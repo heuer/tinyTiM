@@ -32,7 +32,7 @@ import org.tmapi.core.TopicMapObject;
  * Base class for all Topic Maps constructs.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 abstract class Construct implements TopicMapObject, IConstruct {
 
@@ -100,13 +100,13 @@ abstract class Construct implements TopicMapObject, IConstruct {
      * @see org.tinytim.IConstruct#addItemIdentifier(org.tmapi.core.Locator)
      */
     public void addItemIdentifier(Locator itemIdentifier) {
-        if (_iids == null) {
-            _iids = _tm.getCollectionFactory().createSet();
-        }
-        if (_iids.contains(itemIdentifier)) {
+        if (_iids != null && _iids.contains(itemIdentifier)) {
             return;
         }
         _fireEvent(Event.ADD_IID, null, itemIdentifier);
+        if (_iids == null) {
+            _iids = _tm.getCollectionFactory().createSet();
+        }
         _iids.add(itemIdentifier);
     }
 
