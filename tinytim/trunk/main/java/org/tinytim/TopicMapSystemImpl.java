@@ -34,7 +34,7 @@ import org.tmapi.core.TopicMapSystem;
  * {@link org.tmapi.core.TopicMapSystem} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 final class TopicMapSystemImpl implements TopicMapSystem {
 
@@ -48,7 +48,7 @@ final class TopicMapSystemImpl implements TopicMapSystem {
         _collectionFactory = collFactory;
         _features = features;
         _properties = properties;
-        _topicMaps = collFactory.<Locator, TopicMap>createMap();
+        _topicMaps = collFactory.createMap();
     }
 
     /**
