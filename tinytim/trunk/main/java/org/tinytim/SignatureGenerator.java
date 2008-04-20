@@ -26,7 +26,6 @@ import java.util.Set;
 import org.tmapi.core.Association;
 import org.tmapi.core.AssociationRole;
 import org.tmapi.core.Occurrence;
-import org.tmapi.core.ScopedObject;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicName;
 import org.tmapi.core.Variant;
@@ -42,7 +41,7 @@ import org.tmapi.core.Variant;
  * are taken into account.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 final class SignatureGenerator {
 
