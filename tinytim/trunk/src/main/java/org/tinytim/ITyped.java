@@ -30,7 +30,7 @@ import org.tmapi.core.Topic;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-interface ITyped extends IConstruct {
+public interface ITyped extends IConstruct {
 
     /**
      * Returns the type of the construct.
