@@ -18,41 +18,45 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.index;
+package org.tinytim;
 
-import org.tmapi.index.IndexFlags;
+import java.util.Collection;
+
+import org.tmapi.core.Locator;
+import org.tmapi.core.TMAPIException;
+import org.tmapi.core.Topic;
+import org.tmapi.core.TopicName;
+import org.tmapi.core.Variant;
 
 /**
- * Immutable {@link org.tmapi.index.IndexFlags} implementation.
- * 
- * Use {@link #AUTOUPDATED} or {@link #NOT_AUTOUPDATED}
+ * {@link org.tmapi.core.Variant} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-final class IndexFlagsImpl implements IndexFlags {
+public final class VariantImpl extends DatatypeAwareConstruct implements Variant {
 
-    /**
-     * Indicates that the index is auto updated.
-     */
-    public static IndexFlags AUTOUPDATED = new IndexFlagsImpl(true);
+    VariantImpl(TopicMapImpl topicMap, String value, Collection<Topic> scope) {
+        super(topicMap, null, value, scope);
+    }
 
-    /**
-     * Indicates that the index is NOT auto updated.
-     */
-    public static IndexFlags NOT_AUTOUPDATED = new IndexFlagsImpl(false);
-
-    private final boolean _autoUpdated;
-
-    private IndexFlagsImpl(boolean autoUpdated) {
-        _autoUpdated = autoUpdated;
+    VariantImpl(TopicMapImpl topicMap, Locator value, Collection<Topic> scope) {
+        super(topicMap, null, value, scope);
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.index.IndexFlags#isAutoUpdated()
+     * @see org.tmapi.core.Variant#getTopicName()
      */
-    public boolean isAutoUpdated() {
-        return _autoUpdated;
+    public TopicName getTopicName() {
+        return (TopicName) _parent;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tmapi.core.Variant#remove()
+     */
+    public void remove() throws TMAPIException {
+        ((TopicNameImpl) _parent).removeVariant(this);
+        super.dispose();
     }
 
 }

@@ -18,41 +18,39 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.index;
+package org.tinytim;
 
-import org.tmapi.index.IndexFlags;
+import org.tmapi.core.Locator;
 
 /**
- * Immutable {@link org.tmapi.index.IndexFlags} implementation.
- * 
- * Use {@link #AUTOUPDATED} or {@link #NOT_AUTOUPDATED}
+ * Indicates that a Topic Maps construct has a value and a datatype.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-final class IndexFlagsImpl implements IndexFlags {
+interface IDatatypeAwareConstruct extends IConstruct {
+
+    static final String _XSD_BASE = "http://www.w3.org/2001/XMLSchema#";
+    static final Locator STRING = new IRI(_XSD_BASE + "string");
+    static final Locator ANY_URI = new IRI(_XSD_BASE + "anyURI");
 
     /**
-     * Indicates that the index is auto updated.
+     * The value of this Topic Maps construct.
+     * 
+     * This method differs from TMAPI: This method MUST return the value OR the
+     * locator as string. This method should be removed if we have TMAPI 2.0
+     * (maybe the whole interface should be removed).
+     * Currently, the {@link SignatureGenerator} needs it.
+     *
+     * @return The value.
      */
-    public static IndexFlags AUTOUPDATED = new IndexFlagsImpl(true);
+    public String getValue2();
 
     /**
-     * Indicates that the index is NOT auto updated.
+     * Returns the datatype of this Topic Maps construct.
+     *
+     * @return The datatype.
      */
-    public static IndexFlags NOT_AUTOUPDATED = new IndexFlagsImpl(false);
-
-    private final boolean _autoUpdated;
-
-    private IndexFlagsImpl(boolean autoUpdated) {
-        _autoUpdated = autoUpdated;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tmapi.index.IndexFlags#isAutoUpdated()
-     */
-    public boolean isAutoUpdated() {
-        return _autoUpdated;
-    }
+    public Locator getDatatype();
 
 }
