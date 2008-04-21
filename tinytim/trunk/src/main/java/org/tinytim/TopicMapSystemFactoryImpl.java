@@ -126,9 +126,10 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
             reportFeatureNotRecognized(featureName);
         }
         FeatureInfo feature = null;
-        for (FeatureInfo feature_: _FEATURES) {
-            if (feature_.name.equals(featureName)) {
-                feature = feature_;
+        for (FeatureInfo feat: _FEATURES) {
+            if (feat.name.equals(featureName)) {
+                feature = feat;
+                break;
             }
         }
         if (feature.fixed && feature.defaultValue != enabled) {
