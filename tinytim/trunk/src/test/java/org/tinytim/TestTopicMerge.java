@@ -26,6 +26,7 @@ import org.tmapi.core.Locator;
 import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicName;
+import org.tmapi.core.Variant;
 
 /**
  * Tests merging of topics.
@@ -155,5 +156,29 @@ public class TestTopicMerge extends TinyTimTestCase {
         assertTrue(topic2.getTopicNames().contains(name3));
         topic1.mergeIn(topic2);
         assertEquals(2, topic1.getTopicNames().size());
+    }
+
+    /**
+     * Tests if merging detects duplicate names and moves the variants.
+     */
+    public void testDuplicateSuppressionName2() {
+        Topic topic1 = _tm.createTopic();
+        Topic topic2 = _tm.createTopic();
+        TopicName name1 = topic1.createTopicName("tinyTiM", null, null);
+        TopicName name2 = topic2.createTopicName("tinyTiM", null, null);
+        Variant var = name2.createVariant("tiny", null);
+        assertEquals(1, topic1.getTopicNames().size());
+        assertTrue(topic1.getTopicNames().contains(name1));
+        assertEquals(0, name1.getVariants().size()); 
+        assertEquals(1, topic2.getTopicNames().size());
+        assertTrue(topic2.getTopicNames().contains(name2));
+        assertEquals(1, name2.getVariants().size());
+        assertTrue(name2.getVariants().contains(var));
+        topic1.mergeIn(topic2);
+        assertEquals(1, topic1.getTopicNames().size());
+        TopicName tmpName = (TopicName) topic1.getTopicNames().iterator().next();
+        assertEquals(1, tmpName.getVariants().size());
+        Variant tmpVar = (Variant) tmpName.getVariants().iterator().next();
+        assertEquals("tiny", tmpVar.getValue());
     }
 }
