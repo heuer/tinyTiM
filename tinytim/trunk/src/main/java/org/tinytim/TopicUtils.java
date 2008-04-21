@@ -29,7 +29,7 @@ import org.tmapi.core.Topic;
  * This class provides utility functions for {@link org.tmapi.core.Topic}s.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public final class TopicUtils {
 

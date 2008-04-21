@@ -18,41 +18,45 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.index;
+package org.tinytim;
 
-import org.tmapi.index.IndexFlags;
+import java.util.Collection;
+
+import org.tmapi.core.Locator;
+import org.tmapi.core.Occurrence;
+import org.tmapi.core.TMAPIException;
+import org.tmapi.core.Topic;
 
 /**
- * Immutable {@link org.tmapi.index.IndexFlags} implementation.
- * 
- * Use {@link #AUTOUPDATED} or {@link #NOT_AUTOUPDATED}
+ * {@link org.tmapi.core.Occurrence} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-final class IndexFlagsImpl implements IndexFlags {
+public final class OccurrenceImpl extends DatatypeAwareConstruct implements 
+        Occurrence, ITyped {
 
-    /**
-     * Indicates that the index is auto updated.
-     */
-    public static IndexFlags AUTOUPDATED = new IndexFlagsImpl(true);
+    OccurrenceImpl(TopicMapImpl topicMap, Topic type, String value, Collection<Topic> scope) {
+        super(topicMap, type, value, scope);
+    }
 
-    /**
-     * Indicates that the index is NOT auto updated.
-     */
-    public static IndexFlags NOT_AUTOUPDATED = new IndexFlagsImpl(false);
-
-    private final boolean _autoUpdated;
-
-    private IndexFlagsImpl(boolean autoUpdated) {
-        _autoUpdated = autoUpdated;
+    OccurrenceImpl(TopicMapImpl topicMap, Topic type, Locator value, Collection<Topic> scope) {
+        super(topicMap, type, value, scope);
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.index.IndexFlags#isAutoUpdated()
+     * @see org.tmapi.core.Occurrence#getTopic()
      */
-    public boolean isAutoUpdated() {
-        return _autoUpdated;
+    public Topic getTopic() {
+        return (Topic) _parent;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tmapi.core.TopicMapObject#remove()
+     */
+    public void remove() throws TMAPIException {
+        ((TopicImpl) _parent).removeOccurrence(this);
+        super.dispose();
     }
 
 }

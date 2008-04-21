@@ -20,39 +20,37 @@
  */
 package org.tinytim.index;
 
-import org.tmapi.index.IndexFlags;
+import org.tinytim.ICollectionFactory;
+import org.tinytim.IEventPublisher;
 
 /**
- * Immutable {@link org.tmapi.index.IndexFlags} implementation.
  * 
- * Use {@link #AUTOUPDATED} or {@link #NOT_AUTOUPDATED}
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-final class IndexFlagsImpl implements IndexFlags {
+public final class IndexManager {
 
-    /**
-     * Indicates that the index is auto updated.
-     */
-    public static IndexFlags AUTOUPDATED = new IndexFlagsImpl(true);
+    private ITypeInstanceIndex _typeInstanceIndex;
+    private IScopedIndex _scopedIndex;
 
-    /**
-     * Indicates that the index is NOT auto updated.
-     */
-    public static IndexFlags NOT_AUTOUPDATED = new IndexFlagsImpl(false);
-
-    private final boolean _autoUpdated;
-
-    private IndexFlagsImpl(boolean autoUpdated) {
-        _autoUpdated = autoUpdated;
+    public IndexManager(IEventPublisher publisher, ICollectionFactory collFactory) {
+        _typeInstanceIndex = new TypeInstanceIndex(publisher, collFactory);
+        _scopedIndex = new ScopedIndex(publisher, collFactory);
     }
 
-    /* (non-Javadoc)
-     * @see org.tmapi.index.IndexFlags#isAutoUpdated()
-     */
-    public boolean isAutoUpdated() {
-        return _autoUpdated;
+    public ITypeInstanceIndex getTypeInstanceIndex() {
+        return _typeInstanceIndex;
     }
 
+    public IScopedIndex getScopedIndex() {
+        return _scopedIndex;
+    }
+
+    public void close() {
+        ((TypeInstanceIndex) _typeInstanceIndex).clear();
+        ((ScopedIndex) _scopedIndex).clear();
+        _typeInstanceIndex = null;
+        _scopedIndex = null;
+    }
 }
