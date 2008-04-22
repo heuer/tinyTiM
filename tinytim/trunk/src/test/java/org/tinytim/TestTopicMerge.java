@@ -20,6 +20,8 @@
  */
 package org.tinytim;
 
+import java.util.Properties;
+
 import org.tmapi.core.Association;
 import org.tmapi.core.AssociationRole;
 import org.tmapi.core.Locator;
@@ -35,6 +37,16 @@ import org.tmapi.core.Variant;
  * @version $Rev$ - $Date$
  */
 public class TestTopicMerge extends TinyTimTestCase {
+
+    /* (non-Javadoc)
+     * @see org.tinytim.TinyTimTestCase#getAdditionalProperties()
+     */
+    @Override
+    protected Properties getAdditionalProperties() {
+        Properties props = new Properties();
+        props.setProperty(Property.XTM10_REIFICATION, "false");
+        return props;
+    }
 
     /**
      * If topics reify different Topic Maps constructs they cannot be merged.

@@ -29,7 +29,7 @@ import org.tmapi.core.Topic;
  * {@link org.tmapi.core.AssociationRole} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public final class AssociationRoleImpl extends Typed implements AssociationRole, 
         ITyped {
@@ -37,7 +37,7 @@ public final class AssociationRoleImpl extends Typed implements AssociationRole,
     private Topic _player;
 
     AssociationRoleImpl(TopicMapImpl tm, Topic type, Topic player) {
-        super(tm, type, null);
+        super(tm, type);
         _player = player;
     }
 

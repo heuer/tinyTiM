@@ -32,9 +32,10 @@ import org.tmapi.core.Variant;
  * {@link org.tmapi.core.Variant} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
-public final class VariantImpl extends DatatypeAwareConstruct implements Variant {
+public final class VariantImpl extends DatatypeAwareConstruct implements 
+        Variant, IScoped {
 
     VariantImpl(TopicMapImpl topicMap, String value, Collection<Topic> scope) {
         super(topicMap, null, value, scope);

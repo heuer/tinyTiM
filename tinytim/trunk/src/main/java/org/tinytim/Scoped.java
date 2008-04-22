@@ -28,25 +28,23 @@ import org.tmapi.core.Topic;
 
 /**
  * Class that provides a "scope" property and sends events if that
- * scope property changes. Additionally, this class provides
- * a {@link IReifiable} implementation.
+ * scope property changes.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-abstract class Scoped extends Construct implements IReifiable {
+abstract class Scoped extends Typed {
 
     //NOTE: This class does NOT implement IScoped by intention!
-    //      Typed extends this class and roles are not IScoped!
 
     private Set<Topic> _scope;
-    private Topic _reifier;
 
-    Scoped(TopicMapImpl topicMap, Collection<Topic> scope) {
-        super(topicMap);
+    Scoped(TopicMapImpl topicMap, Topic type, Collection<Topic> scope) {
+        super(topicMap, type);
         if (scope != null) {
-            for(Topic theme: scope) {
-                addTheme(theme);
+            _scope = topicMap.getCollectionFactory().createSet(scope.size());
+            for (Topic theme: scope) {
+                _scope.add(theme);
             }
         }
     }
@@ -99,36 +97,11 @@ abstract class Scoped extends Construct implements IReifiable {
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.core.Association#getReifier()
-     */
-    public Topic getReifier() {
-        return _reifier;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tinytim.IReifiable#setReifier(org.tmapi.core.Topic)
-     */
-    public void setReifier(Topic reifier) {
-        if (_reifier == reifier) {
-            return;
-        }
-        _fireEvent(Event.SET_REIFIER, _reifier, reifier);
-        if (_reifier != null) {
-            ((TopicImpl) _reifier)._reified = null;
-        }
-        _reifier = reifier;
-        if (reifier != null) {
-            ((TopicImpl) reifier)._reified = this;
-        }
-    }
-
-    /* (non-Javadoc)
      * @see org.tinytim.Construct#dispose()
      */
     @Override
     protected void dispose() {
         _scope = null;
-        _reifier = null;
         super.dispose();
     }
 

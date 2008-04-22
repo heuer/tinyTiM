@@ -29,10 +29,10 @@ import org.tmapi.core.Topic;
  * Implementation of {@link org.tinytim.IDatatypeAwareConstruct}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
-abstract class DatatypeAwareConstruct extends Typed implements 
-        IDatatypeAwareConstruct, IScoped {
+abstract class DatatypeAwareConstruct extends Scoped implements 
+        IDatatypeAwareConstruct {
 
     private String _value;
     private Locator _resource;
@@ -58,9 +58,11 @@ abstract class DatatypeAwareConstruct extends Typed implements
     }
 
     /**
+     * Sets the value (xsd:string) of this construct.
      * 
+     * Sideeffect: The resource is set to null.
      *
-     * @param value
+     * @param value Sets the value of this construct.
      */
     public void setValue(String value) {
         _fireEvent(Event.SET_VALUE, _value, value);
@@ -69,25 +71,29 @@ abstract class DatatypeAwareConstruct extends Typed implements
     }
 
     /**
-     * 
+     * Returns the value of this construct.
      *
-     * @return
+     * @return The value or <code>null</code>.
      */
     public String getValue() {
         return _value;
     }
 
     /**
-     * 
+     * Returns the locator (xsd:anyURI value) of this construct.
      *
-     * @return
+     * @return The locator or <code>null</code>.
      */
     public Locator getResource() {
         return _resource;
     }
 
-    /* (non-Javadoc)
-     * @see org.tmapi.core.Occurrence#setResource(org.tmapi.core.Locator)
+    /**
+     * Sets the value (xsd:anyURI) of this construct.
+     * 
+     * Side effect: The string value (if any) is set to <code>null</code>.
+     *
+     * @param value The locator.
      */
     public void setResource(Locator value) {
         _fireEvent(Event.SET_VALUE, _value, value);

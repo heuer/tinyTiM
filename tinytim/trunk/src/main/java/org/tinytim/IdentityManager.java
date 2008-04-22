@@ -33,7 +33,7 @@ import org.tmapi.core.TopicsMustMergeException;
  * provides an index to get Topic Maps constructs by their identity.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 final class IdentityManager {
 
