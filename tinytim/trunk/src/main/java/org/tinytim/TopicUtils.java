@@ -45,8 +45,8 @@ public final class TopicUtils {
      * Topic Maps construct and iff it is not used reifier.
      *
      * @param topic The topic to check.
-     * @return <code>true</code> if the topic has no dependencies, 
-     *          otherwise <code>false</code>.
+     * @return <code>true</code> if the topic is removable, <code>false</code> 
+     *          otherwise.
      */
     public static boolean isRemovable(Topic topic) {
         if (((TopicImpl) topic)._reified != null) {
@@ -60,22 +60,22 @@ public final class TopicUtils {
         if (!typeInstanceIdx.isAutoUpdated()) {
             typeInstanceIdx.reindex();
         }
-        if (!typeInstanceIdx.getAssociations(topic).isEmpty()
-                || !typeInstanceIdx.getRoles(topic).isEmpty()
-                || !typeInstanceIdx.getOccurrences(topic).isEmpty()
-                || !typeInstanceIdx.getNames(topic).isEmpty()) {
-            return false;
+        boolean removable = typeInstanceIdx.getAssociations(topic).isEmpty()
+                                && typeInstanceIdx.getRoles(topic).isEmpty()
+                                && typeInstanceIdx.getOccurrences(topic).isEmpty()
+                                && typeInstanceIdx.getNames(topic).isEmpty();
+        typeInstanceIdx.close();
+        if (removable) {
+            IScopedIndex scopedIdx = idxMan.getScopedIndex();
+            if (!scopedIdx.isAutoUpdated()) {
+                scopedIdx.reindex();
+            }
+            removable = scopedIdx.getAssociationsByTheme(topic).isEmpty()
+                            && scopedIdx.getOccurrencesByTheme(topic).isEmpty()
+                            && scopedIdx.getNamesByTheme(topic).isEmpty()
+                            && scopedIdx.getVariantsByTheme(topic).isEmpty();
+            scopedIdx.close();
         }
-        IScopedIndex scopedIdx = idxMan.getScopedIndex();
-        if (!scopedIdx.isAutoUpdated()) {
-            scopedIdx.reindex();
-        }
-        if (!scopedIdx.getAssociationsByTheme(topic).isEmpty()
-                || !scopedIdx.getOccurrencesByTheme(topic).isEmpty()
-                || !scopedIdx.getNamesByTheme(topic).isEmpty()
-                || !scopedIdx.getVariantsByTheme(topic).isEmpty()) {
-            return false;
-        }
-        return true;
+        return removable;
     }
 }

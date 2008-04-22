@@ -35,9 +35,9 @@ import org.tmapi.core.Variant;
  * {@link org.tmapi.core.TopicName} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
-public final class TopicNameImpl extends Typed implements TopicName, ITyped, IScoped {
+public final class TopicNameImpl extends Scoped implements TopicName, ITyped, IScoped {
 
     private String _value;
     private Set<Variant> _variants;

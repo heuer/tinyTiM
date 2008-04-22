@@ -26,7 +26,7 @@ import org.tmapi.core.Locator;
  * Indicates that a Topic Maps construct has a value and a datatype.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 interface IDatatypeAwareConstruct extends IConstruct {
 

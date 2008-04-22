@@ -33,7 +33,7 @@ import org.tmapi.core.Topic;
  * {@link org.tmapi.core.Association} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public final class AssociationImpl extends Scoped implements Association,
         IReifiable, ITyped, IScoped {
@@ -42,7 +42,7 @@ public final class AssociationImpl extends Scoped implements Association,
     private Topic _type;
 
     AssociationImpl(TopicMapImpl topicMap) {
-        super(topicMap, null);
+        super(topicMap, null, null);
         _roles = topicMap.getCollectionFactory().createSet(2);
     }
 

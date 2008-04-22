@@ -38,7 +38,7 @@ import org.tmapi.core.TopicName;
  * {@link org.tmapi.core.Topic} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public final class TopicImpl extends Construct implements Topic {
 
@@ -230,6 +230,9 @@ public final class TopicImpl extends Construct implements Topic {
      * @see org.tmapi.core.Topic#getReified()
      */
     public Set<TopicMapObject> getReified() {
+        if (_tm._oldReification) {
+            return ReificationUtils.getReified(this);
+        }
         return _reified != null ? Collections.<TopicMapObject>singleton(_reified)
                                 : Collections.<TopicMapObject>emptySet();
     }

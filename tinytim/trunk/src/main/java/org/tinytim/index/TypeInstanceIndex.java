@@ -23,8 +23,10 @@ package org.tinytim.index;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.tinytim.AssociationImpl;
 import org.tinytim.AssociationRoleImpl;
@@ -39,10 +41,10 @@ import org.tinytim.TopicNameImpl;
 import org.tmapi.core.Topic;
 
 /**
- * 
+ * {@link ITypeInstanceIndex} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TypeInstanceIndex implements ITypeInstanceIndex {
 
@@ -78,7 +80,7 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
     public Collection<AssociationImpl> getAssociations(Topic type) {
         List<AssociationImpl> assocs = _type2Assocs.get(type);
         return assocs == null ? Collections.<AssociationImpl>emptySet()
-                              : Collections.unmodifiableCollection(assocs);
+                              : new ArrayList<AssociationImpl>(assocs);
     }
 
     /* (non-Javadoc)
@@ -94,7 +96,7 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
     public Collection<AssociationRoleImpl> getRoles(Topic type) {
         List<AssociationRoleImpl> roles = _type2Roles.get(type);
         return roles == null ? Collections.<AssociationRoleImpl>emptySet()
-                             : Collections.unmodifiableCollection(roles);
+                             : new ArrayList<AssociationRoleImpl>(roles);
     }
 
     /* (non-Javadoc)
@@ -110,7 +112,7 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
     public Collection<OccurrenceImpl> getOccurrences(Topic type) {
         List<OccurrenceImpl> occs = _type2Occs.get(type);
         return occs == null ? Collections.<OccurrenceImpl>emptySet()
-                            : Collections.unmodifiableCollection(occs);
+                            : new ArrayList<OccurrenceImpl>(occs);
     }
 
     /* (non-Javadoc)
@@ -126,7 +128,7 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
     public Collection<TopicNameImpl> getNames(Topic type) {
         List<TopicNameImpl> names = _type2Names.get(type);
         return names == null ? Collections.<TopicNameImpl>emptySet()
-                             : Collections.unmodifiableCollection(names);
+                             : new ArrayList<TopicNameImpl>(names);
     }
 
     /* (non-Javadoc)
@@ -139,13 +141,20 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
     /* (non-Javadoc)
      * @see org.tinytim.index.ITypeInstanceIndex#getTopics(org.tmapi.core.Topic[])
      */
-    public Collection<Topic> getTopics(Topic... type) {
-        if (type == null || type.length == 1) {
-            List<Topic> topics = _type2Topics.get(type);
+    public Collection<Topic> getTopics(Topic... types) {
+        if (types == null || types.length == 1) {
+            List<Topic> topics = _type2Topics.get(types[0]);
             return topics == null ? Collections.<Topic>emptySet()
-                                  : Collections.unmodifiableCollection(topics);
+                                  : new ArrayList<Topic>(topics);
         }
-        return null;
+        Set<Topic> topics = new HashSet<Topic>(10);
+        for (Topic type: types) {
+            List<Topic> matches = _type2Topics.get(type);
+            if (matches != null) {
+                topics.addAll(matches);
+            }
+        }
+        return topics;
     }
 
     /* (non-Javadoc)

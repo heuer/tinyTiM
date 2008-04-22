@@ -47,7 +47,7 @@ import org.tmapi.core.Variant;
  * changes, check the <code>==</code> comparisons.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 final class MergeUtils {
 
@@ -272,32 +272,23 @@ final class MergeUtils {
         if (!typeInstanceIndex.isAutoUpdated()) {
             typeInstanceIndex.reindex();
         }
-        List<Topic> topics = new ArrayList<Topic>(typeInstanceIndex.getTopics(source));
-        for (Topic topic: topics) {
+        for (Topic topic: typeInstanceIndex.getTopics(source)) {
             topic.removeType(source);
             topic.addType(replacement);
         }
-        Collection<ITyped> typed = new ArrayList<ITyped>(typeInstanceIndex.getAssociations(source));
-        _replaceTopicAsType(typed, replacement);
-        typed = new ArrayList<ITyped>(typeInstanceIndex.getRoles(source));
-        _replaceTopicAsType(typed, replacement);
-        typed = new ArrayList<ITyped>(typeInstanceIndex.getOccurrences(source));
-        _replaceTopicAsType(typed, replacement);
-        typed = new ArrayList<ITyped>(typeInstanceIndex.getNames(source));
-        _replaceTopicAsType(typed, replacement);
+        _replaceTopicAsType(typeInstanceIndex.getAssociations(source), replacement);
+        _replaceTopicAsType(typeInstanceIndex.getRoles(source), replacement);
+        _replaceTopicAsType(typeInstanceIndex.getOccurrences(source), replacement);
+        _replaceTopicAsType(typeInstanceIndex.getNames(source), replacement);
         typeInstanceIndex.close();
         IScopedIndex scopedIndex = idxMan.getScopedIndex();
         if (!scopedIndex.isAutoUpdated()) {
             scopedIndex.reindex();
         }
-        Collection<IScoped> scoped = new ArrayList<IScoped>(scopedIndex.getAssociationsByTheme(source));
-        _replaceTopicAsTheme(scoped, source, replacement);
-        scoped = new ArrayList<IScoped>(scopedIndex.getOccurrencesByTheme(source));
-        _replaceTopicAsTheme(scoped, source, replacement);
-        scoped = new ArrayList<IScoped>(scopedIndex.getNamesByTheme(source));
-        _replaceTopicAsTheme(scoped, source, replacement);
-        scoped = new ArrayList<IScoped>(scopedIndex.getVariantsByTheme(source));
-        _replaceTopicAsTheme(scoped, source, replacement);
+        _replaceTopicAsTheme(scopedIndex.getAssociationsByTheme(source), source, replacement);
+        _replaceTopicAsTheme(scopedIndex.getOccurrencesByTheme(source), source, replacement);
+        _replaceTopicAsTheme(scopedIndex.getNamesByTheme(source), source, replacement);
+        _replaceTopicAsTheme(scopedIndex.getVariantsByTheme(source), source, replacement);
         scopedIndex.close();
     }
 
@@ -307,14 +298,14 @@ final class MergeUtils {
      * @param typedConstructs A collection of typed constructs.
      * @param replacement The type.
      */
-    private static void _replaceTopicAsType(Collection<ITyped> typedConstructs,
+    private static void _replaceTopicAsType(Collection<? extends ITyped> typedConstructs,
             Topic replacement) {
         for (ITyped typed: typedConstructs) {
             typed.setType(replacement);
         }
     }
 
-    private static void _replaceTopicAsTheme(Collection<IScoped> scopedCollection,
+    private static void _replaceTopicAsTheme(Collection<? extends IScoped> scopedCollection,
             Topic oldTheme, Topic newTheme) {
         for (IScoped scoped: scopedCollection) {
             scoped.removeTheme(oldTheme);

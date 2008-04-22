@@ -20,6 +20,9 @@
  */
 package org.tinytim;
 
+import java.util.Enumeration;
+import java.util.Properties;
+
 import org.tinytim.TopicMapImpl;
 import org.tinytim.TopicMapSystemFactoryImpl;
 import org.tinytim.TopicMapSystemImpl;
@@ -45,6 +48,17 @@ public class TinyTimTestCase extends TestCase {
     protected TopicMapSystemImpl _sys;
     protected TopicMapSystemFactoryImpl _sysFactory;
 
+    /**
+     * Returns additional / non-default properties which should be set
+     * to configure the {@link org.tmapi.core.TopicMapSystemFactory}.
+     *
+     * @return Properties instance or <code>null</code> if no properties != 
+     *          default properties should be set.
+     */
+    protected Properties getAdditionalProperties() {
+        return null;
+    }
+
     /* (non-Javadoc)
      * @see junit.framework.TestCase#setUp()
      */
@@ -52,6 +66,13 @@ public class TinyTimTestCase extends TestCase {
     protected void setUp() throws Exception {
         super.setUp();
         _sysFactory = new TopicMapSystemFactoryImpl();
+        Properties properties = getAdditionalProperties();
+        if (properties != null) {
+            for (Enumeration<?> e = properties.propertyNames(); e.hasMoreElements();) {
+                String name = (String) e.nextElement();
+                _sysFactory.setProperty(name, properties.getProperty(name));
+            }
+        }
         _sys =  (TopicMapSystemImpl) _sysFactory.newTopicMapSystem();
         _tm = (TopicMapImpl) _sys.createTopicMap(_IRI);
         _base = _tm.getBaseLocator();
@@ -66,6 +87,7 @@ public class TinyTimTestCase extends TestCase {
         _sysFactory = null;
         _sys = null;
         _tm = null;
+        _base = null;
     }
 
 }

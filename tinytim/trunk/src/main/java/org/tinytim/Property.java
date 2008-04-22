@@ -41,4 +41,14 @@ public final class Property {
      * default Java collections.
      */
     public static final String COLLECTION_FACTORY = "org.tinytim.CollectionFactory";
+
+    /**
+     * Property which indicates if the "old" XTM 1.0 reification mechansm should
+     * be used.
+     * 
+     * For backwards compatibilty and to support TMAPI 1.0 this property is
+     * set to "true" by default.
+     */
+    public static final String XTM10_REIFICATION = "org.tinytim.XTM10Reification";
+
 }

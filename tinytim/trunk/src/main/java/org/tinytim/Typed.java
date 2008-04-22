@@ -20,26 +20,26 @@
  */
 package org.tinytim;
 
-import java.util.Collection;
-
 import org.tmapi.core.Topic;
 
 /**
- * Class that provides a "type" property and fires and event if that type
- * property changes.
+ * Class that provides a "type" property and fires an event if that type
+ * property changes. Additionally, this class provides
+ * a {@link IReifiable} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-abstract class Typed extends Scoped {
+abstract class Typed extends Construct implements IReifiable {
 
     //NOTE: This class does NOT implement ITyped by intention!
     //      DatatypeAwareConstruct extends this class and variants are not ITyped!
 
     private Topic _type;
+    private Topic _reifier;
 
-    Typed(TopicMapImpl topicMap, Topic type, Collection<Topic> scope) {
-        super(topicMap, scope);
+    Typed(TopicMapImpl topicMap, Topic type) {
+        super(topicMap);
         _type = type;
     }
 
@@ -62,11 +62,39 @@ abstract class Typed extends Scoped {
     }
 
     /* (non-Javadoc)
+     * @see org.tmapi.core.IReifiable#getReifier()
+     */
+    public Topic getReifier() {
+        if (_tm._oldReification) {
+            return ReificationUtils.getReifier(this);
+        }
+        return _reifier;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.IReifiable#setReifier(org.tmapi.core.Topic)
+     */
+    public void setReifier(Topic reifier) {
+        if (_reifier == reifier) {
+            return;
+        }
+        _fireEvent(Event.SET_REIFIER, _reifier, reifier);
+        if (_reifier != null) {
+            ((TopicImpl) _reifier)._reified = null;
+        }
+        _reifier = reifier;
+        if (reifier != null) {
+            ((TopicImpl) reifier)._reified = this;
+        }
+    }
+
+    /* (non-Javadoc)
      * @see org.tinytim.Scoped#dispose()
      */
     @Override
     protected void dispose() {
         _type = null;
+        _reifier = null;
         super.dispose();
     }
 
