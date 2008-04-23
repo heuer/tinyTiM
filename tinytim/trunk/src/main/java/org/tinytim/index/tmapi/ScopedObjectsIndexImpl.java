@@ -39,7 +39,7 @@ import org.tmapi.index.core.ScopedObjectsIndex;
  * {@link org.tmapi.index.core.ScopedObjectsIndex} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class ScopedObjectsIndexImpl extends AbstractTMAPIIndex implements
         ScopedObjectsIndex {

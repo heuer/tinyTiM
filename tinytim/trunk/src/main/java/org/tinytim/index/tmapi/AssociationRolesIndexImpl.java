@@ -31,10 +31,10 @@ import org.tmapi.index.TMAPIIndexException;
 import org.tmapi.index.core.AssociationRolesIndex;
 
 /**
- * 
+ * Implementation of the {@link org.tmapi.index.core.AssociationRolesIndex};
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class AssociationRolesIndexImpl extends AbstractTMAPIIndex implements
         AssociationRolesIndex {

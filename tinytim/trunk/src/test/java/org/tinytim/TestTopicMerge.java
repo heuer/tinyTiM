@@ -26,6 +26,7 @@ import org.tmapi.core.Association;
 import org.tmapi.core.AssociationRole;
 import org.tmapi.core.Locator;
 import org.tmapi.core.ModelConstraintException;
+import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicName;
 import org.tmapi.core.Variant;
@@ -193,4 +194,51 @@ public class TestTopicMerge extends TinyTimTestCase {
         Variant tmpVar = (Variant) tmpName.getVariants().iterator().next();
         assertEquals("tiny", tmpVar.getValue());
     }
+
+    /**
+     * Tests if merging detects duplicate occurrences.
+     */
+    public void testDuplicateSuppressionOccurrence() {
+        Topic topic1 = _tm.createTopic();
+        Topic topic2 = _tm.createTopic();
+        Occurrence occ1 = topic1.createOccurrence("tinyTiM", null, null);
+        Occurrence occ2 = topic2.createOccurrence("tinyTiM", null, null);
+        Occurrence occ3 = topic2.createOccurrence("tiny Topic Maps engine", null, null);
+        assertEquals(1, topic1.getOccurrences().size());
+        assertTrue(topic1.getOccurrences().contains(occ1));
+        assertEquals(2, topic2.getOccurrences().size());
+        assertTrue(topic2.getOccurrences().contains(occ2));
+        assertTrue(topic2.getOccurrences().contains(occ3));
+        topic1.mergeIn(topic2);
+        assertEquals(2, topic1.getOccurrences().size());
+    }
+
+    /**
+     * Tests if merging detects duplicate occurrences and moves the 
+     * item identifiers.
+     */
+    public void testDuplicateSuppressionOccurrenceItemIdentifiers() {
+        Topic topic1 = _tm.createTopic();
+        Topic topic2 = _tm.createTopic();
+        Locator iid1 = _tm.createLocator("http://example.org/iid-1");
+        Locator iid2 = _tm.createLocator("http://example.org/iid-2");
+        Occurrence occ1 = topic1.createOccurrence("tinyTiM", null, null);
+        occ1.addSourceLocator(iid1);
+        assertTrue(occ1.getSourceLocators().contains(iid1));
+        Occurrence occ2 = topic2.createOccurrence("tinyTiM", null, null);
+        occ2.addSourceLocator(iid2);
+        assertTrue(occ2.getSourceLocators().contains(iid2));
+        assertEquals(1, topic1.getOccurrences().size());
+        assertTrue(topic1.getOccurrences().contains(occ1));
+        assertEquals(1, topic2.getOccurrences().size());
+        assertTrue(topic2.getOccurrences().contains(occ2));
+        topic1.mergeIn(topic2);
+        assertEquals(1, topic1.getOccurrences().size());
+        Occurrence occ = (Occurrence) topic1.getOccurrences().iterator().next();
+        assertEquals(2, occ.getSourceLocators().size());
+        assertTrue(occ.getSourceLocators().contains(iid1));
+        assertTrue(occ.getSourceLocators().contains(iid2));
+        assertEquals("tinyTiM", occ.getValue());
+    }
+
 }
