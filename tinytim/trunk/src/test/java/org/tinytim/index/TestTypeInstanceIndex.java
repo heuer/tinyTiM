@@ -31,7 +31,7 @@ import org.tmapi.core.TopicName;
  * Tests against {@link ITypeInstanceIndex}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TestTypeInstanceIndex extends TinyTimTestCase {
 
@@ -72,6 +72,7 @@ public class TestTypeInstanceIndex extends TinyTimTestCase {
         assertTrue(_typeInstanceIdx.getTopics(null).contains(topic));
         Topic type1 = _tm.createTopic();
         Topic type2 = _tm.createTopic();
+        _updateIndex();
         assertTrue(_typeInstanceIdx.getTopicTypes().isEmpty());
         assertEquals(3, _typeInstanceIdx.getTopics(null).size());
         assertTrue(_typeInstanceIdx.getTopics(null).contains(topic));
@@ -81,6 +82,7 @@ public class TestTypeInstanceIndex extends TinyTimTestCase {
         assertTrue(_typeInstanceIdx.getTopics(new Topic[] {type1, type2}, true).isEmpty());
         // Topic with one type
         topic.addType(type1);
+        _updateIndex();
         assertEquals(1, _typeInstanceIdx.getTopicTypes().size());
         assertTrue(_typeInstanceIdx.getTopicTypes().contains(type1));
         assertEquals(2, _typeInstanceIdx.getTopics(null).size());
@@ -94,6 +96,7 @@ public class TestTypeInstanceIndex extends TinyTimTestCase {
         assertTrue(_typeInstanceIdx.getTopics(new Topic[] {type1, type2}, true).isEmpty());
         // Topic with two types
         topic.addType(type2);
+        _updateIndex();
         assertEquals(2, _typeInstanceIdx.getTopicTypes().size());
         assertTrue(_typeInstanceIdx.getTopicTypes().contains(type1));
         assertTrue(_typeInstanceIdx.getTopicTypes().contains(type2));
@@ -111,6 +114,7 @@ public class TestTypeInstanceIndex extends TinyTimTestCase {
         assertTrue(_typeInstanceIdx.getTopics(new Topic[] {type1, type2}, true).contains(topic));
         // Topic removal
         topic.remove();
+        _updateIndex();
         assertEquals(0, _typeInstanceIdx.getTopicTypes().size());
         assertEquals(2, _typeInstanceIdx.getTopics(null).size());
         assertTrue(_typeInstanceIdx.getTopics(null).contains(type1));

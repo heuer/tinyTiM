@@ -50,6 +50,8 @@ public interface IScopedIndex extends IIndex {
      */
     public Collection<AssociationImpl> getAssociationsByTheme(Topic theme);
 
+    public Collection<Topic> getAssociationThemes();
+
     /**
      * Returns all occurrences which use the specified topic as theme.
      *
@@ -58,6 +60,8 @@ public interface IScopedIndex extends IIndex {
      *          in their [scope] property.
      */
     public Collection<OccurrenceImpl> getOccurrencesByTheme(Topic theme);
+
+    public Collection<Topic> getOccurrenceThemes();
 
     /**
      * Returns all names which use the specified topic as theme.
@@ -68,6 +72,8 @@ public interface IScopedIndex extends IIndex {
      */
     public Collection<TopicNameImpl> getNamesByTheme(Topic theme);
 
+    public Collection<Topic> getNameThemes();
+
     /**
      * Returns all variants which use the specified topic as theme.
      *
@@ -76,4 +82,6 @@ public interface IScopedIndex extends IIndex {
      *          in their [scope] property.
      */
     public Collection<VariantImpl> getVariantsByTheme(Topic theme);
+
+    public Collection<Topic> getVariantThemes();
 }
