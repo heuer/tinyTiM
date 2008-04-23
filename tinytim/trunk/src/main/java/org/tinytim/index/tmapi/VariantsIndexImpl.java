@@ -41,7 +41,7 @@ import org.tmapi.index.core.VariantsIndex;
  * Implementation of the {@link org.tmapi.index.core.VariantsIndex}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class VariantsIndexImpl extends AbstractTMAPIIndex implements
         VariantsIndex {

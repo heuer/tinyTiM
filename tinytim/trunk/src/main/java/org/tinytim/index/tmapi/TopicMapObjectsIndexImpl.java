@@ -29,10 +29,10 @@ import org.tmapi.index.TMAPIIndexException;
 import org.tmapi.index.core.TopicMapObjectsIndex;
 
 /**
- * 
+ * Implementation of the {@link org.tmapi.index.core.TopicMapObjectsIndex};
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TopicMapObjectsIndexImpl extends AbstractTMAPIIndex implements TopicMapObjectsIndex {
 

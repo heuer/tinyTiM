@@ -42,7 +42,7 @@ import org.tmapi.index.core.OccurrencesIndex;
  * Implementation of the {@link org.tmapi.index.core.OccurrencesIndex}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class OccurrencesIndexImpl extends AbstractTMAPIIndex implements
         OccurrencesIndex {
