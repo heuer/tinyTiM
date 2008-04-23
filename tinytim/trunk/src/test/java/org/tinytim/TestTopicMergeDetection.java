@@ -99,9 +99,9 @@ public class TestTopicMergeDetection extends TinyTimTestCase {
     }
 
     /**
-     * Tests if adding a subject identifier equals to an item identifier is detected.
+     * Tests if adding an item identifier equals to a subject identifier is detected.
      */
-    public void testExistingSubjectIdentifierItemIdentifier() {
+    public void testExistingSubjectIdentifierAddItemIdentifier() {
         Topic topic1 = _tm.createTopic();
         Topic topic2 = _tm.createTopic();
         Locator loc = _tm.createLocator("http://sf.net/projects/tinytim");
@@ -118,10 +118,10 @@ public class TestTopicMergeDetection extends TinyTimTestCase {
     }
 
     /**
-     * Tests if adding a subject identifier equals to an item identifier 
+     * Tests if adding an item identifier equals to a subject identifier
      * on the SAME topic is accepted
      */
-    public void testExistingSubjectIdentifierItemIdentifierLegal() {
+    public void testExistingSubjectIdentifierAddItemIdentifierLegal() {
         Topic topic1 = _tm.createTopic();
         Locator loc = _tm.createLocator("http://sf.net/projects/tinytim");
         topic1.addSubjectIdentifier(loc);
@@ -131,6 +131,47 @@ public class TestTopicMergeDetection extends TinyTimTestCase {
         assertEquals(topic1, _tm.getTopicBySubjectIdentifier(loc));
         assertNull(_tm.getObjectByItemIdentifier(loc));
         topic1.addSourceLocator(loc);
+        assertEquals(1, topic1.getSubjectIdentifiers().size());
+        assertEquals(1, topic1.getSourceLocators().size());
+        assertTrue(topic1.getSubjectIdentifiers().contains(loc));
+        assertTrue(topic1.getSourceLocators().contains(loc));
+        assertEquals(topic1, _tm.getTopicBySubjectIdentifier(loc));
+        assertEquals(topic1, _tm.getObjectByItemIdentifier(loc));
+    }
+
+    /**
+     * Tests if adding a subject identifier equals to an item identifier is detected.
+     */
+    public void testExistingItemIdentifierAddSubjectIdentifier() {
+        Topic topic1 = _tm.createTopic();
+        Topic topic2 = _tm.createTopic();
+        Locator loc = _tm.createLocator("http://sf.net/projects/tinytim");
+        topic1.addSourceLocator(loc);
+        assertTrue(topic1.getSourceLocators().contains(loc));
+        assertEquals(topic1, _tm.getObjectByItemIdentifier(loc));
+        try {
+            topic2.addSubjectIdentifier(loc);
+            fail("A topic with an item identifier equals to the subject identifier '" + loc + "' exists.");
+        }
+        catch (TopicsMustMergeException ex) {
+            // noop.
+        }
+    }
+
+    /**
+     * Tests if adding a subject identifier equals to an item identifier 
+     * on the SAME topic is accepted
+     */
+    public void testExistingItemIdentifierAddSubjectIdentifierLegal() {
+        Topic topic1 = _tm.createTopic();
+        Locator loc = _tm.createLocator("http://sf.net/projects/tinytim");
+        topic1.addSourceLocator(loc);
+        assertEquals(1, topic1.getSourceLocators().size());
+        assertEquals(0, topic1.getSubjectIdentifiers().size());
+        assertTrue(topic1.getSourceLocators().contains(loc));
+        assertEquals(topic1, _tm.getObjectByItemIdentifier(loc));
+        assertNull(_tm.getTopicBySubjectIdentifier(loc));
+        topic1.addSubjectIdentifier(loc);
         assertEquals(1, topic1.getSubjectIdentifiers().size());
         assertEquals(1, topic1.getSourceLocators().size());
         assertTrue(topic1.getSubjectIdentifiers().contains(loc));

@@ -167,4 +167,18 @@ abstract class Construct implements TopicMapObject, IConstruct {
         _iids = null;
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.append(" iids=[");
+        for (Locator sid: getItemIdentifiers()) {
+            sb.append(sid);
+            sb.append(',');
+        }
+        sb.append("]");
+        return sb.toString();
+    }
 }

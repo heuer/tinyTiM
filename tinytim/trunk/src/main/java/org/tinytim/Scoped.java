@@ -97,7 +97,7 @@ abstract class Scoped extends Typed {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.Construct#dispose()
+     * @see org.tinytim.Typed#dispose()
      */
     @Override
     protected void dispose() {

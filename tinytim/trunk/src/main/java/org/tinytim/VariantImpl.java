@@ -35,7 +35,7 @@ import org.tmapi.core.Variant;
  * @version $Rev$ - $Date$
  */
 public final class VariantImpl extends DatatypeAwareConstruct implements 
-        Variant, IScoped {
+        Variant, IScoped, IMovable<TopicName> {
 
     VariantImpl(TopicMapImpl topicMap, String value, Collection<Topic> scope) {
         super(topicMap, null, value, scope);
@@ -50,6 +50,15 @@ public final class VariantImpl extends DatatypeAwareConstruct implements
      */
     public TopicName getTopicName() {
         return (TopicName) _parent;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.IMovable#moveTo(java.lang.Object)
+     */
+    public void moveTo(TopicName newParent) {
+        _fireEvent(Event.MOVE_VARIANT, _parent, newParent);
+        ((TopicNameImpl) _parent).detachVariant(this);
+        ((TopicNameImpl) newParent).attachVariant(this);
     }
 
     /* (non-Javadoc)

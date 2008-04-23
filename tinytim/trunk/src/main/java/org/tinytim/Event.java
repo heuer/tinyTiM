@@ -151,6 +151,10 @@ public enum Event {
      * Notification that the "resource" of an occurrence or variant should be
      * set.
      */
-    SET_LOCATOR;  //TODO: Remove this once we have a TMDM-compatible version
+    SET_LOCATOR,  //TODO: Remove this once we have a TMDM-compatible version
+
+    MOVE_OCCURRENCE,
+    MOVE_NAME,
+    MOVE_VARIANT
 
 }
