@@ -23,6 +23,7 @@ package org.tinytim.index;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -39,7 +40,7 @@ import org.tmapi.core.ScopedObject;
 import org.tmapi.core.Topic;
 
 /**
- * 
+ * {@link IScopedIndex} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -58,6 +59,16 @@ public class ScopedIndex implements IScopedIndex {
         _theme2Variants = collFactory.createMap();
         publisher.subscribe(Event.ADD_THEME, new AddThemeHandler());
         publisher.subscribe(Event.REMOVE_THEME, new RemoveThemeHandler());
+        IEventHandler handler = new AddScopedHandler();
+        publisher.subscribe(Event.ADD_ASSOCIATION, handler);
+        publisher.subscribe(Event.ADD_OCCURRENCE, handler);
+        publisher.subscribe(Event.ADD_NAME, handler);
+        publisher.subscribe(Event.ADD_VARIANT, handler);
+        handler = new RemoveScopedHandler();
+        publisher.subscribe(Event.REMOVE_ASSOCIATION, handler);
+        publisher.subscribe(Event.REMOVE_OCCURRENCE, handler);
+        publisher.subscribe(Event.REMOVE_NAME, handler);
+        publisher.subscribe(Event.REMOVE_VARIANT, handler);
     }
 
     /* (non-Javadoc)
@@ -70,12 +81,30 @@ public class ScopedIndex implements IScopedIndex {
     }
 
     /* (non-Javadoc)
+     * @see org.tinytim.index.IScopedIndex#getAssociationThemes()
+     */
+    public Collection<Topic> getAssociationThemes() {
+        List<Topic> themes = new ArrayList<Topic>(_theme2Assocs.keySet());
+        themes.remove(null);
+        return themes;
+    }
+
+    /* (non-Javadoc)
      * @see org.tinytim.index.IScopedIndex#getOccurrencesByTheme(org.tmapi.core.Topic)
      */
     public Collection<OccurrenceImpl> getOccurrencesByTheme(Topic theme) {
         List<OccurrenceImpl> occs = _theme2Occs.get(theme);
         return occs == null ? Collections.<OccurrenceImpl>emptySet()
                             : Collections.unmodifiableCollection(occs);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.index.IScopedIndex#getOccurrenceThemes()
+     */
+    public Collection<Topic> getOccurrenceThemes() {
+        List<Topic> themes = new ArrayList<Topic>(_theme2Occs.keySet());
+        themes.remove(null);
+        return themes;
     }
 
     /* (non-Javadoc)
@@ -88,12 +117,30 @@ public class ScopedIndex implements IScopedIndex {
     }
 
     /* (non-Javadoc)
+     * @see org.tinytim.index.IScopedIndex#getNameThemes()
+     */
+    public Collection<Topic> getNameThemes() {
+        List<Topic> themes = new ArrayList<Topic>(_theme2Names.keySet());
+        themes.remove(null);
+        return themes;
+    }
+
+    /* (non-Javadoc)
      * @see org.tinytim.index.IScopedIndex#getVariantsByTheme(org.tmapi.core.Topic)
      */
     public Collection<VariantImpl> getVariantsByTheme(Topic theme) {
         List<VariantImpl> vars = _theme2Variants.get(theme);
         return vars == null ? Collections.<VariantImpl>emptySet()
                             : Collections.unmodifiableCollection(vars);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.index.IScopedIndex#getVariantThemes()
+     */
+    public Collection<Topic> getVariantThemes() {
+        List<Topic> themes = new ArrayList<Topic>(_theme2Variants.keySet());
+        themes.remove(null);
+        return themes;
     }
 
     /* (non-Javadoc)
@@ -128,55 +175,125 @@ public class ScopedIndex implements IScopedIndex {
         _theme2Variants = null;
     }
 
-    private final class AddThemeHandler implements IEventHandler {
+    private abstract class _EvtHandler implements IEventHandler {
         @SuppressWarnings("unchecked")
-        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
-                Object newValue) {
+        Map<Topic, List<ScopedObject>> getMap(ScopedObject scoped) {
             Map<Topic, ?> theme2Scoped = null;
-            if (sender instanceof AssociationImpl) {
+            if (scoped instanceof AssociationImpl) {
                 theme2Scoped = _theme2Assocs;
             }
-            else if (sender instanceof OccurrenceImpl) {
+            else if (scoped instanceof OccurrenceImpl) {
                 theme2Scoped = _theme2Occs;
             }
-            else if (sender instanceof TopicNameImpl) {
+            else if (scoped instanceof TopicNameImpl) {
                 theme2Scoped = _theme2Names;
             }
-            else if (sender instanceof VariantImpl) {
+            else if (scoped instanceof VariantImpl) {
                 theme2Scoped = _theme2Variants;
             }
-            _index((Map<Topic, List<ScopedObject>>) theme2Scoped, (Topic) newValue, (ScopedObject) sender);
-        }
-
-        private void _index(Map<Topic, List<ScopedObject>> theme2Scoped, 
-                Topic newValue, ScopedObject sender) {
-            List<ScopedObject> scopedConstructs = theme2Scoped.get(newValue);
-            if (scopedConstructs == null) {
-                scopedConstructs = new ArrayList<ScopedObject>();
-                theme2Scoped.put(newValue, scopedConstructs);
-            }
-            scopedConstructs.add(sender);
+            return (Map<Topic, List<ScopedObject>>) theme2Scoped;
         }
     }
 
-    private final class RemoveThemeHandler implements IEventHandler {
+    private final class AddScopedHandler extends _EvtHandler {
+        @SuppressWarnings("unchecked")
+        @Override
         public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
-            List<?> scoped = null;
-            if (sender instanceof AssociationImpl) {
-                scoped = _theme2Assocs.get(oldValue);
+            ScopedObject scoped = (ScopedObject) newValue;
+            Map<Topic, List<ScopedObject>> map = getMap(scoped);
+            List<ScopedObject> list = null;
+            if (scoped.getScope().isEmpty()) {
+                list = map.get(null);
+                if (list == null) {
+                    list = new ArrayList<ScopedObject>();
+                    map.put(null, list);
+                }
+                list.add(scoped);
             }
-            else if (sender instanceof OccurrenceImpl) {
-                scoped = _theme2Occs.get(oldValue);
+            else {
+                for (Iterator<Topic> iter = scoped.getScope().iterator(); iter.hasNext();) {
+                    Topic theme = iter.next();
+                    list = map.get(theme);
+                    if (list == null) {
+                        list = new ArrayList<ScopedObject>();
+                        map.put(theme, list);
+                    }
+                    list.add(scoped);
+                }
             }
-            else if (sender instanceof TopicNameImpl) {
-                scoped = _theme2Names.get(oldValue);
+        }
+        
+    }
+
+    private final class RemoveScopedHandler extends _EvtHandler {
+        @SuppressWarnings("unchecked")
+        @Override
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
+                Object newValue) {
+            ScopedObject scoped = (ScopedObject) oldValue;
+            Map<Topic, List<ScopedObject>> map = getMap(scoped); 
+            List<ScopedObject> list = null;
+            if (scoped.getScope().isEmpty()) {
+                list = map.get(null);
+                if (list != null) {
+                    list.remove(scoped);
+                }
             }
-            else if (sender instanceof VariantImpl) {
-                scoped = _theme2Variants.get(oldValue);
+            else {
+                for (Iterator<Topic> iter = scoped.getScope().iterator(); iter.hasNext();) {
+                    Topic theme = iter.next();
+                    list = map.get(theme);
+                    if (list != null) {
+                        list.remove(scoped);
+                        if (list.isEmpty()) {
+                            map.remove(theme);
+                        }
+                    }
+                }
             }
-            if (scoped != null) {
-                scoped.remove(sender);
+        }
+        
+    }
+
+    private final class AddThemeHandler extends _EvtHandler {
+        @SuppressWarnings("unchecked")
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
+                Object newValue) {
+            ScopedObject scoped = (ScopedObject) sender;
+            Map<Topic, List<ScopedObject>> map = getMap(scoped); 
+            List<ScopedObject> list = map.get(newValue);
+            if (list == null) {
+                list = new ArrayList<ScopedObject>();
+                map.put((Topic)newValue, list);
+            }
+            list.add(scoped);
+            list = map.get(null);
+            if (list != null) {
+                list.remove(scoped);
+            }
+        }
+    }
+
+    private final class RemoveThemeHandler extends _EvtHandler {
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
+                Object newValue) {
+            ScopedObject scoped = (ScopedObject) sender;
+            Map<Topic, List<ScopedObject>> map = getMap(scoped); 
+            List<ScopedObject> list = map.get(oldValue);
+            if (list != null) {
+                list.remove(scoped);
+                if (list.isEmpty()) {
+                    map.remove(oldValue);
+                }
+            }
+            if (scoped.getScope().size() == 1) {
+                list = map.get(null);
+                if (list == null) {
+                    list = new ArrayList<ScopedObject>();
+                    map.put(null, list);
+                }
+                list.add(scoped);
             }
         }
     }

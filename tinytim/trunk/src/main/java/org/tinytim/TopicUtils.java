@@ -44,7 +44,7 @@ public final class TopicUtils {
      * a typed Topic Maps construct, and is not not used as theme of a scoped
      * Topic Maps construct.
      * 
-     * This functions returns the same result as 
+     * This function returns the same result as 
      * <code>isRemovable(topic, false)</code>.
      *
      * @param topic The topic to check.

@@ -50,7 +50,19 @@ public interface ITypeInstanceIndex extends IIndex {
      *              <code>null</code> all untyped topics will be returned.
      * @return A (maybe empty) collection of topic instances.
      */
-    public Collection<Topic> getTopics(Topic... type);
+    public Collection<Topic> getTopics(Topic type);
+
+    /**
+     * Returns these topics which have the one of the specified 
+     * <code>types</code> iff <code>matchAll</code> is false. Iff 
+     * <code>matchAll</code> is <code>true</code>, these topics will be returned
+     * which have all the specified <code>types</code>.
+     *
+     * @param types The types to match
+     * @param matchAll Indicates if a topic must have all types to be part of the result. 
+     * @return A (maybe empty) collection of topic instances.
+     */
+    public Collection<Topic> getTopics(Topic[] types, boolean matchAll);
 
     /**
      * Returns the associations that are typed by the {@link org.tmapi.core.Topic}

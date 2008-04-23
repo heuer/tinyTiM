@@ -48,7 +48,7 @@ import org.tmapi.core.Topic;
  */
 public class TypeInstanceIndex implements ITypeInstanceIndex {
 
-    private Map<Topic, List<Topic>> _type2Topics;
+    private Map<Topic, Set<Topic>> _type2Topics;
     private Map<Topic, List<AssociationImpl>> _type2Assocs;
     private Map<Topic, List<AssociationRoleImpl>> _type2Roles;
     private Map<Topic, List<OccurrenceImpl>> _type2Occs;
@@ -63,15 +63,26 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
         IEventHandler handler = new TopicTypeHandler();
         publisher.subscribe(Event.ADD_TYPE, handler);
         publisher.subscribe(Event.REMOVE_TYPE, handler);
+        handler = new AddTopicHandler();
+        publisher.subscribe(Event.ADD_TOPIC, handler);
+        handler = new RemoveTopicHandler();
+        publisher.subscribe(Event.REMOVE_TOPIC, handler);
         handler = new TypeHandler();
         publisher.subscribe(Event.SET_TYPE, handler);
+        handler = new RemoveTypedHandler();
+        publisher.subscribe(Event.REMOVE_ASSOCIATION, handler);
+        publisher.subscribe(Event.REMOVE_ROLE, handler);
+        publisher.subscribe(Event.REMOVE_OCCURRENCE, handler);
+        publisher.subscribe(Event.REMOVE_NAME, handler);
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.index.ITypeInstanceIndex#getAssociationTypes()
      */
     public Collection<Topic> getAssociationTypes() {
-        return Collections.unmodifiableSet(_type2Assocs.keySet());
+        List<Topic> topics = new ArrayList<Topic>(_type2Assocs.keySet());
+        topics.remove(null);
+        return topics;
     }
 
     /* (non-Javadoc)
@@ -87,7 +98,9 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
      * @see org.tinytim.index.ITypeInstanceIndex#getRoleTypes()
      */
     public Collection<Topic> getRoleTypes() {
-        return Collections.unmodifiableSet(_type2Roles.keySet());
+        List<Topic> topics = new ArrayList<Topic>(_type2Roles.keySet());
+        topics.remove(null);
+        return topics;
     }
 
     /* (non-Javadoc)
@@ -103,7 +116,9 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
      * @see org.tinytim.index.ITypeInstanceIndex#getOccurrenceTypes()
      */
     public Collection<Topic> getOccurrenceTypes() {
-        return Collections.unmodifiableSet(_type2Occs.keySet());
+        List<Topic> topics = new ArrayList<Topic>(_type2Occs.keySet());
+        topics.remove(null);
+        return topics;
     }
 
     /* (non-Javadoc)
@@ -119,7 +134,9 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
      * @see org.tinytim.index.ITypeInstanceIndex#getNameTypes()
      */
     public Collection<Topic> getNameTypes() {
-        return Collections.unmodifiableSet(_type2Names.keySet());
+        List<Topic> topics = new ArrayList<Topic>(_type2Names.keySet());
+        topics.remove(null);
+        return topics;
     }
 
     /* (non-Javadoc)
@@ -135,26 +152,52 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
      * @see org.tinytim.index.ITypeInstanceIndex#getTopicTypes()
      */
     public Collection<Topic> getTopicTypes() {
-        return Collections.unmodifiableSet(_type2Topics.keySet());
+        List<Topic> topics = new ArrayList<Topic>(_type2Topics.keySet());
+        topics.remove(null);
+        return topics;
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.index.ITypeInstanceIndex#getTopics(org.tmapi.core.Topic[])
      */
-    public Collection<Topic> getTopics(Topic... types) {
-        if (types == null || types.length == 1) {
-            List<Topic> topics = _type2Topics.get(types[0]);
-            return topics == null ? Collections.<Topic>emptySet()
-                                  : new ArrayList<Topic>(topics);
+    public Collection<Topic> getTopics(Topic type) {
+        Set<Topic> topics = _type2Topics.get(type);
+        return topics == null ? Collections.<Topic>emptySet()
+                              : new ArrayList<Topic>(topics);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.index.ITypeInstanceIndex#getTopics(org.tmapi.core.Topic[], boolean)
+     */
+    public Collection<Topic> getTopics(Topic[] types, boolean matchAll) {
+        if (types.length == 1) {
+            return getTopics(types[0]);
         }
-        Set<Topic> topics = new HashSet<Topic>(10);
-        for (Topic type: types) {
-            List<Topic> matches = _type2Topics.get(type);
-            if (matches != null) {
-                topics.addAll(matches);
+        if (!matchAll) {
+            Set<Topic> topics = new HashSet<Topic>();
+            for (Topic type: types) {
+                Set<Topic> matches = _type2Topics.get(type);
+                if (matches != null) {
+                    topics.addAll(matches);
+                }
             }
+            return topics;
         }
-        return topics;
+        else {
+            Set<Topic> topics = new HashSet<Topic>(getTopics(types[0]));
+            for (int i=1; i < types.length; i++) {
+                topics.retainAll(getTopics(types[i]));
+            }
+            return topics;
+        }
+    }
+
+    private boolean _unindex(List<ITyped> objects, Object obj) {
+        if (objects == null) {
+            return false;
+        }
+        objects.remove(obj);
+        return objects.isEmpty();
     }
 
     /* (non-Javadoc)
@@ -178,6 +221,52 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
         // noop.
     }
 
+    private final class AddTopicHandler implements IEventHandler {
+        @SuppressWarnings("unchecked")
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
+                Object newValue) {
+            Topic topic = (Topic) newValue;
+            Collection<Topic> types = topic.getTypes();
+            if (types.isEmpty()) {
+               Set<Topic> topics = _type2Topics.get(null);
+                if (topics == null) {
+                    topics = new HashSet<Topic>();
+                    _type2Topics.put(null, topics);
+                }
+                topics.add(topic);
+            }
+            else {
+                for (Topic type: types) {
+                    Set<Topic> topics = _type2Topics.get(type);
+                    if (topics == null) {
+                        topics = new HashSet<Topic>();
+                        _type2Topics.put(type, topics);
+                    }
+                    topics.add(topic);
+                }
+            }
+        }
+    }
+
+    private final class RemoveTopicHandler implements IEventHandler {
+        @SuppressWarnings("unchecked")
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
+                Object newValue) {
+            Topic topic = (Topic) oldValue;
+            Set<Topic> topics = _type2Topics.get(null);
+            if (topics != null) {
+                topics.remove(topic);
+            }
+            Collection<Topic> types = topic.getTypes();
+            for (Topic type: types) {
+                topics = _type2Topics.get(type);
+                if (topics != null) {
+                    topics.remove(topic);
+                }
+            }
+        }
+    }
+
     /**
      * Handler that (un-)indexes topics by their type.
      */
@@ -186,19 +275,35 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
                 Object newValue) {
             Topic topic = (Topic) sender;
             if (oldValue == null) {
-                List<Topic> topics = _type2Topics.get(newValue);
+                // Adding a type
+                Set<Topic> topics = _type2Topics.get(newValue);
                 if (topics == null) {
-                    topics = new ArrayList<Topic>();
+                    topics = new HashSet<Topic>();
                     _type2Topics.put((Topic) newValue, topics);
                 }
                 topics.add(topic);
+                topics = _type2Topics.get(null);
+                if (topics != null) {
+                    topics.remove(topic);
+                }
             }
             else {
-                List<Topic> topics = _type2Topics.get(oldValue);
+                Set<Topic> topics = _type2Topics.get(oldValue);
                 if (topics == null) {
                     return;
                 }
                 topics.remove(topic);
+                if (topics.isEmpty()) {
+                    _type2Topics.remove(oldValue);
+                }
+                if (topic.getTypes().size() == 1) {
+                    topics = _type2Topics.get(null);
+                    if (topics == null) {
+                        topics = new HashSet<Topic>();
+                        _type2Topics.put(null, topics);
+                    }
+                    topics.add(topic);
+                }
             }
         }
     }
@@ -220,7 +325,9 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
             else if (sender instanceof TopicNameImpl) {
                 type2Typed = _type2Names;
             }
-            _unindex((List<ITyped>)type2Typed.get(oldValue), sender);
+            if (_unindex((List<ITyped>)type2Typed.get((Topic)oldValue), sender)) {
+                type2Typed.remove(oldValue);
+            }
             _index((Map<Topic, List<ITyped>>) type2Typed, (Topic) newValue, (ITyped) sender);
         }
 
@@ -233,12 +340,29 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
             }
             typedConstructs.add(sender);
         }
+    }
 
-        private void _unindex(List<ITyped> objects, Object obj) {
-            if (objects == null) {
-                return;
+    private final class RemoveTypedHandler implements IEventHandler {
+        @SuppressWarnings("unchecked")
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
+                Object newValue) {
+            Map<Topic, ?> type2Typed = null;
+            if (oldValue instanceof AssociationImpl) {
+                type2Typed = _type2Assocs;
             }
-            objects.remove(obj);
+            else if (oldValue instanceof AssociationRoleImpl) {
+                type2Typed = _type2Roles;
+            }
+            else if (oldValue instanceof OccurrenceImpl) {
+                type2Typed = _type2Occs;
+            }
+            else if (oldValue instanceof TopicNameImpl) {
+                type2Typed = _type2Names;
+            }
+            Topic type = ((ITyped) oldValue).getType();
+            if (_unindex((List<ITyped>)type2Typed.get(type), oldValue)) {
+                type2Typed.remove(type);
+            }
         }
     }
 

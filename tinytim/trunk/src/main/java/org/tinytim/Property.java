@@ -48,6 +48,11 @@ public final class Property {
      * 
      * For backwards compatibilty and to support TMAPI 1.0 this property is
      * set to "true" by default.
+     * 
+     * Note, that this property is likely to be removed in a future version and
+     * that only the TMDM way of reification will be supported.
+     * Maybe you'll be able to use {@link org.tinytim.ReificationUtils} to support 
+     * the XTM 1.0 reification mechanism.
      */
     public static final String XTM10_REIFICATION = "org.tinytim.XTM10Reification";
 
