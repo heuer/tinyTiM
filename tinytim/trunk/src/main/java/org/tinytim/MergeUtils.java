@@ -84,6 +84,7 @@ final class MergeUtils {
     /**
      * @see #merge(Topic, Topic)
      */
+    @SuppressWarnings("unchecked")
     private static void _merge(TopicImpl source, TopicImpl target) {
         if (source == null || target == null) {
             throw new IllegalArgumentException("Neither the source topic nor the target topic must be null");
@@ -130,8 +131,7 @@ final class MergeUtils {
                 removeConstruct((IConstruct)occ);
             }
             else {
-                source.removeOccurrence(occ);
-                target.addOccurrence(occ);
+                ((IMovable<Topic>) occ).moveTo(target);
             }
         }
         sigs.clear();
@@ -146,8 +146,7 @@ final class MergeUtils {
                 removeConstruct((IConstruct) name);
             }
             else {
-                source.removeName(name);
-                target.addName(name);
+                ((IMovable<Topic>) name).moveTo(target);
             }
         }
         sigs.clear();
@@ -210,6 +209,7 @@ final class MergeUtils {
      * @param source The name to take the variants from.
      * @param target The target to add the variants to.
      */
+    @SuppressWarnings("unchecked")
     static void moveVariants(TopicNameImpl source, TopicNameImpl target) {
         Map<String, Variant> sigs = ((TopicMapImpl) target.getTopicMap()).getCollectionFactory().<String, Variant>createMap();
         for (Variant var: target.getVariants()) {
@@ -223,8 +223,7 @@ final class MergeUtils {
                 removeConstruct((IConstruct)var);
             }
             else {
-                source.removeVariant(var);
-                target.addVariant(var);
+                ((IMovable<TopicName>) var).moveTo(target);
             }
         }
     }

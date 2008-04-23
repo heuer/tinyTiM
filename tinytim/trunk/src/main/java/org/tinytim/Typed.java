@@ -89,7 +89,7 @@ abstract class Typed extends Construct implements IReifiable {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.Scoped#dispose()
+     * @see org.tinytim.Construct#dispose()
      */
     @Override
     protected void dispose() {

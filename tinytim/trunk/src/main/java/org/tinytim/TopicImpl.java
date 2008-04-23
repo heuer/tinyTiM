@@ -159,8 +159,7 @@ public final class TopicImpl extends Construct implements Topic {
             return;
         }
         _fireEvent(Event.ADD_OCCURRENCE, null, o);
-        o._parent = this;
-        _occs.add(o);
+        attachOccurrence(o);
     }
 
     /**
@@ -174,8 +173,17 @@ public final class TopicImpl extends Construct implements Topic {
             return;
         }
         _fireEvent(Event.REMOVE_OCCURRENCE, o, null);
-        _occs.remove(o);
-        o._parent = null;
+        detachOccurrence(o);
+    }
+
+    void attachOccurrence(OccurrenceImpl occ) {
+        occ._parent = this;
+        _occs.add(occ);
+    }
+
+    void detachOccurrence(OccurrenceImpl occ) {
+        _occs.remove(occ);
+        occ._parent = null;
     }
 
     /* (non-Javadoc)
@@ -212,8 +220,7 @@ public final class TopicImpl extends Construct implements Topic {
         }
         assert n._parent == null;
         _fireEvent(Event.ADD_NAME, null, n);
-        n._parent = this;
-        _names.add(n);
+        attachName(n);
     }
 
     void removeName(TopicName name) {
@@ -222,8 +229,17 @@ public final class TopicImpl extends Construct implements Topic {
             return;
         }
         _fireEvent(Event.REMOVE_NAME, n, null);
-        _names.remove(n);
-        n._parent = null;
+        detachName(n);
+    }
+
+    void attachName(TopicNameImpl name) {
+        name._parent = this;
+        _names.add(name);
+    }
+
+    void detachName(TopicNameImpl name) {
+        _names.remove(name);
+        name._parent = null;
     }
 
     /* (non-Javadoc)
@@ -303,8 +319,11 @@ public final class TopicImpl extends Construct implements Topic {
      * @see org.tmapi.core.TopicMapObject#remove()
      */
     public void remove() throws TopicInUseException {
-        if (!TopicUtils.isRemovable(this)) {
-            throw new TopicInUseException("The topic is used as type, player, reifier or theme");
+        if (!TopicUtils.isRemovable(this, false)) {
+            throw new TopicInUseException("The topic is used as type, player, or theme");
+        }
+        if (_reified != null) {
+            _reified.setReifier(null);
         }
         _tm.removeTopic(this);
         _sids = null;
@@ -315,6 +334,26 @@ public final class TopicImpl extends Construct implements Topic {
         _rolesPlayed = null;
         _reified = null;
         super.dispose();
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder(super.toString());
+        sb.append(", sids=[");
+        for (Locator sid: getSubjectIdentifiers()) {
+            sb.append(sid);
+            sb.append(',');
+        }
+        sb.append("], slos=[");
+        for (Locator slo: getSubjectLocators()) {
+            sb.append(slo);
+            sb.append(',');
+        }
+        sb.append("]");
+        return sb.toString();
     }
 
 }

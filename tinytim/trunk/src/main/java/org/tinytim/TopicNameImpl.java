@@ -37,7 +37,8 @@ import org.tmapi.core.Variant;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class TopicNameImpl extends Scoped implements TopicName, ITyped, IScoped {
+public final class TopicNameImpl extends Scoped implements TopicName, ITyped, 
+        IScoped, IMovable<Topic> {
 
     private String _value;
     private Set<Variant> _variants;
@@ -104,11 +105,7 @@ public final class TopicNameImpl extends Scoped implements TopicName, ITyped, IS
        }
        assert v._parent == null;
        _fireEvent(Event.ADD_VARIANT, null, v);
-       if (_variants == null) {
-           _variants = _tm.getCollectionFactory().createSet();
-       }
-       v._parent = this;
-       _variants.add(v);
+       attachVariant(v);
     }
 
    void removeVariant(Variant variant) {
@@ -117,9 +114,30 @@ public final class TopicNameImpl extends Scoped implements TopicName, ITyped, IS
            return;
        }
        _fireEvent(Event.REMOVE_VARIANT, v, null);
-       _variants.remove(v);
-       v._parent = null;
+       detachVariant(v);
    }
+
+   void attachVariant(VariantImpl variant) {
+       if (_variants == null) {
+           _variants = _tm.getCollectionFactory().createSet();
+       }
+       variant._parent = this;
+       _variants.add(variant);
+   }
+
+   void detachVariant(VariantImpl variant) {
+       _variants.remove(variant);
+       variant._parent = null;
+   }
+
+   /* (non-Javadoc)
+     * @see org.tinytim.IMovable#moveTo(java.lang.Object)
+     */
+    public void moveTo(Topic newParent) {
+        _fireEvent(Event.MOVE_NAME, _parent, newParent);
+        ((TopicImpl) _parent).detachName(this);
+        ((TopicImpl) newParent).attachName(this);
+    }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMapObject#remove()

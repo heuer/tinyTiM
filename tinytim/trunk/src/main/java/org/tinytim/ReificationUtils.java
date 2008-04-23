@@ -30,12 +30,10 @@ import org.tmapi.core.TopicMapObject;
 /**
  * Functions to support the XTM 1.0 reification mechanism.
  * 
- * This class is not meant to be used outside of the tinyTiM package.
- * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
-final class ReificationUtils {
+public final class ReificationUtils {
 
     /**
      * Returns all Topic Maps constructs which have an item identifier 
