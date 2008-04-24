@@ -130,19 +130,19 @@ public class TestReifiable extends TinyTimTestCase {
         assertEquals(0, reifier.getReified().size());
         reifiable.setReifier(reifier);
         assertEquals(reifier, reifiable.getReifier());
-        assertEquals(reifiable, reifier._reified);
+        assertEquals(reifiable, reifier.getReifiedConstruct());
         assertEquals(1, reifier.getReified().size());
         assertTrue(reifier.getReified().contains(reifiable));
         reifiable.setReifier(null);
         assertNull(reifiable.getReifier());
-        assertNull(reifier._reified);
+        assertNull(reifier.getReifiedConstruct());
         assertEquals(0, reifier.getReified().size());
 
         TopicImpl reifier2 = (TopicImpl) _tm.createTopic();
         IReifiable assoc = (IReifiable) _tm.createAssociation();
         assoc.setReifier(reifier2);
         assertEquals(reifier2, assoc.getReifier());
-        assertEquals(assoc, reifier2._reified);
+        assertEquals(assoc, reifier2.getReifiedConstruct());
         try {
             reifiable.setReifier(reifier2);
             fail("Expected an exception. The reifier reifies another Topic Maps construct");
@@ -152,12 +152,12 @@ public class TestReifiable extends TinyTimTestCase {
         }
         assoc.setReifier(null);
         assertNull(assoc.getReifier());
-        assertNull(reifier2._reified);
+        assertNull(reifier2.getReifiedConstruct());
         reifiable.setReifier(reifier);
         assertEquals(reifier, reifiable.getReifier());
-        assertEquals(reifiable, reifier._reified);
+        assertEquals(reifiable, reifier.getReifiedConstruct());
         reifiable.setReifier(reifier2);
         assertEquals(reifier2, reifiable.getReifier());
-        assertEquals(reifiable, reifier2._reified);
+        assertEquals(reifiable, reifier2.getReifiedConstruct());
     }
 }

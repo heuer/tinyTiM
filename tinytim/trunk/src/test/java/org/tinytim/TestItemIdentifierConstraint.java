@@ -36,7 +36,7 @@ import org.tmapi.core.Variant;
  * Tests if the TMDM item identifier constraint is respected.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TestItemIdentifierConstraint extends TinyTimTestCase {
 

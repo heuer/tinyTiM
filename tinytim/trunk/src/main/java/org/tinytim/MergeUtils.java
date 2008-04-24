@@ -95,10 +95,10 @@ final class MergeUtils {
         if (source.getTopicMap() != target.getTopicMap()) {
             throw new IllegalArgumentException("The topics must belong to the same topic map");
         }
-        IReifiable sourceReifiable = source._reified;
-        if (sourceReifiable != null && target._reified != null) {
+        IReifiable sourceReifiable = source.getReifiedConstruct();
+        if (sourceReifiable != null && target.getReifiedConstruct() != null) {
             // This should be enforced by the model
-            assert sourceReifiable != target._reified;
+            assert sourceReifiable != target.getReifiedConstruct();
             throw new ModelConstraintException(target, "The topics cannot be merged. They reify different Topic Maps constructs");
         }
         _moveItemIdentifiers((IConstruct)source, (IConstruct)target);
@@ -160,7 +160,7 @@ final class MergeUtils {
             existing = sigs.get(SignatureGenerator.generateSignature(parent));
             if (existing != null) {
                 handleExistingConstruct((IReifiable)parent, existing);
-                _moveRoleCharacteristics(parent, (Association)existing);
+                moveRoleCharacteristics(parent, (Association)existing);
                 removeConstruct((IConstruct)parent);
             }
         }
@@ -191,7 +191,7 @@ final class MergeUtils {
      * @param target The association which takes the role characteristics.
      */
     @SuppressWarnings("unchecked")
-    private static void _moveRoleCharacteristics(Association source, Association target) {
+    static void moveRoleCharacteristics(Association source, Association target) {
         Map<String, AssociationRole> sigs = ((TopicMapImpl) target.getTopicMap()).getCollectionFactory().<String, AssociationRole>createMap();
         for (AssociationRole role: ((AssociationImpl)target).getAssociationRoles()) {
             sigs.put(SignatureGenerator.generateSignature(role), role);
@@ -304,6 +304,14 @@ final class MergeUtils {
         }
     }
 
+    /**
+     * Replaces the <code>oldTheme</code> with the <code>newTheme</code> in each
+     * scoped Topic Maps construct.
+     *
+     * @param scopedCollection A collection of scoped Topic Maps constructs.
+     * @param oldTheme The old theme.
+     * @param newTheme The theme that is used as replacement for <code>oldTheme</code>.
+     */
     private static void _replaceTopicAsTheme(Collection<? extends IScoped> scopedCollection,
             Topic oldTheme, Topic newTheme) {
         for (IScoped scoped: scopedCollection) {

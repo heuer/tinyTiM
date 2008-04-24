@@ -49,7 +49,7 @@ import org.tmapi.core.Variant;
  * {@link org.tmapi.core.TopicMap} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public final class TopicMapImpl extends Construct implements TopicMap, 
         IReifiable, IEventHandler, IEventPublisher {

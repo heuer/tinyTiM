@@ -61,7 +61,6 @@ public class TopicNamesIndexImpl extends AbstractTMAPIIndex implements
     /* (non-Javadoc)
      * @see org.tmapi.index.core.TopicNamesIndex#getTopicNameTypes()
      */
-    @Override
     public Collection<Topic> getTopicNameTypes() {
         return _getTypeInstanceIndex().getNameTypes();
     }
@@ -69,7 +68,6 @@ public class TopicNamesIndexImpl extends AbstractTMAPIIndex implements
     /* (non-Javadoc)
      * @see org.tmapi.index.core.TopicNamesIndex#getTopicNamesByType(org.tmapi.core.Topic)
      */
-    @Override
     public Collection<TopicNameImpl> getTopicNamesByType(Topic type) {
         return _getTypeInstanceIndex().getNames(type);
     }
@@ -77,7 +75,6 @@ public class TopicNamesIndexImpl extends AbstractTMAPIIndex implements
     /* (non-Javadoc)
      * @see org.tmapi.index.core.TopicNamesIndex#getTopicNamesByValue(java.lang.String)
      */
-    @Override
     public Collection<TopicName> getTopicNamesByValue(String value) {
         List<TopicName> names = _value2Names.get(value);
         return names == null ? Collections.<TopicName>emptySet()
@@ -87,7 +84,6 @@ public class TopicNamesIndexImpl extends AbstractTMAPIIndex implements
     /* (non-Javadoc)
      * @see org.tmapi.index.Index#getFlags()
      */
-    @Override
     public IndexFlags getFlags() throws TMAPIIndexException {
         return IndexFlagsImpl.NOT_AUTOUPDATED;
     }
@@ -96,7 +92,6 @@ public class TopicNamesIndexImpl extends AbstractTMAPIIndex implements
      * @see org.tmapi.index.Index#reindex()
      */
     @SuppressWarnings("unchecked")
-    @Override
     public void reindex() throws TMAPIIndexException {
         _value2Names.clear();
         for (Topic topic: _weakTopicMap.get().getTopics()) {
