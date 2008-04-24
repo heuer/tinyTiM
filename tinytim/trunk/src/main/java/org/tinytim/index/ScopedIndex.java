@@ -197,7 +197,6 @@ public class ScopedIndex implements IScopedIndex {
 
     private final class AddScopedHandler extends _EvtHandler {
         @SuppressWarnings("unchecked")
-        @Override
         public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             ScopedObject scoped = (ScopedObject) newValue;
@@ -228,7 +227,6 @@ public class ScopedIndex implements IScopedIndex {
 
     private final class RemoveScopedHandler extends _EvtHandler {
         @SuppressWarnings("unchecked")
-        @Override
         public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             ScopedObject scoped = (ScopedObject) oldValue;

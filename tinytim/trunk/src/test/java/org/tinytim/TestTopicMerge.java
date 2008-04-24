@@ -154,6 +154,86 @@ public class TestTopicMerge extends TinyTimTestCase {
     }
 
     /**
+     * Tests if merging detects duplicates and that the reifier is kept.
+     */
+    public void testDuplicateDetectionReifier() {
+        Topic topic1 = _tm.createTopic();
+        Topic topic2 = _tm.createTopic();
+        Topic reifier = _tm.createTopic();
+        TopicName name1 = topic1.createTopicName("tinyTiM", null, null);
+        TopicName name2 = topic2.createTopicName("tinyTiM", null, null);
+        assertEquals(3, _tm.getTopics().size());
+        ((IReifiable) name1).setReifier(reifier);
+        assertEquals(reifier, name1.getReifier());
+        assertEquals(1, topic1.getTopicNames().size());
+        assertTrue(topic1.getTopicNames().contains(name1));
+        assertEquals(1, topic2.getTopicNames().size());
+        assertTrue(topic2.getTopicNames().contains(name2));
+        topic1.mergeIn(topic2);
+        assertEquals(2, _tm.getTopics().size());
+        assertEquals(1, topic1.getTopicNames().size());
+        TopicName name = (TopicName) topic1.getTopicNames().iterator().next();
+        assertEquals(reifier, name.getReifier());
+    }
+
+    /**
+     * Tests if merging detects duplicates and merges the reifiers of the
+     * duplicates.
+     */
+    public void testDuplicateDetectionReifierMerge() {
+        Topic topic1 = _tm.createTopic();
+        Topic topic2 = _tm.createTopic();
+        Topic reifier1 = _tm.createTopic();
+        Topic reifier2 = _tm.createTopic();
+        TopicName name1 = topic1.createTopicName("tinyTiM", null, null);
+        TopicName name2 = topic2.createTopicName("tinyTiM", null, null);
+        assertEquals(4, _tm.getTopics().size());
+        ((IReifiable) name1).setReifier(reifier1);
+        ((IReifiable) name2).setReifier(reifier2);
+        assertEquals(reifier1, name1.getReifier());
+        assertEquals(reifier2, name2.getReifier());
+        assertEquals(1, topic1.getTopicNames().size());
+        assertTrue(topic1.getTopicNames().contains(name1));
+        assertEquals(1, topic2.getTopicNames().size());
+        assertTrue(topic2.getTopicNames().contains(name2));
+        topic1.mergeIn(topic2);
+        assertEquals(2, _tm.getTopics().size());
+        assertEquals(1, topic1.getTopicNames().size());
+        TopicName name = (TopicName) topic1.getTopicNames().iterator().next();
+        Topic reifier = null;
+        for (Topic topic: _tm.getTopics()) {
+            if (!topic.equals(topic1)) {
+                reifier = topic;
+            }
+        }
+        assertEquals(reifier, name.getReifier());
+    }
+
+    /**
+     * Tests if merging detects duplicate associations.
+     */
+    public void testDuplicateSuppressionAssociation() {
+        Topic topic1 = _tm.createTopic();
+        Topic topic2 = _tm.createTopic();
+        Topic roleType = _tm.createTopic();
+        Association assoc1 = _tm.createAssociation();
+        Association assoc2 = _tm.createAssociation();
+        AssociationRole role1 = assoc1.createAssociationRole(topic1, roleType);
+        AssociationRole role2 = assoc2.createAssociationRole(topic2, roleType);
+        assertEquals(3, _tm.getTopics().size());
+        assertEquals(2, _tm.getAssociations().size());
+        assertTrue(topic1.getRolesPlayed().contains(role1));
+        assertTrue(topic2.getRolesPlayed().contains(role2));
+        assertEquals(1, topic1.getRolesPlayed().size());
+        assertEquals(1, topic2.getRolesPlayed().size());
+        topic1.mergeIn(topic2);
+        assertEquals(2, _tm.getTopics().size());
+        assertEquals(1, _tm.getAssociations().size());
+        AssociationRole role = (AssociationRole) topic1.getRolesPlayed().iterator().next();
+        assertEquals(roleType, role.getType());
+    }
+
+    /**
      * Tests if merging detects duplicate names.
      */
     public void testDuplicateSuppressionName() {
@@ -196,6 +276,34 @@ public class TestTopicMerge extends TinyTimTestCase {
     }
 
     /**
+     * Tests if merging detects duplicate names and sets the item 
+     * identifier to the union of both names.
+     */
+    public void testDuplicateSuppressionNameMoveItemIdentifiers() {
+        Topic topic1 = _tm.createTopic();
+        Topic topic2 = _tm.createTopic();
+        Locator iid1 = _tm.createLocator("http://example.org/iid-1");
+        Locator iid2 = _tm.createLocator("http://example.org/iid-2");
+        TopicName name1 = topic1.createTopicName("tinyTiM", null, null);
+        TopicName name2 = topic2.createTopicName("tinyTiM", null, null);
+        name1.addSourceLocator(iid1);
+        name2.addSourceLocator(iid2);
+        assertTrue(name1.getSourceLocators().contains(iid1));
+        assertTrue(name2.getSourceLocators().contains(iid2));
+        assertEquals(1, topic1.getTopicNames().size());
+        assertTrue(topic1.getTopicNames().contains(name1));
+        assertEquals(1, topic2.getTopicNames().size());
+        assertTrue(topic2.getTopicNames().contains(name2));
+        topic1.mergeIn(topic2);
+        assertEquals(1, topic1.getTopicNames().size());
+        TopicName name = (TopicName) topic1.getTopicNames().iterator().next();
+        assertEquals(2, name.getSourceLocators().size());
+        assertTrue(name.getSourceLocators().contains(iid1));
+        assertTrue(name.getSourceLocators().contains(iid2));
+        assertEquals("tinyTiM", name.getValue());
+    }
+
+    /**
      * Tests if merging detects duplicate occurrences.
      */
     public void testDuplicateSuppressionOccurrence() {
@@ -214,10 +322,10 @@ public class TestTopicMerge extends TinyTimTestCase {
     }
 
     /**
-     * Tests if merging detects duplicate occurrences and moves the 
-     * item identifiers.
+     * Tests if merging detects duplicate occurrences and sets the item 
+     * identifier to the union of both occurrences.
      */
-    public void testDuplicateSuppressionOccurrenceItemIdentifiers() {
+    public void testDuplicateSuppressionOccurrenceMoveItemIdentifiers() {
         Topic topic1 = _tm.createTopic();
         Topic topic2 = _tm.createTopic();
         Locator iid1 = _tm.createLocator("http://example.org/iid-1");

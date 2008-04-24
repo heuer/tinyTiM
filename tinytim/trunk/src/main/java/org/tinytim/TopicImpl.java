@@ -242,6 +242,17 @@ public final class TopicImpl extends Construct implements Topic {
         name._parent = null;
     }
 
+    /**
+     * Returns the Topic Maps construct that is reified by
+     * this topic.
+     *
+     * @return The reified construct or <code>null</code> if this
+     *          topic reifies nothing.
+     */
+    public IReifiable getReifiedConstruct() {
+        return _reified;
+    }
+
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#getReified()
      */

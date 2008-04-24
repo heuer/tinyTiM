@@ -64,7 +64,6 @@ public class OccurrencesIndexImpl extends AbstractTMAPIIndex implements
     /* (non-Javadoc)
      * @see org.tmapi.index.core.OccurrencesIndex#getOccurrenceTypes()
      */
-    @Override
     public Collection<Topic> getOccurrenceTypes() {
         return _getTypeInstanceIndex().getOccurrenceTypes();
     }
@@ -72,7 +71,6 @@ public class OccurrencesIndexImpl extends AbstractTMAPIIndex implements
     /* (non-Javadoc)
      * @see org.tmapi.index.core.OccurrencesIndex#getOccurrencesByType(org.tmapi.core.Topic)
      */
-    @Override
     public Collection<OccurrenceImpl> getOccurrencesByType(Topic type) {
         return _getTypeInstanceIndex().getOccurrences(type);
     }
@@ -80,7 +78,6 @@ public class OccurrencesIndexImpl extends AbstractTMAPIIndex implements
     /* (non-Javadoc)
      * @see org.tmapi.index.core.OccurrencesIndex#getOccurrencesByResource(org.tmapi.core.Locator)
      */
-    @Override
     public Collection<Occurrence> getOccurrencesByResource(Locator value) {
         List<Occurrence> occs = _loc2Occs.get(value);
         return occs == null ? Collections.<Occurrence>emptySet()
@@ -90,7 +87,6 @@ public class OccurrencesIndexImpl extends AbstractTMAPIIndex implements
     /* (non-Javadoc)
      * @see org.tmapi.index.core.OccurrencesIndex#getOccurrencesByValue(java.lang.String)
      */
-    @Override
     public Collection<Occurrence> getOccurrencesByValue(String value) {
         List<Occurrence> occs = _value2Occs.get(value);
         return occs == null ? Collections.<Occurrence>emptySet()
@@ -100,7 +96,6 @@ public class OccurrencesIndexImpl extends AbstractTMAPIIndex implements
     /* (non-Javadoc)
      * @see org.tmapi.index.Index#getFlags()
      */
-    @Override
     public IndexFlags getFlags() throws TMAPIIndexException {
         return IndexFlagsImpl.NOT_AUTOUPDATED;
     }
@@ -109,7 +104,6 @@ public class OccurrencesIndexImpl extends AbstractTMAPIIndex implements
      * @see org.tmapi.index.Index#reindex()
      */
     @SuppressWarnings("unchecked")
-    @Override
     public void reindex() throws TMAPIIndexException {
         _value2Occs.clear();
         _loc2Occs.clear();
