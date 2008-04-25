@@ -422,16 +422,16 @@ public final class TopicMapImpl extends Construct implements TopicMap,
             switch (evt) {
                 case ADD_TOPIC:         _topicAdd((TopicImpl)newValue); break;
                 case ADD_ASSOCIATION:   _associationAdd((AssociationImpl)newValue); break;
-                case ADD_ROLE:          _roleAdd((AssociationRoleImpl)newValue); break;
-                case ADD_OCCURRENCE:    _occurrenceAdd((OccurrenceImpl)newValue); break;
                 case ADD_NAME:          _nameAdd((TopicNameImpl)newValue); break;
-                case ADD_VARIANT:       _variantAdd((VariantImpl)newValue); break;
+                case ADD_ROLE:
+                case ADD_OCCURRENCE:
+                case ADD_VARIANT:       _constructAdd((IConstruct)newValue); break;
                 case REMOVE_TOPIC:      _topicRemove((TopicImpl) oldValue); break;
                 case REMOVE_ASSOCIATION: _associationRemove((AssociationImpl) oldValue); break;
-                case REMOVE_ROLE:       _roleRemove((AssociationRoleImpl) oldValue); break;
-                case REMOVE_OCCURRENCE: _occurrenceRemove((OccurrenceImpl) oldValue); break;
-                case REMOVE_NAME:       _nameRemove((TopicNameImpl) oldValue); break;
-                case REMOVE_VARIANT:    _variantRemove((VariantImpl) oldValue); break;
+                case REMOVE_NAME:       _nameRemove((TopicNameImpl)oldValue); break;
+                case REMOVE_ROLE:
+                case REMOVE_OCCURRENCE:
+                case REMOVE_VARIANT:    _constructRemove((IConstruct) oldValue); break;
             }
         }
 
@@ -456,59 +456,15 @@ public final class TopicMapImpl extends Construct implements TopicMap,
 
         private void _associationAdd(AssociationImpl sender) {
             _constructAdd(sender);
-            _typedAdd(sender);
-            _scopedAdd(sender);
             for (AssociationRole role: sender.getAssociationRoles()) {
                 _handler.handleEvent(Event.ADD_ROLE, sender, null, role);
             }
         }
 
-        private void _roleAdd(AssociationRoleImpl sender) {
-            _constructAdd(sender);
-            _typedAdd(sender);
-            _handler.handleEvent(Event.SET_PLAYER, sender, null, sender.getPlayer());
-        }
-
-        private void _occurrenceAdd(OccurrenceImpl sender) {
-            _constructAdd(sender);
-            _typedAdd(sender);
-            _scopedAdd(sender);
-            if (sender.getValue() != null) {
-                _handler.handleEvent(Event.SET_VALUE, sender, null, sender.getValue());
-            }
-            else if (sender.getResource() != null) {
-                _handler.handleEvent(Event.SET_LOCATOR, sender, null, sender.getResource());
-            }
-        }
-
         private void _nameAdd(TopicNameImpl sender) {
             _constructAdd(sender);
-            _typedAdd(sender);
-            _scopedAdd(sender);
-            _handler.handleEvent(Event.SET_VALUE, sender, null, sender.getValue());
             for (Variant variant: sender.getVariants()) {
                 _handler.handleEvent(Event.ADD_VARIANT, sender, null, variant);
-            }
-        }
-
-        private void _variantAdd(VariantImpl sender) {
-            _constructAdd(sender);
-            _scopedAdd(sender);
-            if (sender.getValue() != null) {
-                _handler.handleEvent(Event.SET_VALUE, sender, null, sender.getValue());
-            }
-            else if (sender.getResource() != null) {
-                _handler.handleEvent(Event.SET_LOCATOR, sender, null, sender.getResource());
-            }
-        }
-
-        private void _typedAdd(ITyped typed) {
-            _handler.handleEvent(Event.SET_TYPE, typed, null, typed.getType());
-        }
-
-        private void _scopedAdd(IScoped scoped) {
-            for (Topic theme: scoped.getScope()) {
-                _handler.handleEvent(Event.ADD_THEME, scoped, null, theme);
             }
         }
 
@@ -550,14 +506,6 @@ public final class TopicMapImpl extends Construct implements TopicMap,
             }
         }
 
-        private void _roleRemove(AssociationRoleImpl sender) {
-            _constructRemove(sender);
-        }
-
-        private void _occurrenceRemove(OccurrenceImpl sender) {
-            _constructRemove(sender);
-        }
-
         private void _nameRemove(TopicNameImpl sender) {
             _constructRemove(sender);
             for (Variant variant: sender.getVariants()) {
@@ -565,8 +513,5 @@ public final class TopicMapImpl extends Construct implements TopicMap,
             }
         }
 
-        private void _variantRemove(VariantImpl sender) {
-            _constructRemove(sender);
-        }
     }
 }

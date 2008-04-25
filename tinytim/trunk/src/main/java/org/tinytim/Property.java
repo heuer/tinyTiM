@@ -43,16 +43,16 @@ public final class Property {
     public static final String COLLECTION_FACTORY = "org.tinytim.CollectionFactory";
 
     /**
-     * Property which indicates if the "old" XTM 1.0 reification mechansm should
-     * be used.
+     * Property which indicates if the "old" XTM 1.0 reification mechanism 
+     * should be used.
      * 
      * For backwards compatibilty and to support TMAPI 1.0 this property is
      * set to "true" by default.
      * 
      * Note, that this property is likely to be removed in a future version and
      * that only the TMDM way of reification will be supported.
-     * Maybe you'll be able to use {@link org.tinytim.ReificationUtils} to support 
-     * the XTM 1.0 reification mechanism.
+     * Maybe you'll be able to use {@link org.tinytim.ReificationUtils} to 
+     * support the XTM 1.0 reification mechanism.
      */
     public static final String XTM10_REIFICATION = "org.tinytim.XTM10Reification";
 

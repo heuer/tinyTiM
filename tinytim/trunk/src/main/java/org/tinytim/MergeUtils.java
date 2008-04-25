@@ -41,7 +41,7 @@ import org.tmapi.core.TopicName;
 import org.tmapi.core.Variant;
 
 /**
- * This class does provides functions to merge topic maps and topics.
+ * This class provides functions to merge topic maps and topics.
  * 
  * This class relies on the implementation of tinyTiM, if the implementation
  * changes, check the <code>==</code> comparisons.

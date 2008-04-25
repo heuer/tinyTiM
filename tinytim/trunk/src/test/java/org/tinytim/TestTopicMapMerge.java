@@ -28,7 +28,7 @@ import org.tmapi.core.TopicMap;
  * Tests merging of topic maps.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TestTopicMapMerge extends TinyTimTestCase {
 

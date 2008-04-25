@@ -69,6 +69,11 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
         publisher.subscribe(Event.REMOVE_TOPIC, handler);
         handler = new TypeHandler();
         publisher.subscribe(Event.SET_TYPE, handler);
+        handler = new AddTypedHandler();
+        publisher.subscribe(Event.ADD_ASSOCIATION, handler);
+        publisher.subscribe(Event.ADD_ROLE, handler);
+        publisher.subscribe(Event.ADD_OCCURRENCE, handler);
+        publisher.subscribe(Event.ADD_NAME, handler);
         handler = new RemoveTypedHandler();
         publisher.subscribe(Event.REMOVE_ASSOCIATION, handler);
         publisher.subscribe(Event.REMOVE_ROLE, handler);
@@ -192,12 +197,24 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
         }
     }
 
-    private boolean _unindex(List<ITyped> objects, Object obj) {
-        if (objects == null) {
-            return false;
+    private void _index(Map<Topic, List<ITyped>> type2Typed, Topic type, ITyped typed) {
+        List<ITyped> list = type2Typed.get(type);
+        if (list == null) {
+            list = new ArrayList<ITyped>();
+            type2Typed.put(type, list);
         }
-        objects.remove(obj);
-        return objects.isEmpty();
+        list.add(typed);
+    }
+
+    private void _unindex(Map<Topic, List<ITyped>> type2Typed, Topic type, ITyped typed) {
+        List<ITyped> list = type2Typed.get(type);
+        if (list == null) {
+            return;
+        }
+        list.remove(typed);
+        if (list.isEmpty()) {
+            type2Typed.remove(type);
+        }
     }
 
     /* (non-Javadoc)
@@ -308,61 +325,54 @@ public class TypeInstanceIndex implements ITypeInstanceIndex {
         }
     }
 
-    private final class TypeHandler implements IEventHandler {
+    private abstract class _EvtHandler implements IEventHandler {
         @SuppressWarnings("unchecked")
-        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
-                Object newValue) {
+        Map<Topic, List<ITyped>> getMap(ITyped typed) {
             Map<Topic, ?> type2Typed = null;
-            if (sender instanceof AssociationImpl) {
+            if (typed instanceof AssociationImpl) {
                 type2Typed = _type2Assocs;
             }
-            else if (sender instanceof AssociationRoleImpl) {
+            else if (typed instanceof AssociationRoleImpl) {
                 type2Typed = _type2Roles;
             }
-            else if (sender instanceof OccurrenceImpl) {
+            else if (typed instanceof OccurrenceImpl) {
                 type2Typed = _type2Occs;
             }
-            else if (sender instanceof TopicNameImpl) {
+            else if (typed instanceof TopicNameImpl) {
                 type2Typed = _type2Names;
             }
-            if (_unindex((List<ITyped>)type2Typed.get((Topic)oldValue), sender)) {
-                type2Typed.remove(oldValue);
-            }
-            _index((Map<Topic, List<ITyped>>) type2Typed, (Topic) newValue, (ITyped) sender);
-        }
-
-        private void _index(Map<Topic, List<ITyped>> type2Typed,
-                Topic newValue, ITyped sender) {
-            List<ITyped> typedConstructs = type2Typed.get(newValue);
-            if (typedConstructs == null) {
-                typedConstructs = new ArrayList<ITyped>();
-                type2Typed.put(newValue, typedConstructs);
-            }
-            typedConstructs.add(sender);
+            return (Map<Topic, List<ITyped>>) type2Typed;
         }
     }
 
-    private final class RemoveTypedHandler implements IEventHandler {
+    private final class TypeHandler extends _EvtHandler {
         @SuppressWarnings("unchecked")
         public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
-            Map<Topic, ?> type2Typed = null;
-            if (oldValue instanceof AssociationImpl) {
-                type2Typed = _type2Assocs;
-            }
-            else if (oldValue instanceof AssociationRoleImpl) {
-                type2Typed = _type2Roles;
-            }
-            else if (oldValue instanceof OccurrenceImpl) {
-                type2Typed = _type2Occs;
-            }
-            else if (oldValue instanceof TopicNameImpl) {
-                type2Typed = _type2Names;
-            }
-            Topic type = ((ITyped) oldValue).getType();
-            if (_unindex((List<ITyped>)type2Typed.get(type), oldValue)) {
-                type2Typed.remove(type);
-            }
+            ITyped typed = (ITyped) sender;
+            Map<Topic, List<ITyped>> map = getMap(typed);
+            _unindex(map, (Topic) oldValue, typed);
+            _index(map, (Topic) newValue, typed);
+        }
+    }
+
+    private final class AddTypedHandler extends _EvtHandler {
+        @SuppressWarnings("unchecked")
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
+                Object newValue) {
+            ITyped typed = (ITyped) newValue;
+            Map<Topic, List<ITyped>> map = getMap(typed);
+            _index(map, typed.getType(), typed);
+        }
+    }
+
+    private final class RemoveTypedHandler extends _EvtHandler {
+        @SuppressWarnings("unchecked")
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
+                Object newValue) {
+            ITyped typed = (ITyped) oldValue;
+            Map<Topic, List<ITyped>> map = getMap(typed);
+            _unindex(map, typed.getType(), typed);
         }
     }
 
