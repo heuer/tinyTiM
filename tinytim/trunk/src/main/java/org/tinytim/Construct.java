@@ -125,18 +125,18 @@ abstract class Construct implements TopicMapObject, IConstruct {
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
-    public boolean equals(Object obj) {
+    public final boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        return (obj instanceof Construct) && _id.equals(((Construct) obj)._id);
+        return (obj instanceof Construct) && _id.equals(((Construct) obj).getObjectId());
     }
 
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
     @Override
-    public int hashCode() {
+    public final int hashCode() {
         return _id.hashCode();
     }
 

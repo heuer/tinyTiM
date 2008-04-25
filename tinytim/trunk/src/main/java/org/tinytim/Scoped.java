@@ -27,8 +27,8 @@ import java.util.Set;
 import org.tmapi.core.Topic;
 
 /**
- * Class that provides a "scope" property and sends events if that
- * scope property changes.
+ * Class that provides a "scope" property and sends events if that property 
+ * changes.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

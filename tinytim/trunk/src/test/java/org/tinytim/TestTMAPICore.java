@@ -23,7 +23,6 @@ package org.tinytim;
 import org.tmapi.core.test.AllTMAPITests;
 
 import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * Runs the TMAPI core test suite against tinyTiM.
@@ -31,15 +30,13 @@ import junit.framework.TestSuite;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestTMAPICore extends TMAPITestCase {
+public class TestTMAPICore extends AbstractTMAPITestSuite {
 
     public static void main(String[] args) {
         junit.textui.TestRunner.run(suite());
     }
 
     public static Test suite() {
-        TestSuite suite = new TestSuite();
-        suite.addTest(AllTMAPITests.suite());
-        return suite;
+        return AllTMAPITests.suite();
     }
 }

@@ -53,6 +53,11 @@ final class IdentityManager {
         _register(tm);
     }
 
+    /**
+     * Subscribes itself to the specified event publisher.
+     *
+     * @param publisher The publisher to subscribe to.
+     */
     private void _subscribe(IEventPublisher publisher) {
         IEventHandler handler = new TopicMapsConstructAddHandler();
         publisher.subscribe(Event.ADD_TOPIC, handler);
@@ -84,32 +89,66 @@ final class IdentityManager {
         publisher.subscribe(Event.SET_REIFIER, handler);
     }
 
+    /**
+     * Registeres a Topic Maps construct and, if necessary, gives it an id.
+     *
+     * @param construct The construct to register.
+     */
     private void _register(IConstruct construct) {
         Construct c = (Construct) construct;
         if (c._id == null) {
             c._id = "" + _nextId++;
         }
-        if (!_id2Construct.containsKey(c)) {
+        if (!_id2Construct.containsKey(c._id)) {
             _id2Construct.put(c._id, c);
         }
     }
 
+    /**
+     * Unregisteres the specified <code>construct</code>.
+     *
+     * @param construct The Topic Maps construct to unregister.
+     */
     private void _unregister(IConstruct construct) {
         _id2Construct.remove(((Construct) construct)._id);
     }
 
+    /**
+     * Returns a Topic Maps construct by its identifier.
+     *
+     * @param id The identifier.
+     * @return A Topic Maps construct with the <code>id</code> or <code>null</code>.
+     */
     public IConstruct getConstructById(String id) {
         return _id2Construct.get(id);
     }
 
+    /**
+     * Returns a topic by its subject identifier.
+     *
+     * @param sid The subject identifier.
+     * @return A topic with the <code>sid</code> or <code>null</code>.
+     */
     public Topic getTopicBySubjectIdentifier(Locator sid) {
         return _sid2Topic.get(sid);
     }
 
+    /**
+     * Returns a topic by its subject locator.
+     *
+     * @param slo The subject locator.
+     * @return A topic with the <code>slo</code> or <code>null</code>.
+     */
     public Topic getTopicBySubjectLocator(Locator slo) {
         return _slo2Topic.get(slo);
     }
 
+    /**
+     * Returns a Topic Maps construct by its item identifier.
+     *
+     * @param iid The item identifier.
+     * @return A Topic Maps construct with the <code>iid</code> or <code>null</code>.
+     */
     public IConstruct getConstructByItemIdentifier(Locator iid) {
         return _iid2Construct.get(iid);
     }
@@ -199,8 +238,7 @@ final class IdentityManager {
     private class RemoveSubjectIdentifierHandler implements IEventHandler {
         public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
-            Locator slo = (Locator) oldValue;
-            _sid2Topic.remove(slo);
+            _sid2Topic.remove(oldValue);
         }
     }
 
@@ -227,8 +265,7 @@ final class IdentityManager {
     private class RemoveSubjectLocatorHandler implements IEventHandler {
         public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
-            Locator slo = (Locator) oldValue;
-            _slo2Topic.remove(slo);
+            _slo2Topic.remove(oldValue);
         }
     }
 

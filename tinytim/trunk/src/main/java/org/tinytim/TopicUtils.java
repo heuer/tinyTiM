@@ -70,7 +70,7 @@ public final class TopicUtils {
      *          otherwise.
      */
     public static boolean isRemovable(Topic topic, boolean includeReified) {
-        if (includeReified && ((TopicImpl) topic)._reified != null) {
+        if (includeReified && ((TopicImpl) topic).getReifiedConstruct() != null) {
             return false;
         }
         if (!topic.getRolesPlayed().isEmpty()) {
