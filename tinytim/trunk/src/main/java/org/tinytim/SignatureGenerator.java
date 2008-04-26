@@ -34,7 +34,7 @@ import org.tmapi.core.Variant;
  * Generates signatures for Topic Maps constructs.
  * 
  * This class can be used to detect duplicates: If two Topic Maps constructs
- * have the same signature, they should be merged (if they belong to the same
+ * have the same signature, they should be merged (if they belong to the same 
  * parent).
  * 
  * Neither the topic map, the parent, the reifier, nor item identifiers 

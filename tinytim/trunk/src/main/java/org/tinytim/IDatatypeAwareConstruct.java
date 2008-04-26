@@ -25,14 +25,12 @@ import org.tmapi.core.Locator;
 /**
  * Indicates that a Topic Maps construct has a value and a datatype.
  * 
+ * This interface is not meant to be used outside of the tinyTiM package.
+ * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
 interface IDatatypeAwareConstruct extends IConstruct {
-
-    static final String _XSD_BASE = "http://www.w3.org/2001/XMLSchema#";
-    static final Locator STRING = new IRI(_XSD_BASE + "string");
-    static final Locator ANY_URI = new IRI(_XSD_BASE + "anyURI");
 
     /**
      * The value of this Topic Maps construct.

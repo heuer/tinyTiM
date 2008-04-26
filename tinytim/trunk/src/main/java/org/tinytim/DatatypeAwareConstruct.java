@@ -34,6 +34,10 @@ import org.tmapi.core.Topic;
 abstract class DatatypeAwareConstruct extends Scoped implements 
         IDatatypeAwareConstruct {
 
+    private static final String _XSD_BASE = "http://www.w3.org/2001/XMLSchema#";
+    private static final Locator STRING = new IRI(_XSD_BASE + "string");
+    private static final Locator ANY_URI = new IRI(_XSD_BASE + "anyURI");
+
     private String _value;
     private Locator _resource;
 
@@ -96,7 +100,7 @@ abstract class DatatypeAwareConstruct extends Scoped implements
      * @param value The locator.
      */
     public void setResource(Locator value) {
-        _fireEvent(Event.SET_VALUE, _value, value);
+        _fireEvent(Event.SET_LOCATOR, _resource, value);
         _value = null;
         _resource = value;
     }

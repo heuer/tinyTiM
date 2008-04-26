@@ -80,7 +80,7 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
     }
 
     /**
-     * Creates a collection factory based according to the 
+     * Creates a collection factory according to the 
      * {@link Property#COLLECTION_FACTORY} value. If the collection factory
      * is not available, a default collection factory implementation is returned.
      *
