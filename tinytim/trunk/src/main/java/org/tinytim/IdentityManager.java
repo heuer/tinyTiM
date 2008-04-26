@@ -45,10 +45,10 @@ final class IdentityManager {
 
     IdentityManager(TopicMapImpl tm) {
         ICollectionFactory collFactory = tm.getCollectionFactory();
-        _id2Construct = collFactory.<String, IConstruct>createMap();
-        _sid2Topic = collFactory.<Locator, Topic>createMap();
-        _slo2Topic = collFactory.<Locator, Topic>createMap();
-        _iid2Construct = collFactory.<Locator, IConstruct>createMap();
+        _id2Construct = collFactory.createMap();
+        _sid2Topic = collFactory.createMap();
+        _slo2Topic = collFactory.createMap();
+        _iid2Construct = collFactory.createMap();
         _subscribe(tm);
         _register(tm);
     }
