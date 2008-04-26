@@ -26,7 +26,6 @@ import java.util.Set;
 import org.tmapi.core.DuplicateSourceLocatorException;
 import org.tmapi.core.Locator;
 import org.tmapi.core.TopicMap;
-import org.tmapi.core.TopicMapObject;
 
 /**
  * Base class for all Topic Maps constructs.
@@ -34,7 +33,7 @@ import org.tmapi.core.TopicMapObject;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-abstract class Construct implements TopicMapObject, IConstruct {
+abstract class Construct implements IConstruct {
 
     protected String _id;
     protected TopicMapImpl _tm;
@@ -129,7 +128,7 @@ abstract class Construct implements TopicMapObject, IConstruct {
         if (this == obj) {
             return true;
         }
-        return (obj instanceof Construct) && _id.equals(((Construct) obj).getObjectId());
+        return (obj instanceof Construct) && _id.equals(((Construct) obj)._id);
     }
 
     /* (non-Javadoc)
