@@ -23,9 +23,9 @@ package org.tinytim;
 import org.tmapi.core.Topic;
 
 /**
- * Class that provides a "type" property and fires an event if that type
- * property changes. Additionally, this class provides
- * a {@link IReifiable} implementation.
+ * Class that provides a "type" property and fires an event if that property 
+ * changes. Additionally, this class provides a {@link IReifiable} 
+ * implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

@@ -243,7 +243,7 @@ public final class TopicMapImpl extends Construct implements TopicMap,
     }
 
     /**
-     * Returns a toic by its subject identifier.
+     * Returns a topic by its subject identifier.
      *
      * @param subjectIdentifier The subject identifier.
      * @return A topic or <code>null</code> if no topic with the specified
@@ -254,7 +254,7 @@ public final class TopicMapImpl extends Construct implements TopicMap,
     }
 
     /**
-     * Returns a toic by its subject locator.
+     * Returns a topic by its subject locator.
      *
      * @param subjectLocator The subject locator.
      * @return A topic or <code>null</code> if no topic with the specified
@@ -335,6 +335,8 @@ public final class TopicMapImpl extends Construct implements TopicMap,
         _identityManager.close();
         _identityManager = null;
         _eventMultiplier = null;
+        _helperObjects.clear();
+        _helperObjects = null;
         super.dispose();
     }
 
@@ -362,7 +364,7 @@ public final class TopicMapImpl extends Construct implements TopicMap,
                 _helperObjects.put(interfaceName, instance);
             }
             catch (Exception ex) {
-                throw new HelperObjectInstantiationException("");
+                throw new HelperObjectInstantiationException("Failed to initialize the helper object");
             }
         }
         return instance;

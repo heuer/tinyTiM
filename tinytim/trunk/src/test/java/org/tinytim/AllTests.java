@@ -30,7 +30,7 @@ import junit.framework.TestSuite;
  * Runs all tests.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class AllTests extends TestSuite {
 
