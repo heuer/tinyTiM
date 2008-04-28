@@ -517,6 +517,9 @@ public class MapInputHandler implements IMapHandler {
         Topic topic = (tmo instanceof Topic) ? (Topic) tmo : null;
         if (topic == null) {
             topic = _tm.getTopicBySubjectIdentifier(iid);
+            if (topic != null) {
+                topic.addSourceLocator(iid);
+            }
         }
         if (topic == null) {
             topic = _tm.createTopic();
@@ -538,6 +541,7 @@ public class MapInputHandler implements IMapHandler {
             TopicMapObject tmo = _tm.getObjectByItemIdentifier(sid);
             if (tmo instanceof Topic) {
                 topic = (Topic) tmo;
+                topic.addSubjectIdentifier(sid);
             }
         }
         if (topic == null) {
