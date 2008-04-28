@@ -46,7 +46,7 @@ import com.semagia.mio.MIOException;
  * {@link com.semagia.mio.IMapHandler} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class MapInputHandler implements IMapHandler {
 
