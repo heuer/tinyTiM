@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import org.tinytim.IReifiable;
 import org.tinytim.ITyped;
 import org.tinytim.TopicMapImpl;
+import org.tinytim.TypeInstanceConverter;
 import org.tmapi.core.Association;
 import org.tmapi.core.AssociationRole;
 import org.tmapi.core.Locator;
@@ -65,6 +66,14 @@ public class MapInputHandler implements IMapHandler {
     private int _stackPointer;
     private List<TopicMapObject> _constructStack;
 
+    public MapInputHandler() {
+    }
+
+    public MapInputHandler(TopicMap topicMap) {
+        this();
+        setTopicMap(topicMap);
+    }
+
     /**
      * Sets the topic map instance to operate on.
      *
@@ -91,7 +100,7 @@ public class MapInputHandler implements IMapHandler {
         if (_state() != State.INITIAL) {
             LOG.warning("The topic map import seems to be unfinished due to errors");
         }
-        //TODO: Convert type-instance assocs.
+        TypeInstanceConverter.convertAssociationsToTypes(_tm);
         _constructStack = null;
         _stateStack = null;
         _tm = null;
@@ -354,7 +363,7 @@ public class MapInputHandler implements IMapHandler {
      */
     public void value(String value, String datatype) throws MIOException {
         boolean isLocator = _XSD_ANY_URI.equals(datatype);
-        if (!isLocator && _XSD_STRING.equals(datatype)) {
+        if (!isLocator && !_XSD_STRING.equals(datatype)) {
             LOG.warning("The datatype '" + datatype + "' was converted into xsd:string");
         }
         if (_state() == State.OCCURRENCE) {

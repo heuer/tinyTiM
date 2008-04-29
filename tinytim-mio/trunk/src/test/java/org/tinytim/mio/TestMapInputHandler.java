@@ -22,6 +22,8 @@ package org.tinytim.mio;
 
 import org.tinytim.Property;
 import org.tinytim.TopicMapImpl;
+import org.tmapi.core.Locator;
+import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
@@ -39,6 +41,9 @@ import junit.framework.TestCase;
  */
 public class TestMapInputHandler extends TestCase {
 
+    private static final String _XSD_STRING = "http://www.w3.org/2001/XMLSchema#string";
+    private static final String _XSD_ANY_URI = "http://www.w3.org/2001/XMLSchema#anyURI";
+
     private TopicMapImpl _tm;
     private MapInputHandler _handler;
 
@@ -55,6 +60,9 @@ public class TestMapInputHandler extends TestCase {
         _handler.setTopicMap(_tm);
     }
 
+    /**
+     * Simple startTopicMap, followed by an endTopicMap event.
+     */
     public void testEmpty() throws Exception {
         assertEquals(0, _tm.getTopics().size());
         assertEquals(0, _tm.getAssociations().size());
@@ -64,6 +72,9 @@ public class TestMapInputHandler extends TestCase {
         assertEquals(0, _tm.getAssociations().size());
     }
 
+    /**
+     * Tests topic creation with an item identifier.
+     */
     public void testTopicIdentityItemIdentifier() throws Exception {
         String itemIdent = "http://sf.net/projects/tinytim/test#1";
         _handler.startTopicMap();
@@ -75,6 +86,9 @@ public class TestMapInputHandler extends TestCase {
         assertNotNull(topic);
     }
 
+    /**
+     * Tests topic creation with a subject identifier.
+     */
     public void testTopicIdentitySubjectIdentifier() throws Exception {
         String subjIdent = "http://sf.net/projects/tinytim/test#1";
         _handler.startTopicMap();
@@ -86,6 +100,9 @@ public class TestMapInputHandler extends TestCase {
         assertNotNull(topic);
     }
 
+    /**
+     * Tests topic creation with a subject locator.
+     */
     public void testTopicIdentitySubjectLocator() throws Exception {
         String subjLoc = "http://sf.net/projects/tinytim/test#1";
         _handler.startTopicMap();
@@ -97,11 +114,15 @@ public class TestMapInputHandler extends TestCase {
         assertNotNull(topic);
     }
 
-    public void testTopicMerging1() throws Exception {
+    /**
+     * Tests transparent merging.
+     */
+    public void testTopicMerging() throws Exception {
         String ref = "http://sf.net/projects/tinytim/test#1";
         String itemIdent = "http://example.org/1";
         _handler.startTopicMap();
         _handler.startTopic(Ref.createSubjectIdentifier(ref));
+        // Topic in topic event
         _handler.startTopic(Ref.createItemIdentifier(itemIdent));
         _handler.itemIdentifier(ref);
         _handler.endTopic();
@@ -120,6 +141,43 @@ public class TestMapInputHandler extends TestCase {
         assertEquals("tinyTiM", name.getValue());
     }
 
+    /**
+     * Tests assigning identities to a topic.
+     */
+    public void testTopicIdentities1() throws Exception {
+        String ref = "http://sf.net/projects/tinytim/test#1";
+        _handler.startTopicMap();
+        _handler.startTopic(Ref.createSubjectIdentifier(ref));
+        _handler.itemIdentifier(ref);
+        _handler.endTopic();
+        _handler.endTopicMap();
+        assertEquals(1, _tm.getTopics().size());
+        Locator loc = _tm.createLocator(ref);
+        Topic topic = _tm.getTopicBySubjectIdentifier(loc);
+        assertNotNull(topic);
+        assertEquals(topic, _tm.getObjectByItemIdentifier(loc));
+    }
+
+    /**
+     * Tests assigning identities to a topic.
+     */
+    public void testTopicIdentities2() throws Exception {
+        String ref = "http://sf.net/projects/tinytim/test#1";
+        _handler.startTopicMap();
+        _handler.startTopic(Ref.createItemIdentifier(ref));
+        _handler.subjectIdentifier(ref);
+        _handler.endTopic();
+        _handler.endTopicMap();
+        assertEquals(1, _tm.getTopics().size());
+        Locator loc = _tm.createLocator(ref);
+        Topic topic = _tm.getTopicBySubjectIdentifier(loc);
+        assertNotNull(topic);
+        assertEquals(topic, _tm.getObjectByItemIdentifier(loc));
+    }
+
+    /**
+     * Tests reifying the topic map.
+     */
     public void testTopicMapReifier() throws Exception {
         String ref = "http://sf.net/projects/tinytim/test#1";
         _handler.startTopicMap();
@@ -132,6 +190,45 @@ public class TestMapInputHandler extends TestCase {
         Topic topic = _tm.getTopicBySubjectIdentifier(_tm.createLocator(ref));
         assertNotNull(topic);
         assertEquals(topic, _tm.getReifier());
+    }
+
+    /**
+     * Tests occurrence creation with a value of datatype xsd:string.
+     */
+    public void testOccurrenceValueString() throws Exception {
+        String ref = "http://sf.net/projects/tinytim/test#1";
+        String val = "tinyTiM";
+        _handler.startTopicMap();
+        _handler.startTopic(Ref.createSubjectIdentifier(ref));
+        _handler.startOccurrence();
+        _handler.value(val, _XSD_STRING);
+        _handler.endOccurrence();
+        _handler.endTopic();
+        _handler.endTopicMap();
+        Topic topic = _tm.getTopicBySubjectIdentifier(_tm.createLocator(ref));
+        assertNotNull(topic);
+        Occurrence occ = (Occurrence) topic.getOccurrences().iterator().next();
+        assertEquals(val, occ.getValue());
+    }
+
+    /**
+     * Tests occurrence creation with a value of datatype xsd:anyURI.
+     */
+    public void testOccurrenceValueURI() throws Exception {
+        String ref = "http://sf.net/projects/tinytim/test#1";
+        String val = "http://sf.net/projects/tinytim";
+        _handler.startTopicMap();
+        _handler.startTopic(Ref.createSubjectIdentifier(ref));
+        _handler.startOccurrence();
+        _handler.value(val, _XSD_ANY_URI);
+        _handler.endOccurrence();
+        _handler.endTopic();
+        _handler.endTopicMap();
+        Topic topic = _tm.getTopicBySubjectIdentifier(_tm.createLocator(ref));
+        assertNotNull(topic);
+        Occurrence occ = (Occurrence) topic.getOccurrences().iterator().next();
+        assertNull(occ.getValue());
+        assertEquals(val, occ.getResource().getReference());
     }
 
 }
