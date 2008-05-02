@@ -97,9 +97,6 @@ public class MapInputHandler implements IMapHandler {
      * @see com.semagia.mio.IMapHandler#endTopicMap()
      */
     public void endTopicMap() throws MIOException {
-        if (_state() != State.INITIAL) {
-            LOG.warning("The topic map import seems to be unfinished due to errors");
-        }
         TypeInstanceConverter.convertAssociationsToTypes(_tm);
         _constructStack = null;
         _stateStack = null;
