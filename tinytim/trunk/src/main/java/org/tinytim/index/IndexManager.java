@@ -24,12 +24,13 @@ import org.tinytim.ICollectionFactory;
 import org.tinytim.IEventPublisher;
 
 /**
- * 
+ * {@link IIndexManager} implementation which provides autoupdated default 
+ * indexes.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class IndexManager {
+public final class IndexManager implements IIndexManager {
 
     private ITypeInstanceIndex _typeInstanceIndex;
     private IScopedIndex _scopedIndex;
@@ -39,10 +40,16 @@ public final class IndexManager {
         _scopedIndex = new ScopedIndex(publisher, collFactory);
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.index.IIndexManager#getTypeInstanceIndex()
+     */
     public ITypeInstanceIndex getTypeInstanceIndex() {
         return _typeInstanceIndex;
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.index.IIndexManager#getScopedIndex()
+     */
     public IScopedIndex getScopedIndex() {
         return _scopedIndex;
     }

@@ -29,6 +29,7 @@ import java.util.Map;
 
 import org.tinytim.ICollectionFactory;
 import org.tinytim.TopicMapImpl;
+import org.tinytim.index.ITypeInstanceIndex;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicName;
@@ -88,30 +89,42 @@ public class VariantsIndexImpl extends AbstractTMAPIIndex implements
     public void reindex() throws TMAPIIndexException {
         _value2Variants.clear();
         _loc2Variants.clear();
-        for (Topic topic: _weakTopicMap.get().getTopics()) {
-            for (Iterator<TopicName> nameIter = topic.getTopicNames().iterator(); nameIter.hasNext();) {
-                for (Iterator<Variant> iter = nameIter.next().getVariants().iterator(); iter.hasNext();) {
-                    Variant variant = iter.next();
-                    if (variant.getValue() != null) {
-                        String value = variant.getValue();
-                        List<Variant> variants = _value2Variants.get(value);
-                        if (variants == null) {
-                            variants = new ArrayList<Variant>();
-                            _value2Variants.put(value, variants);
-                        }
-                        variants.add(variant);
-                    }
-                    else if (variant.getResource() != null) {
-                        Locator loc = variant.getResource();
-                        List<Variant> variants = _loc2Variants.get(loc);
-                        if (variants == null) {
-                            variants = new ArrayList<Variant>();
-                            _loc2Variants.put(loc, variants);
-                        }
-                        variants.add(variant);
-                    }
+        ITypeInstanceIndex typeInstanceIdx = _weakTopicMap.get().getIndexManager().getTypeInstanceIndex();
+        if (!typeInstanceIdx.isAutoUpdated()) {
+            typeInstanceIdx.reindex();
+        }
+        for (Topic type: typeInstanceIdx.getNameTypes()) {
+            for (TopicName name: typeInstanceIdx.getNames(type)) {
+                for (Iterator<Variant> iter = name.getVariants().iterator(); iter.hasNext();) {
+                    _index(iter.next());
                 }
             }
+        }
+        for (TopicName name: typeInstanceIdx.getNames(null)) {
+            for (Iterator<Variant> iter = name.getVariants().iterator(); iter.hasNext();) {
+                _index(iter.next());
+            }
+        }
+    }
+
+    private void _index(Variant variant) {
+        if (variant.getValue() != null) {
+            String value = variant.getValue();
+            List<Variant> variants = _value2Variants.get(value);
+            if (variants == null) {
+                variants = new ArrayList<Variant>();
+                _value2Variants.put(value, variants);
+            }
+            variants.add(variant);
+        }
+        else if (variant.getResource() != null) {
+            Locator loc = variant.getResource();
+            List<Variant> variants = _loc2Variants.get(loc);
+            if (variants == null) {
+                variants = new ArrayList<Variant>();
+                _loc2Variants.put(loc, variants);
+            }
+            variants.add(variant);
         }
     }
 

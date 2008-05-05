@@ -39,9 +39,13 @@ import org.tmapi.index.core.AssociationsIndex;
 public class AssociationsIndexImpl extends AbstractTMAPIIndex implements
         AssociationsIndex {
 
+    private final IndexFlags _indexFlags;
+    
     public AssociationsIndexImpl(TopicMapImpl topicMap,
             ICollectionFactory collFactory) {
         super(topicMap, collFactory);
+        _indexFlags = topicMap.getIndexManager().getTypeInstanceIndex().isAutoUpdated() ?
+                IndexFlagsImpl.AUTOUPDATED : IndexFlagsImpl.NOT_AUTOUPDATED;
     }
 
     /* (non-Javadoc)
@@ -62,14 +66,16 @@ public class AssociationsIndexImpl extends AbstractTMAPIIndex implements
      * @see org.tmapi.index.Index#getFlags()
      */
     public IndexFlags getFlags() throws TMAPIIndexException {
-        return IndexFlagsImpl.AUTOUPDATED;
+        return _indexFlags;
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.index.Index#reindex()
      */
     public void reindex() throws TMAPIIndexException {
-        // noop.
+        if (_indexFlags != IndexFlagsImpl.AUTOUPDATED) {
+            _weakTopicMap.get().getIndexManager().getTypeInstanceIndex().reindex();
+        }
     }
 
 }

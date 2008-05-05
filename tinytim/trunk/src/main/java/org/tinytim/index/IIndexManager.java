@@ -18,37 +18,27 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim;
-
-import org.tmapi.core.Locator;
+package org.tinytim.index;
 
 /**
- * Indicates that a Topic Maps construct has a value and a datatype.
- * 
- * This interface is not meant to be used outside of the tinyTiM package.
+ * The index manager provides access to the tinyTiM-specific indexes.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public interface IDatatypeAwareConstruct extends IConstruct {
+public interface IIndexManager {
 
     /**
-     * The value of this Topic Maps construct.
-     * 
-     * This method differs from TMAPI: This method MUST return the value OR the
-     * locator as string. This method should be removed if we have TMAPI 2.0
-     * (maybe the whole interface should be removed).
-     * Currently, the {@link SignatureGenerator} needs it.
+     * Returns the {@link ITypeInstanceIndex}.
      *
-     * @return The value.
+     * @return A {@link ITypeInstanceIndex} instance.
      */
-    public String getValue2();
+    public ITypeInstanceIndex getTypeInstanceIndex();
 
     /**
-     * Returns the datatype of this Topic Maps construct.
+     * Returns the {@link IScopedIndex}.
      *
-     * @return The datatype.
+     * @return A {@link IScopedIndex} instance.
      */
-    public Locator getDatatype();
-
+    public IScopedIndex getScopedIndex();
 }

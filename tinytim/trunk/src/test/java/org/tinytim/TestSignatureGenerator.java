@@ -114,4 +114,16 @@ public class TestSignatureGenerator extends TinyTimTestCase {
         assoc2.setType(type);
         assertEquals(sigAfter, SignatureGenerator.generateSignature(assoc2));
     }
+
+    public void testRoles() {
+        Association assoc = _tm.createAssociation();
+        Topic type = _tm.createTopic();
+        Topic player = _tm.createTopic();
+        AssociationRole role1 = assoc.createAssociationRole(player, type);
+        AssociationRole role2 = assoc.createAssociationRole(player, type);
+        assertEquals(2, player.getRolesPlayed().size());
+        assertEquals(2, assoc.getAssociationRoles().size());
+        String sig = SignatureGenerator.generateSignature(role1);
+        assertEquals(sig, SignatureGenerator.generateSignature(role2));
+    }
 }

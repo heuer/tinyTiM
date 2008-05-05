@@ -21,6 +21,7 @@
 package org.tinytim;
 
 import java.util.Collection;
+import java.util.Set;
 
 import org.tmapi.core.Locator;
 import org.tmapi.core.TMAPIException;
@@ -50,6 +51,22 @@ public final class VariantImpl extends DatatypeAwareConstruct implements
      */
     public TopicName getTopicName() {
         return (TopicName) _parent;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.Scoped#getScope()
+     */
+    @Override
+    public Set<Topic> getScope() {
+        if (_tm == null || _parent == null || !_tm._inheritNameScope) {
+            return super.getScope();
+        }
+        else {
+            Set<Topic> scope = _tm.getCollectionFactory().createSet();
+            scope.addAll(super.getScope());
+            scope.addAll(((IScoped) _parent).getScope());
+            return scope;
+        }
     }
 
     /* (non-Javadoc)
