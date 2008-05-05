@@ -77,7 +77,7 @@ public class ScopedIndex implements IScopedIndex {
     public Collection<AssociationImpl> getAssociationsByTheme(Topic theme) {
         List<AssociationImpl> assocs = _theme2Assocs.get(theme);
         return assocs == null ? Collections.<AssociationImpl>emptySet()
-                              : Collections.unmodifiableCollection(assocs);
+                              : new ArrayList<AssociationImpl>(assocs);
     }
 
     /* (non-Javadoc)
@@ -95,7 +95,7 @@ public class ScopedIndex implements IScopedIndex {
     public Collection<OccurrenceImpl> getOccurrencesByTheme(Topic theme) {
         List<OccurrenceImpl> occs = _theme2Occs.get(theme);
         return occs == null ? Collections.<OccurrenceImpl>emptySet()
-                            : Collections.unmodifiableCollection(occs);
+                            : new ArrayList<OccurrenceImpl>(occs);
     }
 
     /* (non-Javadoc)
@@ -113,7 +113,7 @@ public class ScopedIndex implements IScopedIndex {
     public Collection<TopicNameImpl> getNamesByTheme(Topic theme) {
         List<TopicNameImpl> names = _theme2Names.get(theme);
         return names == null ? Collections.<TopicNameImpl>emptySet()
-                             : Collections.unmodifiableCollection(names);
+                             : new ArrayList<TopicNameImpl>(names);
     }
 
     /* (non-Javadoc)
@@ -131,7 +131,7 @@ public class ScopedIndex implements IScopedIndex {
     public Collection<VariantImpl> getVariantsByTheme(Topic theme) {
         List<VariantImpl> vars = _theme2Variants.get(theme);
         return vars == null ? Collections.<VariantImpl>emptySet()
-                            : Collections.unmodifiableCollection(vars);
+                            : new ArrayList<VariantImpl>(vars);
     }
 
     /* (non-Javadoc)

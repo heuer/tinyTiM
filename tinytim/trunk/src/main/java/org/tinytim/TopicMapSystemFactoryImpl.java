@@ -60,6 +60,7 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
             _features.put(feature.name, feature.defaultValue);
         }
         _properties.setProperty(Property.XTM10_REIFICATION, "true");
+        _properties.setProperty(Property.INHERIT_NAME_SCOPE, "false");
         _properties.setProperty(Property.COLLECTION_FACTORY, _COLL_FACTORY_JAVA);
         try {
             // Probe if Trove is available.

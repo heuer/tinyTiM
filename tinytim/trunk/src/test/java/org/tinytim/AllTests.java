@@ -41,6 +41,7 @@ public class AllTests extends TestSuite {
     public static Test suite() {
         TestSuite suite = new TestSuite();
         suite.addTestSuite(TestConstruct.class);
+        suite.addTestSuite(TestDuplicateRemovalUtils.class);
         suite.addTestSuite(TestItemIdentifierConstraint.class);
         suite.addTestSuite(TestReifiable.class);
         suite.addTestSuite(TestScoped.class);

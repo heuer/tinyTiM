@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.tinytim.index.IndexManager;
+import org.tinytim.index.IIndexManager;
 import org.tmapi.core.Association;
 import org.tmapi.core.AssociationRole;
 import org.tmapi.core.HelperObjectConfigurationException;
@@ -88,6 +89,7 @@ public final class TopicMapImpl extends Construct implements TopicMap,
     private EventMultiplier _eventMultiplier;
     private Map<String, Object> _helperObjects;
     boolean _oldReification;
+    boolean _inheritNameScope;
 
     TopicMapImpl(TopicMapSystemImpl sys, Locator locator) {
         super(null);
@@ -100,9 +102,11 @@ public final class TopicMapImpl extends Construct implements TopicMap,
         _evtHandlers = _collectionFactory.createMap();
         _helperObjects = _collectionFactory.createMap();
         _identityManager = new IdentityManager(this);
+        //TODO: Makes this configurable
         _indexManager = new IndexManager(this, _collectionFactory);
         _eventMultiplier = new EventMultiplier(this);
         _oldReification = "true".equalsIgnoreCase(sys.getProperty(Property.XTM10_REIFICATION));
+        _inheritNameScope = "true".equalsIgnoreCase(sys.getProperty(Property.INHERIT_NAME_SCOPE));
     }
 
     ICollectionFactory getCollectionFactory() {
@@ -407,7 +411,7 @@ public final class TopicMapImpl extends Construct implements TopicMap,
         }
     }
 
-    public IndexManager getIndexManager() {
+    public IIndexManager getIndexManager() {
         return _indexManager;
     }
 

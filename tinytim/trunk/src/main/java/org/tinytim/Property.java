@@ -56,4 +56,14 @@ public final class Property {
      */
     public static final String XTM10_REIFICATION = "org.tinytim.XTM10Reification";
 
+    /**
+     * Property which indicates if the variant's parent scope is included
+     * in the {@link org.tmapi.core.Variant#getScope()} return value.
+     * 
+     * This property is disabled by default.
+     * 
+     * If enabled, the variants scope is the union of its own scope and
+     * the parent name's scope.
+     */
+    public static final String INHERIT_NAME_SCOPE = "org.tinytim.InheritNameScope";
 }

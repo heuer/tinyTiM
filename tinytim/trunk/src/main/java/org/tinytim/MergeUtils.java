@@ -25,9 +25,9 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.tinytim.index.IIndexManager;
 import org.tinytim.index.IScopedIndex;
 import org.tinytim.index.ITypeInstanceIndex;
-import org.tinytim.index.IndexManager;
 import org.tmapi.core.Association;
 import org.tmapi.core.AssociationRole;
 import org.tmapi.core.Locator;
@@ -266,7 +266,7 @@ final class MergeUtils {
      */
     private static void _replaceTopics(Topic source, Topic replacement) {
         TopicMapImpl tm = (TopicMapImpl) replacement.getTopicMap();
-        IndexManager idxMan = tm.getIndexManager();
+        IIndexManager idxMan = tm.getIndexManager();
         ITypeInstanceIndex typeInstanceIndex = idxMan.getTypeInstanceIndex();
         if (!typeInstanceIndex.isAutoUpdated()) {
             typeInstanceIndex.reindex();

@@ -41,6 +41,7 @@
         <echo message="Available targets:"/>
         <echo message=""/>
         <echo message=" jar     Creates the jar"/>
+        <echo message=" doc     Creates the API documentation"/>
         <echo message=" release Creates the jar and a distributable file"/>
     </target>
 
@@ -58,7 +59,7 @@
         <property name="dir.dist" value="${dir.dist.root}/${dist.name}"/>
         <property name="dir.build.classes" value="${dir.build}/classes"/>
         <property name="dir.build.tests" value="${dir.build}/tests"/>
-        <property name="dir.javadocs" value="${basedir}/javadocs"/>
+        <property name="dir.javadocs" value="${dir.dist}/docs/api"/>
     </target>
 
     <!-- =================================================================== -->
@@ -132,6 +133,32 @@
     </target>
 
     <!-- =================================================================== -->
+    <!-- Creates the Java Docs                                               -->
+    <!-- =================================================================== -->
+    <target name="doc" depends="init">
+        <mkdir dir="${dir.javadocs}"/>
+        <javadoc destdir="${dir.javadocs}"
+            packagenames="org.tinytim.*"
+            author="true"
+            version="true"
+            use="true"
+            splitindex="true"
+            noindex="false"
+            windowtitle="tinyTiM API v${dist.version}"
+            doctitle="tinyTiM API v${dist.version}">
+            <fileset dir="${dir.src}">
+                <exclude name="**/*Impl.*"/>
+                <exclude name="org/tinytim/index/**"/>
+                <exclude name="org/tinytim/IConstruct*"/>
+                <exclude name="org/tinytim/IDatatypeAware*"/>
+                <exclude name="org/tinytim/IRI*"/>
+                <exclude name="org/tinytim/IEvent*"/>
+                <exclude name="org/tinytim/Event*"/>
+            </fileset>
+        </javadoc>
+    </target>
+
+    <!-- =================================================================== -->
     <!-- Creates the jar                                                     -->
     <!-- =================================================================== -->
     <target name="jar" depends="compile">
@@ -153,7 +180,7 @@
     <!-- =================================================================== -->
     <!-- Prepares a distribution                                             -->
     <!-- =================================================================== -->
-    <target name="dist" depends="jar">
+    <target name="dist" depends="jar, doc">
         <mkdir dir="${dir.dist}"/>
 
         <copy todir="${dir.dist}" file="${dir.build}/${tinytim.jar}"/>

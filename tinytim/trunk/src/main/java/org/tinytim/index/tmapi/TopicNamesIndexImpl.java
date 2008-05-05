@@ -23,7 +23,6 @@ package org.tinytim.index.tmapi;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -94,18 +93,28 @@ public class TopicNamesIndexImpl extends AbstractTMAPIIndex implements
     @SuppressWarnings("unchecked")
     public void reindex() throws TMAPIIndexException {
         _value2Names.clear();
-        for (Topic topic: _weakTopicMap.get().getTopics()) {
-            for (Iterator<TopicName> iter = topic.getTopicNames().iterator(); iter.hasNext();) {
-                TopicName name = iter.next();
-                String value = name.getValue();
-                List<TopicName> names = _value2Names.get(value);
-                if (names == null) {
-                    names = new ArrayList<TopicName>();
-                    _value2Names.put(value, names);
-                }
-                names.add(name);
+        ITypeInstanceIndex typeInstanceIdx = _weakTopicMap.get().getIndexManager().getTypeInstanceIndex();
+        if (!typeInstanceIdx.isAutoUpdated()) {
+            typeInstanceIdx.reindex();
+        }
+        for (Topic type: typeInstanceIdx.getNameTypes()) {
+            for (TopicName name: typeInstanceIdx.getNames(type)) {
+                _index(name);
             }
         }
+        for (TopicName name: typeInstanceIdx.getNames(null)) {
+            _index(name);
+        }
+    }
+
+    private void _index(TopicName name) {
+        String value = name.getValue();
+        List<TopicName> names = _value2Names.get(value);
+        if (names == null) {
+            names = new ArrayList<TopicName>();
+            _value2Names.put(value, names);
+        }
+        names.add(name);
     }
 
 }

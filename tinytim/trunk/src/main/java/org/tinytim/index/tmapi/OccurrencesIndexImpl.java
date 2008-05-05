@@ -23,7 +23,6 @@ package org.tinytim.index.tmapi;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -107,28 +106,38 @@ public class OccurrencesIndexImpl extends AbstractTMAPIIndex implements
     public void reindex() throws TMAPIIndexException {
         _value2Occs.clear();
         _loc2Occs.clear();
-        for (Topic topic: _weakTopicMap.get().getTopics()) {
-            for (Iterator<Occurrence> iter = topic.getOccurrences().iterator(); iter.hasNext();) {
-                Occurrence occ = iter.next();
-                if (occ.getValue() != null) {
-                    String value = occ.getValue();
-                    List<Occurrence> occs = _value2Occs.get(value);
-                    if (occs == null) {
-                        occs = new ArrayList<Occurrence>();
-                        _value2Occs.put(value, occs);
-                    }
-                    occs.add(occ);
-                }
-                else if (occ.getResource() != null) {
-                    Locator loc = occ.getResource();
-                    List<Occurrence> occs = _loc2Occs.get(loc);
-                    if (occs == null) {
-                        occs = new ArrayList<Occurrence>();
-                        _loc2Occs.put(loc, occs);
-                    }
-                    occs.add(occ);
-                }
+        ITypeInstanceIndex typeInstanceIdx = _weakTopicMap.get().getIndexManager().getTypeInstanceIndex();
+        if (!typeInstanceIdx.isAutoUpdated()) {
+            typeInstanceIdx.reindex();
+        }
+        for (Topic type: typeInstanceIdx.getOccurrenceTypes()) {
+            for (Occurrence occ: typeInstanceIdx.getOccurrences(type)) {
+                _index(occ);
             }
+        }
+        for (Occurrence occ: typeInstanceIdx.getOccurrences(null)) {
+            _index(occ);
+        }
+    }
+
+    private void _index(Occurrence occ) {
+        if (occ.getValue() != null) {
+            String value = occ.getValue();
+            List<Occurrence> occs = _value2Occs.get(value);
+            if (occs == null) {
+                occs = new ArrayList<Occurrence>();
+                _value2Occs.put(value, occs);
+            }
+            occs.add(occ);
+        }
+        else if (occ.getResource() != null) {
+            Locator loc = occ.getResource();
+            List<Occurrence> occs = _loc2Occs.get(loc);
+            if (occs == null) {
+                occs = new ArrayList<Occurrence>();
+                _loc2Occs.put(loc, occs);
+            }
+            occs.add(occ);
         }
     }
 

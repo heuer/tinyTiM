@@ -20,6 +20,7 @@
  */
 package org.tinytim;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -44,7 +45,7 @@ public final class ReificationUtils {
      */
     public static Set<TopicMapObject> getReified(Topic reifier) {
         TopicMapImpl tm = (TopicMapImpl) reifier.getTopicMap();
-        Set<TopicMapObject> reified = tm.getCollectionFactory().createSet();
+        Set<TopicMapObject> reified = new HashSet<TopicMapObject>();
         for (Locator sid: ((TopicImpl) reifier).getSubjectIdentifiers()) {
             TopicMapObject obj = tm.getObjectByItemIdentifier(sid);
             if (obj != null) {

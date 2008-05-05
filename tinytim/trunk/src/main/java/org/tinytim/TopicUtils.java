@@ -20,9 +20,9 @@
  */
 package org.tinytim;
 
+import org.tinytim.index.IIndexManager;
 import org.tinytim.index.IScopedIndex;
 import org.tinytim.index.ITypeInstanceIndex;
-import org.tinytim.index.IndexManager;
 import org.tmapi.core.Topic;
 
 /**
@@ -76,7 +76,7 @@ public final class TopicUtils {
         if (!topic.getRolesPlayed().isEmpty()) {
             return false;
         }
-        IndexManager idxMan = ((TopicMapImpl) topic.getTopicMap()).getIndexManager();
+        IIndexManager idxMan = ((TopicMapImpl) topic.getTopicMap()).getIndexManager();
         ITypeInstanceIndex typeInstanceIdx = idxMan.getTypeInstanceIndex();
         if (!typeInstanceIdx.isAutoUpdated()) {
             typeInstanceIdx.reindex();
