@@ -35,7 +35,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * good enough to support CXTM.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 final class CXTMWriter {
 
