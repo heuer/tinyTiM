@@ -22,6 +22,7 @@ package org.tinytim.mio;
 
 import org.tinytim.Property;
 import org.tinytim.TopicMapImpl;
+import org.tinytim.voc.TMDM;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
@@ -29,6 +30,7 @@ import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
 import org.tmapi.core.TopicName;
 
+import com.semagia.mio.MIOException;
 import com.semagia.mio.helpers.Ref;
 
 import junit.framework.TestCase;
@@ -126,9 +128,9 @@ public class TestMapInputHandler extends TestCase {
         _handler.startTopic(Ref.createItemIdentifier(itemIdent));
         _handler.itemIdentifier(ref);
         _handler.endTopic();
-        _handler.startName();
-        _handler.value("tinyTiM");
-        _handler.endName();
+        _handler.startOccurrence();
+        _handler.value("tinyTiM", _XSD_STRING);
+        _handler.endOccurrence();
         _handler.endTopic();
         _handler.endTopicMap();
         assertEquals(1, _tm.getTopics().size());
@@ -136,9 +138,9 @@ public class TestMapInputHandler extends TestCase {
         assertNotNull(topic);
         assertEquals(topic, _tm.getObjectByItemIdentifier(_tm.createLocator(ref)));
         assertEquals(topic, _tm.getObjectByItemIdentifier(_tm.createLocator(itemIdent)));
-        assertEquals(1, topic.getTopicNames().size());
-        TopicName name = (TopicName)topic.getTopicNames().iterator().next();
-        assertEquals("tinyTiM", name.getValue());
+        assertEquals(1, topic.getOccurrences().size());
+        Occurrence occ = (Occurrence) topic.getOccurrences().iterator().next();
+        assertEquals("tinyTiM", occ.getValue());
     }
 
     /**
@@ -229,6 +231,81 @@ public class TestMapInputHandler extends TestCase {
         Occurrence occ = (Occurrence) topic.getOccurrences().iterator().next();
         assertNull(occ.getValue());
         assertEquals(val, occ.getResource().getReference());
+    }
+
+    /**
+     * Tests if the name type is automatically set.
+     */
+    public void testDefaultNameType() throws Exception {
+        String ref = "http://sf.net/projects/tinytim/test#1";
+        String val = "tinyTiM";
+        _handler.startTopicMap();
+        _handler.startTopic(Ref.createSubjectIdentifier(ref));
+        _handler.startName();
+        _handler.value(val);
+        _handler.endName();
+        _handler.endTopic();
+        _handler.endTopicMap();
+        Topic topic = _tm.getTopicBySubjectIdentifier(_tm.createLocator(ref));
+        assertNotNull(topic);
+        TopicName name = (TopicName) topic.getTopicNames().iterator().next();
+        assertEquals(val, name.getValue());
+        assertNotNull(name.getType());
+        assertTrue(name.getType().getSubjectIdentifiers().contains(TMDM.TOPIC_NAME));
+    }
+
+    /**
+     * Tests if a variant with no scope is reported as error.
+     */
+    public void testVariantNoScopeError() throws Exception {
+        String ref = "http://sf.net/projects/tinytim/test#1";
+        String val = "tinyTiM";
+        _handler.startTopicMap();
+        _handler.startTopic(Ref.createSubjectIdentifier(ref));
+        _handler.startName();
+        _handler.value(val);
+        _handler.startVariant();
+        _handler.value(val, _XSD_STRING);
+        try {
+            _handler.endVariant();
+            fail("A variant with no scope shouldn't be allowed");
+        }
+        catch (MIOException ex) {
+            // noop.
+        }
+    }
+
+    /**
+     * Tests if a variant with a scope equals to the parent's scope is rejected.
+     */
+    public void testVariantNoScopeError2() throws Exception {
+        String ref = "http://sf.net/projects/tinytim/test#1";
+        String theme = "http://sf.net/projects/tinytim/test#theme";
+        String val = "tinyTiM";
+        _handler.startTopicMap();
+        _handler.startTopic(Ref.createSubjectIdentifier(ref));
+        _handler.startName();
+        _handler.startScope();
+        _handler.startTheme();
+        _handler.topicRef(Ref.createItemIdentifier(theme));
+        _handler.endTheme();
+        _handler.endScope();
+        _handler.value(val);
+        
+        _handler.startVariant();
+        _handler.value(val, _XSD_STRING);
+        _handler.startScope();
+        _handler.startTheme();
+        _handler.topicRef(Ref.createItemIdentifier(theme));
+        _handler.endTheme();
+        _handler.endScope();
+        try {
+            _handler.endVariant();
+            fail("A variant with a scope equals to the parent's scope shouldn't be allowed");
+        }
+        catch (MIOException ex) {
+            // noop.
+        }
     }
 
 }
