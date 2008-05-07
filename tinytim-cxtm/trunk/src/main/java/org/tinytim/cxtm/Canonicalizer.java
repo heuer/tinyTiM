@@ -68,23 +68,28 @@ import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Provides serialization of topic maps into Canonical XTM (CXTM).
- * 
+ * <p>
  * CXTM is a format that guarantees that two equivalent Topic Maps Data Model 
  * instances [ISO/IEC 13250-2] will always produce byte-by-byte identical 
  * serializations, and that non-equivalent instances will always produce 
  * different serializations.
- * 
+ * </p>
+ * <p>
  * See <a href="http://www.isotopicmaps.org/cxtm/">http://www.isotopicmaps.org/cxtm/</a>
  * for details.
- * 
- * <em>CAUTION</em>: This class implements a CXTM draft (2008-04-14), the output
- * may change in the future.
- * 
- * The canonicalizer requires that the property 
+ * </p>
+ * <p>
+ * <em>CAUTION</em>: This class implements the 
+ * <a href="http://www.isotopicmaps.org/cxtm/2008-04-14/">CXTM draft dtd. 2008-04-14</a>,
+ * the output may change in the future.
+ * </p>
+ * <p>
+ * The canonicalizer IS NOT a generic TMAPI-compatible implementation. It 
+ * requires tinyTiM. The canonicalizer requires that the property 
  * {@link org.tinytim.Property#XTM10_REIFICATION} is set to <tt>false</tt> and
  * that the property {@link org.tinytim.Property#INHERIT_NAME_SCOPE} is enabled
  * (set to <tt>true</tt>).
- * 
+ * </p>
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
@@ -124,7 +129,17 @@ public final class Canonicalizer {
     private Map<TopicName, Variant[]> _name2Variants;
     private Map<Association, AssociationRole[]> _assoc2Roles;
 
+    /**
+     * Creates a canonicalizer.
+     *
+     * @param out The stream the CXTM is written onto.
+     * @param baseLocator The base locator which is used to resolve IRIs against.
+     * @throws IOException If an error occurs.
+     */
     public Canonicalizer(OutputStream out, String baseLocator) throws IOException {
+        if (baseLocator == null) {
+            throw new IllegalArgumentException("The base locator must not be null");
+        }
         _out = new CXTMWriter(out);
         _normBase = _normalizeBaseLocator(baseLocator);
         _topicComparator = new TopicComparator();
@@ -140,13 +155,15 @@ public final class Canonicalizer {
 
     /**
      * Serializes the specified <code>topicMap</code> into the CXTM format.
-     * 
+     * <p>
      * <em>CAUTION</em>: This method MAY modify the topic map since duplicate 
      * Topic Maps constructs (if any) are removed in advance.
-     * 
+     * </p>
+     * <p>
      * The topic map's base locator 
      * ({@link org.tmapi.core.TopicMap#getBaseLocator()}) is ignored.
-     *
+     * </p>
+     * 
      * @param topicMap The topic map to serialize.
      * @throws IOException If an error occurs.
      */
@@ -782,7 +799,7 @@ public final class Canonicalizer {
      * Writes a warning msg to the log.
      * 
      * This method is used to inform the user that the serialized topic map
-     * is not valid CXTM.
+     * is not valid acc. to CXTM.
      *
      * @param msg The warning message.
      */
@@ -922,7 +939,8 @@ public final class Canonicalizer {
 
     /**
      * Role comparator which ignores the parent association. This comparator
-     * is meant to be used for roles where the parent is always equal.
+     * is meant to be used for roles where the parent is known to be equal or
+     * unequal.
      */
     private class RoleIgnoreParentComparator extends AbstractComparator<AssociationRole> {
 
@@ -1065,7 +1083,7 @@ public final class Canonicalizer {
     private final class RoleSetComparator extends AbstractSetComparator<AssociationRole> {
 
         private RoleIgnoreParentComparator _roleCmp; 
-        
+
         RoleSetComparator() {
             _roleCmp = new RoleIgnoreParentComparator();
         }
