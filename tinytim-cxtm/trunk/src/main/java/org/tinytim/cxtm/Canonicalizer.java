@@ -86,7 +86,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * (set to <tt>true</tt>).
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public final class Canonicalizer {
 
@@ -182,6 +182,7 @@ public final class Canonicalizer {
         _out.endElement("topicMap");
         _out.newline();
         _out.endDocument();
+        _out = null;
         _construct2Id = null;
         _locator2Norm = null;
         _assoc2Roles = null;
@@ -821,7 +822,7 @@ public final class Canonicalizer {
     }
 
     /**
-     * Abstract comparator that provides some utility method which handle common 
+     * Abstract comparator that provides some utility methods which handle common 
      * comparisons.
      */
     private abstract class AbstractComparator<T> implements Comparator<T> {
@@ -905,6 +906,9 @@ public final class Canonicalizer {
 
         @SuppressWarnings("unchecked")
         public int compare(Association o1, Association o2) {
+            if (o1 == o2) {
+                return 0;
+            }
             int res = compareType((ITyped) o1, (ITyped) o2);
             if (res == 0) {
                 res = _roleSetComparator.compare(o1.getAssociationRoles(), o2.getAssociationRoles());
@@ -923,6 +927,9 @@ public final class Canonicalizer {
     private class RoleIgnoreParentComparator extends AbstractComparator<AssociationRole> {
 
         public int compare(AssociationRole o1, AssociationRole o2) {
+            if (o1 == o2) {
+                return 0;
+            }
             int res = _topicComparator.compare(o1.getPlayer(), o2.getPlayer());
             if (res == 0) {
                 res = compareType((ITyped) o1, (ITyped) o2);
@@ -959,6 +966,9 @@ public final class Canonicalizer {
     private final class OccurrenceComparator extends AbstractDatatypeAwareComparator<Occurrence> {
 
         public int compare(Occurrence o1, Occurrence o2) {
+            if (o1 == o2) {
+                return 0;
+            }
             int res = _compareValueDatatype((IDatatypeAwareConstruct) o1, (IDatatypeAwareConstruct) o2);
             if (res == 0) {
                 res = compareType((ITyped) o1, (ITyped) o2);
@@ -981,6 +991,9 @@ public final class Canonicalizer {
     private final class NameComparator extends AbstractComparator<TopicName> {
 
         public int compare(TopicName o1, TopicName o2) {
+            if (o1 == o2) {
+                return 0;
+            }
             int res = compareString(o1.getValue(), o2.getValue());
             if (res == 0) {
                 res = compareType((ITyped) o1, (ITyped) o2);
@@ -1002,6 +1015,9 @@ public final class Canonicalizer {
     private final class VariantComparator extends AbstractDatatypeAwareComparator<Variant> {
 
         public int compare(Variant o1, Variant o2) {
+            if (o1 == o2) {
+                return 0;
+            }
             int res = _compareValueDatatype((IDatatypeAwareConstruct) o1, (IDatatypeAwareConstruct) o2);
             if (res == 0) {
                 res = compareScope(o1, o2);
@@ -1115,6 +1131,9 @@ public final class Canonicalizer {
     private final class LocatorComparator implements Comparator<Locator> {
 
         public int compare(Locator o1, Locator o2) {
+            if (o1 == o2) {
+                return 0;
+            }
             return _normalizeLocator(o1.getReference()).compareTo(_normalizeLocator(o2.getReference()));
         }
         
