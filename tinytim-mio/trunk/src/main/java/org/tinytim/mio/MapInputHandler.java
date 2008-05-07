@@ -21,6 +21,7 @@
 package org.tinytim.mio;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -28,6 +29,7 @@ import org.tinytim.IReifiable;
 import org.tinytim.ITyped;
 import org.tinytim.TopicMapImpl;
 import org.tinytim.TypeInstanceConverter;
+import org.tinytim.voc.TMDM;
 import org.tmapi.core.Association;
 import org.tmapi.core.AssociationRole;
 import org.tmapi.core.Locator;
@@ -77,10 +79,13 @@ public class MapInputHandler implements IMapHandler {
     /**
      * Sets the topic map instance to operate on.
      *
-     * @param tm The topic map.
+     * @param topicMap The topic map.
      */
-    public void setTopicMap(TopicMap tm) {
-        _tm = (TopicMapImpl) tm;
+    public void setTopicMap(TopicMap topicMap) {
+        if (topicMap == null) {
+            throw new IllegalArgumentException("The topic map must not be null");
+        }
+        _tm = (TopicMapImpl) topicMap;
     }
 
     /* (non-Javadoc)
@@ -189,7 +194,11 @@ public class MapInputHandler implements IMapHandler {
      * @see com.semagia.mio.IMapHandler#endName()
      */
     public void endName() throws MIOException {
+        TopicName name = (TopicName) _peekConstruct();
         _leaveStatePopConstruct(State.NAME);
+        if (name.getType() == null) {
+            name.setType(_topicBySubjectIdentifier(TMDM.TOPIC_NAME));
+        }
     }
 
     /* (non-Javadoc)
@@ -203,8 +212,14 @@ public class MapInputHandler implements IMapHandler {
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endVariant()
      */
+    @SuppressWarnings("unchecked")
     public void endVariant() throws MIOException {
+        Variant variant = (Variant) _peekConstruct();
         _leaveStatePopConstruct(State.VARIANT);
+        Collection<Topic> scope = variant.getScope();
+        if (scope.isEmpty() || variant.getTopicName().getScope().equals(scope)) {
+            throw new MIOException("The variant has no scope");
+        }
     }
 
     /* (non-Javadoc)
