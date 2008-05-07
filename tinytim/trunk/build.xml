@@ -155,6 +155,7 @@
                 <exclude name="org/tinytim/IEvent*"/>
                 <exclude name="org/tinytim/Event*"/>
             </fileset>
+            <link href="http://www.tmapi.org/apiDocs/"/>
         </javadoc>
     </target>
 
