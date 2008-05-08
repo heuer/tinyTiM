@@ -18,7 +18,7 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.mio;
+package org.tinytim.io;
 
 import org.tinytim.Property;
 import org.tinytim.TopicMapImpl;
@@ -36,7 +36,7 @@ import com.semagia.mio.helpers.Ref;
 import junit.framework.TestCase;
 
 /**
- * Tests against the {@link org.tinytim.mio.MapInputHandler}.
+ * Tests against the {@link org.tinytim.io.MapInputHandler}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
