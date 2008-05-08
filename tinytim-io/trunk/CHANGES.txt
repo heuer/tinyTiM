@@ -1,0 +1,8 @@
+===========
+Changes Log
+===========
+
+
+1.0.0 alpha1 (08.05.2008)
+-------------------------
+- Initial tinyTiM I/O release
