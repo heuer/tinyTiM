@@ -2,6 +2,12 @@
 Changes Log
 ===========
 
+1.0.0 alpha2 (16.05.2008)
+-------------------------
+* Adapted the current CXTM draft dtd. 2008-05-15
+  see <http://www.isotopicmaps.org/cxtm/>
+
+
 1.0.0 alpha1 (07.05.2008)
 -------------------------
-- Initial release
+* Initial release

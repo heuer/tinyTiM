@@ -43,7 +43,6 @@ import org.tinytim.IConstruct;
 import org.tinytim.IDatatypeAwareConstruct;
 import org.tinytim.IReifiable;
 import org.tinytim.ITyped;
-import org.tinytim.TopicImpl;
 import org.tinytim.TopicMapImpl;
 import org.tinytim.index.ITypeInstanceIndex;
 import org.tinytim.voc.TMDM;
@@ -80,7 +79,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * </p>
  * <p>
  * <em>CAUTION</em>: This class implements the 
- * <a href="http://www.isotopicmaps.org/cxtm/2008-04-14/">CXTM draft dtd. 2008-04-14</a>,
+ * <a href="http://www.isotopicmaps.org/cxtm/">CXTM draft dtd. 2008-05-15</a>,
  * the output may change in the future.
  * </p>
  * <p>
@@ -100,9 +99,6 @@ public final class Canonicalizer {
     private static final String _XSD_ANY_URI = "http://www.w3.org/2001/XMLSchema#anyURI";
 
     private static final AssociationRole[] _EMPTY_ROLES = new AssociationRole[0];
-    private static final Occurrence[] _EMPTY_OCCS = new Occurrence[0];
-    private static final TopicName[] _EMPTY_NAMES = new TopicName[0];
-    private static final Variant[] _EMPTY_VARIANTS = new Variant[0];
 
     private Topic _type;
     private Topic _instance;
@@ -124,9 +120,6 @@ public final class Canonicalizer {
     private Comparator<Locator> _locComparator;
     private Comparator<Set<Topic>> _scopeComparator;
 
-    private Map<Topic, TopicName[]> _topic2Names;
-    private Map<Topic, Occurrence[]> _topic2Occs;
-    private Map<TopicName, Variant[]> _name2Variants;
     private Map<Association, AssociationRole[]> _assoc2Roles;
 
     /**
@@ -173,9 +166,6 @@ public final class Canonicalizer {
         _locator2Norm = new HashMap<String, String>();
         _assoc2Roles = new IdentityHashMap<Association, AssociationRole[]>();
         _topic2Roles = new IdentityHashMap<Topic, List<AssociationRole>>();
-        _topic2Occs = new IdentityHashMap<Topic, Occurrence[]>();
-        _topic2Names = new IdentityHashMap<Topic, TopicName[]>();
-        _name2Variants = new IdentityHashMap<TopicName, Variant[]>();
         ITypeInstanceIndex typeInstanceIndex = ((TopicMapImpl) topicMap).getIndexManager().getTypeInstanceIndex();
         if (!typeInstanceIndex.isAutoUpdated()) {
             typeInstanceIndex.reindex();
@@ -204,9 +194,6 @@ public final class Canonicalizer {
         _locator2Norm = null;
         _assoc2Roles = null;
         _topic2Roles = null;
-        _topic2Occs = null;
-        _topic2Names = null;
-        _name2Variants = null;
     }
 
     /**
@@ -301,28 +288,6 @@ public final class Canonicalizer {
         for (int i=0; i < topics.length; i++) {
             topic = topics[i];
             _construct2Id.put(topic, new Integer(i+1));
-            Set<Occurrence> occs_ = topic.getOccurrences();
-            Occurrence[] occs = occs_.toArray(new Occurrence[occs_.size()]);
-            Arrays.sort(occs, _occComparator);
-            _topic2Occs.put(topic, occs);
-            for (int j=0; j < occs.length; j++) {
-                _construct2Id.put(occs[j], new Integer(j+1));
-            }
-            Set<TopicName> names_ = topic.getTopicNames();
-            TopicName[] names = names_.toArray(new TopicName[names_.size()]);
-            Arrays.sort(names, _nameComparator);
-            _topic2Names.put(topic, names);
-            for (int j=0; j < names.length; j++) {
-                TopicName name = names[j];
-                _construct2Id.put(name, new Integer(j+1));
-                Set<Variant> variants_ = name.getVariants();
-                Variant[] variants = variants_.toArray(new Variant[variants_.size()]);
-                Arrays.sort(variants, _variantComparator);
-                _name2Variants.put(name, variants);
-                for (int k=0; k < variants.length; k++) {
-                    _construct2Id.put(variants[k], new Integer(k+1));
-                }
-            }
         }
         Arrays.sort(assocs, _assocComparator);
         Association assoc = null;
@@ -356,9 +321,12 @@ public final class Canonicalizer {
      * @param topic The topic to retrieve the names from.
      * @return A (maybe empty) sorted array of names.
      */
+    @SuppressWarnings("unchecked")
     private TopicName[] _getNames(Topic topic) {
-        TopicName[] names = _topic2Names.get(topic);
-        return names != null ? names : _EMPTY_NAMES;
+        Set<TopicName> names_ = topic.getTopicNames();
+        TopicName[] names = names_.toArray(new TopicName[names_.size()]);
+        Arrays.sort(names, _nameComparator);
+        return names;
     }
 
     /**
@@ -367,9 +335,12 @@ public final class Canonicalizer {
      * @param name The name to retrieve the variants from.
      * @return A (maybe empty) sorted array of variants.
      */
+    @SuppressWarnings("unchecked")
     private Variant[] _getVariants(TopicName name) {
-        Variant[] variants = _name2Variants.get(name);
-        return variants != null ? variants : _EMPTY_VARIANTS;
+        Set<Variant> variants_ = name.getVariants();
+        Variant[] variants = variants_.toArray(new Variant[variants_.size()]);
+        Arrays.sort(variants, _variantComparator);
+        return variants;
     }
 
     /**
@@ -378,9 +349,12 @@ public final class Canonicalizer {
      * @param topic The topic to retrieve the occurrences from.
      * @return A (maybe emtpy) sorted array of occurrences.
      */
+    @SuppressWarnings("unchecked")
     private Occurrence[] _getOccurrences(Topic topic) {
-        Occurrence[] occs = _topic2Occs.get(topic);
-        return occs != null ? occs : _EMPTY_OCCS;
+        Set<Occurrence> occs_ = topic.getOccurrences();
+        Occurrence[] occs = occs_.toArray(new Occurrence[occs_.size()]);
+        Arrays.sort(occs, _occComparator);
+        return occs;
     }
 
     /**
@@ -393,8 +367,8 @@ public final class Canonicalizer {
      * @param tmo The Topic Maps construct to return the index of.
      * @return The index of the Topic Maps construct.
      */
-    private String _indexOf(TopicMapObject tmo) {
-        return _construct2Id.get(tmo).toString();
+    private int _indexOf(TopicMapObject tmo) {
+        return _construct2Id.get(tmo).intValue();
     }
 
     /**
@@ -406,18 +380,19 @@ public final class Canonicalizer {
     @SuppressWarnings("unchecked")
     private void _writeTopic(Topic topic) throws IOException {
         AttributesImpl attrs = new AttributesImpl();
-        _addReified(attrs, topic);
-        attrs.addAttribute("", "number", null, null, _indexOf(topic));
+        attrs.addAttribute("", "number", null, null, "" +_indexOf(topic));
         _out.startElement("topic", attrs);
         _out.newline();
         _writeLocatorSet("subjectIdentifiers", topic.getSubjectIdentifiers());
         _writeLocatorSet("subjectLocators", topic.getSubjectLocators());
         _writeItemIdentifiers(topic);
-        for (TopicName name: _getNames(topic)) {
-            _writeName(name);
+        TopicName[] names = _getNames(topic);
+        for (int i=0; i < names.length; i++) {
+            _writeName(names[i], i+1);
         }
-        for (Occurrence occ: _getOccurrences(topic)) {
-            _writeOccurrence(occ);
+        Occurrence[] occs = _getOccurrences(topic);
+        for (int i=0; i < occs.length; i++) {
+            _writeOccurrence(occs[i], i+1);
         }
         Set<AssociationRole> roles_ = new HashSet<AssociationRole>(topic.getRolesPlayed());
         List<AssociationRole> alienRoles = _topic2Roles.get(topic);
@@ -452,11 +427,11 @@ public final class Canonicalizer {
      */
     @SuppressWarnings("unchecked")
     private void _writeAssociation(Association assoc) throws IOException {
-        _out.startElement("association", _attributes(assoc));
+        _out.startElement("association", _attributes(assoc, _indexOf(assoc)));
         _out.newline();
         _writeType((ITyped) assoc);
         for (AssociationRole role: _getRoles(assoc)) {
-            _out.startElement("role", _attributes(role));
+            _out.startElement("role", _attributes(role, _indexOf(role)));
             _out.newline();
             _out.startElement("player", _topicRef(role.getPlayer()));
             _out.endElement("player");
@@ -477,8 +452,8 @@ public final class Canonicalizer {
      * @param occ The occurrence to serialize.
      * @throws IOException If an error occurs.
      */
-    private void _writeOccurrence(Occurrence occ) throws IOException {
-        _out.startElement("occurrence", _attributes(occ));
+    private void _writeOccurrence(Occurrence occ, int pos) throws IOException {
+        _out.startElement("occurrence", _attributes(occ, pos));
         _out.newline();
         _writeDatatyped((IDatatypeAwareConstruct) occ);
         _writeType((ITyped) occ);
@@ -497,6 +472,7 @@ public final class Canonicalizer {
     private void _writeDatatyped(IDatatypeAwareConstruct obj) throws IOException {
         String value = obj.getValue2();
         String datatype = obj.getDatatype().getReference();
+        //TODO: Handle xsd:decimal, xsd:integer, xsd:date, xsd:dateTime xsd:anyType(?!?)
         if (_XSD_ANY_URI.equals(datatype)) {
             value = _normalizeLocator(value);
         }
@@ -516,8 +492,8 @@ public final class Canonicalizer {
      * @param name The name to serialize.
      * @throws IOException If an error occurs.
      */
-    private void _writeName(TopicName name) throws IOException {
-        _out.startElement("topicName", _attributes(name));
+    private void _writeName(TopicName name, int pos) throws IOException {
+        _out.startElement("name", _attributes(name, pos));
         _out.newline();
         _out.startElement("value");
         _out.characters(name.getValue());
@@ -525,8 +501,11 @@ public final class Canonicalizer {
         _out.newline();
         _writeType((ITyped) name);
         _writeScope(name);
-        for (Variant variant: _getVariants(name)) {
-            _out.startElement("variant", _attributes(variant));
+        Variant[] variants = _getVariants(name);
+        Variant variant = null;
+        for (int i=0; i<variants.length; i++) {
+            variant = variants[i];
+            _out.startElement("variant", _attributes(variant, i+1));
             _out.newline();
             _writeDatatyped((IDatatypeAwareConstruct) variant);
             _writeScope(variant);
@@ -535,7 +514,7 @@ public final class Canonicalizer {
             _out.newline();
         }
         _writeItemIdentifiers(name);
-        _out.endElement("topicName");
+        _out.endElement("name");
         _out.newline();
     }
 
@@ -626,6 +605,7 @@ public final class Canonicalizer {
         Locator[] locs = locators.toArray(new Locator[locators.size()]);
         Arrays.sort(locs, _locComparator);
         _out.startElement(localName);
+        _out.newline();
         for (int i=0; i < locs.length; i++) {
             _writeLocator(locs[i]);
         }
@@ -645,7 +625,7 @@ public final class Canonicalizer {
             return CXTMWriter.EMPTY_ATTRS;
         }
         AttributesImpl attrs = new AttributesImpl();
-        attrs.addAttribute("", "topicref", null, null, _indexOf(topic));
+        attrs.addAttribute("", "topicref", null, null, ""+_indexOf(topic));
         return attrs;
     }
 
@@ -657,10 +637,10 @@ public final class Canonicalizer {
      * @return Attributes which contain a reference to the reifier (if any) and
      *          the number of the provided Topic Maps construct.
      */
-    private Attributes _attributes(TopicMapObject reifiable) {
+    private Attributes _attributes(TopicMapObject reifiable, int i) {
         AttributesImpl attrs = new AttributesImpl();
         _addReifier(attrs, (IReifiable)reifiable);
-        attrs.addAttribute("", "number", null, null, _indexOf(reifiable));
+        attrs.addAttribute("", "number", null, null, "" + i);
         return attrs;
     }
 
@@ -675,62 +655,8 @@ public final class Canonicalizer {
     private void _addReifier(AttributesImpl attrs, IReifiable reifiable) {
         Topic reifier = reifiable.getReifier();
         if (reifier != null) {
-            attrs.addAttribute("", "reifier", null, null, _indexOf(reifier));
+            attrs.addAttribute("", "reifier", null, null, "" + _indexOf(reifier));
         }
-    }
-
-    /**
-     * Adds a reference to the Topic Maps construct which is reified by the
-     * provided topic.
-     * 
-     * If the topic reifies no Topic Maps construct, the attributes are not
-     * modified.
-     *
-     * @param attrs The attributes to add the reference to.
-     * @param topic The topic.
-     */
-    private void _addReified(AttributesImpl attrs, Topic topic) {
-        if (topic instanceof TypeInstanceTopic) {
-            return;
-        }
-        IReifiable reifiable = ((TopicImpl) topic).getReifiedConstruct();
-        if (reifiable == null) {
-            return;
-        }
-        StringBuilder sb = new StringBuilder();
-        if (reifiable instanceof TopicMap) {
-            sb.append("topicMap");
-        }
-        else if (reifiable instanceof Association) {
-            sb.append("association.")
-                .append(_indexOf(reifiable));
-        }
-        else if (reifiable instanceof AssociationRole) {
-            sb.append("association.")
-                .append(_indexOf(reifiable.getParent()))
-                .append(".role.")
-                .append(_indexOf(reifiable));
-        }
-        else {
-            sb.append("topic.");
-            final IConstruct parent = reifiable.getParent();
-            if (reifiable instanceof Occurrence) {
-                sb.append(_indexOf(parent))
-                    .append(".occurrence.");
-            }
-            else if (reifiable instanceof TopicName) {
-                sb.append(_indexOf(parent))
-                    .append(".name.");
-            }
-            else if (reifiable instanceof Variant) {
-                sb.append(_indexOf(parent.getParent()))
-                    .append(".name.")
-                    .append(_indexOf(parent))
-                    .append(".variant.");
-            }
-            sb.append(_indexOf(reifiable));
-        }
-        attrs.addAttribute("", "reifier", null, null, sb.toString());
     }
 
     /**
@@ -965,6 +891,9 @@ public final class Canonicalizer {
     private final class RoleComparator extends RoleIgnoreParentComparator {
 
         public int compare(AssociationRole o1, AssociationRole o2) {
+            if (o1 == o2) {
+                return 0;
+            }
             int res = super.compare(o1, o2);
             if (res == 0) {
                 res = _assocComparator.compare(o1.getAssociation(), o2.getAssociation());
