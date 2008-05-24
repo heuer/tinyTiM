@@ -85,8 +85,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * <p>
  * The canonicalizer IS NOT a generic TMAPI-compatible implementation. It 
  * requires tinyTiM. The canonicalizer requires that the property 
- * {@link org.tinytim.Property#XTM10_REIFICATION} is set to <tt>false</tt> and
- * that the property {@link org.tinytim.Property#INHERIT_NAME_SCOPE} is enabled
+ * {@link org.tinytim.Property#INHERIT_NAME_SCOPE} is enabled
  * (set to <tt>true</tt>).
  * </p>
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
