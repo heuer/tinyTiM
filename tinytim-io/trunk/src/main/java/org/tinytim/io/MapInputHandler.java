@@ -44,6 +44,7 @@ import org.tmapi.core.Variant;
 import com.semagia.mio.IMapHandler;
 import com.semagia.mio.IRef;
 import com.semagia.mio.MIOException;
+import com.semagia.mio.voc.XSD;
 
 /**
  * {@link com.semagia.mio.IMapHandler} implementation.
@@ -58,14 +59,10 @@ public class MapInputHandler implements IMapHandler {
         SCOPE, THEME, REIFIER, PLAYER, ISA, TYPE;
     }
 
-    private static final String _XSD_STRING = "http://www.w3.org/2001/XMLSchema#string";
-    private static final String _XSD_ANY_URI = "http://www.w3.org/2001/XMLSchema#anyURI";
-
     private static final Logger LOG = Logger.getLogger(MapInputHandler.class.getName());
 
     private TopicMapImpl _tm;
-    private State[] _stateStack;
-    private int _stackPointer;
+    private List<State> _stateStack;
     private List<TopicMapObject> _constructStack;
 
     public MapInputHandler() {
@@ -93,8 +90,7 @@ public class MapInputHandler implements IMapHandler {
      */
     public void startTopicMap() throws MIOException {
         _constructStack = new ArrayList<TopicMapObject>();
-        _stateStack = new State[15];
-        _stackPointer = -1;
+        _stateStack = new ArrayList<State>();
         _enterState(State.INITIAL, _tm);
     }
 
@@ -374,8 +370,8 @@ public class MapInputHandler implements IMapHandler {
      * @see com.semagia.mio.IMapHandler#value(java.lang.String, java.lang.String)
      */
     public void value(String value, String datatype) throws MIOException {
-        boolean isLocator = _XSD_ANY_URI.equals(datatype);
-        if (!isLocator && !_XSD_STRING.equals(datatype)) {
+        boolean isLocator = XSD.ANY_URI.equals(datatype);
+        if (!isLocator && !XSD.STRING.equals(datatype)) {
             LOG.warning("The datatype '" + datatype + "' was converted into xsd:string");
         }
         if (_state() == State.OCCURRENCE) {
@@ -405,7 +401,7 @@ public class MapInputHandler implements IMapHandler {
      * @param state The state to push ontop of the state stack.
      */
     private void _enterState(State state) {
-        _stateStack[++_stackPointer] = state;
+        _stateStack.add(state);
     }
 
     /**
@@ -427,10 +423,10 @@ public class MapInputHandler implements IMapHandler {
      * @throws MIOException If the state is not equals to the current state.
      */
     private void _leaveState(State state) throws MIOException {
-        if (!(state == _stateStack[_stackPointer])) {
-            _reportError("Unexpected state: " + _stateStack[_stackPointer] + ", expected: " + state);
+        State current = _stateStack.remove(_stateStack.size()-1);
+        if (state != current) {
+            _reportError("Unexpected state: " + current + ", expected: " + state);
         }
-        --_stackPointer;
     }
 
     /**
@@ -469,7 +465,7 @@ public class MapInputHandler implements IMapHandler {
      * @return The current state.
      */
     private State _state() {
-        return _stateStack[_stackPointer];
+        return _stateStack.get(_stateStack.size()-1);
     }
 
     /**

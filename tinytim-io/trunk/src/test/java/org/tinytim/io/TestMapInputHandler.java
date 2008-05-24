@@ -75,6 +75,27 @@ public class TestMapInputHandler extends TestCase {
     }
 
     /**
+     * Tests reifying a topic map.
+     */
+    public void testTMReifier() throws Exception {
+        String itemIdent = "http://sf.net/projects/tinytim/test#1";
+        assertEquals(0, _tm.getTopics().size());
+        assertEquals(0, _tm.getAssociations().size());
+        _handler.startTopicMap();
+        _handler.startReifier();
+        _handler.startTopic(Ref.createItemIdentifier(itemIdent));
+        _handler.endTopic();
+        _handler.endReifier();
+        _handler.endTopicMap();
+        assertEquals(1, _tm.getTopics().size());
+        assertEquals(0, _tm.getAssociations().size());
+        Topic topic = (Topic) _tm.getObjectByItemIdentifier(_tm.createLocator(itemIdent));
+        assertNotNull(topic);
+        assertNotNull(_tm.getReifier());
+        assertEquals(topic, _tm.getReifier());
+    }
+
+    /**
      * Tests topic creation with an item identifier.
      */
     public void testTopicIdentityItemIdentifier() throws Exception {
