@@ -436,6 +436,7 @@ public final class Canonicalizer {
             _out.endElement("player");
             _out.newline();
             _writeType((ITyped) role);
+            _writeItemIdentifiers(role);
             _out.endElement("role");
             _out.newline();
         }
