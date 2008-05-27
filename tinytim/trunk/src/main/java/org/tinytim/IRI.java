@@ -20,9 +20,12 @@
  */
 package org.tinytim;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLDecoder;
 
 import org.tmapi.core.Locator;
+import org.tmapi.core.TMAPIRuntimeException;
 
 /**
  * Immutable representation of an IRI.
@@ -33,13 +36,16 @@ import org.tmapi.core.Locator;
 public final class IRI implements Locator {
 
     private final URI _uri;
+    private final String _reference;
 
     public IRI(String reference) {
-        this(URI.create(reference));
-    }
-
-    private IRI(URI uri) {
-        _uri = uri;
+        try {
+            _reference = URLDecoder.decode(reference, "utf-8");
+        }
+        catch (UnsupportedEncodingException ex) {
+            throw new TMAPIRuntimeException(ex);
+        }
+        _uri = URI.create(_reference.replace(" ", "%20"));
     }
 
     /* (non-Javadoc)
@@ -53,14 +59,14 @@ public final class IRI implements Locator {
      * @see org.tmapi.core.Locator#getReference()
      */
     public String getReference() {
-        return _uri.toString();
+        return _reference;
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.Locator#resolveRelative(java.lang.String)
      */
     public Locator resolveRelative(String reference) {
-        return new IRI(_uri.resolve(reference));
+        return new IRI(_uri.resolve(reference).toString());
     }
 
     /* (non-Javadoc)
