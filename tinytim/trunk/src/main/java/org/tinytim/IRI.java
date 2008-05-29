@@ -48,6 +48,16 @@ public final class IRI implements Locator {
         _uri = URI.create(_reference.replace(" ", "%20"));
     }
 
+    private IRI(URI uri) {
+        try {
+            _reference = URLDecoder.decode(uri.toString(), "utf-8");
+        }
+        catch (UnsupportedEncodingException ex) {
+            throw new TMAPIRuntimeException(ex);
+        }
+        _uri = uri;
+    }
+
     /* (non-Javadoc)
      * @see org.tmapi.core.Locator#getNotation()
      */
@@ -66,7 +76,7 @@ public final class IRI implements Locator {
      * @see org.tmapi.core.Locator#resolveRelative(java.lang.String)
      */
     public Locator resolveRelative(String reference) {
-        return new IRI(_uri.resolve(reference).toString());
+        return new IRI(_uri.resolve(reference));
     }
 
     /* (non-Javadoc)
@@ -81,7 +91,7 @@ public final class IRI implements Locator {
      */
     @Override
     public boolean equals(Object obj) {
-        return this == obj || (obj instanceof IRI && _uri.equals(((IRI) obj)._uri));
+        return this == obj || (obj instanceof IRI && _reference.equals(((IRI) obj)._reference));
     }
 
     /* (non-Javadoc)
@@ -89,7 +99,7 @@ public final class IRI implements Locator {
      */
     @Override
     public int hashCode() {
-        return _uri.hashCode();
+        return _reference.hashCode();
     }
 
     /* (non-Javadoc)
