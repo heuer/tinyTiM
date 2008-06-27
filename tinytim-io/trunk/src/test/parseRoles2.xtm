@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<topicMap xmlns="http://www.topicmaps.org/xtm/1.0/">
+   <topic id="picture">
+        <baseName>
+            <baseNameString>a picture</baseNameString>
+        </baseName>    
+    </topic>
+
+   <topic id="person">
+        <baseName>
+            <baseNameString>a person</baseNameString>
+        </baseName>    
+    </topic>
+    
+    <topic id="group">
+        <baseName>
+            <baseNameString>a person</baseNameString>
+        </baseName>    
+    </topic>
+
+   <topic id="item">
+        <baseName>
+            <baseNameString>an item</baseNameString>
+        </baseName>    
+    </topic>
+
+   <topic id="action">
+        <baseName>
+            <baseNameString>an action</baseNameString>
+        </baseName>    
+    </topic>
+
+   <topic id="place">
+        <baseName>
+            <baseNameString>a place</baseNameString>
+        </baseName>    
+    </topic>    
+    
+   <topic id="event">
+        <baseName>
+            <baseNameString>an event</baseNameString>
+        </baseName>    
+    </topic>    
+    
+<!-- Association standards -->
+
+    <topic id="isgroup">
+        <baseName>
+            <baseNameString>some persons and a group</baseNameString>
+        </baseName>    
+    </topic>
+    
+   <topic id="personinaction">
+        <baseName>
+            <baseNameString>person in an action</baseNameString>
+        </baseName>    
+    </topic>
+    
+   <topic id="where">
+        <baseName>
+            <baseNameString>something is somewhere</baseNameString>
+        </baseName>    
+    </topic>    
+
+   <topic id="ispartof">
+        <baseName>
+            <baseNameString>something belongs to an event</baseNameString>
+        </baseName>    
+    </topic>    
+
+
+  <topic id="1073409678563">
+    <instanceOf>
+      <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#picture"></topicRef>
+    </instanceOf>
+    <subjectIdentity>
+      <resourceRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.ivs.tu-berlin.de/Lischke/bilderbuch/1mai/images/Foto(03).jpg"></resourceRef>
+    </subjectIdentity>
+  </topic>
+  <topic id="1073409692594">
+    <instanceOf>
+      <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#person"></topicRef>
+    </instanceOf>
+    <baseName id="1073409692595">
+      <baseNameString>Joachim Fuchs</baseNameString>
+    </baseName>
+  </topic>
+
+  <association id="1073409717985">
+    <instanceOf>
+      <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#personinaction"></topicRef>
+    </instanceOf>
+    <member id="1073409717986">
+      <roleSpec>
+        <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#picture"></topicRef>
+      </roleSpec>
+      <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#1073409678563"></topicRef>
+    </member>
+    <member id="1073409717987">
+      <roleSpec>
+        <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#person"></topicRef>
+      </roleSpec>
+      <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#1073409692594"></topicRef>
+    </member>
+  </association>
+</topicMap>
