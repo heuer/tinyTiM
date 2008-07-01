@@ -18,7 +18,7 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.io;
+package org.tinytim.mio;
 
 import java.io.File;
 import java.io.FileInputStream;
