@@ -85,7 +85,8 @@ import org.xml.sax.helpers.AttributesImpl;
  * <p>
  * The canonicalizer IS NOT a generic TMAPI-compatible implementation. It 
  * requires tinyTiM. The canonicalizer requires that the property 
- * {@link org.tinytim.Property#INHERIT_NAME_SCOPE} is enabled
+ * {@link org.tinytim.Property#XTM10_REIFICATION} is set to <tt>false</tt> and
+ * that the property {@link org.tinytim.Property#INHERIT_NAME_SCOPE} is enabled
  * (set to <tt>true</tt>).
  * </p>
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
@@ -286,19 +287,19 @@ public final class Canonicalizer {
         Topic topic = null;
         for (int i=0; i < topics.length; i++) {
             topic = topics[i];
-            _construct2Id.put(topic, new Integer(i+1));
+            _construct2Id.put(topic, Integer.valueOf(i+1));
         }
         Arrays.sort(assocs, _assocComparator);
         Association assoc = null;
         for (int i=0; i < assocs.length; i++) {
             assoc = assocs[i];
-            _construct2Id.put(assoc, new Integer(i+1));
+            _construct2Id.put(assoc, Integer.valueOf(i+1));
             Set<AssociationRole> roles_ = assoc.getAssociationRoles();
             AssociationRole[] roles = roles_.toArray(new AssociationRole[roles_.size()]);
             Arrays.sort(roles, _roleComparator);
             _assoc2Roles.put(assoc, roles);
             for (int j=0; j < roles.length; j++) {
-                _construct2Id.put(roles[j], new Integer(j+1));
+                _construct2Id.put(roles[j], Integer.valueOf(j+1));
             }
         }
     }
