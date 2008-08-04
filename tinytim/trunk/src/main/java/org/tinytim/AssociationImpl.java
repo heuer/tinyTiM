@@ -39,7 +39,6 @@ public final class AssociationImpl extends Scoped implements Association,
         IReifiable, ITyped, IScoped {
 
     private Set<AssociationRole> _roles;
-    private Topic _type;
 
     AssociationImpl(TopicMapImpl topicMap) {
         super(topicMap, null, null);
@@ -99,24 +98,6 @@ public final class AssociationImpl extends Scoped implements Association,
      */
     public Set<AssociationRole> getAssociationRoles() {
         return Collections.unmodifiableSet(_roles);
-    }
-
-    /* (non-Javadoc)
-     * @see org.tmapi.core.Association#getType()
-     */
-    public Topic getType() {
-        return _type;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tmapi.core.Association#setType(org.tmapi.core.Topic)
-     */
-    public void setType(Topic type) {
-        if (_type == type) {
-            return;
-        }
-        _fireEvent(Event.SET_TYPE, _type, type);
-        _type = type;
     }
 
     /* (non-Javadoc)
