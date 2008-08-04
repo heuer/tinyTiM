@@ -38,29 +38,24 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.tinytim.DuplicateRemovalUtils;
-import org.tinytim.IConstruct;
-import org.tinytim.IDatatypeAwareConstruct;
-import org.tinytim.IReifiable;
-import org.tinytim.ITyped;
-import org.tinytim.TopicMapImpl;
-import org.tinytim.index.ITypeInstanceIndex;
+import org.tinytim.core.DuplicateRemovalUtils;
+import org.tinytim.core.TopicMapImpl;
 import org.tinytim.voc.TMDM;
 import org.tmapi.core.Association;
-import org.tmapi.core.AssociationRole;
-import org.tmapi.core.DuplicateSourceLocatorException;
+import org.tmapi.core.Construct;
+import org.tmapi.core.DatatypeAware;
 import org.tmapi.core.Locator;
-import org.tmapi.core.MergeException;
-import org.tmapi.core.ModelConstraintException;
+import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
-import org.tmapi.core.ScopedObject;
-import org.tmapi.core.TMAPIException;
+import org.tmapi.core.Reifiable;
+import org.tmapi.core.Role;
+import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicInUseException;
 import org.tmapi.core.TopicMap;
-import org.tmapi.core.TopicMapObject;
-import org.tmapi.core.TopicName;
+import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
+import org.tmapi.index.TypeInstanceIndex;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
@@ -84,10 +79,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * </p>
  * <p>
  * The canonicalizer IS NOT a generic TMAPI-compatible implementation. It 
- * requires tinyTiM. The canonicalizer requires that the property 
- * {@link org.tinytim.Property#XTM10_REIFICATION} is set to <tt>false</tt> and
- * that the property {@link org.tinytim.Property#INHERIT_NAME_SCOPE} is enabled
- * (set to <tt>true</tt>).
+ * requires tinyTiM.
  * </p>
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -98,7 +90,7 @@ public final class Canonicalizer {
 
     private static final String _XSD_ANY_URI = "http://www.w3.org/2001/XMLSchema#anyURI";
 
-    private static final AssociationRole[] _EMPTY_ROLES = new AssociationRole[0];
+    private static final Role[] _EMPTY_ROLES = new Role[0];
 
     private Topic _type;
     private Topic _instance;
@@ -106,21 +98,21 @@ public final class Canonicalizer {
 
     private CXTMWriter _out;
     private final String _normBase;
-    private Map<TopicMapObject, Integer> _construct2Id;
-    private Map<Topic, List<AssociationRole>> _topic2Roles;
+    private Map<Construct, Integer> _construct2Id;
+    private Map<Topic, List<Role>> _topic2Roles;
     private Map<String, String> _locator2Norm;
 
     private Comparator<Topic> _topicComparator;
     private Comparator<Association> _assocComparator;
-    private Comparator<AssociationRole> _roleComparator;
+    private Comparator<Role> _roleComparator;
     private Comparator<Occurrence> _occComparator;
-    private Comparator<TopicName> _nameComparator;
+    private Comparator<Name> _nameComparator;
     private Comparator<Variant> _variantComparator;
     private Comparator<Set<Locator>> _locSetComparator;
     private Comparator<Locator> _locComparator;
     private Comparator<Set<Topic>> _scopeComparator;
 
-    private Map<Association, AssociationRole[]> _assoc2Roles;
+    private Map<Association, Role[]> _assoc2Roles;
 
     /**
      * Creates a canonicalizer.
@@ -162,11 +154,11 @@ public final class Canonicalizer {
      */
     public void write(TopicMap topicMap) throws IOException {
         DuplicateRemovalUtils.removeDuplicates(topicMap);
-        _construct2Id = new IdentityHashMap<TopicMapObject, Integer>();
+        _construct2Id = new IdentityHashMap<Construct, Integer>();
         _locator2Norm = new HashMap<String, String>();
-        _assoc2Roles = new IdentityHashMap<Association, AssociationRole[]>();
-        _topic2Roles = new IdentityHashMap<Topic, List<AssociationRole>>();
-        ITypeInstanceIndex typeInstanceIndex = ((TopicMapImpl) topicMap).getIndexManager().getTypeInstanceIndex();
+        _assoc2Roles = new IdentityHashMap<Association, Role[]>();
+        _topic2Roles = new IdentityHashMap<Topic, List<Role>>();
+        TypeInstanceIndex typeInstanceIndex = ((TopicMapImpl) topicMap).getIndexManager().getTypeInstanceIndex();
         if (!typeInstanceIndex.isAutoUpdated()) {
             typeInstanceIndex.reindex();
         }
@@ -176,7 +168,7 @@ public final class Canonicalizer {
         _createIndex(topics, assocs);
         _out.startDocument();
         AttributesImpl attrs = new AttributesImpl();
-        _addReifier(attrs, (IReifiable)topicMap);
+        _addReifier(attrs, topicMap);
         _out.startElement("topicMap", attrs);
         _out.newline();
         _writeItemIdentifiers(topicMap);
@@ -208,8 +200,7 @@ public final class Canonicalizer {
      * @param idx A (upto date) type instance index.
      * @return All topics which must be included into the output.
      */
-    @SuppressWarnings("unchecked")
-    private Topic[] _fetchTopics(TopicMap topicMap, ITypeInstanceIndex idx) {
+    private Topic[] _fetchTopics(TopicMap topicMap, TypeInstanceIndex idx) {
         Collection<Topic> types = idx.getTopicTypes();
         if (types.isEmpty()) {
             Set<Topic> topics = topicMap.getTopics();
@@ -255,8 +246,7 @@ public final class Canonicalizer {
      * @param idx A (upto date) type instance index.
      * @return An unsorted array of associations which must be included into the output.
      */
-    @SuppressWarnings("unchecked")
-    private Association[] _fetchAssociations(TopicMap tm, ITypeInstanceIndex idx) {
+    private Association[] _fetchAssociations(TopicMap tm, TypeInstanceIndex idx) {
         Collection<Topic> types = idx.getTopicTypes();
         if (types.isEmpty()) {
             Set<Association> assocs = tm.getAssociations();
@@ -281,7 +271,6 @@ public final class Canonicalizer {
      * @param topics An array of topics.
      * @param assocs An array of associations.
      */
-    @SuppressWarnings("unchecked")
     private void _createIndex(Topic[] topics, Association[] assocs) {
         Arrays.sort(topics, _topicComparator);
         Topic topic = null;
@@ -294,8 +283,8 @@ public final class Canonicalizer {
         for (int i=0; i < assocs.length; i++) {
             assoc = assocs[i];
             _construct2Id.put(assoc, Integer.valueOf(i+1));
-            Set<AssociationRole> roles_ = assoc.getAssociationRoles();
-            AssociationRole[] roles = roles_.toArray(new AssociationRole[roles_.size()]);
+            Set<Role> roles_ = assoc.getRoles();
+            Role[] roles = roles_.toArray(new Role[roles_.size()]);
             Arrays.sort(roles, _roleComparator);
             _assoc2Roles.put(assoc, roles);
             for (int j=0; j < roles.length; j++) {
@@ -310,8 +299,8 @@ public final class Canonicalizer {
      * @param assoc The association to retrieve the roles from.
      * @return A (maybe empty) sorted array of roles.
      */
-    private AssociationRole[] _getRoles(Association assoc) {
-        AssociationRole[] roles = _assoc2Roles.get(assoc);
+    private Role[] _getRoles(Association assoc) {
+        Role[] roles = _assoc2Roles.get(assoc);
         return roles != null ? roles : _EMPTY_ROLES;
     }
 
@@ -321,10 +310,9 @@ public final class Canonicalizer {
      * @param topic The topic to retrieve the names from.
      * @return A (maybe empty) sorted array of names.
      */
-    @SuppressWarnings("unchecked")
-    private TopicName[] _getNames(Topic topic) {
-        Set<TopicName> names_ = topic.getTopicNames();
-        TopicName[] names = names_.toArray(new TopicName[names_.size()]);
+    private Name[] _getNames(Topic topic) {
+        Set<Name> names_ = topic.getNames();
+        Name[] names = names_.toArray(new Name[names_.size()]);
         Arrays.sort(names, _nameComparator);
         return names;
     }
@@ -335,8 +323,7 @@ public final class Canonicalizer {
      * @param name The name to retrieve the variants from.
      * @return A (maybe empty) sorted array of variants.
      */
-    @SuppressWarnings("unchecked")
-    private Variant[] _getVariants(TopicName name) {
+    private Variant[] _getVariants(Name name) {
         Set<Variant> variants_ = name.getVariants();
         Variant[] variants = variants_.toArray(new Variant[variants_.size()]);
         Arrays.sort(variants, _variantComparator);
@@ -349,7 +336,6 @@ public final class Canonicalizer {
      * @param topic The topic to retrieve the occurrences from.
      * @return A (maybe emtpy) sorted array of occurrences.
      */
-    @SuppressWarnings("unchecked")
     private Occurrence[] _getOccurrences(Topic topic) {
         Set<Occurrence> occs_ = topic.getOccurrences();
         Occurrence[] occs = occs_.toArray(new Occurrence[occs_.size()]);
@@ -367,7 +353,7 @@ public final class Canonicalizer {
      * @param tmo The Topic Maps construct to return the index of.
      * @return The index of the Topic Maps construct.
      */
-    private int _indexOf(TopicMapObject tmo) {
+    private int _indexOf(Construct tmo) {
         return _construct2Id.get(tmo).intValue();
     }
 
@@ -377,7 +363,6 @@ public final class Canonicalizer {
      * @param topic The topic to serialize.
      * @throws IOException If an error occurs.
      */
-    @SuppressWarnings("unchecked")
     private void _writeTopic(Topic topic) throws IOException {
         AttributesImpl attrs = new AttributesImpl();
         attrs.addAttribute("", "number", null, null, "" +_indexOf(topic));
@@ -386,7 +371,7 @@ public final class Canonicalizer {
         _writeLocatorSet("subjectIdentifiers", topic.getSubjectIdentifiers());
         _writeLocatorSet("subjectLocators", topic.getSubjectLocators());
         _writeItemIdentifiers(topic);
-        TopicName[] names = _getNames(topic);
+        Name[] names = _getNames(topic);
         for (int i=0; i < names.length; i++) {
             _writeName(names[i], i+1);
         }
@@ -394,18 +379,18 @@ public final class Canonicalizer {
         for (int i=0; i < occs.length; i++) {
             _writeOccurrence(occs[i], i+1);
         }
-        Set<AssociationRole> roles_ = new HashSet<AssociationRole>(topic.getRolesPlayed());
-        List<AssociationRole> alienRoles = _topic2Roles.get(topic);
+        Set<Role> roles_ = new HashSet<Role>(topic.getRolesPlayed());
+        List<Role> alienRoles = _topic2Roles.get(topic);
         if (alienRoles != null) {
             roles_.addAll(alienRoles);
         }
-        AssociationRole[] roles = roles_.toArray(new AssociationRole[roles_.size()]);
+        Role[] roles = roles_.toArray(new Role[roles_.size()]);
         Arrays.sort(roles, _roleComparator);
         AttributesImpl roleAttrs = new AttributesImpl();
         StringBuilder sb = new StringBuilder();
         for (int i=0; i < roles.length; i++) {
             sb.append("association.")
-                .append(_indexOf(roles[i].getAssociation()))
+                .append(_indexOf(roles[i].getParent()))
                 .append(".role.")
                 .append(_indexOf(roles[i]));
             roleAttrs.addAttribute("", "ref", null, null, sb.toString());
@@ -425,18 +410,17 @@ public final class Canonicalizer {
      * @param assoc The association to serialize.
      * @throws IOException If an error occurs.
      */
-    @SuppressWarnings("unchecked")
     private void _writeAssociation(Association assoc) throws IOException {
         _out.startElement("association", _attributes(assoc, _indexOf(assoc)));
         _out.newline();
-        _writeType((ITyped) assoc);
-        for (AssociationRole role: _getRoles(assoc)) {
+        _writeType(assoc);
+        for (Role role: _getRoles(assoc)) {
             _out.startElement("role", _attributes(role, _indexOf(role)));
             _out.newline();
             _out.startElement("player", _topicRef(role.getPlayer()));
             _out.endElement("player");
             _out.newline();
-            _writeType((ITyped) role);
+            _writeType(role);
             _writeItemIdentifiers(role);
             _out.endElement("role");
             _out.newline();
@@ -456,8 +440,8 @@ public final class Canonicalizer {
     private void _writeOccurrence(Occurrence occ, int pos) throws IOException {
         _out.startElement("occurrence", _attributes(occ, pos));
         _out.newline();
-        _writeDatatyped((IDatatypeAwareConstruct) occ);
-        _writeType((ITyped) occ);
+        _writeDatatyped(occ);
+        _writeType(occ);
         _writeScope(occ);
         _writeItemIdentifiers(occ);
         _out.endElement("occurrence");
@@ -470,8 +454,8 @@ public final class Canonicalizer {
      * @param obj The construct to serialize.
      * @throws IOException If an error occurs.
      */
-    private void _writeDatatyped(IDatatypeAwareConstruct obj) throws IOException {
-        String value = obj.getValue2();
+    private void _writeDatatyped(DatatypeAware obj) throws IOException {
+        String value = obj.getValue();
         String datatype = obj.getDatatype().getReference();
         //TODO: Handle xsd:decimal, xsd:integer, xsd:date, xsd:dateTime xsd:anyType(?!?)
         if (_XSD_ANY_URI.equals(datatype)) {
@@ -493,14 +477,14 @@ public final class Canonicalizer {
      * @param name The name to serialize.
      * @throws IOException If an error occurs.
      */
-    private void _writeName(TopicName name, int pos) throws IOException {
+    private void _writeName(Name name, int pos) throws IOException {
         _out.startElement("name", _attributes(name, pos));
         _out.newline();
         _out.startElement("value");
         _out.characters(name.getValue());
         _out.endElement("value");
         _out.newline();
-        _writeType((ITyped) name);
+        _writeType(name);
         _writeScope(name);
         Variant[] variants = _getVariants(name);
         Variant variant = null;
@@ -508,7 +492,7 @@ public final class Canonicalizer {
             variant = variants[i];
             _out.startElement("variant", _attributes(variant, i+1));
             _out.newline();
-            _writeDatatyped((IDatatypeAwareConstruct) variant);
+            _writeDatatyped(variant);
             _writeScope(variant);
             _writeItemIdentifiers(variant);
             _out.endElement("variant");
@@ -526,7 +510,7 @@ public final class Canonicalizer {
      *                  serialized.
      * @throws IOException If an error occurs.
      */
-    private void _writeType(ITyped typed) throws IOException {
+    private void _writeType(Typed typed) throws IOException {
         Topic type = typed.getType();
         if (type == null) {
             _reportInvalid("The type of " + typed + " is null");
@@ -544,8 +528,7 @@ public final class Canonicalizer {
      * @param scoped The scoped Topic Maps construct.
      * @throws IOException If an error occurs.
      */
-    @SuppressWarnings("unchecked")
-    private void _writeScope(ScopedObject scoped) throws IOException {
+    private void _writeScope(Scoped scoped) throws IOException {
         Set<Topic> scope = scoped.getScope();
         if (scope.isEmpty()) {
             return;
@@ -584,9 +567,8 @@ public final class Canonicalizer {
      * @param tmo The Topic Maps construct to take the item identifiers from.
      * @throws IOException If an error occurs.
      */
-    @SuppressWarnings("unchecked")
-    private void _writeItemIdentifiers(TopicMapObject tmo) throws IOException {
-        _writeLocatorSet("itemIdentifiers", tmo.getSourceLocators());
+    private void _writeItemIdentifiers(Construct tmo) throws IOException {
+        _writeLocatorSet("itemIdentifiers", tmo.getItemIdentifiers());
     }
 
     /**
@@ -638,9 +620,9 @@ public final class Canonicalizer {
      * @return Attributes which contain a reference to the reifier (if any) and
      *          the number of the provided Topic Maps construct.
      */
-    private Attributes _attributes(TopicMapObject reifiable, int i) {
+    private Attributes _attributes(Reifiable reifiable, int i) {
         AttributesImpl attrs = new AttributesImpl();
-        _addReifier(attrs, (IReifiable)reifiable);
+        _addReifier(attrs, reifiable);
         attrs.addAttribute("", "number", null, null, "" + i);
         return attrs;
     }
@@ -653,7 +635,7 @@ public final class Canonicalizer {
      * @param attrs The attributes.
      * @param reifiable The reifiable Topic Maps construct.
      */
-    private void _addReifier(AttributesImpl attrs, IReifiable reifiable) {
+    private void _addReifier(AttributesImpl attrs, Reifiable reifiable) {
         Topic reifier = reifiable.getReifier();
         if (reifier != null) {
             attrs.addAttribute("", "reifier", null, null, "" + _indexOf(reifier));
@@ -741,7 +723,6 @@ public final class Canonicalizer {
 
     private final class TopicComparator implements Comparator<Topic> {
 
-        @SuppressWarnings("unchecked")
         public int compare(Topic o1, Topic o2) {
             if (o1 == o2) {
                 return 0;
@@ -758,7 +739,7 @@ public final class Canonicalizer {
             if (res == 0) {
                 res = _locSetComparator.compare(o1.getSubjectLocators(), o2.getSubjectLocators());
                 if (res == 0) {
-                    res = _locSetComparator.compare(o1.getSourceLocators(), o2.getSourceLocators());
+                    res = _locSetComparator.compare(o1.getItemIdentifiers(), o2.getItemIdentifiers());
                 }
             }
             return res;
@@ -791,7 +772,7 @@ public final class Canonicalizer {
          *          first argument is less than, equal to, or greater than the 
          *          second.
          */
-        int compareType(ITyped o1, ITyped o2) {
+        int compareType(Typed o1, Typed o2) {
             return _topicComparator.compare(o1.getType(), o2.getType());
         }
         /**
@@ -804,8 +785,7 @@ public final class Canonicalizer {
          *          first argument is less than, equal to, or greater than the 
          *          second.
          */
-        @SuppressWarnings("unchecked")
-        int compareScope(ScopedObject o1, ScopedObject o2) {
+        int compareScope(Scoped o1, Scoped o2) {
             return _scopeComparator.compare(o1.getScope(), o2.getScope());
         }
     }
@@ -824,8 +804,8 @@ public final class Canonicalizer {
          *          first argument is less than, equal to, or greater than the 
          *          second.
          */
-        int _compareValueDatatype(IDatatypeAwareConstruct o1, IDatatypeAwareConstruct o2) {
-            int res = compareString(o1.getValue2(), o2.getValue2());
+        int _compareValueDatatype(DatatypeAware o1, DatatypeAware o2) {
+            int res = compareString(o1.getValue(), o2.getValue());
             if (res == 0) {
                 res = compareString(o1.getDatatype().getReference(), o2.getDatatype().getReference());
             }
@@ -842,20 +822,19 @@ public final class Canonicalizer {
      */
     private final class AssociationComparator extends AbstractComparator<Association> {
 
-        private Comparator<Set<AssociationRole>> _roleSetComparator;
+        private Comparator<Set<Role>> _roleSetComparator;
 
         AssociationComparator() {
             _roleSetComparator = new RoleSetComparator();
         }
 
-        @SuppressWarnings("unchecked")
         public int compare(Association o1, Association o2) {
             if (o1 == o2) {
                 return 0;
             }
-            int res = compareType((ITyped) o1, (ITyped) o2);
+            int res = compareType(o1, o2);
             if (res == 0) {
-                res = _roleSetComparator.compare(o1.getAssociationRoles(), o2.getAssociationRoles());
+                res = _roleSetComparator.compare(o1.getRoles(), o2.getRoles());
                 if (res == 0) {
                     res = compareScope(o1, o2);
                 }
@@ -869,15 +848,15 @@ public final class Canonicalizer {
      * is meant to be used for roles where the parent is known to be equal or
      * unequal.
      */
-    private class RoleIgnoreParentComparator extends AbstractComparator<AssociationRole> {
+    private class RoleIgnoreParentComparator extends AbstractComparator<Role> {
 
-        public int compare(AssociationRole o1, AssociationRole o2) {
+        public int compare(Role o1, Role o2) {
             if (o1 == o2) {
                 return 0;
             }
             int res = _topicComparator.compare(o1.getPlayer(), o2.getPlayer());
             if (res == 0) {
-                res = compareType((ITyped) o1, (ITyped) o2);
+                res = compareType(o1, o2);
             }
             return res;
         }
@@ -891,13 +870,13 @@ public final class Canonicalizer {
      */
     private final class RoleComparator extends RoleIgnoreParentComparator {
 
-        public int compare(AssociationRole o1, AssociationRole o2) {
+        public int compare(Role o1, Role o2) {
             if (o1 == o2) {
                 return 0;
             }
             int res = super.compare(o1, o2);
             if (res == 0) {
-                res = _assocComparator.compare(o1.getAssociation(), o2.getAssociation());
+                res = _assocComparator.compare(o1.getParent(), o2.getParent());
             }
             return res;
         }
@@ -917,9 +896,9 @@ public final class Canonicalizer {
             if (o1 == o2) {
                 return 0;
             }
-            int res = _compareValueDatatype((IDatatypeAwareConstruct) o1, (IDatatypeAwareConstruct) o2);
+            int res = _compareValueDatatype(o1, o2);
             if (res == 0) {
-                res = compareType((ITyped) o1, (ITyped) o2);
+                res = compareType(o1, o2);
                 if (res == 0) {
                     res = compareScope(o1, o2);
                 }
@@ -936,15 +915,15 @@ public final class Canonicalizer {
      * 3. [scope]
      * 4. [parent]
      */
-    private final class NameComparator extends AbstractComparator<TopicName> {
+    private final class NameComparator extends AbstractComparator<Name> {
 
-        public int compare(TopicName o1, TopicName o2) {
+        public int compare(Name o1, Name o2) {
             if (o1 == o2) {
                 return 0;
             }
             int res = compareString(o1.getValue(), o2.getValue());
             if (res == 0) {
-                res = compareType((ITyped) o1, (ITyped) o2);
+                res = compareType(o1, o2);
                 if (res == 0) {
                     res = compareScope(o1, o2);
                 }
@@ -966,7 +945,7 @@ public final class Canonicalizer {
             if (o1 == o2) {
                 return 0;
             }
-            int res = _compareValueDatatype((IDatatypeAwareConstruct) o1, (IDatatypeAwareConstruct) o2);
+            int res = _compareValueDatatype(o1, o2);
             if (res == 0) {
                 res = compareScope(o1, o2);
             }
@@ -1010,7 +989,7 @@ public final class Canonicalizer {
     /**
      * Compares role sets. The parent of the roles is ignored! 
      */
-    private final class RoleSetComparator extends AbstractSetComparator<AssociationRole> {
+    private final class RoleSetComparator extends AbstractSetComparator<Role> {
 
         private RoleIgnoreParentComparator _roleCmp; 
 
@@ -1019,11 +998,11 @@ public final class Canonicalizer {
         }
 
         @Override
-        int compareContent(Set<AssociationRole> o1, Set<AssociationRole> o2,
+        int compareContent(Set<Role> o1, Set<Role> o2,
                 int size) {
             int res = 0;
-            AssociationRole[] roles1 = o1.toArray(new AssociationRole[size]);
-            AssociationRole[] roles2 = o2.toArray(new AssociationRole[size]);
+            Role[] roles1 = o1.toArray(new Role[size]);
+            Role[] roles2 = o2.toArray(new Role[size]);
             Arrays.sort(roles1, _roleCmp);
             Arrays.sort(roles2, _roleCmp);
             for (int i=0; i < size && res == 0; i++) {
@@ -1093,7 +1072,6 @@ public final class Canonicalizer {
      * of a topic, as associations. 
      */
 
-    @SuppressWarnings("unchecked")
     private final class TypeInstanceTopic implements Topic {
 
         private final Set<Locator> _sids;
@@ -1106,47 +1084,58 @@ public final class Canonicalizer {
             return _sids;
         }
 
-        public void addSourceLocator(Locator arg0) throws DuplicateSourceLocatorException, MergeException { }
-        public void addSubjectIdentifier(Locator arg0) throws MergeException {}
-        public void addSubjectLocator(Locator arg0) throws MergeException, ModelConstraintException {}
+        public void addItemIdentifier(Locator arg0) { }
+        public void addSubjectIdentifier(Locator arg0) {}
+        public void addSubjectLocator(Locator arg0) {}
         public void addType(Topic arg0) {}
-        public Occurrence createOccurrence(String arg0, Topic arg1, Collection arg2) { return null; }
-        public Occurrence createOccurrence(Locator arg0, Topic arg1, Collection arg2) { return null; }
-        public TopicName createTopicName(String arg0, Collection arg1) throws MergeException { return null; }
-        public TopicName createTopicName(String arg0, Topic arg1, Collection arg2) throws UnsupportedOperationException, MergeException { return null; }
-        public Set getOccurrences() { return Collections.emptySet(); }
-        public Set getReified() { return null; }
-        public Set getRolesPlayed() { return Collections.emptySet(); }
-        public Set getSubjectLocators() { return Collections.emptySet(); }
-        public Set getTopicNames() { return Collections.emptySet(); }
-        public Set getTypes() { return null; }
-        public void mergeIn(Topic arg0) throws MergeException { }
+        public Set<Occurrence> getOccurrences() { return Collections.emptySet(); }
+        public Reifiable getReified() { return null; }
+        public Set<Role> getRolesPlayed() { return Collections.emptySet(); }
+        public Set<Locator> getSubjectLocators() { return Collections.emptySet(); }
+        public Set<Name> getNames() { return Collections.emptySet(); }
+        public Set<Topic> getTypes() { return null; }
+        public void mergeIn(Topic arg0) { }
         public void remove() throws TopicInUseException { }
         public void removeSubjectIdentifier(Locator arg0) { }
         public void removeSubjectLocator(Locator arg0) { }
         public void removeType(Topic arg0) { }
-        public String getObjectId() { return null; }
-        public Set getSourceLocators() { return Collections.emptySet(); }
+        public String getId() { return null; }
+        public Set<Locator> getItemIdentifiers() { return Collections.emptySet(); }
         public TopicMap getTopicMap() { return null; }
-        public void removeSourceLocator(Locator arg0) { }
+        public void removeItemIdentifier(Locator arg0) { }
+        public Name createName(String value, Collection<Topic> scope) { return null; }
+        public Name createName(String value, Topic... scope) {return null;}
+        public Name createName(Topic type, String value, Collection<Topic> scope) { return null; }
+        public Name createName(Topic type, String value, Topic... scope) { return null; }
+        public Occurrence createOccurrence(Topic type, Locator value, Collection<Topic> scope) { return null;}
+        public Occurrence createOccurrence(Topic type, Locator value, Topic... scope) {return null;}
+        public Occurrence createOccurrence(Topic type, String value, Collection<Topic> scope) { return null; }
+        public Occurrence createOccurrence(Topic type, String value, Locator datatype, Collection<Topic> scope) { return null; }
+        public Occurrence createOccurrence(Topic type, String value, Locator datatype, Topic... scope) { return null; }
+        public Occurrence createOccurrence(Topic type, String value, Topic... scope) { return null; }
+        public Set<Name> getNames(Topic type) { return null; }
+        public Set<Occurrence> getOccurrences(Topic type) { return null;}
+        public TopicMap getParent() { return null; }
+        public Set<Role> getRolesPlayed(Topic type, Topic assocType) { return null; }
+        public Set<Role> getRolesPlayed(Topic type) { return null; }
+        
     }
 
     /**
      * Used to represent type-instance relationships which are modelled as
      * [type] property of topics.
      */
-    @SuppressWarnings("unchecked")
-    private final class TypeInstanceAssociation implements Association, IReifiable, ITyped {
+    private final class TypeInstanceAssociation implements Association {
 
-        final Set<AssociationRole> _roles; 
+        final Set<Role> _roles; 
 
         TypeInstanceAssociation(Topic type, Topic instance) {
-            AssociationRole typeRole = new TypeInstanceRole(this, _type, type);
-            AssociationRole instanceRole = new TypeInstanceRole(this, _instance, instance);
+            Role typeRole = new TypeInstanceRole(this, _type, type);
+            Role instanceRole = new TypeInstanceRole(this, _instance, instance);
             _roles = new TypeInstanceRoleSet(typeRole, instanceRole);
         }
 
-        public Set<AssociationRole> getAssociationRoles() {
+        public Set<Role> getRoles() {
             return _roles;
         }
 
@@ -1154,30 +1143,27 @@ public final class Canonicalizer {
             return _typeInstance;
         }
 
+        public Set<Role> getRoles(Topic type) { return null; }
         public void setReifier(Topic reifier) { }
         public void addItemIdentifier(Locator itemIdentifier) { }
         public Set<Locator> getItemIdentifiers() { return Collections.emptySet(); }
-        public IConstruct getParent() { return null; }
+        public TopicMap getParent() { return null; }
         public void removeItemIdentifier(Locator itemIdentifier) { }
-        public AssociationRole createAssociationRole(Topic arg0, Topic arg1) { return null; }
+        public Role createRole(Topic arg0, Topic arg1) { return null; }
         public Topic getReifier() { return null; }
-        public void remove() throws TMAPIException {}
+        public void remove() {}
         public void setType(Topic arg0) {}
-        public void addScopingTopic(Topic arg0) {}
-        public Set getScope() { return Collections.emptySet(); }
-        public void removeScopingTopic(Topic arg0) {}
-        public void addSourceLocator(Locator arg0) throws DuplicateSourceLocatorException {}
-        public String getObjectId() { return null; }
-        public Set getSourceLocators() { return Collections.emptySet(); }
+        public void addTheme(Topic arg0) {}
+        public Set<Topic> getScope() { return Collections.emptySet(); }
+        public void removeTheme(Topic arg0) {}
+        public String getId() { return null; }
         public TopicMap getTopicMap() { return null; }
-        public void removeSourceLocator(Locator arg0) {}
     }
 
     /**
      * Immutable association role.
      */
-    @SuppressWarnings("unchecked")
-    private class TypeInstanceRole implements AssociationRole , IReifiable, ITyped {
+    private class TypeInstanceRole implements Role {
         private final Topic _type;
         private final Topic _player;
         private final Association _parent;
@@ -1186,9 +1172,9 @@ public final class Canonicalizer {
             _type = type;
             _player = player;
             _parent = parent;
-            List<AssociationRole> roles = _topic2Roles.get(player);
+            List<Role> roles = _topic2Roles.get(player);
             if (roles == null) {
-                roles = new ArrayList<AssociationRole>();
+                roles = new ArrayList<Role>();
                 _topic2Roles.put(player, roles);
             }
             roles.add(this);
@@ -1205,35 +1191,32 @@ public final class Canonicalizer {
         public void setReifier(Topic reifier) { }
         public void addItemIdentifier(Locator itemIdentifier) { }
         public Set<Locator> getItemIdentifiers() { return Collections.emptySet(); }
-        public IConstruct getParent() { return (IConstruct) _parent; }
+        public Association getParent() { return _parent; }
         public void removeItemIdentifier(Locator itemIdentifier) { }
         public Association getAssociation() { return _parent; }
         public Topic getReifier() { return null; }
-        public void remove() throws TMAPIException {}
+        public void remove() {}
         public void setPlayer(Topic arg0) {}
         public void setType(Topic arg0) {}
-        public void addSourceLocator(Locator arg0) throws DuplicateSourceLocatorException {}
-        public String getObjectId() { return null; }
-        public Set getSourceLocators() { return Collections.emptySet(); }
+        public String getId() { return null; }
         public TopicMap getTopicMap() { return null; }
-        public void removeSourceLocator(Locator arg0) {}
     }
 
     /**
      * Immutable 'set' of two roles.
      */
-    private static class TypeInstanceRoleSet extends AbstractSet<AssociationRole> {
+    private static class TypeInstanceRoleSet extends AbstractSet<Role> {
 
-        private final AssociationRole _role1;
-        private final AssociationRole _role2;
+        private final Role _role1;
+        private final Role _role2;
 
-        TypeInstanceRoleSet(AssociationRole role1, AssociationRole role2) {
+        TypeInstanceRoleSet(Role role1, Role role2) {
             _role1 = role1;
             _role2 = role2;
         }
 
         @Override
-        public Iterator<AssociationRole> iterator() {
+        public Iterator<Role> iterator() {
             return new TypeInstanceRoleSetIterator();
         }
 
@@ -1242,7 +1225,7 @@ public final class Canonicalizer {
             return 2;
         }
 
-        private class TypeInstanceRoleSetIterator implements Iterator<AssociationRole> {
+        private class TypeInstanceRoleSetIterator implements Iterator<Role> {
 
             private int _idx;
 
@@ -1250,7 +1233,7 @@ public final class Canonicalizer {
                 return _idx < 2;
             }
 
-            public AssociationRole next() {
+            public Role next() {
                 if (_idx > 1) {
                     throw new NoSuchElementException();
                 }
