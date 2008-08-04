@@ -2,7 +2,7 @@
 Changes Log
 ===========
 
-1.0.0 alpha3 (xx.xx.2008)
+1.0.0 alpha3 (08.08.2008)
 -------------------------
 * Fixed bug #1971341 (Item identifiers of roles are omitted)
 
