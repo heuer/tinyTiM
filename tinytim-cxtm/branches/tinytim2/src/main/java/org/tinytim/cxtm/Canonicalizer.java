@@ -1143,6 +1143,7 @@ public final class Canonicalizer {
             return _typeInstance;
         }
 
+        public Set<Topic> getRoleTypes() { return null; }
         public Set<Role> getRoles(Topic type) { return null; }
         public void setReifier(Topic reifier) { }
         public void addItemIdentifier(Locator itemIdentifier) { }
