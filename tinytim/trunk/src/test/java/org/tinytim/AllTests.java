@@ -45,6 +45,7 @@ public class AllTests extends TestSuite {
         suite.addTestSuite(TestItemIdentifierConstraint.class);
         suite.addTestSuite(TestReifiable.class);
         suite.addTestSuite(TestScoped.class);
+        suite.addTestSuite(TestTopic.class);
         suite.addTestSuite(TestSignatureGenerator.class);
         suite.addTest(TestTMAPICore.suite());
         suite.addTest(TestTMAPIIndex.suite());
