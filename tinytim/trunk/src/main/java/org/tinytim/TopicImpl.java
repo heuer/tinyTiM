@@ -118,7 +118,7 @@ public final class TopicImpl extends Construct implements Topic {
             return;
         }
         _fireEvent(Event.REMOVE_SLO, slo, null);
-        _sids.remove(slo);
+        _slos.remove(slo);
     }
 
     /* (non-Javadoc)
