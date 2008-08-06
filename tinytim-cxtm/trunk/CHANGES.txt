@@ -2,9 +2,11 @@
 Changes Log
 ===========
 
-1.0.0 alpha3 (08.08.2008)
--------------------------
+1.5.0 beta (08.08.2008)
+-----------------------
 * Fixed bug #1971341 (Item identifiers of roles are omitted)
+* Minor improvements
+* Aligned version number to the tinyTiM's version scheme
 
 
 1.0.0 alpha2 (16.05.2008)

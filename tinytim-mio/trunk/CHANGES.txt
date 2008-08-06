@@ -2,7 +2,12 @@
 Changes Log
 ===========
 
+1.5.0 beta (08.08.2008)
+-----------------------
+* Moved the package from ``org.tinytim.io`` to ``org.tinytim.mio``
+* Aligned version number to the tinyTiM's version scheme
+
 
 1.0.0 alpha1 (08.05.2008)
 -------------------------
-- Initial tinyTiM I/O release
+* Initial tinyTiM I/O release
