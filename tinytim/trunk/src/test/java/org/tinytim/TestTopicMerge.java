@@ -202,8 +202,9 @@ public class TestTopicMerge extends TinyTimTestCase {
         TopicName name = (TopicName) topic1.getTopicNames().iterator().next();
         Topic reifier = null;
         for (Topic topic: _tm.getTopics()) {
-            if (!topic.equals(topic1)) {
+            if (!topic.equals(topic1) && !topic.equals(type)) {
                 reifier = topic;
+                break;
             }
         }
         assertEquals(reifier, name.getReifier());
