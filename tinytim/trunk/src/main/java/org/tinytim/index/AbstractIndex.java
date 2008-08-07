@@ -18,49 +18,63 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim;
+package org.tinytim.index;
 
-import gnu.trove.THashMap;
-import gnu.trove.THashSet;
-
-import java.util.Map;
-import java.util.Set;
+import org.tinytim.utils.ICollectionFactory;
+import org.tmapi.core.TopicMap;
+import org.tmapi.index.Index;
 
 /**
- * {@link ICollectionFactory} which uses the
- * <a href="http://sourceforge.net/projects/trove4j/">Trove library </a>.
+ * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-final class TroveCollectionFactory implements ICollectionFactory {
+abstract class AbstractIndex implements Index {
 
-    /* (non-Javadoc)
-     * @see org.tinytim.ICollectionFactory#createMap(int)
-     */
-    public <K, V> Map<K, V> createMap(int size) {
-        return new THashMap<K,V>(size);
+    private ICollectionFactory _collFactory;
+
+    public AbstractIndex(TopicMap topicMap, ICollectionFactory collFactory) {
+        _collFactory = collFactory;
+    }
+
+    protected ICollectionFactory _getCollectionFactory() {
+        return _collFactory;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.ICollectionFactory#createMap()
+     * @see org.tmapi.index.Index#close()
      */
-    public <K, V> Map<K, V> createMap() {
-        return new THashMap<K, V>();
+    public void close() {
+        // noop.
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.ICollectionFactory#createSet(int)
+     * @see org.tmapi.index.Index#isOpen()
      */
-    public <E> Set<E> createSet(int size) {
-        return new THashSet<E>(size);
+    public boolean isOpen() {
+        return true;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.ICollectionFactory#createSet()
+     * @see org.tmapi.index.Index#open()
      */
-    public <E> Set<E> createSet() {
-        return new THashSet<E>();
+    public void open() {
+        // noop.
+    }
+
+    /* (non-Javadoc)
+     * @see org.tmapi.index.Index#isAutoUpdated()
+     */
+    public boolean isAutoUpdated() {
+        return true;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tmapi.index.Index#reindex()
+     */
+    public void reindex() {
+        // noop.
     }
 
 }

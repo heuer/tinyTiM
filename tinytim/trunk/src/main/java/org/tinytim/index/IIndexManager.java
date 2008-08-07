@@ -18,55 +18,39 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim;
+package org.tinytim.index;
 
-import java.util.Map;
-import java.util.Set;
+import org.tmapi.index.LiteralIndex;
+import org.tmapi.index.ScopedIndex;
+import org.tmapi.index.TypeInstanceIndex;
 
 /**
- * Factory for collections.
- * 
- * Implementations of this interface must provide a default constructor.
+ * The index manager provides access to the tinyTiM-specific indexes.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public interface ICollectionFactory {
+public interface IIndexManager {
 
     /**
-     * Creates a Set with the specified initial <code>size</code>.
+     * Returns the {@link TypeInstanceIndex}.
      *
-     * @param <E>
-     * @param size The initial capacity.
-     * @return
+     * @return A {@link TypeInstanceIndex} instance.
      */
-    <E> Set<E> createSet(int size);
+    public TypeInstanceIndex getTypeInstanceIndex();
 
     /**
-     * Creates a Set.
+     * Returns the {@link ScopedIndex}.
      *
-     * @param <E>
-     * @return
+     * @return A {@link ScopedIndex} instance.
      */
-    <E> Set<E> createSet();
+    public ScopedIndex getScopedIndex();
 
     /**
-     * Creates a Map.
+     * 
      *
-     * @param <K>
-     * @param <V>
      * @return
      */
-    <K, V> Map<K, V> createMap();
-
-    /**
-     * Creates a Map with the specified initial <code>size</code>.
-     *
-     * @param <K>
-     * @param <V>
-     * @param size The initial capacity.
-     * @return
-     */
-    <K, V> Map<K, V> createMap(int size);
+    public LiteralIndex getLiteralIndex();
 
 }
