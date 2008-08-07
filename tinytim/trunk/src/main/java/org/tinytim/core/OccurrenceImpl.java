@@ -18,46 +18,48 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.index;
+package org.tinytim.core;
 
-import org.tinytim.ICollectionFactory;
-import org.tinytim.IEventPublisher;
+import java.util.Collection;
+
+import org.tmapi.core.Occurrence;
+import org.tmapi.core.Topic;
 
 /**
- * {@link IIndexManager} implementation which provides autoupdated default 
- * indexes.
+ * {@link org.tmapi.core.Occurrence} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class IndexManager implements IIndexManager {
+final class OccurrenceImpl extends DatatypeAwareConstruct implements 
+        Occurrence, IMovable<Topic> {
 
-    private ITypeInstanceIndex _typeInstanceIndex;
-    private IScopedIndex _scopedIndex;
-
-    public IndexManager(IEventPublisher publisher, ICollectionFactory collFactory) {
-        _typeInstanceIndex = new TypeInstanceIndex(publisher, collFactory);
-        _scopedIndex = new ScopedIndex(publisher, collFactory);
+    OccurrenceImpl(TopicMapImpl topicMap, Topic type, ILiteral literal, Collection<Topic> scope) {
+        super(topicMap, type, literal, scope);
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.index.IIndexManager#getTypeInstanceIndex()
+     * @see org.tmapi.core.Occurrence#getParent()
      */
-    public ITypeInstanceIndex getTypeInstanceIndex() {
-        return _typeInstanceIndex;
+    public Topic getParent() {
+        return (Topic) _parent;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.index.IIndexManager#getScopedIndex()
+     * @see org.tinytim.IMovable#moveTo(java.lang.Object)
      */
-    public IScopedIndex getScopedIndex() {
-        return _scopedIndex;
+    public void moveTo(Topic newParent) {
+        _fireEvent(Event.MOVE_OCCURRENCE, _parent, newParent);
+        ((TopicImpl) _parent).detachOccurrence(this);
+        ((TopicImpl) newParent).attachOccurrence(this);
     }
 
-    public void close() {
-        ((TypeInstanceIndex) _typeInstanceIndex).clear();
-        ((ScopedIndex) _scopedIndex).clear();
-        _typeInstanceIndex = null;
-        _scopedIndex = null;
+    /* (non-Javadoc)
+     * @see org.tmapi.core.Construct#remove()
+     */
+    public void remove() {
+        ((TopicImpl) _parent).removeOccurrence(this);
+        super.dispose();
     }
+
 }

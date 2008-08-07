@@ -18,41 +18,18 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.index.tmapi;
+package org.tinytim.core;
 
-import org.tmapi.index.IndexFlags;
+import org.tmapi.core.Locator;
 
 /**
- * Immutable {@link org.tmapi.index.IndexFlags} implementation.
  * 
- * Use {@link #AUTOUPDATED} or {@link #NOT_AUTOUPDATED}
+ * 
+ * This interface is not meant to be used outside of the tinyTiM package.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-final class IndexFlagsImpl implements IndexFlags {
-
-    /**
-     * Indicates that the index is auto updated.
-     */
-    public static IndexFlags AUTOUPDATED = new IndexFlagsImpl(true);
-
-    /**
-     * Indicates that the index is NOT auto updated.
-     */
-    public static IndexFlags NOT_AUTOUPDATED = new IndexFlagsImpl(false);
-
-    private final boolean _autoUpdated;
-
-    private IndexFlagsImpl(boolean autoUpdated) {
-        _autoUpdated = autoUpdated;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tmapi.index.IndexFlags#isAutoUpdated()
-     */
-    public boolean isAutoUpdated() {
-        return _autoUpdated;
-    }
+public interface ILocator extends ILiteral, Locator {
 
 }
