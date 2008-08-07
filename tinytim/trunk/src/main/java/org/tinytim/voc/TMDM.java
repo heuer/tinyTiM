@@ -20,18 +20,21 @@
  */
 package org.tinytim.voc;
 
-import org.tinytim.IRI;
 import org.tmapi.core.Locator;
 
 /**
  * Constants for TMDM 1.0 (model) PSIs.
  * 
- * Copied from the Semagia MIO project.
+ * Copied with permission from the Semagia MIO project.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
-public final class TMDM {
+public final class TMDM extends Vocabulary {
+
+    private TMDM() {
+        // noop.
+    }
 
     private static final String _BASE = "http://psi.topicmaps.org/iso13250/model/";
 
@@ -39,48 +42,49 @@ public final class TMDM {
      * Core concept of type-instance relationships. 
      * Used as association type.
      */
-    public static final Locator TYPE_INSTANCE = new IRI(_BASE + "type-instance");
+    public static final Locator TYPE_INSTANCE = _createLocator(_BASE + "type-instance");
 
     /**
      * Core concept of type within a type-instance relationship. 
      * Used as role type.
      */
-    public static final Locator TYPE = new IRI(_BASE + "type");
+    public static final Locator TYPE = _createLocator(_BASE + "type");
 
     /**
      * Core concept of instance within a type-instance relationship. 
      * Used as role type.
      */
-    public static final Locator INSTANCE = new IRI(_BASE + "instance");
+    public static final Locator INSTANCE = _createLocator(_BASE + "instance");
 
     /**
      * Core concept of supertype-subtype relationship.
      * Used as association type.
      */
-    public static final Locator SUPERTYPE_SUBTYPE = new IRI(_BASE + "supertype-subtype");
+    public static final Locator SUPERTYPE_SUBTYPE = _createLocator(_BASE + "supertype-subtype");
 
     /**
      * Core concept of supertype within a supertype-subtype relationship.
      * Used as role type.
      */
-    public static final Locator SUPERTYPE = new IRI(_BASE + "supertype");
+    public static final Locator SUPERTYPE = _createLocator(_BASE + "supertype");
 
     /**
      * Core concept of subtype within a supertype-subtype relationship.
      * Used as role type.
      */
-    public static final Locator SUBTYPE = new IRI(_BASE + "subtype");
+    public static final Locator SUBTYPE = _createLocator(_BASE + "subtype");
 
     /**
      * Core concept of a topic name.
      * Used as topic name type.
      */
-    public static final Locator TOPIC_NAME = new IRI(_BASE + "topic-name");
+    public static final Locator TOPIC_NAME = _createLocator(_BASE + "topic-name");
 
     /**
      * Used to indicate that a variant can be used for sorting purposes.
      * Used as variant theme.
      */
-    public static final Locator SORT = new IRI(_BASE + "sort");
+    public static final Locator SORT = _createLocator(_BASE + "sort");
+
 }
 
