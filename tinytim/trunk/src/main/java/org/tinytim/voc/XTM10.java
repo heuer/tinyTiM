@@ -20,7 +20,6 @@
  */
 package org.tinytim.voc;
 
-import org.tinytim.IRI;
 import org.tmapi.core.Locator;
 
 /**
@@ -34,9 +33,9 @@ import org.tmapi.core.Locator;
  * Copied from the Semagia MIO project.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
-public final class XTM10 {
+public final class XTM10 extends Vocabulary {
 
     private static final String _BASE = "http://www.topicmaps.org/xtm/1.0/core.xtm#";
 
@@ -45,61 +44,61 @@ public final class XTM10 {
      * represents class-instance relationships between topics, and that is 
      * semantically equivalent to the use of <instanceOf> subelements.
      */
-    public static final Locator CLASS_INSTANCE = new IRI(_BASE + "class-instance");
+    public static final Locator CLASS_INSTANCE = _createLocator(_BASE + "class-instance");
 
     /**
      * The core concept of class; the role of class as played by one of the 
      * members of a class-instance association.
      */
-    public static final Locator CLASS = new IRI(_BASE + "class");
+    public static final Locator CLASS = _createLocator(_BASE + "class");
 
     /**
      * The core concept of instance; the role of instance as played by one of 
      * the members of a class-instance association.
      */
-    public static final Locator INSTANCE = new IRI(_BASE + "instance");
+    public static final Locator INSTANCE = _createLocator(_BASE + "instance");
 
     /**
      * The core concept of superclass-subclass; the class of association that 
      * represents superclass-subclass relationships between topics.
      */
-    public static final Locator SUPERCLASS_SUBCLASS = new IRI(_BASE + "superclass-subclass");
+    public static final Locator SUPERCLASS_SUBCLASS = _createLocator(_BASE + "superclass-subclass");
 
     /**
      * The core concept of superclass; the role of superclass as played by one 
      * of the members of a superclass-subclass association.
      */
-    public static final Locator SUPERCLASS = new IRI(_BASE + "superclass");
+    public static final Locator SUPERCLASS = _createLocator(_BASE + "superclass");
 
     /**
      * The core concept of subclass; the role of subclass as played by one of 
      * the members of a superclass-subclass association.
      */
-    public static final Locator SUBCLASS = new IRI(_BASE + "subclass");
+    public static final Locator SUBCLASS = _createLocator(_BASE + "subclass");
 
     /**
      * The core concept of association; the generic class to which all 
      * associations belong unless otherwise specified.
      */
-    public static final Locator ASSOCIATION = new IRI(_BASE + "association");
+    public static final Locator ASSOCIATION = _createLocator(_BASE + "association");
 
     /**
      * The core concept of occurrence; the generic class to which all 
      * occurrences belong unless otherwise specified.
      */
-    public static final Locator OCCURRENCE = new IRI(_BASE + "occurrence");
+    public static final Locator OCCURRENCE = _createLocator(_BASE + "occurrence");
 
     /**
      * Used to indicate that a variant can be used for sorting purposes.
      * Used as variant theme.
      */
-    public static final Locator SORT = new IRI(_BASE + "sort");
+    public static final Locator SORT = _createLocator(_BASE + "sort");
 
     /**
      * Used to indicate that a variant can be used for displaying purposes.
      * Used as variant theme.
      */
-    public static final Locator DISPLAY = new IRI(_BASE + "display");
+    public static final Locator DISPLAY = _createLocator(_BASE + "display");
 
 }
 
