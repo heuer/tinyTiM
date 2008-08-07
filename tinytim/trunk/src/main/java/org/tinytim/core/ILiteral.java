@@ -18,40 +18,35 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.index;
+package org.tinytim.core;
+
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
+import org.tmapi.core.Locator;
 
 /**
- * Simplified interface for indexes.
  * 
- * Copied from the TMAPIX-project.
+ * 
+ * This interface is not meant to be used outside of the tinyTiM package.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public interface IIndex {
+public interface ILiteral {
 
-    /**
-     * Returns if this index is automatically kept in sync. with the 
-     * topic map values.
-     *
-     * @return <code>true</code> if the index synchronizes itself with the 
-     *          underlying topic map, otherwise <code>false</code>
-     */
-    public boolean isAutoUpdated();
+    public String getValue();
 
-    /**
-     * Resynchronizes this index with the data in the topic map.
-     * 
-     * Indexes that are automatically kept in sync should ignore this.
-     */
-    public void reindex();
+    public Locator getDatatype();
 
-    /**
-     * Closes the index.
-     * 
-     * This operation is optional but useful to release resources.
-     * After closing the index must not be used further.
-     */
-    public void close();
+    public BigDecimal decimalValue();
+
+    public float floatValue();
+
+    public BigInteger integerValue();
+
+    public int intValue();
+
+    public long longValue();
 
 }

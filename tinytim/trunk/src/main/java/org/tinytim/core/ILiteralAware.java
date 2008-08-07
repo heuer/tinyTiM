@@ -18,27 +18,20 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.index;
+package org.tinytim.core;
 
 /**
- * The index manager provides access to the tinyTiM-specific indexes.
+ * 
+ * 
+ * This interface is not meant to be used outside of the tinyTiM package.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev:$ - $Date:$
  */
-public interface IIndexManager {
+public interface ILiteralAware {
 
-    /**
-     * Returns the {@link ITypeInstanceIndex}.
-     *
-     * @return A {@link ITypeInstanceIndex} instance.
-     */
-    public ITypeInstanceIndex getTypeInstanceIndex();
+    public ILiteral getLiteral();
 
-    /**
-     * Returns the {@link IScopedIndex}.
-     *
-     * @return A {@link IScopedIndex} instance.
-     */
-    public IScopedIndex getScopedIndex();
+    public void setLiteral(ILiteral literal);
+
 }
