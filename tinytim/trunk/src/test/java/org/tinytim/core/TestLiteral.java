@@ -42,44 +42,53 @@ public class TestLiteral extends TinyTimTestCase {
     }
 
     public void testStringEquality() {
-        final String value = "tinyTiM";
+        final String value = "__tinyTiM__";
+        assertNull(Literal.get(value));
         ILiteral lit1 = Literal.create(value);
         ILiteral lit2 = Literal.create(value);
         assertSame(lit1, lit2);
     }
 
     public void testStringEquality2() {
-        final String value = "tinyTiM";
+        final String value = "tinyTiM!";
+        assertNull(Literal.get(value));
         ILiteral lit1 = Literal.create(value);
         ILiteral lit2 = Literal.create(value, XSD.STRING);
         assertSame(lit1, lit2);
     }
 
     public void testStringEquality3() {
-        final String value = "tinyTiM";
+        final String value = "tinyTiM?";
+        assertNull(Literal.get(value));
         ILiteral lit1 = Literal.create(value, XSD.STRING);
         ILiteral lit2 = Literal.create(value);
         assertSame(lit1, lit2);
     }
 
     public void testIRIEquality() {
-        final Locator value = _sys.createLocator("http://www.semagia.com/");
-        ILiteral lit1 = Literal.create(value);
-        ILiteral lit2 = Literal.create(value);
+        final String value = "http://www.semagia.com/";
+        assertNull(Literal.get(value, XSD.ANY_URI));
+        final Locator loc = _sys.createLocator(value);
+        ILiteral lit1 = Literal.create(loc);
+        ILiteral lit2 = Literal.create(loc);
         assertSame(lit1, lit2);
     }
 
     public void testIRIEquality2() {
-        final Locator value = _sys.createLocator("http://www.semagia.com/");
-        ILiteral lit1 = Literal.create(value);
-        ILiteral lit2 = Literal.create(value.getReference(), XSD.ANY_URI);
+        final String value = "http://www.semagia.net/";
+        assertNull(Literal.get(value, XSD.ANY_URI));
+        final Locator loc = _sys.createLocator(value);
+        ILiteral lit1 = Literal.create(loc);
+        ILiteral lit2 = Literal.create(value, XSD.ANY_URI);
         assertSame(lit1, lit2);
     }
 
     public void testIRIEquality3() {
-        final Locator value = _sys.createLocator("http://www.semagia.com/");
-        ILiteral lit1 = Literal.create(value.getReference(), XSD.ANY_URI);
-        ILiteral lit2 = Literal.create(value);
+        final String value = "http://www.semagia.de/";
+        assertNull(Literal.get(value, XSD.ANY_URI));
+        final Locator loc = _sys.createLocator(value);
+        ILiteral lit1 = Literal.create(value, XSD.ANY_URI);
+        ILiteral lit2 = Literal.create(loc);
         assertSame(lit1, lit2);
     }
 }
