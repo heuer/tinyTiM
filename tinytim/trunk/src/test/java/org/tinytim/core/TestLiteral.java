@@ -27,9 +27,19 @@ import org.tmapi.core.Locator;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class TestLiteral extends TinyTimTestCase {
+
+
+    public void testStringGet() {
+        final String value = "tiny tiny tiny";
+        ILiteral lit = Literal.get(value);
+        assertNull(lit);
+        lit = Literal.create(value);
+        assertNotNull(lit);
+        assertSame(lit, Literal.get(value));
+    }
 
     public void testStringEquality() {
         final String value = "tinyTiM";

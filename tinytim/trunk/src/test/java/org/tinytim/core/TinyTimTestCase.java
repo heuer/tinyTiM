@@ -23,7 +23,13 @@ package org.tinytim.core;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.tmapi.core.Association;
 import org.tmapi.core.Locator;
+import org.tmapi.core.Name;
+import org.tmapi.core.Occurrence;
+import org.tmapi.core.Role;
+import org.tmapi.core.Topic;
+import org.tmapi.core.Variant;
 
 import junit.framework.TestCase;
 
@@ -54,6 +60,62 @@ public class TinyTimTestCase extends TestCase {
      */
     protected Properties getAdditionalProperties() {
         return null;
+    }
+
+    /**
+     * Creates a topic with a random item identifier.
+     *
+     * @return The topic.
+     */
+    protected Topic createTopic() {
+        return _tm.createTopic();
+    }
+
+    /**
+     * Creates an association with a random type and no roles.
+     *
+     * @return The association.
+     */
+    protected Association createAssociation() {
+        return _tm.createAssociation(createTopic());
+    }
+
+    /**
+     * Creates a role which is part of a random association with a random
+     * player and type.
+     *
+     * @return The role.
+     */
+    protected Role createRole() {
+        return createAssociation().createRole(createTopic(), createTopic());
+    }
+
+    /**
+     * Creates an occurrence which is part of a random topic with a random type.
+     *
+     * @return The occurrence.
+     */
+    protected Occurrence createOccurrence() {
+        return createTopic().createOccurrence(createTopic(), "Occurrence");
+    }
+
+    /**
+     * Creates a name which is part of a newly created topic using the default
+     * type name.
+     *
+     * @return The name.
+     */
+    protected Name createName() {
+        return createTopic().createName("Name");
+    }
+
+    /**
+     * Creates a variant which is part of a newly created name.
+     *
+     * @return The variant.
+     */
+    protected Variant createVariant() {
+        return createName().createVariant("Variant", createTopic());
     }
 
     /* (non-Javadoc)
