@@ -21,6 +21,7 @@
 package org.tinytim.core;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Set;
 
 import org.tmapi.core.Association;
@@ -61,24 +62,23 @@ final class SignatureGenerator {
      * @param assoc The association to generate the signature for.
      * @return The association's signature.
      */
-    public static String generateSignature(Association assoc) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(_generateTypeSignature(assoc))
-            .append('s')
-            .append(_generateScopeSignature(assoc))
-            .append('.');
-        Set<Role> roles = assoc.getRoles();
-        String[] roleSigs = new String[roles.size()];
+    public static int generateSignature(Association assoc) {
+        return Arrays.hashCode(new int[] {_generateTypeSignature(assoc),
+                _generateScopeSignature(assoc),
+                _generateRolesSignature(assoc.getRoles())});
+    }
+
+    private static int _generateRolesSignature(final Collection<Role> roles) {
+        if (roles.isEmpty()) {
+            return 0;
+        }
+        int[] ids = new int[roles.size()];
         int i = 0;
         for (Role role : roles) {
-            roleSigs[i++] = generateSignature(role);
+            ids[i++] = generateSignature(role); 
         }
-        Arrays.sort(roleSigs);
-        for (String sig : roleSigs) {
-            sb.append(sig)
-                .append('.');
-        }
-        return sb.toString();
+        Arrays.sort(ids);
+        return Arrays.hashCode(ids);
     }
 
     /**
@@ -87,12 +87,10 @@ final class SignatureGenerator {
      * @param role The role to generate the signature for.
      * @return The role's signature.
      */
-    public static String generateSignature(Role role) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(_generateTypeSignature(role))
-            .append('p')
-            .append(role.getPlayer() == null ? "" : role.getPlayer().getId());
-        return sb.toString();
+    public static int generateSignature(final Role role) {
+        return Arrays.hashCode(new int[] {
+                _signature(role.getType()), _signature(role.getPlayer())
+                });
     }
 
     /**
@@ -101,14 +99,12 @@ final class SignatureGenerator {
      * @param occ The occurrence to create the signature for.
      * @return The signature of the occurrence.
      */
-    public static String generateSignature(Occurrence occ) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(_generateTypeSignature(occ))
-            .append('s')
-            .append(_generateScopeSignature(occ))
-            .append('v')
-            .append(_generateDataSignature((ILiteralAware) occ));
-        return sb.toString();
+    public static int generateSignature(final Occurrence occ) {
+        return Arrays.hashCode(new int[] {
+                _generateTypeSignature(occ),
+                _generateScopeSignature(occ),
+                _generateDataSignature((ILiteralAware)occ)
+            });
     }
 
     /**
@@ -119,14 +115,12 @@ final class SignatureGenerator {
      * @param name The name to generate the signature for.
      * @return A signature for the name.
      */
-    public static String generateSignature(Name name) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(_generateTypeSignature(name))
-            .append('s')
-            .append(_generateScopeSignature(name))
-            .append('v')
-            .append(_generateDataSignature((ILiteralAware) name));
-        return sb.toString();
+    public static int generateSignature(final Name name) {
+        return Arrays.hashCode(new int[] {
+                _generateTypeSignature(name),
+                _generateScopeSignature(name),
+                _generateDataSignature((ILiteralAware)name)
+            });
     }
 
     /**
@@ -135,12 +129,11 @@ final class SignatureGenerator {
      * @param variant The variant to generate the signature for.
      * @return A signature for the variant.
      */
-    public static String generateSignature(Variant variant) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(_generateScopeSignature(variant))
-            .append('v')
-            .append(_generateDataSignature((ILiteralAware)variant));
-        return sb.toString();
+    public static int generateSignature(final Variant variant) {
+        return Arrays.hashCode(new int[] {
+                _generateScopeSignature(variant),
+                _generateDataSignature((ILiteralAware)variant)
+            });
     }
 
     /**
@@ -149,7 +142,7 @@ final class SignatureGenerator {
      * @param construct An occurrence or variant.
      * @return The signature.
      */
-    private static int _generateDataSignature(ILiteralAware construct) {
+    private static int _generateDataSignature(final ILiteralAware construct) {
         return System.identityHashCode(construct.getLiteral());
     }
 
@@ -159,9 +152,8 @@ final class SignatureGenerator {
      * @param typed The typed Topic Maps construct.
      * @return The signature.
      */
-    private static String _generateTypeSignature(Typed typed) {
-        Topic type = typed.getType();
-        return type == null ? "" : type.getId();
+    private static int _generateTypeSignature(final Typed typed) {
+        return _signature(typed.getType());
     }
 
     /**
@@ -173,23 +165,22 @@ final class SignatureGenerator {
      * @param scoped The scoped Topic Maps construct.
      * @return The signature.
      */
-    private static String _generateScopeSignature(Scoped scoped) {
+    private static int _generateScopeSignature(final Scoped scoped) {
         Set<Topic> scope = scoped.getScope();
         if (scope.isEmpty()) {
-            return "";
+            return 0;
         }
-        String[] ids = new String[scope.size()];
+        int[] ids = new int[scope.size()];
         int i = 0;
         for (Topic topic : scope) {
-            ids[i++] = topic.getId(); 
+            ids[i++] = _signature(topic); 
         }
         Arrays.sort(ids);
-        StringBuilder sb = new StringBuilder();
-        for (String id : ids) {
-            sb.append(id)
-                .append('.');
-        }
-        return sb.toString();
+        return Arrays.hashCode(ids);
+    }
+
+    private static int _signature(Topic topic) {
+        return System.identityHashCode(topic);
     }
 
 }

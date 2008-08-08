@@ -37,7 +37,7 @@ import org.tmapi.core.Locator;
  * This class is not meant to be used outside of the tinyTiM package.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public final class Literal implements ILiteral {
 
@@ -49,6 +49,9 @@ public final class Literal implements ILiteral {
     private final Locator _datatype;
 
     private Literal(final String value, final Locator datatype) {
+        if (value == null) {
+            throw new IllegalArgumentException("The value must not be null");
+        }
         _value = value;
         _datatype = datatype;
     }
@@ -59,6 +62,34 @@ public final class Literal implements ILiteral {
 
     public String getValue() {
         return _value;
+    }
+
+    public static synchronized ILiteral get(String value) {
+        return _STRINGS.get(new Literal(value, XSD.STRING));
+    }
+
+    public static synchronized ILiteral getIRI(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("The value must not be null");
+        }
+        return _IRIS.get(new IRI(value));
+    }
+
+    public static synchronized ILiteral get(String value, Locator datatype) {
+        if (value == null) {
+            throw new IllegalArgumentException("The value must not be null");
+        }
+        if (datatype == null) {
+            throw new IllegalArgumentException("The datatype must not be null");
+        }
+        if (XSD.ANY_URI.equals(datatype)) {
+            return getIRI(value);
+        }
+        if (XSD.STRING.equals(datatype)) {
+            return get(value);
+        }
+        return _LITERALS.get(new Literal(value, datatype));
+        
     }
 
     public static synchronized ILiteral create(final String value, final Locator datatype) {
@@ -84,9 +115,6 @@ public final class Literal implements ILiteral {
     }
 
     public static synchronized ILiteral create(String value) {
-        if (value == null) {
-            throw new IllegalArgumentException("The value must not be null");
-        }
         ILiteral literal = new Literal(value, XSD.STRING);
         ILiteral existing = _STRINGS.get(literal);
         if (existing != null) {

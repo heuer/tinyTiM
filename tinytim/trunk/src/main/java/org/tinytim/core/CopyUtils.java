@@ -176,7 +176,7 @@ final class CopyUtils {
      */
     private static void _copyCharacteristics(Topic topic, TopicImpl targetTopic,
             Map<Topic, Topic> mergeMap) {
-        Map<String, Reifiable> sigs = ((TopicMapImpl) targetTopic.getTopicMap()).getCollectionFactory().createMap();
+        Map<Integer, Reifiable> sigs = ((TopicMapImpl) targetTopic.getTopicMap()).getCollectionFactory().createMap();
         for (Occurrence occ: targetTopic.getOccurrences()) {
             sigs.put(SignatureGenerator.generateSignature(occ), occ);
         }
@@ -226,7 +226,7 @@ final class CopyUtils {
      */
     private static void _copyVariants(Name source, NameImpl target,
             Map<Topic, Topic> mergeMap) {
-        Map<String, Variant> sigs = ((TopicMapImpl) target.getTopicMap()).getCollectionFactory().createMap();
+        Map<Integer, Variant> sigs = ((TopicMapImpl) target.getTopicMap()).getCollectionFactory().createMap();
         for (Variant variant: target.getVariants()) {
             sigs.put(SignatureGenerator.generateSignature(variant), variant);
         }
@@ -321,7 +321,7 @@ final class CopyUtils {
     private static void _copyAssociations(TopicMap source, 
             TopicMapImpl target, Map<Topic, Topic> mergeMap) {
         Set<Association> assocs = target.getAssociations();
-        Map<String, Association> sigs = target.getCollectionFactory().createMap(assocs.size());
+        Map<Integer, Association> sigs = target.getCollectionFactory().createMap(assocs.size());
         for (Association assoc: assocs) {
             sigs.put(SignatureGenerator.generateSignature(assoc), assoc);
         }

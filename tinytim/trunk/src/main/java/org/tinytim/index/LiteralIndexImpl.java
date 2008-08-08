@@ -45,7 +45,7 @@ import org.tmapi.index.LiteralIndex;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
 
@@ -73,10 +73,13 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
      * @see org.tmapi.index.LiteralIndex#getNames(java.lang.String)
      */
     public Collection<Name> getNames(String value) {
-        return _getNames(Literal.create(value));
+        return _getNames(Literal.get(value));
     }
 
     private Collection<Name> _getNames(ILiteral literal) {
+        if (literal == null) {
+            return Collections.<Name>emptySet();
+        }
         Collection<Name> names = _lit2Names.get(literal);
         return names == null ? Collections.<Name>emptySet()
                              : new ArrayList<Name>(names);
@@ -86,24 +89,30 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
      * @see org.tmapi.index.LiteralIndex#getOccurrences(java.lang.String)
      */
     public Collection<Occurrence> getOccurrences(String value) {
-        return _getOccurrences(Literal.create(value));
+        return _getOccurrences(Literal.get(value));
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.index.LiteralIndex#getOccurrences(org.tmapi.core.Locator)
      */
     public Collection<Occurrence> getOccurrences(Locator value) {
-        return _getOccurrences(Literal.create(value));
+        if (value == null) {
+            throw new IllegalArgumentException("The value must not be null");
+        }
+        return _getOccurrences((ILiteral) value);
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.index.LiteralIndex#getOccurrences(java.lang.String, org.tmapi.core.Locator)
      */
     public Collection<Occurrence> getOccurrences(String value, Locator datatype) {
-        return _getOccurrences(Literal.create(value, datatype));
+        return _getOccurrences(Literal.get(value, datatype));
     }
 
     private Collection<Occurrence> _getOccurrences(ILiteral literal) {
+        if (literal == null) {
+            return Collections.<Occurrence>emptySet();
+        }
         Collection<Occurrence> occs = _lit2Occs.get(literal);
         return occs == null ? Collections.<Occurrence>emptySet()
                             : new ArrayList<Occurrence>(occs);
@@ -113,24 +122,30 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
      * @see org.tmapi.index.LiteralIndex#getVariants(java.lang.String)
      */
     public Collection<Variant> getVariants(String value) {
-        return _getVariants(Literal.create(value));
+        return _getVariants(Literal.get(value));
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.index.LiteralIndex#getVariants(org.tmapi.core.Locator)
      */
     public Collection<Variant> getVariants(Locator value) {
-        return _getVariants(Literal.create(value));
+        if (value == null) {
+            throw new IllegalArgumentException("The value must not be null");
+        }
+        return _getVariants((ILiteral) value);
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.index.LiteralIndex#getVariants(java.lang.String, org.tmapi.core.Locator)
      */
     public Collection<Variant> getVariants(String value, Locator datatype) {
-        return _getVariants(Literal.create(value, datatype));
+        return _getVariants(Literal.get(value, datatype));
     }
 
     private Collection<Variant> _getVariants(ILiteral literal) {
+        if (literal == null) {
+            return Collections.<Variant>emptySet();
+        }
         Collection<Variant> variants = _lit2Variants.get(literal);
         return variants == null ? Collections.<Variant>emptySet()
                                 : new ArrayList<Variant>(variants);
