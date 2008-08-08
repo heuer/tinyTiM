@@ -121,7 +121,7 @@ final class MergeUtils {
         for(Topic type: source.getTypes()) {
             target.addType(type);
         }
-        Map<String, Reifiable> sigs = ((TopicMapImpl) source.getTopicMap()).getCollectionFactory().createMap();
+        Map<Integer, Reifiable> sigs = ((TopicMapImpl) source.getTopicMap()).getCollectionFactory().createMap();
         for (Occurrence occ: target.getOccurrences()) {
             sigs.put(SignatureGenerator.generateSignature(occ), occ);
         }
@@ -177,7 +177,7 @@ final class MergeUtils {
      * @param target The association which takes the role characteristics.
      */
     static void moveRoleCharacteristics(Association source, Association target) {
-        Map<String, Role> sigs = ((TopicMapImpl) target.getTopicMap()).getCollectionFactory().<String, Role>createMap();
+        Map<Integer, Role> sigs = ((TopicMapImpl) target.getTopicMap()).getCollectionFactory().createMap();
         for (Role role: target.getRoles()) {
             sigs.put(SignatureGenerator.generateSignature(role), role);
         }
@@ -196,7 +196,7 @@ final class MergeUtils {
      */
     @SuppressWarnings("unchecked")
     static void moveVariants(Name source, Name target) {
-        Map<String, Variant> sigs = ((TopicMapImpl) target.getTopicMap()).getCollectionFactory().<String, Variant>createMap();
+        Map<Integer, Variant> sigs = ((TopicMapImpl) target.getTopicMap()).getCollectionFactory().createMap();
         for (Variant var: target.getVariants()) {
             sigs.put(SignatureGenerator.generateSignature(var), var);
         }
