@@ -28,16 +28,15 @@ import java.util.Map;
 import java.util.Set;
 
 import org.tinytim.core.Event;
+import org.tinytim.core.IConstruct;
 import org.tinytim.core.IEventHandler;
 import org.tinytim.core.IEventPublisher;
-import org.tinytim.utils.ICollectionFactory;
+import org.tinytim.utils.CollectionFactory;
 import org.tmapi.core.Association;
-import org.tmapi.core.Construct;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
-import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
 import org.tmapi.index.TypeInstanceIndex;
 
@@ -55,13 +54,13 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
     private Map<Topic, List<Occurrence>> _type2Occs;
     private Map<Topic, List<Name>> _type2Names;
 
-    public TypeInstanceIndexImpl(IEventPublisher publisher, ICollectionFactory collFactory) {
-        super((TopicMap) publisher, collFactory);
-        _type2Topics = collFactory.createIdentityMap();
-        _type2Assocs = collFactory.createIdentityMap();
-        _type2Roles = collFactory.createIdentityMap();
-        _type2Occs = collFactory.createIdentityMap();
-        _type2Names = collFactory.createIdentityMap();
+    public TypeInstanceIndexImpl(IEventPublisher publisher) {
+        super();
+        _type2Topics = CollectionFactory.createIdentityMap();
+        _type2Assocs = CollectionFactory.createIdentityMap();
+        _type2Roles = CollectionFactory.createIdentityMap();
+        _type2Occs = CollectionFactory.createIdentityMap();
+        _type2Names = CollectionFactory.createIdentityMap();
         IEventHandler handler = new TopicTypeHandler();
         publisher.subscribe(Event.ADD_TYPE, handler);
         publisher.subscribe(Event.REMOVE_TYPE, handler);
@@ -180,7 +179,7 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
         if (types.length == 1) {
             return getTopics(types[0]);
         }
-        Set<Topic> result = _getCollectionFactory().createIdentitySet();
+        Set<Topic> result =  CollectionFactory.createIdentitySet();
         if (!matchAll) {
             for (Topic type: types) {
                 Set<Topic> matches = _type2Topics.get(type);
@@ -219,14 +218,14 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
     }
 
     private final class AddTopicHandler implements IEventHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             Topic topic = (Topic) newValue;
             Collection<Topic> types = topic.getTypes();
             if (types.isEmpty()) {
                Set<Topic> topics = _type2Topics.get(null);
                 if (topics == null) {
-                    topics = _getCollectionFactory().createIdentitySet();
+                    topics = CollectionFactory.createIdentitySet();
                     _type2Topics.put(null, topics);
                 }
                 topics.add(topic);
@@ -235,7 +234,7 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
                 for (Topic type: types) {
                     Set<Topic> topics = _type2Topics.get(type);
                     if (topics == null) {
-                        topics = _getCollectionFactory().createIdentitySet();
+                        topics = CollectionFactory.createIdentitySet();
                         _type2Topics.put(type, topics);
                     }
                     topics.add(topic);
@@ -245,7 +244,7 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
     }
 
     private final class RemoveTopicHandler implements IEventHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             Topic topic = (Topic) oldValue;
             Set<Topic> topics = _type2Topics.get(null);
@@ -266,14 +265,14 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
      * Handler that (un-)indexes topics by their type.
      */
     private final class TopicTypeHandler implements IEventHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             Topic topic = (Topic) sender;
             if (oldValue == null) {
                 // Adding a type
                 Set<Topic> topics = _type2Topics.get(newValue);
                 if (topics == null) {
-                    topics = _getCollectionFactory().createIdentitySet();
+                    topics = CollectionFactory.createIdentitySet();
                     _type2Topics.put((Topic) newValue, topics);
                 }
                 topics.add(topic);
@@ -294,7 +293,7 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
                 if (topic.getTypes().size() == 1) {
                     topics = _type2Topics.get(null);
                     if (topics == null) {
-                        topics = _getCollectionFactory().createIdentitySet();
+                        topics = CollectionFactory.createIdentitySet();
                         _type2Topics.put(null, topics);
                     }
                     topics.add(topic);
@@ -324,7 +323,7 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
     }
 
     private final class TypeHandler extends _EvtHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             Typed typed = (Typed) sender;
             Map<Topic, List<Typed>> map = getMap(typed);
@@ -335,7 +334,7 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
 
     private final class AddTypedHandler extends _EvtHandler {
         @SuppressWarnings("unchecked")
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             Typed typed = (Typed) newValue;
             Map<Topic, List<Typed>> map = getMap(typed);
@@ -345,7 +344,7 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
 
     private final class RemoveTypedHandler extends _EvtHandler {
         @SuppressWarnings("unchecked")
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             Typed typed = (Typed) oldValue;
             Map<Topic, List<Typed>> map = getMap(typed);

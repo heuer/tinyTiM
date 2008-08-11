@@ -23,6 +23,7 @@ package org.tinytim.core;
 import java.util.Collections;
 import java.util.Set;
 
+import org.tinytim.utils.CollectionFactory;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
 import org.tmapi.core.TopicMap;
@@ -33,7 +34,7 @@ import org.tmapi.core.TopicMap;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-abstract class ConstructImpl implements Construct {
+abstract class ConstructImpl implements IConstruct {
 
     protected String _id;
     protected TopicMapImpl _tm;
@@ -45,11 +46,11 @@ abstract class ConstructImpl implements Construct {
     }
 
     protected <E> Set<E> _makeSet() {
-        return _tm.getCollectionFactory().createIdentitySet();
+        return CollectionFactory.createIdentitySet();
     }
 
     protected <E> Set<E> _makeSet(int size) {
-        return _tm.getCollectionFactory().createIdentitySet(size);
+        return CollectionFactory.createIdentitySet(size);
     }
 
     /* (non-Javadoc)
@@ -135,7 +136,7 @@ abstract class ConstructImpl implements Construct {
      * @param newValue The new value.
      */
     protected void _fireEvent(Event evt, Object oldValue, Object newValue) {
-        if (_tm != null) {
+        if (_tm != null && _parent != null) {
             _tm.handleEvent(evt, this, oldValue, newValue);
         }
     }
@@ -150,6 +151,55 @@ abstract class ConstructImpl implements Construct {
         _tm = null;
         _parent = null;
         _iids = null;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IConstruct#isAssociation()
+     */
+    public boolean isAssociation() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IConstruct#isName()
+     */
+    public boolean isName() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IConstruct#isOccurrence()
+     */
+    public boolean isOccurrence() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IConstruct#isRole()
+     */
+    public boolean isRole() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IConstruct#isTopic()
+     */
+    public boolean isTopic() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IConstruct#isTopicMap()
+     */
+    public boolean isTopicMap() {
+        return false;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IConstruct#isVariant()
+     */
+    public boolean isVariant() {
+        return false;
     }
 
     /* (non-Javadoc)

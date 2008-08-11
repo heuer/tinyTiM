@@ -193,7 +193,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
         if (scope == null) {
             throw new IllegalArgumentException("The scope must not be null");
         }
-        Occurrence occ = new OccurrenceImpl(_tm, type, literal, scope);
+        Occurrence occ = new OccurrenceImpl(_tm, type, literal, Scope.create(scope));
         addOccurrence(occ);
         return occ;
     }
@@ -313,7 +313,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
         if (scope == null) {
             throw new IllegalArgumentException("The scope must not be null");
         }
-        NameImpl name = new NameImpl(_tm, type, literal, scope);
+        NameImpl name = new NameImpl(_tm, type, literal, Scope.create(scope));
         addName(name);
         return name;
     }
@@ -458,6 +458,14 @@ final class TopicImpl extends ConstructImpl implements Topic {
      */
     public void mergeIn(Topic source) {
         MergeUtils.merge(source, this);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.ConstructImpl#isTopic()
+     */
+    @Override
+    public final boolean isTopic() {
+        return true;
     }
 
     /* (non-Javadoc)

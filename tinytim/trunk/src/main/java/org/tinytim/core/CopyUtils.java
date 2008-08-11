@@ -23,6 +23,9 @@ package org.tinytim.core;
 import java.util.Map;
 import java.util.Set;
 
+import org.tinytim.utils.CollectionFactory;
+import org.tinytim.utils.IIntObjectMap;
+import org.tinytim.utils.IntObjectMap;
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
@@ -66,7 +69,7 @@ final class CopyUtils {
         if (source == target) {
             return;
         }
-        Map<Topic, Topic> mergeMap = target.getCollectionFactory().createIdentityMap();
+        Map<Topic, Topic> mergeMap = CollectionFactory.createIdentityMap();
         Topic existing = null;
         Construct existingConstruct = null;
         for (Topic topic: source.getTopics()) {
@@ -176,7 +179,7 @@ final class CopyUtils {
      */
     private static void _copyCharacteristics(Topic topic, TopicImpl targetTopic,
             Map<Topic, Topic> mergeMap) {
-        Map<Integer, Reifiable> sigs = ((TopicMapImpl) targetTopic.getTopicMap()).getCollectionFactory().createMap();
+        IIntObjectMap<Reifiable> sigs = IntObjectMap.create();
         for (Occurrence occ: targetTopic.getOccurrences()) {
             sigs.put(SignatureGenerator.generateSignature(occ), occ);
         }
@@ -226,7 +229,7 @@ final class CopyUtils {
      */
     private static void _copyVariants(Name source, NameImpl target,
             Map<Topic, Topic> mergeMap) {
-        Map<Integer, Variant> sigs = ((TopicMapImpl) target.getTopicMap()).getCollectionFactory().createMap();
+        IIntObjectMap<Variant> sigs = IntObjectMap.create();
         for (Variant variant: target.getVariants()) {
             sigs.put(SignatureGenerator.generateSignature(variant), variant);
         }
@@ -288,7 +291,7 @@ final class CopyUtils {
      */
     private static Set<Topic>_copyScope(Scoped source, TopicMap tm, 
             Map<Topic, Topic> mergeMap) {
-        Set<Topic> themes = ((TopicMapImpl) tm).getCollectionFactory().createIdentitySet(source.getScope().size());
+        Set<Topic> themes = CollectionFactory.createIdentitySet(source.getScope().size());
         Topic theme = null;
         for (Topic sourceTheme: source.getScope()) {
             theme = mergeMap.containsKey(sourceTheme) ? mergeMap.get(sourceTheme)
@@ -321,7 +324,7 @@ final class CopyUtils {
     private static void _copyAssociations(TopicMap source, 
             TopicMapImpl target, Map<Topic, Topic> mergeMap) {
         Set<Association> assocs = target.getAssociations();
-        Map<Integer, Association> sigs = target.getCollectionFactory().createMap(assocs.size());
+        IIntObjectMap<Association> sigs = IntObjectMap.create(assocs.size());
         for (Association assoc: assocs) {
             sigs.put(SignatureGenerator.generateSignature(assoc), assoc);
         }

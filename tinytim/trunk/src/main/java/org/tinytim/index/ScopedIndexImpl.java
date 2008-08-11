@@ -28,16 +28,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.tinytim.core.Event;
+import org.tinytim.core.IConstruct;
 import org.tinytim.core.IEventHandler;
 import org.tinytim.core.IEventPublisher;
-import org.tinytim.utils.ICollectionFactory;
+import org.tinytim.core.IScope;
+import org.tinytim.core.IScoped;
+import org.tinytim.utils.CollectionFactory;
 import org.tmapi.core.Association;
-import org.tmapi.core.Construct;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
-import org.tmapi.core.TopicMap;
 import org.tmapi.core.Variant;
 import org.tmapi.index.ScopedIndex;
 
@@ -49,19 +50,18 @@ import org.tmapi.index.ScopedIndex;
  */
 public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
 
-    private Map<Topic, List<Association>> _theme2Assocs;
-    private Map<Topic, List<Occurrence>> _theme2Occs;
-    private Map<Topic, List<Name>> _theme2Names;
-    private Map<Topic, List<Variant>> _theme2Variants;
+    private Map<Topic, Set<Association>> _theme2Assocs;
+    private Map<Topic, Set<Occurrence>> _theme2Occs;
+    private Map<Topic, Set<Name>> _theme2Names;
+    private Map<Topic, Set<Variant>> _theme2Variants;
 
-    public ScopedIndexImpl(IEventPublisher publisher, ICollectionFactory collFactory) {
-        super((TopicMap) publisher, collFactory);
-        _theme2Assocs = collFactory.createIdentityMap();
-        _theme2Occs = collFactory.createIdentityMap();
-        _theme2Names = collFactory.createIdentityMap();
-        _theme2Variants = collFactory.createIdentityMap();
-        publisher.subscribe(Event.ADD_THEME, new AddThemeHandler());
-        publisher.subscribe(Event.REMOVE_THEME, new RemoveThemeHandler());
+    public ScopedIndexImpl(IEventPublisher publisher) {
+        super();
+        _theme2Assocs = CollectionFactory.createIdentityMap();
+        _theme2Occs = CollectionFactory.createIdentityMap();
+        _theme2Names = CollectionFactory.createIdentityMap();
+        _theme2Variants = CollectionFactory.createIdentityMap();
+        publisher.subscribe(Event.SET_SCOPE, new SetScopeHandler());
         IEventHandler handler = new AddScopedHandler();
         publisher.subscribe(Event.ADD_ASSOCIATION, handler);
         publisher.subscribe(Event.ADD_OCCURRENCE, handler);
@@ -78,7 +78,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      * @see org.tmapi.index.ScopedIndex#getAssociations(org.tmapi.core.Topic)
      */
     public Collection<Association> getAssociations(Topic theme) {
-        List<Association> assocs = _theme2Assocs.get(theme);
+        Collection<Association> assocs = _theme2Assocs.get(theme);
         return assocs == null ? Collections.<Association>emptySet()
                               : new ArrayList<Association>(assocs);
     }
@@ -88,7 +88,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      */
     public Collection<Association> getAssociations(Topic[] themes,
             boolean matchAll) {
-        Set<Association> result = _getCollectionFactory().createIdentitySet();
+        Set<Association> result = CollectionFactory.createIdentitySet();
         if (!matchAll) {
             for (Topic theme: themes) {
                 result.addAll(getAssociations(theme));
@@ -116,7 +116,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      * @see org.tmapi.index.ScopedIndex#getOccurrences(org.tmapi.core.Topic)
      */
     public Collection<Occurrence> getOccurrences(Topic theme) {
-        List<Occurrence> occs = _theme2Occs.get(theme);
+        Collection<Occurrence> occs = _theme2Occs.get(theme);
         return occs == null ? Collections.<Occurrence>emptySet()
                             : new ArrayList<Occurrence>(occs);
     }
@@ -126,7 +126,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      */
     public Collection<Occurrence> getOccurrences(Topic[] themes,
             boolean matchAll) {
-        Set<Occurrence> result = _getCollectionFactory().createIdentitySet();
+        Set<Occurrence> result = CollectionFactory.createIdentitySet();
         if (!matchAll) {
             for (Topic theme: themes) {
                 result.addAll(getOccurrences(theme));
@@ -154,7 +154,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      * @see org.tmapi.index.ScopedIndex#getNames(org.tmapi.core.Topic)
      */
     public Collection<Name> getNames(Topic theme) {
-        List<Name> names = _theme2Names.get(theme);
+        Collection<Name> names = _theme2Names.get(theme);
         return names == null ? Collections.<Name>emptySet()
                              : new ArrayList<Name>(names);
     }
@@ -163,7 +163,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      * @see org.tmapi.index.ScopedIndex#getNames(org.tmapi.core.Topic[], boolean)
      */
     public Collection<Name> getNames(Topic[] themes, boolean matchAll) {
-        Set<Name> result = _getCollectionFactory().createIdentitySet();
+        Set<Name> result = CollectionFactory.createIdentitySet();
         if (!matchAll) {
             for (Topic theme: themes) {
                 result.addAll(getNames(theme));
@@ -191,7 +191,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      * @see org.tmapi.index.ScopedIndex#getVariants(org.tmapi.core.Topic)
      */
     public Collection<Variant> getVariants(Topic theme) {
-        List<Variant> vars = _theme2Variants.get(theme);
+        Collection<Variant> vars = _theme2Variants.get(theme);
         return vars == null ? Collections.<Variant>emptySet()
                             : new ArrayList<Variant>(vars);
     }
@@ -200,7 +200,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      * @see org.tmapi.index.ScopedIndex#getVariants(org.tmapi.core.Topic[], boolean)
      */
     public Collection<Variant> getVariants(Topic[] themes, boolean matchAll) {
-        Set<Variant> result = _getCollectionFactory().createIdentitySet();
+        Set<Variant> result = CollectionFactory.createIdentitySet();
         if (!matchAll) {
             for (Topic theme: themes) {
                 result.addAll(getVariants(theme));
@@ -235,119 +235,90 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
         _theme2Variants = null;
     }
 
+    private void _unindex(Map<Topic, Set<Scoped>> map, Scoped scoped, IScope scope) {
+        if (scope.isUnconstrained()) {
+            Set<Scoped> list = map.get(null);
+            if (list != null) {
+                list.remove(scoped);
+            }
+        }
+        else {
+            for (Topic theme: scope) {
+                Set<Scoped> list = map.get(theme);
+                if (list != null) {
+                    list.remove(scoped);
+                    if (list.isEmpty()) {
+                        map.remove(theme);
+                    }
+                }
+            }
+        }
+    }
+
+    private void _index(Map<Topic, Set<Scoped>> map, Scoped scoped, IScope scope) {
+        if (scope.isUnconstrained()) {
+            Set<Scoped> list = map.get(null);
+            if (list == null) {
+                list = CollectionFactory.createIdentitySet();
+                map.put(null, list);
+            }
+            list.add(scoped);
+        }
+        else {
+            for (Topic theme: scope) {
+                Set<Scoped> list = map.get(theme);
+                if (list == null) {
+                    list = CollectionFactory.createIdentitySet();
+                    map.put(theme, list);
+                }
+                list.add(scoped);
+            }
+        }
+    }
+
     private abstract class _EvtHandler implements IEventHandler {
         @SuppressWarnings("unchecked")
-        Map<Topic, List<Scoped>> getMap(Scoped scoped) {
+        Map<Topic, Set<Scoped>> getMap(IConstruct scoped) {
             Map<Topic, ?> theme2Scoped = null;
-            if (scoped instanceof Association) {
+            if (scoped.isAssociation()) {
                 theme2Scoped = _theme2Assocs;
             }
-            else if (scoped instanceof Occurrence) {
+            else if (scoped.isOccurrence()) {
                 theme2Scoped = _theme2Occs;
             }
-            else if (scoped instanceof Name) {
+            else if (scoped.isName()) {
                 theme2Scoped = _theme2Names;
             }
-            else if (scoped instanceof Variant) {
+            else if (scoped.isVariant()) {
                 theme2Scoped = _theme2Variants;
             }
-            return (Map<Topic, List<Scoped>>) theme2Scoped;
+            return (Map<Topic, Set<Scoped>>) theme2Scoped;
         }
     }
 
     private final class AddScopedHandler extends _EvtHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
-            Scoped scoped = (Scoped) newValue;
-            Map<Topic, List<Scoped>> map = getMap(scoped);
-            List<Scoped> list = null;
-            if (scoped.getScope().isEmpty()) {
-                list = map.get(null);
-                if (list == null) {
-                    list = new ArrayList<Scoped>();
-                    map.put(null, list);
-                }
-                list.add(scoped);
-            }
-            else {
-                for (Topic theme: scoped.getScope()) {
-                    list = map.get(theme);
-                    if (list == null) {
-                        list = new ArrayList<Scoped>();
-                        map.put(theme, list);
-                    }
-                    list.add(scoped);
-                }
-            }
+            IScoped scoped = (IScoped) newValue;
+            _index(getMap(scoped), scoped, scoped.getScopeObject());
         }
-        
     }
 
     private final class RemoveScopedHandler extends _EvtHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
-            Scoped scoped = (Scoped) oldValue;
-            Map<Topic, List<Scoped>> map = getMap(scoped); 
-            List<Scoped> list = null;
-            if (scoped.getScope().isEmpty()) {
-                list = map.get(null);
-                if (list != null) {
-                    list.remove(scoped);
-                }
-            }
-            else {
-                for (Topic theme: scoped.getScope()) {
-                    list = map.get(theme);
-                    if (list != null) {
-                        list.remove(scoped);
-                        if (list.isEmpty()) {
-                            map.remove(theme);
-                        }
-                    }
-                }
-            }
-        }
-        
-    }
-
-    private final class AddThemeHandler extends _EvtHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
-                Object newValue) {
-            Scoped scoped = (Scoped) sender;
-            Map<Topic, List<Scoped>> map = getMap(scoped); 
-            List<Scoped> list = map.get(newValue);
-            if (list == null) {
-                list = new ArrayList<Scoped>();
-                map.put((Topic)newValue, list);
-            }
-            list.add(scoped);
-            list = map.get(null);
-            if (list != null) {
-                list.remove(scoped);
-            }
+            IScoped scoped = (IScoped) oldValue;
+            _unindex(getMap(scoped), scoped, scoped.getScopeObject());
         }
     }
 
-    private final class RemoveThemeHandler extends _EvtHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+    private final class SetScopeHandler extends _EvtHandler {
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             Scoped scoped = (Scoped) sender;
-            Map<Topic, List<Scoped>> map = getMap(scoped); 
-            List<Scoped> list = map.get(oldValue);
-            if (list != null) {
-                list.remove(scoped);
-                if (list.isEmpty()) {
-                    map.remove(oldValue);
-                }
-            }
-            if (scoped.getScope().size() == 1) {
-                list = map.get(null);
-                if (list == null) {
-                    list = new ArrayList<Scoped>();
-                    map.put(null, list);
-                }
-                list.add(scoped);
-            }
+            Map<Topic, Set<Scoped>> map = getMap(sender);
+            _unindex(map, scoped, (IScope) oldValue);
+            _index(map, scoped, (IScope) newValue);
         }
     }
 

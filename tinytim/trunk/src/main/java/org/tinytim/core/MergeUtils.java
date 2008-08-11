@@ -23,9 +23,10 @@ package org.tinytim.core;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 import org.tinytim.index.IIndexManager;
+import org.tinytim.utils.IIntObjectMap;
+import org.tinytim.utils.IntObjectMap;
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
@@ -86,8 +87,7 @@ final class MergeUtils {
     /**
      * @see #merge(Topic, Topic)
      */
-    @SuppressWarnings("unchecked")
-    private static void _merge(TopicImpl source, TopicImpl target) {
+    private static void _merge(TopicImpl source, Topic target) {
         if (source == null || target == null) {
             throw new IllegalArgumentException("Neither the source topic nor the target topic must be null");
         }
@@ -121,7 +121,7 @@ final class MergeUtils {
         for(Topic type: source.getTypes()) {
             target.addType(type);
         }
-        Map<Integer, Reifiable> sigs = ((TopicMapImpl) source.getTopicMap()).getCollectionFactory().createMap();
+        IIntObjectMap<Reifiable> sigs = IntObjectMap.create();
         for (Occurrence occ: target.getOccurrences()) {
             sigs.put(SignatureGenerator.generateSignature(occ), occ);
         }
@@ -133,7 +133,7 @@ final class MergeUtils {
                 occ.remove();
             }
             else {
-                ((IMovable<Topic>) occ).moveTo(target);
+                ((OccurrenceImpl) occ).moveTo(target);
             }
         }
         sigs.clear();
@@ -148,7 +148,7 @@ final class MergeUtils {
                 name.remove();
             }
             else {
-                ((IMovable<Topic>) name).moveTo(target);
+                ((NameImpl) name).moveTo(target);
             }
         }
         sigs.clear();
@@ -177,7 +177,7 @@ final class MergeUtils {
      * @param target The association which takes the role characteristics.
      */
     static void moveRoleCharacteristics(Association source, Association target) {
-        Map<Integer, Role> sigs = ((TopicMapImpl) target.getTopicMap()).getCollectionFactory().createMap();
+        IIntObjectMap<Role> sigs = IntObjectMap.create();
         for (Role role: target.getRoles()) {
             sigs.put(SignatureGenerator.generateSignature(role), role);
         }
@@ -194,9 +194,8 @@ final class MergeUtils {
      * @param source The name to take the variants from.
      * @param target The target to add the variants to.
      */
-    @SuppressWarnings("unchecked")
     static void moveVariants(Name source, Name target) {
-        Map<Integer, Variant> sigs = ((TopicMapImpl) target.getTopicMap()).getCollectionFactory().createMap();
+        IIntObjectMap<Variant> sigs = IntObjectMap.create();
         for (Variant var: target.getVariants()) {
             sigs.put(SignatureGenerator.generateSignature(var), var);
         }
@@ -208,7 +207,7 @@ final class MergeUtils {
                 var.remove();
             }
             else {
-                ((IMovable<Name>) var).moveTo(target);
+                ((VariantImpl) var).moveTo(target);
             }
         }
     }

@@ -23,8 +23,6 @@ package org.tinytim.core;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.tinytim.utils.ICollectionFactory;
-import org.tinytim.utils.Property;
 import org.tinytim.utils.Feature;
 import org.tmapi.core.FeatureNotRecognizedException;
 import org.tmapi.core.FeatureNotSupportedException;
@@ -40,8 +38,6 @@ import org.tmapi.core.TopicMapSystemFactory;
  */
 public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
 
-    private static final String _COLL_FACTORY_JAVA = "org.tinytim.core.JavaCollectionFactory";
-    private static final String _COLL_FACTORY_TROVE = "org.tinytim.core.TroveCollectionFactory";
     private static final FeatureInfo[] _FEATURES = new FeatureInfo[] {
                     // Feature IRI, default value, fixed?
         new FeatureInfo(Feature.NOTATION_URI, true, true),
@@ -61,15 +57,6 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
         for (FeatureInfo feature: _FEATURES) {
             _features.put(feature.name, feature.defaultValue);
         }
-        _properties.put(Property.COLLECTION_FACTORY, _COLL_FACTORY_JAVA);
-        try {
-            // Probe if Trove is available.
-            Class.forName("gnu.trove.THashSet");
-            _properties.put(Property.COLLECTION_FACTORY, _COLL_FACTORY_TROVE);
-        }
-        catch (Exception ex) {
-            // noop.
-        }
     }
 
     /* (non-Javadoc)
@@ -77,26 +64,7 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
      */
     @Override
     public TopicMapSystem newTopicMapSystem() throws TMAPIException {
-        return new TopicMapSystemImpl(_createCollectionFactory(), new HashMap<String, Boolean>(_features), new HashMap<String, Object>(_properties));
-    }
-
-    /**
-     * Creates a collection factory according to the 
-     * {@link Property#COLLECTION_FACTORY} value. If the collection factory
-     * is not available, a default collection factory implementation is returned.
-     *
-     * @return A collection factory.
-     */
-    private ICollectionFactory _createCollectionFactory() {
-        String collFactory = (String) _properties.get(Property.COLLECTION_FACTORY);
-        String className = collFactory == null ? _COLL_FACTORY_JAVA : collFactory;
-        try {
-            return (ICollectionFactory) Class.forName(className).newInstance();
-        }
-        catch (Exception ex) {
-            // Irgendwas geht immer ;)
-            return new JavaCollectionFactory();
-        }
+        return new TopicMapSystemImpl(new HashMap<String, Boolean>(_features), new HashMap<String, Object>(_properties));
     }
 
     /* (non-Javadoc)

@@ -18,51 +18,19 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.index;
+package org.tinytim.core;
 
-import org.tmapi.index.Index;
+import org.tmapi.core.Scoped;
 
 /**
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-abstract class AbstractIndex implements Index {
+public interface IScoped extends Scoped, IConstruct {
 
-    /* (non-Javadoc)
-     * @see org.tmapi.index.Index#close()
-     */
-    public void close() {
-        // noop.
-    }
+    public IScope getScopeObject();
 
-    /* (non-Javadoc)
-     * @see org.tmapi.index.Index#isOpen()
-     */
-    public boolean isOpen() {
-        return true;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tmapi.index.Index#open()
-     */
-    public void open() {
-        // noop.
-    }
-
-    /* (non-Javadoc)
-     * @see org.tmapi.index.Index#isAutoUpdated()
-     */
-    public boolean isAutoUpdated() {
-        return true;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tmapi.index.Index#reindex()
-     */
-    public void reindex() {
-        // noop.
-    }
-
+    public void setScopeObject(IScope scope);
 }

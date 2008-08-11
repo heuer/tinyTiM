@@ -31,7 +31,7 @@ import java.util.Set;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public interface ICollectionFactory {
+interface ICollectionFactory {
 
     /**
      * Creates a {@link java.util.Set} with the specified initial <code>size</code>.

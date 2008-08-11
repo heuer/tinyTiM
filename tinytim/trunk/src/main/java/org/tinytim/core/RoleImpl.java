@@ -34,6 +34,10 @@ final class RoleImpl extends TypedImpl implements Role {
 
     private Topic _player;
 
+    RoleImpl(TopicMapImpl tm) {
+        super(tm);
+    }
+
     RoleImpl(TopicMapImpl tm, Topic type, Topic player) {
         super(tm, type);
         _player = player;
@@ -71,6 +75,14 @@ final class RoleImpl extends TypedImpl implements Role {
         if (player != null) {
             ((TopicImpl) player).addRolePlayed(this);
         }
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.ConstructImpl#isRole()
+     */
+    @Override
+    public final boolean isRole() {
+        return true;
     }
 
     /* (non-Javadoc)
