@@ -44,7 +44,11 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
     private Set<Variant> _variants;
 
 
-    NameImpl(TopicMapImpl topicMap, Topic type, ILiteral literal, Collection<Topic> scope) {
+    NameImpl(TopicMapImpl tm) {
+        super(tm);
+    }
+
+    NameImpl(TopicMapImpl topicMap, Topic type, ILiteral literal, IScope scope) {
         super(topicMap, type, scope);
         _literal = literal;
     }
@@ -151,7 +155,7 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
         if (scope_.isEmpty()) {
             throw new ModelConstraintException(this, "The variant's scope is not a true superset of the parent's scope");
         }
-        Variant variant = new VariantImpl(_tm, literal, scope_);
+        Variant variant = new VariantImpl(_tm, literal, Scope.create(scope_));
         addVariant(variant);
         return variant;
     }
@@ -195,6 +199,14 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
         _fireEvent(Event.MOVE_NAME, _parent, newParent);
         ((TopicImpl) _parent).detachName(this);
         ((TopicImpl) newParent).attachName(this);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.ConstructImpl#isName()
+     */
+    @Override
+    public final boolean isName() {
+        return true;
     }
 
     /* (non-Javadoc)

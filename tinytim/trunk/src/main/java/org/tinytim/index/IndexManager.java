@@ -21,7 +21,6 @@
 package org.tinytim.index;
 
 import org.tinytim.core.IEventPublisher;
-import org.tinytim.utils.ICollectionFactory;
 import org.tmapi.index.LiteralIndex;
 import org.tmapi.index.ScopedIndex;
 import org.tmapi.index.TypeInstanceIndex;
@@ -39,10 +38,10 @@ public final class IndexManager implements IIndexManager {
     private ScopedIndexImpl _scopedIndex;
     private LiteralIndexImpl _literalIndex;
 
-    public IndexManager(IEventPublisher publisher, ICollectionFactory collFactory) {
-        _typeInstanceIndex = new TypeInstanceIndexImpl(publisher, collFactory);
-        _scopedIndex = new ScopedIndexImpl(publisher, collFactory);
-        _literalIndex = new LiteralIndexImpl(publisher, collFactory);
+    public IndexManager(IEventPublisher publisher) {
+        _typeInstanceIndex = new TypeInstanceIndexImpl(publisher);
+        _scopedIndex = new ScopedIndexImpl(publisher);
+        _literalIndex = new LiteralIndexImpl(publisher);
     }
 
     /* (non-Javadoc)

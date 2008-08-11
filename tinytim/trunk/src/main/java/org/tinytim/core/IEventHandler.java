@@ -20,8 +20,6 @@
  */
 package org.tinytim.core;
 
-import org.tmapi.core.Construct;
-
 /**
  * Event handler that is able to handle Topic Maps events.
  * 
@@ -44,6 +42,6 @@ public interface IEventHandler {
      * @param newValue The new value or <code>null</code> if the new value
      *                 is not available or should become <code>null</code>.
      */
-    public void handleEvent(Event evt, Construct sender, Object oldValue, Object newValue);
+    public void handleEvent(Event evt, IConstruct sender, Object oldValue, Object newValue);
 
 }

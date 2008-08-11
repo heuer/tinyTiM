@@ -22,7 +22,6 @@ package org.tinytim.core;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Set;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Name;
@@ -166,17 +165,7 @@ final class SignatureGenerator {
      * @return The signature.
      */
     private static int _generateScopeSignature(final Scoped scoped) {
-        Set<Topic> scope = scoped.getScope();
-        if (scope.isEmpty()) {
-            return 0;
-        }
-        int[] ids = new int[scope.size()];
-        int i = 0;
-        for (Topic topic : scope) {
-            ids[i++] = _signature(topic); 
-        }
-        Arrays.sort(ids);
-        return Arrays.hashCode(ids);
+        return System.identityHashCode(((IScoped) scoped).getScopeObject());
     }
 
     private static int _signature(Topic topic) {

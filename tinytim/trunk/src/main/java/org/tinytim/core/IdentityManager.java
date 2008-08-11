@@ -22,7 +22,7 @@ package org.tinytim.core;
 
 import java.util.Map;
 
-import org.tinytim.utils.ICollectionFactory;
+import org.tinytim.utils.CollectionFactory;
 import org.tmapi.core.Construct;
 import org.tmapi.core.IdentityConstraintException;
 import org.tmapi.core.Locator;
@@ -41,15 +41,14 @@ final class IdentityManager {
 
     private Map<Locator, Topic> _sid2Topic;
     private Map<Locator, Topic> _slo2Topic;
-    private Map<Locator, Construct> _iid2Construct;
-    private Map<String, Construct> _id2Construct;
+    private Map<Locator, IConstruct> _iid2Construct;
+    private Map<String, IConstruct> _id2Construct;
 
     IdentityManager(TopicMapImpl tm) {
-        ICollectionFactory collFactory = tm.getCollectionFactory();
-        _id2Construct = collFactory.createIdentityMap();
-        _sid2Topic = collFactory.createIdentityMap();
-        _slo2Topic = collFactory.createIdentityMap();
-        _iid2Construct = collFactory.createIdentityMap();
+        _id2Construct = CollectionFactory.createIdentityMap();
+        _sid2Topic = CollectionFactory.createIdentityMap();
+        _slo2Topic = CollectionFactory.createIdentityMap();
+        _iid2Construct = CollectionFactory.createIdentityMap();
         _subscribe(tm);
         _register(tm);
     }
@@ -95,10 +94,10 @@ final class IdentityManager {
      *
      * @param construct The construct to register.
      */
-    private void _register(Construct construct) {
+    private void _register(IConstruct construct) {
         ConstructImpl c = (ConstructImpl) construct;
         if (c._id == null) {
-            String id = "" + IdGenerator.getInstance().nextId();
+            String id = "" + IdGenerator.nextId();
             c._id = id.intern();
         }
         if (!_id2Construct.containsKey(c._id)) {
@@ -163,16 +162,16 @@ final class IdentityManager {
     }
 
     private class TopicMapsConstructAddHandler implements IEventHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
-            _register((ConstructImpl)newValue);
+            _register((IConstruct)newValue);
         }
     }
 
     private class TopicMapsConstructRemoveHandler implements IEventHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
-            _unregister((ConstructImpl)oldValue);
+            _unregister((IConstruct)oldValue);
         }
     }
 
@@ -181,19 +180,19 @@ final class IdentityManager {
      * item identifier to the index. 
      */
     private class AddItemIdentifierHandler implements IEventHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             Locator iid = (Locator) newValue;
-            Construct existing = _iid2Construct.get(iid);
+            IConstruct existing = _iid2Construct.get(iid);
             if (existing != null) {
                 if (existing != sender) {
-                    if (sender instanceof Topic && existing instanceof Topic) {
+                    if (sender.isTopic() && existing.isTopic()) {
                         throw new IdentityConstraintException((Topic) sender, (Topic) existing, iid, "A topic with the same item identifier '" + iid.getReference() + "' exists");
                     }
                     throw new IdentityConstraintException(sender, existing, iid, "A Topic Maps construct with the same item identifier '" + iid.getReference() + "' exists");
                 }
             }
-            if (sender instanceof Topic) {
+            if (sender.isTopic()) {
                 Topic existingTopic = _sid2Topic.get(iid);
                 if (existingTopic != null && existingTopic != sender) {
                     throw new IdentityConstraintException((Topic) sender, existingTopic, iid, "A topic with a subject identifier equals to the item identifier '" + iid.getReference() + "' exists");
@@ -207,7 +206,7 @@ final class IdentityManager {
      * Removes an item identifier and its Topic Maps constructs from the index. 
      */
     private class RemoveItemIdentifierHandler implements IEventHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             _iid2Construct.remove(oldValue);
         }
@@ -218,16 +217,16 @@ final class IdentityManager {
      * subject identifier to the index. 
      */
     private class AddSubjectIdentifierHandler implements IEventHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             Topic topic = (Topic) sender;
             Locator sid = (Locator) newValue;
-            Construct existing = _sid2Topic.get(sid);
+            IConstruct existing = (IConstruct) _sid2Topic.get(sid);
             if (existing != null && existing != topic) {
                 throw new IdentityConstraintException(topic, (Topic) existing, sid, "A topic with the same subject identifier '" + sid.getReference() + "' exists");
             }
             existing = _iid2Construct.get(sid);
-            if (existing != null && existing instanceof Topic && existing != topic) {
+            if (existing != null && existing.isTopic() && existing != topic) {
                 throw new IdentityConstraintException(topic, (Topic) existing, sid, "A topic with an item identifier equals to the subject identifier '" + sid.getReference() + "' exists");
             }
             _sid2Topic.put(sid, topic);
@@ -238,7 +237,7 @@ final class IdentityManager {
      * Removes a subject identifier and its topic from the index. 
      */
     private class RemoveSubjectIdentifierHandler implements IEventHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             _sid2Topic.remove(oldValue);
         }
@@ -249,7 +248,7 @@ final class IdentityManager {
      * subject locator to the index. 
      */
     private class AddSubjectLocatorHandler implements IEventHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             Topic topic = (Topic) sender;
             Locator slo = (Locator) newValue;
@@ -265,7 +264,7 @@ final class IdentityManager {
      * Removes a subject locator and its topic from the index. 
      */
     private class RemoveSubjectLocatorHandler implements IEventHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             _slo2Topic.remove(oldValue);
         }
@@ -275,7 +274,7 @@ final class IdentityManager {
      * Checks if setting the reifier is allowed.
      */
     private static class ReifierConstraintHandler implements IEventHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             if (newValue == null) {
                 return;

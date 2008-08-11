@@ -23,7 +23,8 @@ package org.tinytim.core;
 import org.tmapi.core.Locator;
 
 /**
- * 
+ * Marker interface which unifies the {@link org.tmapi.core.Locator} and 
+ * tinyTiM's {@link ILiteral}.
  * 
  * This interface is not meant to be used outside of the tinyTiM package.
  * 

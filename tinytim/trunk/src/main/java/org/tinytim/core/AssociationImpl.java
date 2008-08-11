@@ -21,7 +21,6 @@
 package org.tinytim.core;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
@@ -40,7 +39,12 @@ final class AssociationImpl extends ScopedImpl implements Association {
 
     private Set<Role> _roles;
 
-    AssociationImpl(TopicMapImpl topicMap, Topic type, Collection<Topic> scope) {
+    AssociationImpl(TopicMapImpl tm) {
+        super(tm);
+        _roles = _makeSet(2);
+    }
+
+    AssociationImpl(TopicMapImpl topicMap, Topic type, IScope scope) {
         super(topicMap, type, scope);
         _roles = _makeSet(2);
     }
@@ -139,6 +143,14 @@ final class AssociationImpl extends ScopedImpl implements Association {
             }
         }
         return roles;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.ConstructImpl#isAssociation()
+     */
+    @Override
+    public final boolean isAssociation() {
+        return true;
     }
 
     /* (non-Javadoc)

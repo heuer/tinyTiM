@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.tinytim.utils.ICollectionFactory;
+import org.tinytim.utils.CollectionFactory;
 import org.tmapi.core.FeatureNotRecognizedException;
 import org.tmapi.core.Locator;
 import org.tmapi.core.TopicMap;
@@ -42,23 +42,12 @@ final class TopicMapSystemImpl implements TopicMapSystem {
     private Map<Locator, TopicMap> _topicMaps;
     private Map<String, Object> _properties;
     private Map<String, Boolean> _features;
-    private ICollectionFactory _collectionFactory;
 
 
-    TopicMapSystemImpl(ICollectionFactory collFactory, Map<String, Boolean> features, Map<String, Object> properties) {
-        _collectionFactory = collFactory;
+    TopicMapSystemImpl(Map<String, Boolean> features, Map<String, Object> properties) {
         _features = features;
         _properties = properties;
-        _topicMaps = collFactory.createIdentityMap(4);
-    }
-
-    /**
-     * Returns the collection factory.
-     *
-     * @return The collection factory.
-     */
-    ICollectionFactory getCollectionFactory() {
-        return _collectionFactory;
+        _topicMaps = CollectionFactory.createIdentityMap(4);
     }
 
     /**
@@ -142,7 +131,6 @@ final class TopicMapSystemImpl implements TopicMapSystem {
         _features = null;
         _properties = null;
         _topicMaps = null;
-        _collectionFactory = null;
     }
 
 }

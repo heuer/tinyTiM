@@ -18,28 +18,32 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.utils;
+package org.tinytim.core;
+
+import java.util.Set;
+
+import org.tmapi.core.Topic;
 
 /**
- * Provides constants for all tinyTiM-specific TMAPI properties.
+ * Represents an immutable set of {@link org.tmapi.core.Topic}s.
+ * 
+ * This interface is not meant to be used outside of the tinyTiM package.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public final class Property {
+public interface IScope extends Iterable<Topic> {
 
-    private Property() {
-        // noop.
-    }
+    public Set<Topic> asSet();
 
-    /**
-     * Property which indicates the {@link org.tinytim.ICollectionFactory} to use.
-     * 
-     * The default value of this property depends on the environment: If
-     * the <a href="http://trove4j.sourceforge.net/">Trove4J</a> lib is found, 
-     * that lib used, otherwise a collection factory which depends on the 
-     * default Java collections.
-     */
-    public static final String COLLECTION_FACTORY = "org.tinytim.util.ICollectionFactory";
+    public boolean contains(Topic theme);
+
+    public IScope add(Topic theme);
+
+    public IScope remove(Topic theme);
+
+    public boolean isUnconstrained();
+
+    public int size();
 
 }

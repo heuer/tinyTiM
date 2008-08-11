@@ -121,14 +121,9 @@ public enum Event {
     SET_TYPE,
 
     /**
-     * Notification that a theme should be added to a {@link IScoped} construct.
+     * Notification that the scope is changed.
      */
-    ADD_THEME,
-    /**
-     * Notification that a theme should be removed from a 
-     * {@link IScoped} construct.
-     */
-    REMOVE_THEME,
+    SET_SCOPE,
 
     /**
      * Notification that the player of a role should be set.

@@ -20,29 +20,22 @@
  */
 package org.tinytim.core;
 
-import org.tmapi.core.Association;
-import org.tmapi.core.Name;
-import org.tmapi.core.Occurrence;
-import org.tmapi.core.Role;
-import org.tmapi.core.Topic;
-import org.tmapi.core.Variant;
+import org.tmapi.core.Construct;
 
 /**
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public interface IFactory {
+public interface IConstruct extends Construct {
 
-    public Association createAssociation();
-
-    public Role createRole(Association parent);
-
-    public Occurrence createOccurrence(Topic parent);
-
-    public Name createName(Topic parent);
-
-    public Variant createVariant(Name parent);
+    public boolean isTopicMap();
+    public boolean isTopic();
+    public boolean isAssociation();
+    public boolean isRole();
+    public boolean isOccurrence();
+    public boolean isName();
+    public boolean isVariant();
 
 }

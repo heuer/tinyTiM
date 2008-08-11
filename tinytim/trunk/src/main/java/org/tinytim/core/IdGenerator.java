@@ -31,13 +31,8 @@ import java.util.concurrent.atomic.AtomicLong;
 final class IdGenerator {
 
     private static final AtomicLong _COUNTER = new AtomicLong();
-    private static final IdGenerator _INSTANCE = new IdGenerator();
 
-    public static IdGenerator getInstance() {
-        return _INSTANCE;
-    }
-
-    public long nextId() {
+    public static long nextId() {
         return _COUNTER.getAndIncrement();
     }
 }

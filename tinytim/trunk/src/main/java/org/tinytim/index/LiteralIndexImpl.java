@@ -27,17 +27,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.tinytim.core.Event;
+import org.tinytim.core.IConstruct;
 import org.tinytim.core.IEventHandler;
 import org.tinytim.core.IEventPublisher;
 import org.tinytim.core.ILiteral;
 import org.tinytim.core.ILiteralAware;
 import org.tinytim.core.Literal;
-import org.tinytim.utils.ICollectionFactory;
-import org.tmapi.core.Construct;
+import org.tinytim.utils.CollectionFactory;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
-import org.tmapi.core.TopicMap;
 import org.tmapi.core.Variant;
 import org.tmapi.index.LiteralIndex;
 
@@ -53,11 +52,11 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
     private Map<ILiteral, List<Occurrence>> _lit2Occs;
     private Map<ILiteral, List<Variant>> _lit2Variants;
 
-    public LiteralIndexImpl(IEventPublisher publisher, ICollectionFactory collFactory) {
-        super((TopicMap) publisher, collFactory);
-        _lit2Names = collFactory.createIdentityMap();
-        _lit2Occs = collFactory.createIdentityMap();
-        _lit2Variants = collFactory.createIdentityMap();
+    public LiteralIndexImpl(IEventPublisher publisher) {
+        super();
+        _lit2Names = CollectionFactory.createIdentityMap();
+        _lit2Occs = CollectionFactory.createIdentityMap();
+        _lit2Variants = CollectionFactory.createIdentityMap();
         publisher.subscribe(Event.SET_LITERAL, new LiteralHandler());
         IEventHandler handler = new AddLiteralAwareHandler();
         publisher.subscribe(Event.ADD_OCCURRENCE, handler);
@@ -179,46 +178,46 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
 
     private abstract class _EvtHandler implements IEventHandler {
         @SuppressWarnings("unchecked")
-        Map<ILiteral, List<ILiteralAware>> getMap(ILiteralAware typed) {
-            Map<ILiteral, ?> type2Typed = null;
-            if (typed instanceof Name) {
-                type2Typed = _lit2Names;
+        Map<ILiteral, List<ILiteralAware>> getMap(IConstruct c) {
+            Map<ILiteral, ?> lit2LitAware = null;
+            if (c.isName()) {
+                lit2LitAware = _lit2Names;
             }
-            else if (typed instanceof Occurrence) {
-                type2Typed = _lit2Occs;
+            else if (c.isOccurrence()) {
+                lit2LitAware = _lit2Occs;
             }
-            else if (typed instanceof Variant) {
-                type2Typed = _lit2Variants;
+            else if (c.isVariant()) {
+                lit2LitAware = _lit2Variants;
             }
-            return (Map<ILiteral, List<ILiteralAware>>) type2Typed;
+            return (Map<ILiteral, List<ILiteralAware>>) lit2LitAware;
         }
     }
 
     private final class LiteralHandler extends _EvtHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             ILiteralAware typed = (ILiteralAware) sender;
-            Map<ILiteral, List<ILiteralAware>> map = getMap(typed);
+            Map<ILiteral, List<ILiteralAware>> map = getMap(sender);
             _unindex(map, (ILiteral) oldValue, typed);
             _index(map, (ILiteral) newValue, typed);
         }
     }
 
     private final class AddLiteralAwareHandler extends _EvtHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             ILiteralAware litAware = (ILiteralAware) newValue;
-            Map<ILiteral, List<ILiteralAware>> map = getMap(litAware);
+            Map<ILiteral, List<ILiteralAware>> map = getMap((IConstruct) newValue);
             _index(map, litAware.getLiteral(), litAware);
         }
         
     }
 
     private final class RemoveLiteralAwareHandler extends _EvtHandler {
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             ILiteralAware litAware = (ILiteralAware) oldValue;
-            Map<ILiteral, List<ILiteralAware>> map = getMap(litAware);
+            Map<ILiteral, List<ILiteralAware>> map = getMap((IConstruct)oldValue);
             _unindex(map, litAware.getLiteral(), litAware);
         }
         

@@ -20,7 +20,6 @@
  */
 package org.tinytim.core;
 
-import java.util.Collection;
 import java.util.Set;
 
 import org.tmapi.core.Name;
@@ -37,7 +36,11 @@ import org.tmapi.core.Variant;
 final class VariantImpl extends DatatypeAwareConstruct implements 
         Variant, IMovable<Name> {
 
-    VariantImpl(TopicMapImpl topicMap, ILiteral literal, Collection<Topic> scope) {
+    VariantImpl(TopicMapImpl tm) {
+        super(tm);
+    }
+
+    VariantImpl(TopicMapImpl topicMap, ILiteral literal, IScope scope) {
         super(topicMap, null, literal, scope);
     }
 
@@ -69,6 +72,14 @@ final class VariantImpl extends DatatypeAwareConstruct implements
         _fireEvent(Event.MOVE_VARIANT, _parent, newParent);
         ((NameImpl) _parent).detachVariant(this);
         ((NameImpl) newParent).attachVariant(this);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.ConstructImpl#isVariant()
+     */
+    @Override
+    public final boolean isVariant() {
+        return true;
     }
 
     /* (non-Javadoc)

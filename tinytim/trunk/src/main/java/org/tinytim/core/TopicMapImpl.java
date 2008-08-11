@@ -30,7 +30,7 @@ import java.util.Set;
 
 import org.tinytim.index.IndexManager;
 import org.tinytim.index.IIndexManager;
-import org.tinytim.utils.ICollectionFactory;
+import org.tinytim.utils.CollectionFactory;
 import org.tinytim.voc.TMDM;
 import org.tmapi.core.Association;
 import org.tmapi.core.IdentityConstraintException;
@@ -55,8 +55,6 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
 
     private IdentityManager _identityManager;
     private IndexManager _indexManager;
-    private ICollectionFactory _collectionFactory;
-    private IFactory _factory;
     private Locator _locator;
     private Set<Topic> _topics;
     private Set<Association> _assocs;
@@ -70,21 +68,12 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
         super._tm = this;
         _sys = sys;
         _locator = locator;
-        _collectionFactory = _sys.getCollectionFactory();
-        _topics = _collectionFactory.createIdentitySet(100);
-        _assocs = _collectionFactory.createIdentitySet(100);
-        _evtHandlers = _collectionFactory.createIdentityMap();
+        _topics = CollectionFactory.createIdentitySet(100);
+        _assocs = CollectionFactory.createIdentitySet(100);
+        _evtHandlers = CollectionFactory.createIdentityMap();
         _identityManager = new IdentityManager(this);
-        _indexManager = new IndexManager(this, _collectionFactory);
+        _indexManager = new IndexManager(this);
         _eventMultiplier = new EventMultiplier(this);
-    }
-
-    ICollectionFactory getCollectionFactory() {
-        return _collectionFactory;
-    }
-
-    public IFactory getFactory() {
-        return _factory;
     }
 
     Locator getLocator() {
@@ -119,7 +108,7 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
     public Topic createTopic() {
         TopicImpl topic = new TopicImpl(this);
         addTopic(topic);
-        topic.addItemIdentifier(Literal.createIRI("urn:x-tinytim:" + IdGenerator.getInstance().nextId()));
+        topic.addItemIdentifier(Literal.createIRI("urn:x-tinytim:" + IdGenerator.nextId()));
         return topic;
     }
 
@@ -244,7 +233,7 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
         if (scope == null) {
             throw new IllegalArgumentException("The scope must not be null");
         }
-        AssociationImpl assoc = new AssociationImpl(this, type, scope);
+        AssociationImpl assoc = new AssociationImpl(this, type, Scope.create(scope));
         addAssociation(assoc);
         return assoc;
     }
@@ -328,15 +317,16 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#getIndex(java.lang.Class)
      */
-    public Index getIndex(Class<? extends Index> indexInterface) {
+    @SuppressWarnings("unchecked")
+    public <I extends Index> I getIndex(Class<I> indexInterface) {
         if (indexInterface.getName().equals("org.tmapi.index.TypeInstanceIndex")) {
-            return _indexManager.getTypeInstanceIndex();
+            return (I) _indexManager.getTypeInstanceIndex();
         }
         if (indexInterface.getName().equals("org.tmapi.index.ScopedIndex")) {
-            return _indexManager.getScopedIndex();
+            return (I) _indexManager.getScopedIndex();
         }
         if (indexInterface.getName().equals("org.tmapi.index.LiteralIndex")) {
-            return _indexManager.getLiteralIndex();
+            return (I) _indexManager.getLiteralIndex();
         }
         throw new UnsupportedOperationException("Index '" + indexInterface.getName() + "'  is unknown");
     }
@@ -353,6 +343,14 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
      */
     public void close() {
         remove();
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.ConstructImpl#isTopicMap()
+     */
+    @Override
+    public boolean isTopicMap() {
+        return true;
     }
 
     /* (non-Javadoc)
@@ -373,9 +371,17 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
     }
 
     /* (non-Javadoc)
+     * @see org.tinytim.core.ConstructImpl#_fireEvent(org.tinytim.core.Event, java.lang.Object, java.lang.Object)
+     */
+    @Override
+    protected final void _fireEvent(Event evt, Object oldValue, Object newValue) {
+        handleEvent(evt, this, oldValue, newValue);
+    }
+
+    /* (non-Javadoc)
      * @see org.tinytim.IEventHandler#handleEvent(org.tinytim.Event, org.tinytim.IConstruct, java.lang.Object, java.lang.Object)
      */
-    public void handleEvent(Event evt, Construct sender, Object oldValue, Object newValue) {
+    public void handleEvent(Event evt, IConstruct sender, Object oldValue, Object newValue) {
         if (!_evtHandlers.containsKey(evt)) {
             _eventMultiplier.handleEvent(evt, sender, oldValue, newValue);
             return;
@@ -421,25 +427,25 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
             _handler = handler;
         }
 
-        public void handleEvent(Event evt, Construct sender, Object oldValue,
+        public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             switch (evt) {
-                case ADD_TOPIC:         _topicAdd((Topic)newValue); break;
-                case ADD_ASSOCIATION:   _associationAdd((Association)newValue); break;
-                case ADD_NAME:          _nameAdd((Name)newValue); break;
+                case ADD_TOPIC:         _topicAdd((TopicImpl)newValue); break;
+                case ADD_ASSOCIATION:   _associationAdd((AssociationImpl)newValue); break;
+                case ADD_NAME:          _nameAdd((NameImpl)newValue); break;
                 case ADD_ROLE:
                 case ADD_OCCURRENCE:
-                case ADD_VARIANT:       _constructAdd((Construct)newValue); break;
-                case REMOVE_TOPIC:      _topicRemove((Topic) oldValue); break;
-                case REMOVE_ASSOCIATION: _associationRemove((Association) oldValue); break;
-                case REMOVE_NAME:       _nameRemove((Name)oldValue); break;
+                case ADD_VARIANT:       _constructAdd((IConstruct)newValue); break;
+                case REMOVE_TOPIC:      _topicRemove((TopicImpl) oldValue); break;
+                case REMOVE_ASSOCIATION: _associationRemove((AssociationImpl) oldValue); break;
+                case REMOVE_NAME:       _nameRemove((NameImpl)oldValue); break;
                 case REMOVE_ROLE:
                 case REMOVE_OCCURRENCE:
-                case REMOVE_VARIANT:    _constructRemove((Construct) oldValue); break;
+                case REMOVE_VARIANT:    _constructRemove((IConstruct) oldValue); break;
             }
         }
 
-        private void _topicAdd(Topic sender) {
+        private void _topicAdd(TopicImpl sender) {
             _constructAdd(sender);
             for (Locator sid: sender.getSubjectIdentifiers()) {
                 _handler.handleEvent(Event.ADD_SID, sender, null, sid);
@@ -458,33 +464,33 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
             }
         }
 
-        private void _associationAdd(Association sender) {
+        private void _associationAdd(AssociationImpl sender) {
             _constructAdd(sender);
             for (Role role: sender.getRoles()) {
                 _handler.handleEvent(Event.ADD_ROLE, sender, null, role);
             }
         }
 
-        private void _nameAdd(Name sender) {
+        private void _nameAdd(NameImpl sender) {
             _constructAdd(sender);
             for (Variant variant: sender.getVariants()) {
                 _handler.handleEvent(Event.ADD_VARIANT, sender, null, variant);
             }
         }
 
-        private void _constructAdd(Construct construct) {
+        private void _constructAdd(IConstruct construct) {
             for (Locator iid: construct.getItemIdentifiers()) {
                 _handler.handleEvent(Event.ADD_IID, construct, null, iid);
             }
         }
 
-        private void _constructRemove(Construct sender) {
+        private void _constructRemove(IConstruct sender) {
             for (Locator iid: sender.getItemIdentifiers()) {
                 _handler.handleEvent(Event.REMOVE_IID, sender, iid, null);
             }
         }
 
-        private void _topicRemove(Topic sender) {
+        private void _topicRemove(TopicImpl sender) {
             _constructRemove(sender);
             for (Locator sid: sender.getSubjectIdentifiers()) {
                 _handler.handleEvent(Event.REMOVE_SID, sender, sid, null);
@@ -503,14 +509,14 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
             }
         }
 
-        private void _associationRemove(Association sender) {
+        private void _associationRemove(AssociationImpl sender) {
             _constructRemove(sender);
             for (Role role: sender.getRoles()) {
                 _handler.handleEvent(Event.REMOVE_ROLE, sender, role, null);
             }
         }
 
-        private void _nameRemove(Name sender) {
+        private void _nameRemove(NameImpl sender) {
             _constructRemove(sender);
             for (Variant variant: sender.getVariants()) {
                 _handler.handleEvent(Event.REMOVE_VARIANT, sender, variant, null);

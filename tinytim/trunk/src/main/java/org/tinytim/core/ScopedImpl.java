@@ -20,8 +20,6 @@
  */
 package org.tinytim.core;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
 
 import org.tmapi.core.Topic;
@@ -33,28 +31,45 @@ import org.tmapi.core.Topic;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-abstract class ScopedImpl extends TypedImpl {
+abstract class ScopedImpl extends TypedImpl implements IScoped {
 
     //NOTE: This class does NOT implement IScoped by intention!
 
-    private Set<Topic> _scope;
+    private IScope _scope;
 
-    ScopedImpl(TopicMapImpl topicMap, Topic type, Collection<Topic> scope) {
+    ScopedImpl(TopicMapImpl tm) {
+        super(tm);
+        _scope = Scope.UCS;
+    }
+
+    ScopedImpl(TopicMapImpl topicMap, Topic type, IScope scope) {
         super(topicMap, type);
-        if (scope != null && !scope.isEmpty()) {
-            _scope = _makeSet(scope.size());
-            for (Topic theme: scope) {
-                _scope.add(theme);
-            }
+        _scope = scope;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IScoped#getScopeObject()
+     */
+    public IScope getScopeObject() {
+        return _scope;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IScoped#setScopeObject(org.tinytim.core.IScope)
+     */
+    public void setScopeObject(IScope scope) {
+        if (_scope == scope) {
+            return;
         }
+        _fireEvent(Event.SET_SCOPE, _scope, scope);
+        _scope = scope;
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.ScopedObject#getScope()
      */
     public Set<Topic> getScope() {
-        return _scope == null ? Collections.<Topic>emptySet()
-                              : Collections.unmodifiableSet(_scope); 
+        return _scope.asSet();
     }
 
     /* (non-Javadoc)
@@ -64,25 +79,14 @@ abstract class ScopedImpl extends TypedImpl {
         if (theme == null) {
             throw new IllegalArgumentException("The theme must not be null");
         }
-        if (_scope != null && _scope.contains(theme)) {
-            return;
-        }
-        _fireEvent(Event.ADD_THEME, null, theme);
-        if (_scope == null) {
-            _scope = _makeSet();
-        }
-        _scope.add(theme);
+        setScopeObject(_scope.add(theme));
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.Scoped#removeTheme(org.tmapi.core.Topic)
      */
     public void removeTheme(Topic theme) {
-        if (_scope == null || _scope.isEmpty()) {
-            return;
-        }
-        _fireEvent(Event.REMOVE_THEME, theme, null);
-        _scope.remove(theme);
+        setScopeObject(_scope.remove(theme));
     }
 
     /* (non-Javadoc)

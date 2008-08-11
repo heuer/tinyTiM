@@ -22,7 +22,6 @@ package org.tinytim.core;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.Collection;
 
 import org.tinytim.voc.XSD;
 import org.tmapi.core.DatatypeAware;
@@ -40,7 +39,11 @@ abstract class DatatypeAwareConstruct extends ScopedImpl implements
 
     private ILiteral _literal;
 
-    DatatypeAwareConstruct(TopicMapImpl topicMap, Topic type, ILiteral literal, Collection<Topic> scope) {
+    DatatypeAwareConstruct(TopicMapImpl tm) {
+        super(tm);
+    }
+
+    DatatypeAwareConstruct(TopicMapImpl topicMap, Topic type, ILiteral literal, IScope scope) {
         super(topicMap, type, scope);
         _literal = literal;
     }

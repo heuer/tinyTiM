@@ -22,9 +22,9 @@ package org.tinytim.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Map;
 
-import org.tinytim.utils.ICollectionFactory;
+import org.tinytim.utils.IIntObjectMap;
+import org.tinytim.utils.IntObjectMap;
 import org.tmapi.core.Association;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
@@ -56,7 +56,7 @@ public final class DuplicateRemovalUtils {
         for (Topic topic: tm.getTopics()) {
             removeDuplicates(topic);
         }
-        Map<Integer, Association> sig2Assoc = tm.getCollectionFactory().createMap();
+        IIntObjectMap<Association> sig2Assoc = IntObjectMap.create();
         TypeInstanceIndex typeInstanceIdx = tm.getIndexManager().getTypeInstanceIndex();
         if (!typeInstanceIdx.isAutoUpdated()) {
             typeInstanceIdx.reindex();
@@ -66,13 +66,12 @@ public final class DuplicateRemovalUtils {
         }
     }
 
-    private static void _removeDuplicateAssociations(Map<Integer, Association> sig2Assoc, Collection<Association> assocs) {
+    private static void _removeDuplicateAssociations(IIntObjectMap<Association> sig2Assoc, Collection<Association> assocs) {
         sig2Assoc.clear();
         Association existing = null;
-        Integer sig = null;
         for (Association assoc: assocs) {
             removeDuplicates(assoc);
-            sig = SignatureGenerator.generateSignature(assoc);
+            int sig = SignatureGenerator.generateSignature(assoc);
             existing = sig2Assoc.get(sig);
             if (existing != null) {
                 MergeUtils.moveRoleCharacteristics(assoc, existing);
@@ -90,9 +89,8 @@ public final class DuplicateRemovalUtils {
      * @param topic The topic from which duplicates should be removed from.
      */
     public static void removeDuplicates(Topic topic) {
-        ICollectionFactory collFactory = ((TopicMapImpl) topic.getTopicMap()).getCollectionFactory();
-        _removeDuplicateOccurrences(topic.getOccurrences(), collFactory);
-        _removeDuplicateNames(topic.getNames(), collFactory);
+        _removeDuplicateOccurrences(topic.getOccurrences());
+        _removeDuplicateNames(topic.getNames());
     }
 
     /**
@@ -101,10 +99,9 @@ public final class DuplicateRemovalUtils {
      * @param name The name from which the duplicates should be removed.
      */
     public static void removeDuplicates(Name name) {
-        Map<Integer, Variant> sigs = ((TopicMapImpl) name.getTopicMap()).getCollectionFactory().createMap();
-        Integer sig = null;
+        IIntObjectMap<Variant> sigs = IntObjectMap.create();
         for (Variant variant: new ArrayList<Variant>(name.getVariants())) {
-            sig = SignatureGenerator.generateSignature(variant);
+            int sig = SignatureGenerator.generateSignature(variant);
             Variant existing = sigs.get(sig);
             if (existing != null) {
                 MergeUtils.handleExistingConstruct(variant, existing);
@@ -121,12 +118,11 @@ public final class DuplicateRemovalUtils {
      *
      * @param occs
      */
-    private static void _removeDuplicateOccurrences(Collection<Occurrence> occs, ICollectionFactory collFactory) {
-        Map<Integer, Occurrence> sigs = collFactory.createMap(occs.size());
+    private static void _removeDuplicateOccurrences(Collection<Occurrence> occs) {
+        IIntObjectMap<Occurrence> sigs = IntObjectMap.create(occs.size());
         Occurrence existing = null;
-        Integer sig = null;
         for (Occurrence occ: new ArrayList<Occurrence>(occs)) {
-            sig = SignatureGenerator.generateSignature(occ);
+            int sig = SignatureGenerator.generateSignature(occ);
             existing = sigs.get(sig);
             if (existing != null) {
                 MergeUtils.handleExistingConstruct(occ, existing);
@@ -143,13 +139,12 @@ public final class DuplicateRemovalUtils {
      *
      * @param names
      */
-    private static void _removeDuplicateNames(Collection<Name> names, ICollectionFactory collFactory) {
-        Map<Integer, Name> sigs = collFactory.createMap(names.size());
+    private static void _removeDuplicateNames(Collection<Name> names) {
+        IIntObjectMap<Name> sigs = IntObjectMap.create(names.size());
         Name existing = null;
-        Integer sig = null;
         for (Name name: new ArrayList<Name>(names)) {
             removeDuplicates(name);
-            sig = SignatureGenerator.generateSignature(name);
+            int sig = SignatureGenerator.generateSignature(name);
             existing = sigs.get(sig);
             if (existing != null) {
                 MergeUtils.handleExistingConstruct(name, existing);
@@ -168,11 +163,10 @@ public final class DuplicateRemovalUtils {
      * @param assoc The association to remove duplicate roles from.
      */
     public static void removeDuplicates(Association assoc) {
-        Map<Integer, Role> sig2Role = ((TopicMapImpl) assoc.getTopicMap()).getCollectionFactory().createMap();
+        IIntObjectMap<Role> sig2Role = IntObjectMap.create();
         Role existing = null;
-        Integer sig = null;
         for (Role role: new ArrayList<Role>(assoc.getRoles())) {
-            sig = SignatureGenerator.generateSignature(role);
+            int sig = SignatureGenerator.generateSignature(role);
             existing = sig2Role.get(sig);
             if (existing != null) {
                 MergeUtils.handleExistingConstruct(role, existing);
