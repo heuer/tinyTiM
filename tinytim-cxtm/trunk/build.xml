@@ -29,7 +29,7 @@
 
     <property name="lib.junit" value="${dir.lib}/junit-4.4.jar"/>
     <property name="lib.tmapi" value="${dir.lib}/tmapi-1_0SP1.jar"/>
-    <property name="lib.tinytim" value="${dir.lib}/tinytim-1.5.0alpha2.jar"/>
+    <property name="lib.tinytim" value="${dir.lib}/tinytim-1.5.0beta.jar"/>
 
     <target name="help">
         <echo message="-------------------------"/>
