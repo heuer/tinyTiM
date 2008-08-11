@@ -34,8 +34,8 @@ import org.tmapi.core.Topic;
 public class TestDuplicateRemovalUtils extends TinyTimTestCase {
 
     public void testTopicRemoveNames() {
-        Topic topic = _tm.createTopic();
-        Topic nameType = _tm.createTopic();
+        Topic topic = createTopic();
+        Topic nameType = createTopic();
         Name name1 = topic.createName(nameType, "tinyTiM");
         Name name2 = topic.createName(nameType, "tinyTiM");
         assertEquals(nameType, name1.getType());
@@ -52,12 +52,12 @@ public class TestDuplicateRemovalUtils extends TinyTimTestCase {
     }
 
     public void testTopicRemoveNames2() {
-        Topic topic = _tm.createTopic();
-        Topic nameType = _tm.createTopic();
+        Topic topic = createTopic();
+        Topic nameType = createTopic();
         Name name1 = topic.createName(nameType, "tinyTiM");
         Name name2 = topic.createName(nameType, "tinyTiM");
-        Locator iid1 = _tm.createLocator("http://example.org/iid-1");
-        Locator iid2 = _tm.createLocator("http://example.org/iid-2");
+        Locator iid1 = createLocator("http://example.org/iid-1");
+        Locator iid2 = createLocator("http://example.org/iid-2");
         name1.addItemIdentifier(iid1);
         name2.addItemIdentifier(iid2);
         assertEquals(2, topic.getNames().size());
@@ -73,10 +73,10 @@ public class TestDuplicateRemovalUtils extends TinyTimTestCase {
     }
 
     public void testTopicRemoveNames3() {
-        Topic topic = _tm.createTopic();
-        Topic theme1 = _tm.createTopic();
-        Topic theme2 = _tm.createTopic();
-        Topic nameType = _tm.createTopic();
+        Topic topic = createTopic();
+        Topic theme1 = createTopic();
+        Topic theme2 = createTopic();
+        Topic nameType = createTopic();
         Name name1 = topic.createName(nameType, "tinyTiM", theme1, theme2);
         Name name2 = topic.createName(nameType, "tinyTiM", theme2, theme1);
         assertEquals(2, name1.getScope().size());
@@ -91,9 +91,9 @@ public class TestDuplicateRemovalUtils extends TinyTimTestCase {
     }
 
     public void testRemoveRoles() {
-        Association assoc = _tm.createAssociation(_tm.createTopic());
-        Topic type = _tm.createTopic();
-        Topic player = _tm.createTopic();
+        Association assoc = createAssociation();
+        Topic type = createTopic();
+        Topic player = createTopic();
         assoc.createRole(type, player);
         assoc.createRole(type, player);
         assertEquals(2, player.getRolesPlayed().size());

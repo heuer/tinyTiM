@@ -40,7 +40,7 @@ public class TestSignatureGenerator extends TinyTimTestCase {
      * signature. 
      */
     public void testAssociationBasic() {
-        Topic type = _tm.createTopic();
+        Topic type = createTopic();
         Association assoc = _tm.createAssociation(type);
         Association assoc2 = _tm.createAssociation(type);
         assertFalse(assoc.getId().equals(assoc2.getId()));
@@ -53,8 +53,8 @@ public class TestSignatureGenerator extends TinyTimTestCase {
      * signature. 
      */
     public void testOccurrenceBasic() {
-        Topic topic = _tm.createTopic();
-        Topic type = _tm.createTopic();
+        Topic topic = createTopic();
+        Topic type = createTopic();
         Occurrence occ = topic.createOccurrence(type, "tinyTiM");
         Occurrence occ2 = topic.createOccurrence(type, "tinyTiM");
         assertFalse(occ.getId().equals(occ2.getId()));
@@ -76,7 +76,7 @@ public class TestSignatureGenerator extends TinyTimTestCase {
      * signature. 
      */
     public void testNameBasic() {
-        Topic topic = _tm.createTopic();
+        Topic topic = createTopic();
         Name name = topic.createName("tinyTiM");
         Name name2 = topic.createName("tinyTiM");
         assertFalse(name.getId().equals(name2.getId()));
@@ -116,8 +116,8 @@ public class TestSignatureGenerator extends TinyTimTestCase {
      * Tests if associations with the same type return the same signature.
      */
     public void testAssociationTyped() {
-        Topic type1 = _tm.createTopic();
-        Topic type2 = _tm.createTopic();
+        Topic type1 = createTopic();
+        Topic type2 = createTopic();
         Association assoc = _tm.createAssociation(type1);
         int sigBefore = SignatureGenerator.generateSignature(assoc);
         assoc.setType(type2);
@@ -130,9 +130,9 @@ public class TestSignatureGenerator extends TinyTimTestCase {
     }
 
     public void testRoles() {
-        Association assoc = _tm.createAssociation(_tm.createTopic());
-        Topic type = _tm.createTopic();
-        Topic player = _tm.createTopic();
+        Association assoc = _tm.createAssociation(createTopic());
+        Topic type = createTopic();
+        Topic player = createTopic();
         Role role1 = assoc.createRole(type, player);
         Role role2 = assoc.createRole(type, player);
         assertEquals(2, player.getRolesPlayed().size());
