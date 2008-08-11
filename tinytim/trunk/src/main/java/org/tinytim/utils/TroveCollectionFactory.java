@@ -22,6 +22,7 @@ package org.tinytim.utils;
 
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
+import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TObjectIdentityHashingStrategy;
 
 import java.util.Map;
@@ -36,6 +37,16 @@ import java.util.Set;
  * @version $Rev$ - $Date$
  */
 final class TroveCollectionFactory implements ICollectionFactory {
+
+    @Override
+    public <E> IIntObjectMap<E> createIntObjectMap() {
+        return new TroveIntObjectMap<E>();
+    }
+
+    @Override
+    public <E> IIntObjectMap<E> createIntObjectMap(int size) {
+        return new TroveIntObjectMap<E>(size);
+    }
 
     /* (non-Javadoc)
      * @see org.tinytim.ICollectionFactory#createMap(int)
@@ -94,4 +105,35 @@ final class TroveCollectionFactory implements ICollectionFactory {
     }
 
 
+    private static final class TroveIntObjectMap<V> implements IIntObjectMap<V> {
+
+        private final TIntObjectHashMap<V> _map;
+
+        TroveIntObjectMap() {
+            _map = new TIntObjectHashMap<V>();
+        }
+
+        TroveIntObjectMap(int size) {
+            _map = new TIntObjectHashMap<V>(size);
+        }
+
+        /* (non-Javadoc)
+         * @see org.tinytim.utils.IIntObjectMap#get(int)
+         */
+        public V get(int key) {
+            return _map.get(key);
+        }
+
+        /* (non-Javadoc)
+         * @see org.tinytim.utils.IIntObjectMap#put(int, java.lang.Object)
+         */
+        public V put(int key, V value) {
+            return _map.put(key, value);
+        }
+
+        public void clear() {
+            _map.clear();
+        }
+
+    }
 }

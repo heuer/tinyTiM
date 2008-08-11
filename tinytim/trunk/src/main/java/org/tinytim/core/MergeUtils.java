@@ -25,8 +25,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.tinytim.index.IIndexManager;
+import org.tinytim.utils.CollectionFactory;
 import org.tinytim.utils.IIntObjectMap;
-import org.tinytim.utils.IntObjectMap;
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
@@ -121,7 +121,7 @@ final class MergeUtils {
         for(Topic type: source.getTypes()) {
             target.addType(type);
         }
-        IIntObjectMap<Reifiable> sigs = IntObjectMap.create();
+        IIntObjectMap<Reifiable> sigs = CollectionFactory.createIntObjectMap();
         for (Occurrence occ: target.getOccurrences()) {
             sigs.put(SignatureGenerator.generateSignature(occ), occ);
         }
@@ -177,7 +177,7 @@ final class MergeUtils {
      * @param target The association which takes the role characteristics.
      */
     static void moveRoleCharacteristics(Association source, Association target) {
-        IIntObjectMap<Role> sigs = IntObjectMap.create();
+        IIntObjectMap<Role> sigs = CollectionFactory.createIntObjectMap();
         for (Role role: target.getRoles()) {
             sigs.put(SignatureGenerator.generateSignature(role), role);
         }
@@ -195,7 +195,7 @@ final class MergeUtils {
      * @param target The target to add the variants to.
      */
     static void moveVariants(Name source, Name target) {
-        IIntObjectMap<Variant> sigs = IntObjectMap.create();
+        IIntObjectMap<Variant> sigs = CollectionFactory.createIntObjectMap();
         for (Variant var: target.getVariants()) {
             sigs.put(SignatureGenerator.generateSignature(var), var);
         }

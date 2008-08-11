@@ -25,7 +25,6 @@ import java.util.Set;
 
 import org.tinytim.utils.CollectionFactory;
 import org.tinytim.utils.IIntObjectMap;
-import org.tinytim.utils.IntObjectMap;
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
@@ -179,7 +178,7 @@ final class CopyUtils {
      */
     private static void _copyCharacteristics(Topic topic, TopicImpl targetTopic,
             Map<Topic, Topic> mergeMap) {
-        IIntObjectMap<Reifiable> sigs = IntObjectMap.create();
+        IIntObjectMap<Reifiable> sigs = CollectionFactory.createIntObjectMap();
         for (Occurrence occ: targetTopic.getOccurrences()) {
             sigs.put(SignatureGenerator.generateSignature(occ), occ);
         }
@@ -229,7 +228,7 @@ final class CopyUtils {
      */
     private static void _copyVariants(Name source, NameImpl target,
             Map<Topic, Topic> mergeMap) {
-        IIntObjectMap<Variant> sigs = IntObjectMap.create();
+        IIntObjectMap<Variant> sigs = CollectionFactory.createIntObjectMap();
         for (Variant variant: target.getVariants()) {
             sigs.put(SignatureGenerator.generateSignature(variant), variant);
         }
@@ -324,7 +323,7 @@ final class CopyUtils {
     private static void _copyAssociations(TopicMap source, 
             TopicMapImpl target, Map<Topic, Topic> mergeMap) {
         Set<Association> assocs = target.getAssociations();
-        IIntObjectMap<Association> sigs = IntObjectMap.create(assocs.size());
+        IIntObjectMap<Association> sigs = CollectionFactory.createIntObjectMap(assocs.size());
         for (Association assoc: assocs) {
             sigs.put(SignatureGenerator.generateSignature(assoc), assoc);
         }

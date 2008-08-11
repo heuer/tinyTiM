@@ -26,7 +26,7 @@ import org.tmapi.core.Construct;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public interface IConstruct extends Construct {
 
