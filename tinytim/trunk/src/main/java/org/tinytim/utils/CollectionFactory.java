@@ -24,12 +24,11 @@ import java.util.Map;
 import java.util.Set;
 
 
-
 /**
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public final class CollectionFactory {
     
@@ -103,6 +102,14 @@ public final class CollectionFactory {
      */
     public static <E> Set<E> createSet() {
         return _COLL_FACTORY.createSet();
+    }
+
+    public static <E> IIntObjectMap<E> createIntObjectMap() {
+        return _COLL_FACTORY.createIntObjectMap();
+    }
+
+    public static <E> IIntObjectMap<E> createIntObjectMap(int size) {
+        return _COLL_FACTORY.createIntObjectMap(size);
     }
 
 }

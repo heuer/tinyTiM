@@ -30,7 +30,7 @@ import java.util.WeakHashMap;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public final class WeakObjectRegistry<E> extends AbstractSet<E> {
 

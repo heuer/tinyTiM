@@ -33,6 +33,10 @@ import java.util.Set;
  */
 interface ICollectionFactory {
 
+    <E> IIntObjectMap<E> createIntObjectMap();
+
+    <E> IIntObjectMap<E> createIntObjectMap(int size);
+
     /**
      * Creates a {@link java.util.Set} with the specified initial <code>size</code>.
      *

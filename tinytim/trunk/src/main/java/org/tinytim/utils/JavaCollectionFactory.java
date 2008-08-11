@@ -38,6 +38,22 @@ import java.util.Set;
 final class JavaCollectionFactory implements ICollectionFactory {
 
     /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createIntObjectMap()
+     */
+    @Override
+    public <E> IIntObjectMap<E> createIntObjectMap() {
+        return new JavaIntObjectMap<E>();
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createIntObjectMap(int)
+     */
+    @Override
+    public <E> IIntObjectMap<E> createIntObjectMap(int size) {
+        return new JavaIntObjectMap<E>(size);
+    }
+
+    /* (non-Javadoc)
      * @see org.tinytim.ICollectionFactory#createMap(int)
      */
     public <K, V> Map<K, V> createMap(int size) {
@@ -156,5 +172,37 @@ final class JavaCollectionFactory implements ICollectionFactory {
         public void clear() {
             _map.clear();
         }
+    }
+
+    private static final class JavaIntObjectMap<V> implements IIntObjectMap<V> {
+
+        private final Map<Integer, V> _map;
+
+        JavaIntObjectMap() {
+            _map = new HashMap<Integer, V>();
+        }
+
+        JavaIntObjectMap(int size) {
+            _map = new HashMap<Integer, V>(size);
+        }
+
+        /* (non-Javadoc)
+         * @see org.tinytim.utils.IIntObjectMap#get(int)
+         */
+        public V get(int key) {
+            return _map.get(key);
+        }
+
+        /* (non-Javadoc)
+         * @see org.tinytim.utils.IIntObjectMap#put(int, java.lang.Object)
+         */
+        public V put(int key, V value) {
+            return _map.put(Integer.valueOf(key), value);
+        }
+
+        public void clear() {
+            _map.clear();
+        }
+
     }
 }
