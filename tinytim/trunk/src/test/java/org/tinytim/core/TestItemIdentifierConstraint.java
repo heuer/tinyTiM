@@ -24,12 +24,8 @@ import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.IdentityConstraintException;
 import org.tmapi.core.Locator;
-import org.tmapi.core.Name;
-import org.tmapi.core.Occurrence;
-import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
-import org.tmapi.core.Variant;
 
 /**
  * Tests if the TMDM item identifier constraint is respected.
@@ -38,6 +34,40 @@ import org.tmapi.core.Variant;
  * @version $Rev$ - $Date$
  */
 public class TestItemIdentifierConstraint extends TinyTimTestCase {
+
+    /**
+     * The item identifier constraint test.
+     *
+     * @param tmo The Topic Maps construct to test.
+     */
+    private void _testConstraint(Construct tmo) throws Exception {
+        assertTrue(tmo.getItemIdentifiers().isEmpty());
+        Locator iid = createLocator("http://sf.net/projects/tinytim");
+        Locator iid2 = createLocator("http://sf.net/projects/tinytim2");
+        Association assoc = createAssociation();
+        assoc.addItemIdentifier(iid);
+        assertFalse(tmo.getItemIdentifiers().contains(iid));
+        try {
+            tmo.addItemIdentifier(iid);
+            fail("Topic Maps constructs with the same item identifier are not allowed");
+        }
+        catch (IdentityConstraintException ex) {
+            // noop
+        }
+        tmo.addItemIdentifier(iid2);
+        assertTrue(tmo.getItemIdentifiers().contains(iid2));
+        tmo.removeItemIdentifier(iid2);
+        assoc.removeItemIdentifier(iid);
+        assertFalse(assoc.getItemIdentifiers().contains(iid));
+        tmo.addItemIdentifier(iid);
+        assertTrue(tmo.getItemIdentifiers().contains(iid));
+        if (!(tmo instanceof TopicMap)) {
+            // Removal should 'free' the item identifier
+            tmo.remove();
+            assoc.addItemIdentifier(iid);
+            assertTrue(assoc.getItemIdentifiers().contains(iid));
+        }
+    }
 
     /**
      * Tests against a topic map.
@@ -50,11 +80,11 @@ public class TestItemIdentifierConstraint extends TinyTimTestCase {
      * Tests againts a topic.
      */
     public void testTopic() throws Exception {
-        Topic topic = _tm.createTopic();
-        Locator iid = _tm.createLocator("http://sf.net/projects/tinytim");
+        Topic topic = createTopic();
+        Locator iid = createLocator("http://sf.net/projects/tinytim");
         topic.addItemIdentifier(iid);
         assertTrue(topic.getItemIdentifiers().contains(iid));
-        Topic topic2 = _tm.createTopic();
+        Topic topic2 = createTopic();
         try {
             topic2.addItemIdentifier(iid);
         }
@@ -78,77 +108,35 @@ public class TestItemIdentifierConstraint extends TinyTimTestCase {
      * Tests against an association.
      */
     public void testAssociation() throws Exception {
-        _testConstraint(_tm.createAssociation(_tm.createTopic()));
+        _testConstraint(createAssociation());
     }
 
     /**
      * Tests against a role.
      */
     public void testRole() throws Exception {
-        Association assoc = _tm.createAssociation(_tm.createTopic());
-        Role role = assoc.createRole(_tm.createTopic(), _tm.createTopic());
-        _testConstraint(role);
+        _testConstraint(createRole());
     }
 
     /**
      * Tests against an occurrence.
      */
     public void testOccurrence() throws Exception {
-        Topic topic = _tm.createTopic();
-        Occurrence occ = topic.createOccurrence(_tm.createTopic(), "tinyTiM");
-        _testConstraint(occ);
+        _testConstraint(createOccurrence());
     }
 
     /**
      * Tests against a name.
      */
     public void testName() throws Exception {
-        Topic topic = _tm.createTopic();
-        Name name = topic.createName("tinyTiM");
-        _testConstraint(name);
+        _testConstraint(createName());
     }
 
     /**
      * Tests against a variant.
      */
     public void testVariant() throws Exception {
-        Topic topic = _tm.createTopic();
-        Name name = topic.createName("tinyTiM");
-        Variant variant = name.createVariant("tinyTiM", _tm.createTopic());
-        _testConstraint(variant);
+        _testConstraint(createVariant());
     }
 
-    /**
-     * The item identifier constraint test.
-     *
-     * @param tmo The Topic Maps construct to test.
-     */
-    private void _testConstraint(Construct tmo) throws Exception {
-        assertTrue(tmo.getItemIdentifiers().isEmpty());
-        Locator iid = _tm.createLocator("http://sf.net/projects/tinytim");
-        tmo.addItemIdentifier(iid);
-        assertTrue(tmo.getItemIdentifiers().contains(iid));
-        Association assoc = _tm.createAssociation(_tm.createTopic());
-        try {
-            assoc.addItemIdentifier(iid);
-            fail("Topic Maps constructs with the same item identifier are not allowed");
-        }
-        catch (IdentityConstraintException ex) {
-            // noop
-        }
-        tmo.removeItemIdentifier(iid);
-        assertFalse(tmo.getItemIdentifiers().contains(iid));
-        assoc.addItemIdentifier(iid);
-        assertTrue(assoc.getItemIdentifiers().contains(iid));
-        assoc.removeItemIdentifier(iid);
-        assertFalse(assoc.getItemIdentifiers().contains(iid));
-        tmo.addItemIdentifier(iid);
-        assertTrue(tmo.getItemIdentifiers().contains(iid));
-        if (!(tmo instanceof TopicMap)) {
-            // Removal should 'free' the item identifier
-            tmo.remove();
-            assoc.addItemIdentifier(iid);
-            assertTrue(assoc.getItemIdentifiers().contains(iid));
-        }
-    }
 }

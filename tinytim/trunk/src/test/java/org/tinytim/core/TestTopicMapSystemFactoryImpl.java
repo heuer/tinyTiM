@@ -20,13 +20,6 @@
  */
 package org.tinytim.core;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
-import org.tinytim.utils.ICollectionFactory;
-import org.tinytim.utils.Property;
 import org.tinytim.utils.Feature;
 import org.tmapi.core.FeatureNotRecognizedException;
 import org.tmapi.core.FeatureNotSupportedException;
@@ -110,81 +103,4 @@ public class TestTopicMapSystemFactoryImpl extends TinyTimTestCase {
         }
     }
 
-    /**
-     * Tests if the collection factory property is set.
-     * 
-     * @throws Exception 
-     */
-    public void testCollectionFactoryProperty() throws Exception {
-        boolean troveAvailable = false;
-        try {
-            Class.forName("gnu.trove.THashSet");
-            troveAvailable = true;
-        }
-        catch (Exception ex) {
-            // noop.
-        }
-        if (troveAvailable) {
-            assertEquals("org.tinytim.core.TroveCollectionFactory", _sysFactory.getProperty(Property.COLLECTION_FACTORY));
-        }
-        else {
-            assertEquals("org.tinytim.core.JavaCollectionFactory", _sysFactory.getProperty(Property.COLLECTION_FACTORY));
-            assertTrue(((TopicMapSystemImpl) _sysFactory.newTopicMapSystem()).getCollectionFactory() instanceof JavaCollectionFactory);
-        }
-    }
-
-    /**
-     * Tests if the TopicMapSystemFactory creates automatically a default 
-     * CollectionFactory iff the class name in the property is invaild / 
-     * not resolvable.
-     *
-     * @throws Exception
-     */
-    public void testCollectionFactoryFallback() throws Exception {
-        _sysFactory.setProperty(Property.COLLECTION_FACTORY, "a.non.existent.CollectionFactory");
-        TopicMapSystemImpl sys = (TopicMapSystemImpl) _sysFactory.newTopicMapSystem();
-        assertTrue(sys.getCollectionFactory() instanceof JavaCollectionFactory);
-    }
-
-    /**
-     * Sets the setting of a custom {@link ICollectionFactory}.
-     *
-     * @throws Exception
-     */
-    public void testCustomCollectionFactory() throws Exception {
-        _sysFactory.setProperty(Property.COLLECTION_FACTORY, MyCollectionFactory.class.getName());
-        TopicMapSystemImpl sys = (TopicMapSystemImpl) _sysFactory.newTopicMapSystem();
-        assertTrue(sys.getCollectionFactory() instanceof MyCollectionFactory);
-    }
-
-    /**
-     * {@link ICollectionFactory} implementation that uses the Java collections. 
-     */
-    public static final class MyCollectionFactory implements ICollectionFactory {
-        public <K, V> Map<K, V> createMap() {
-            return new HashMap<K, V>();
-        }
-        public <K, V> Map<K, V> createMap(int size) {
-            return createMap();
-        }
-        public <E> Set<E> createSet(int size) {
-            return createSet();
-        }
-        public <E> Set<E> createSet() {
-            return new HashSet<E>();
-        }
-        public <K, V> Map<K, V> createIdentityMap() {
-            return createMap();
-        }
-        public <K, V> Map<K, V> createIdentityMap(int size) {
-            return createMap(size);
-        }
-        public <E> Set<E> createIdentitySet() {
-            return createSet();
-        }
-        public <E> Set<E> createIdentitySet(int size) {
-            return createSet(size);
-        }
-        
-    }
 }

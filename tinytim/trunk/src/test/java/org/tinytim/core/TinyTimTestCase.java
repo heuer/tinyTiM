@@ -29,6 +29,7 @@ import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
+import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.Variant;
 
 import junit.framework.TestCase;
@@ -48,8 +49,16 @@ public class TinyTimTestCase extends TestCase {
     protected static final String _IRI = "http://www.semagia.com/tinyTiM/testTopicMap/";
     protected Locator _base;
     protected TopicMapImpl _tm;
-    protected TopicMapSystemImpl _sys;
+    protected TopicMapSystem _sys;
     protected TopicMapSystemFactoryImpl _sysFactory;
+
+    public TinyTimTestCase() {
+        super();
+    }
+
+    public TinyTimTestCase(String name) {
+        super(name);
+    }
 
     /**
      * Returns additional / non-default properties which should be set
@@ -116,6 +125,10 @@ public class TinyTimTestCase extends TestCase {
      */
     protected Variant createVariant() {
         return createName().createVariant("Variant", createTopic());
+    }
+
+    protected Locator createLocator(final String reference) {
+        return _sys.createLocator(reference);
     }
 
     /* (non-Javadoc)

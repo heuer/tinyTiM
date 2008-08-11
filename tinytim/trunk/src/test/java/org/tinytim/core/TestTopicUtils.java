@@ -36,16 +36,16 @@ public class TestTopicUtils extends TinyTimTestCase {
      * Tests if a topic is considered as 'removable'.
      */
     public void testRemovable() {
-        Topic topic = _tm.createTopic();
+        Topic topic = createTopic();
         assertTrue(TopicUtils.isRemovable(topic));
         Association assoc = _tm.createAssociation(topic);
         assertFalse(TopicUtils.isRemovable(topic));
-        assoc.setType(_tm.createTopic());
+        assoc.setType(createTopic());
         assertTrue(TopicUtils.isRemovable(topic));
         // Role played
-        Role role = assoc.createRole(_tm.createTopic(), topic);
+        Role role = assoc.createRole(createTopic(), topic);
         assertFalse(TopicUtils.isRemovable(topic));
-        role.setPlayer(_tm.createTopic());
+        role.setPlayer(createTopic());
         assertTrue(TopicUtils.isRemovable(topic));
         // Theme
         assoc.addTheme(topic);

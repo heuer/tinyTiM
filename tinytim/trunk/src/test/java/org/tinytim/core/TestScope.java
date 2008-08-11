@@ -20,33 +20,29 @@
  */
 package org.tinytim.core;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.Arrays;
+
+import org.tmapi.core.Topic;
 
 /**
- * Runs all tests.
+ * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public class AllTests extends TestSuite {
+public class TestScope extends TinyTimTestCase {
 
-    public static void main(String[] args) {
-        junit.textui.TestRunner.run(suite());
+    public void testUnconstrained() {
+        assertTrue(Scope.UCS.isUnconstrained());
+        assertEquals(0, Scope.UCS.size());
     }
 
-    public static Test suite() {
-        TestSuite suite = new TestSuite();
-        suite.addTestSuite(TestDuplicateRemovalUtils.class);
-        suite.addTestSuite(TestIRI.class);
-        suite.addTestSuite(TestScope.class);
-        suite.addTestSuite(TestLiteral.class);
-        suite.addTestSuite(TestItemIdentifierConstraint.class);
-        suite.addTestSuite(TestSignatureGenerator.class);
-        suite.addTest(TestTMAPICore.suite());
-        suite.addTest(TestTMAPIIndex.suite());
-        suite.addTestSuite(TestTopicMapSystemFactoryImpl.class);
-        suite.addTestSuite(TestTopicUtils.class);
-        return suite;
+    public void testEquals() {
+        Topic theme1 = createTopic();
+        Topic theme2 = createTopic();
+        IScope scope1 = Scope.create(Arrays.asList(theme1, theme2));
+        assertEquals(2, scope1.size());
+        IScope scope2 = Scope.create(Arrays.asList(theme2, theme1));
+        assertSame(scope1, scope2);
     }
 }
