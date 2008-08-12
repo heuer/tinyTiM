@@ -20,7 +20,6 @@
  */
 package org.tinytim.index;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +32,7 @@ import org.tinytim.core.IEventPublisher;
 import org.tinytim.core.ILiteral;
 import org.tinytim.core.ILiteralAware;
 import org.tinytim.core.Literal;
-import org.tinytim.utils.CollectionFactory;
+import org.tinytim.internal.utils.CollectionFactory;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
@@ -81,7 +80,7 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
         }
         Collection<Name> names = _lit2Names.get(literal);
         return names == null ? Collections.<Name>emptySet()
-                             : new ArrayList<Name>(names);
+                             : CollectionFactory.createList(names);
     }
 
     /* (non-Javadoc)
@@ -114,7 +113,7 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
         }
         Collection<Occurrence> occs = _lit2Occs.get(literal);
         return occs == null ? Collections.<Occurrence>emptySet()
-                            : new ArrayList<Occurrence>(occs);
+                            : CollectionFactory.createList(occs);
     }
 
     /* (non-Javadoc)
@@ -147,7 +146,7 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
         }
         Collection<Variant> variants = _lit2Variants.get(literal);
         return variants == null ? Collections.<Variant>emptySet()
-                                : new ArrayList<Variant>(variants);
+                                : CollectionFactory.createList(variants);
     }
 
     public void clear() {
@@ -159,7 +158,7 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
     private void _index(Map<ILiteral, List<ILiteralAware>> lit2LitAware, ILiteral lit, ILiteralAware litAware) {
         List<ILiteralAware> list = lit2LitAware.get(lit);
         if (list == null) {
-            list = new ArrayList<ILiteralAware>();
+            list = CollectionFactory.createList();
             lit2LitAware.put(lit, list);
         }
         list.add(litAware);
