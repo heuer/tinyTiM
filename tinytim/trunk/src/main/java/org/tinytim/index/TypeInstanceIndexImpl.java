@@ -20,7 +20,6 @@
  */
 package org.tinytim.index;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -31,7 +30,7 @@ import org.tinytim.core.Event;
 import org.tinytim.core.IConstruct;
 import org.tinytim.core.IEventHandler;
 import org.tinytim.core.IEventPublisher;
-import org.tinytim.utils.CollectionFactory;
+import org.tinytim.internal.utils.CollectionFactory;
 import org.tmapi.core.Association;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
@@ -86,7 +85,7 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
      * @see org.tinytim.index.ITypeInstanceIndex#getAssociationTypes()
      */
     public Collection<Topic> getAssociationTypes() {
-        List<Topic> topics = new ArrayList<Topic>(_type2Assocs.keySet());
+        List<Topic> topics = CollectionFactory.createList(_type2Assocs.keySet());
         topics.remove(null);
         return topics;
     }
@@ -97,14 +96,14 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
     public Collection<Association> getAssociations(Topic type) {
         List<Association> assocs = _type2Assocs.get(type);
         return assocs == null ? Collections.<Association>emptySet()
-                              : new ArrayList<Association>(assocs);
+                              : CollectionFactory.createList(assocs);
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.index.ITypeInstanceIndex#getRoleTypes()
      */
     public Collection<Topic> getRoleTypes() {
-        List<Topic> topics = new ArrayList<Topic>(_type2Roles.keySet());
+        List<Topic> topics = CollectionFactory.createList(_type2Roles.keySet());
         topics.remove(null);
         return topics;
     }
@@ -115,14 +114,14 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
     public Collection<Role> getRoles(Topic type) {
         List<Role> roles = _type2Roles.get(type);
         return roles == null ? Collections.<Role>emptySet()
-                             : new ArrayList<Role>(roles);
+                             : CollectionFactory.createList(roles);
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.index.ITypeInstanceIndex#getOccurrenceTypes()
      */
     public Collection<Topic> getOccurrenceTypes() {
-        List<Topic> topics = new ArrayList<Topic>(_type2Occs.keySet());
+        List<Topic> topics = CollectionFactory.createList(_type2Occs.keySet());
         topics.remove(null);
         return topics;
     }
@@ -133,14 +132,14 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
     public Collection<Occurrence> getOccurrences(Topic type) {
         List<Occurrence> occs = _type2Occs.get(type);
         return occs == null ? Collections.<Occurrence>emptySet()
-                            : new ArrayList<Occurrence>(occs);
+                            : CollectionFactory.createList(occs);
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.index.ITypeInstanceIndex#getNameTypes()
      */
     public Collection<Topic> getNameTypes() {
-        List<Topic> topics = new ArrayList<Topic>(_type2Names.keySet());
+        List<Topic> topics = CollectionFactory.createList(_type2Names.keySet());
         topics.remove(null);
         return topics;
     }
@@ -151,14 +150,14 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
     public Collection<Name> getNames(Topic type) {
         List<Name> names = _type2Names.get(type);
         return names == null ? Collections.<Name>emptySet()
-                             : new ArrayList<Name>(names);
+                             : CollectionFactory.createList(names);
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.index.ITypeInstanceIndex#getTopicTypes()
      */
     public Collection<Topic> getTopicTypes() {
-        List<Topic> topics = new ArrayList<Topic>(_type2Topics.keySet());
+        List<Topic> topics = CollectionFactory.createList(_type2Topics.keySet());
         topics.remove(null);
         return topics;
     }
@@ -169,7 +168,7 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
     public Collection<Topic> getTopics(Topic type) {
         Set<Topic> topics = _type2Topics.get(type);
         return topics == null ? Collections.<Topic>emptySet()
-                              : new ArrayList<Topic>(topics);
+                              : CollectionFactory.createList(topics);
     }
 
     /* (non-Javadoc)
@@ -200,7 +199,7 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
     private void _index(Map<Topic, List<Typed>> type2Typed, Topic type, Typed typed) {
         List<Typed> list = type2Typed.get(type);
         if (list == null) {
-            list = new ArrayList<Typed>();
+            list = CollectionFactory.createList();
             type2Typed.put(type, list);
         }
         list.add(typed);

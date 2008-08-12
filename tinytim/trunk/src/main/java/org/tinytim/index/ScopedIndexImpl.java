@@ -20,7 +20,6 @@
  */
 package org.tinytim.index;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -33,7 +32,7 @@ import org.tinytim.core.IEventHandler;
 import org.tinytim.core.IEventPublisher;
 import org.tinytim.core.IScope;
 import org.tinytim.core.IScoped;
-import org.tinytim.utils.CollectionFactory;
+import org.tinytim.internal.utils.CollectionFactory;
 import org.tmapi.core.Association;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
@@ -80,7 +79,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
     public Collection<Association> getAssociations(Topic theme) {
         Collection<Association> assocs = _theme2Assocs.get(theme);
         return assocs == null ? Collections.<Association>emptySet()
-                              : new ArrayList<Association>(assocs);
+                              : CollectionFactory.createList(assocs);
     }
 
     /* (non-Javadoc)
@@ -107,7 +106,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      * @see org.tmapi.index.ScopedIndex#getAssociationThemes()
      */
     public Collection<Topic> getAssociationThemes() {
-        List<Topic> themes = new ArrayList<Topic>(_theme2Assocs.keySet());
+        List<Topic> themes = CollectionFactory.createList(_theme2Assocs.keySet());
         themes.remove(null);
         return themes;
     }
@@ -118,7 +117,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
     public Collection<Occurrence> getOccurrences(Topic theme) {
         Collection<Occurrence> occs = _theme2Occs.get(theme);
         return occs == null ? Collections.<Occurrence>emptySet()
-                            : new ArrayList<Occurrence>(occs);
+                            : CollectionFactory.createList(occs);
     }
 
     /* (non-Javadoc)
@@ -145,7 +144,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      * @see org.tmapi.index.ScopedIndex#getOccurrenceThemes()
      */
     public Collection<Topic> getOccurrenceThemes() {
-        List<Topic> themes = new ArrayList<Topic>(_theme2Occs.keySet());
+        List<Topic> themes = CollectionFactory.createList(_theme2Occs.keySet());
         themes.remove(null);
         return themes;
     }
@@ -156,7 +155,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
     public Collection<Name> getNames(Topic theme) {
         Collection<Name> names = _theme2Names.get(theme);
         return names == null ? Collections.<Name>emptySet()
-                             : new ArrayList<Name>(names);
+                             : CollectionFactory.createList(names);
     }
 
     /* (non-Javadoc)
@@ -182,7 +181,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      * @see org.tmapi.index.ScopedIndex#getNameThemes()
      */
     public Collection<Topic> getNameThemes() {
-        List<Topic> themes = new ArrayList<Topic>(_theme2Names.keySet());
+        List<Topic> themes = CollectionFactory.createList(_theme2Names.keySet());
         themes.remove(null);
         return themes;
     }
@@ -193,7 +192,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
     public Collection<Variant> getVariants(Topic theme) {
         Collection<Variant> vars = _theme2Variants.get(theme);
         return vars == null ? Collections.<Variant>emptySet()
-                            : new ArrayList<Variant>(vars);
+                            : CollectionFactory.createList(vars);
     }
 
     /* (non-Javadoc)
@@ -219,7 +218,7 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      * @see org.tmapi.index.ScopedIndex#getVariantThemes()
      */
     public Collection<Topic> getVariantThemes() {
-        List<Topic> themes = new ArrayList<Topic>(_theme2Variants.keySet());
+        List<Topic> themes = CollectionFactory.createList(_theme2Variants.keySet());
         themes.remove(null);
         return themes;
     }
