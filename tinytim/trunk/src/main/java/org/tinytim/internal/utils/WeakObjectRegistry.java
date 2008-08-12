@@ -18,7 +18,7 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.utils;
+package org.tinytim.internal.utils;
 
 import java.lang.ref.WeakReference;
 import java.util.AbstractSet;
@@ -27,7 +27,7 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 /**
- * 
+ * Registry which keeps weak references to the contained elements.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -41,11 +41,16 @@ public final class WeakObjectRegistry<E> extends AbstractSet<E> {
         _obj2Ref = new WeakHashMap<E, WeakReference<E>>();
     }
 
+    public WeakObjectRegistry(int size) {
+        super();
+        _obj2Ref = new WeakHashMap<E, WeakReference<E>>(size);
+    }
+
     /**
-     * 
+     * Returns the existing value if <tt>obj</tt> is registered.
      *
-     * @param key
-     * @return
+     * @param key The key.
+     * @return The registered value or <tt>null</tt>.
      */
     public E get(Object key) {
         WeakReference<E> weakRef = _obj2Ref.get(key);

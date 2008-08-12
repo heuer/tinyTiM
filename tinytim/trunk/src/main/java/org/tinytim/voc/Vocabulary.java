@@ -31,7 +31,7 @@ import org.tmapi.core.Locator;
  */
 abstract class Vocabulary {
 
-    protected static Locator _createLocator(String reference) {
+    protected final static Locator _createLocator(String reference) {
         return Literal.createIRI(reference);
     }
 }

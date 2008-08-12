@@ -23,7 +23,7 @@ package org.tinytim.core;
 import java.util.Collections;
 import java.util.Set;
 
-import org.tinytim.utils.CollectionFactory;
+import org.tinytim.internal.utils.CollectionFactory;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
 import org.tmapi.core.TopicMap;
@@ -43,14 +43,6 @@ abstract class ConstructImpl implements IConstruct {
 
     ConstructImpl(TopicMapImpl topicMap) {
         _tm = topicMap;
-    }
-
-    protected <E> Set<E> _makeSet() {
-        return CollectionFactory.createIdentitySet();
-    }
-
-    protected <E> Set<E> _makeSet(int size) {
-        return CollectionFactory.createIdentitySet(size);
     }
 
     /* (non-Javadoc)
@@ -94,7 +86,7 @@ abstract class ConstructImpl implements IConstruct {
         }
         _fireEvent(Event.ADD_IID, null, itemIdentifier);
         if (_iids == null) {
-            _iids = _makeSet();
+            _iids = CollectionFactory.createIdentitySet(IConstant.CONSTRUCT_IID_SIZE);
         }
         _iids.add(itemIdentifier);
     }

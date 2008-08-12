@@ -18,30 +18,35 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.core;
+package org.tinytim.internal.utils;
 
 /**
- * Indicates that a literal can be attached to a construct.
- * 
- * This interface is not meant to be used outside of the tinyTiM package.
+ * A map which uses <tt>int</tt> as keys.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public interface ILiteralAware {
+public interface IIntObjectMap<V> {
 
     /**
-     * Returns the literal.
+     * Associates the <tt>key</tt> with the <tt>value</tt>.
      *
-     * @return The literal.
+     * @param key The key
+     * @param value The value.
+     * @return The previous value associated with <tt>key</tt> or <tt>null</tt>.
      */
-    public ILiteral getLiteral();
+    public V put(int key, V value);
 
     /**
-     * Sets the literal.
+     * Returns the value associated with <tt>key</tt>.
      *
-     * @param literal The literal.
+     * @param key The key.
+     * @return The value associated with <tt>key</tt> or <tt>null</tt>.
      */
-    public void setLiteral(ILiteral literal);
+    public V get(int key);
 
+    /**
+     * Clears the map.
+     */
+    public void clear();
 }

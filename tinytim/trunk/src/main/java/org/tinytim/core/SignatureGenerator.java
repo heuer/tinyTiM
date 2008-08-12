@@ -45,7 +45,7 @@ import org.tmapi.core.Variant;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-final class SignatureGenerator {
+public final class SignatureGenerator {
 
     private SignatureGenerator() {
         // noop.

@@ -18,19 +18,42 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.utils;
+package org.tinytim.internal.utils;
+
+import java.util.Map;
 
 /**
- * 
+ * Default implementation of the {@link IIntObjectMap} which wraps a map.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public interface IIntObjectMap<V> {
+final class DefaultIntObjectMap<E> implements IIntObjectMap<E> {
 
-    public V put(int key, V value);
+    private final Map<Integer, E> _map;
 
-    public V get(int key);
+    public DefaultIntObjectMap(Map<Integer, E> map) {
+        _map = map;
+    }
 
-    public void clear();
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.IIntObjectMap#get(int)
+     */
+    public E get(int key) {
+        return _map.get(key);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.IIntObjectMap#put(int, java.lang.Object)
+     */
+    public E put(int key, E value) {
+        return _map.put(key, value);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.IIntObjectMap#clear()
+     */
+    public void clear() {
+        _map.clear();
+    }
 }

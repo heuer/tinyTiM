@@ -18,8 +18,10 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.utils;
+package org.tinytim.internal.utils;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -54,6 +56,8 @@ interface ICollectionFactory {
      */
     <E> Set<E> createSet();
 
+    <E> Set<E> createSet(Set<? extends E> elements);
+
     /**
      * Creates a {@link java.util.Set} with the specified initial <tt>size</tt>.
      * 
@@ -77,6 +81,8 @@ interface ICollectionFactory {
      */
     <E> Set<E> createIdentitySet();
 
+    <E> Set<E> createIdentitySet(Set<? extends E> elements);
+
     /**
      * Creates a {@link java.util.Map}.
      *
@@ -95,6 +101,8 @@ interface ICollectionFactory {
      * @return
      */
     <K, V> Map<K, V> createMap(int size);
+
+    <K, V> Map<K, V> createMap(Map<? extends K,? extends V> map);
 
     /**
      * Creates a {@link java.util.Map}.
@@ -120,5 +128,11 @@ interface ICollectionFactory {
      * @return
      */
     <K, V> Map<K, V> createIdentityMap(int size);
+
+    <E> List<E> createList();
+    
+    <E> List<E> createList(int size);
+    
+    <E> List<E> createList(Collection<? extends E> values);
 
 }

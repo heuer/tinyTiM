@@ -29,7 +29,7 @@ import org.tmapi.core.Locator;
 import org.tmapi.core.Topic;
 
 /**
- * Implementation of {@link org.tinytim.IDatatypeAwareConstruct}.
+ * Implementation of {@link org.tmapi.core.DatatypeAware}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -166,8 +166,8 @@ abstract class DatatypeAwareConstruct extends ScopedImpl implements
      * @see org.tmapi.core.DatatypeAware#locatorValue()
      */
     public Locator locatorValue() {
-        return XSD.ANY_URI.equals(_literal.getDatatype()) ? (Locator) _literal
-                                : Literal.createIRI(_literal.getValue());
+        return XSD.ANY_URI == _literal.getDatatype() ? (Locator) _literal
+                                    : Literal.createIRI(_literal.getValue());
     }
 
     /* (non-Javadoc)

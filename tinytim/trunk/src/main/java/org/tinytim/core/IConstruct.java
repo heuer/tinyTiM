@@ -23,7 +23,9 @@ package org.tinytim.core;
 import org.tmapi.core.Construct;
 
 /**
+ * Enhancement of the {@link org.tmapi.core.Construct} interface.
  * 
+ * This interface is not meant to be used outside of the tinyTiM package.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

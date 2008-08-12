@@ -18,13 +18,15 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.core;
+package org.tinytim.utils;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
-import org.tinytim.utils.CollectionFactory;
-import org.tinytim.utils.IIntObjectMap;
+import org.tinytim.core.MergeUtils;
+import org.tinytim.core.SignatureGenerator;
+import org.tinytim.core.TopicMapImpl;
+import org.tinytim.internal.utils.CollectionFactory;
+import org.tinytim.internal.utils.IIntObjectMap;
 import org.tmapi.core.Association;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
@@ -100,7 +102,7 @@ public final class DuplicateRemovalUtils {
      */
     public static void removeDuplicates(Name name) {
         IIntObjectMap<Variant> sigs = CollectionFactory.createIntObjectMap();
-        for (Variant variant: new ArrayList<Variant>(name.getVariants())) {
+        for (Variant variant: CollectionFactory.createList(name.getVariants())) {
             int sig = SignatureGenerator.generateSignature(variant);
             Variant existing = sigs.get(sig);
             if (existing != null) {
@@ -121,7 +123,7 @@ public final class DuplicateRemovalUtils {
     private static void _removeDuplicateOccurrences(Collection<Occurrence> occs) {
         IIntObjectMap<Occurrence> sigs = CollectionFactory.createIntObjectMap(occs.size());
         Occurrence existing = null;
-        for (Occurrence occ: new ArrayList<Occurrence>(occs)) {
+        for (Occurrence occ: CollectionFactory.createList(occs)) {
             int sig = SignatureGenerator.generateSignature(occ);
             existing = sigs.get(sig);
             if (existing != null) {
@@ -142,7 +144,7 @@ public final class DuplicateRemovalUtils {
     private static void _removeDuplicateNames(Collection<Name> names) {
         IIntObjectMap<Name> sigs = CollectionFactory.createIntObjectMap(names.size());
         Name existing = null;
-        for (Name name: new ArrayList<Name>(names)) {
+        for (Name name: CollectionFactory.createList(names)) {
             removeDuplicates(name);
             int sig = SignatureGenerator.generateSignature(name);
             existing = sigs.get(sig);
@@ -165,7 +167,7 @@ public final class DuplicateRemovalUtils {
     public static void removeDuplicates(Association assoc) {
         IIntObjectMap<Role> sig2Role = CollectionFactory.createIntObjectMap();
         Role existing = null;
-        for (Role role: new ArrayList<Role>(assoc.getRoles())) {
+        for (Role role: CollectionFactory.createList(assoc.getRoles())) {
             int sig = SignatureGenerator.generateSignature(role);
             existing = sig2Role.get(sig);
             if (existing != null) {

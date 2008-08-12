@@ -21,6 +21,7 @@
 package org.tinytim.core;
 
 import org.tmapi.core.Association;
+import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 
@@ -62,7 +63,7 @@ final class RoleImpl extends TypedImpl implements Role {
      */
     public void setPlayer(Topic player) {
         if (player == null) {
-            throw new IllegalArgumentException("The role player must not be null");
+            throw new ModelConstraintException(this, "The role player must not be null");
         }
         if (_player == player) {
             return;

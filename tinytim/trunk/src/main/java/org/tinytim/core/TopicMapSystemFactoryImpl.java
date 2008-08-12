@@ -20,9 +20,9 @@
  */
 package org.tinytim.core;
 
-import java.util.HashMap;
 import java.util.Map;
 
+import org.tinytim.internal.utils.CollectionFactory;
 import org.tinytim.utils.Feature;
 import org.tmapi.core.FeatureNotRecognizedException;
 import org.tmapi.core.FeatureNotSupportedException;
@@ -52,8 +52,8 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
     private Map<String, Boolean> _features;
 
     public TopicMapSystemFactoryImpl() {
-        _properties = new HashMap<String, Object>();
-        _features = new HashMap<String, Boolean>(_FEATURES.length);
+        _properties = CollectionFactory.createMap();
+        _features = CollectionFactory.createMap(_FEATURES.length);
         for (FeatureInfo feature: _FEATURES) {
             _features.put(feature.name, feature.defaultValue);
         }
@@ -64,7 +64,7 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
      */
     @Override
     public TopicMapSystem newTopicMapSystem() throws TMAPIException {
-        return new TopicMapSystemImpl(new HashMap<String, Boolean>(_features), new HashMap<String, Object>(_properties));
+        return new TopicMapSystemImpl(CollectionFactory.createMap(_features), CollectionFactory.createMap(_properties));
     }
 
     /* (non-Javadoc)

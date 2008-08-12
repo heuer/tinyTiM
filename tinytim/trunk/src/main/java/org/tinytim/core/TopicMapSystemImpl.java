@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.tinytim.utils.CollectionFactory;
+import org.tinytim.internal.utils.CollectionFactory;
 import org.tmapi.core.FeatureNotRecognizedException;
 import org.tmapi.core.Locator;
 import org.tmapi.core.TopicMap;
@@ -47,7 +47,7 @@ final class TopicMapSystemImpl implements TopicMapSystem {
     TopicMapSystemImpl(Map<String, Boolean> features, Map<String, Object> properties) {
         _features = features;
         _properties = properties;
-        _topicMaps = CollectionFactory.createIdentityMap(4);
+        _topicMaps = CollectionFactory.createIdentityMap(IConstant.SYSTEM_TM_SIZE);
     }
 
     /**

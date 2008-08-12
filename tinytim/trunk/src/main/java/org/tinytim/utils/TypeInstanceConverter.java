@@ -91,18 +91,18 @@ public final class TypeInstanceConverter {
                 TMDM.TYPE, TMDM.INSTANCE);
     }
 
-    private static void _associationsToTypes(TopicMap topicMap, 
-            Locator typeInstance_, Locator type_, Locator instance_) {
+    private static void _associationsToTypes(final TopicMap topicMap, 
+            final Locator typeInstance_, final Locator type_, final Locator instance_) {
         TopicMapImpl tm = (TopicMapImpl) topicMap;
-        Topic typeInstance = tm.getTopicBySubjectIdentifier(typeInstance_);
+        final Topic typeInstance = tm.getTopicBySubjectIdentifier(typeInstance_);
         if (typeInstance == null) {
             return;
         }
-        Topic type = tm.getTopicBySubjectIdentifier(type_);
+        final Topic type = tm.getTopicBySubjectIdentifier(type_);
         if (type == null) {
             return;
         }
-        Topic instance = tm.getTopicBySubjectIdentifier(instance_);
+        final Topic instance = tm.getTopicBySubjectIdentifier(instance_);
         if (instance == null) {
             return;
         }
@@ -124,7 +124,7 @@ public final class TypeInstanceConverter {
         LOG.info("The association (ID: '" + assoc.getId() + "') cannot be converted into a type property. Reason: " + msg);
     }
 
-    private static Topic[] _getTypeInstancePair(Association assoc, Topic type, Topic instance) {
+    private static Topic[] _getTypeInstancePair(final Association assoc, final Topic type, final Topic instance) {
         Collection<Role> roles = assoc.getRoles();
         if (roles.size() != 2) {
             _info(assoc, "Not a binary association.");
@@ -135,7 +135,7 @@ public final class TypeInstanceConverter {
             return null;
         }
         if (!assoc.getItemIdentifiers().isEmpty()) {
-            _info(assoc, "It as item identifiers");
+            _info(assoc, "It has item identifiers");
             return null;
         }
         if (!assoc.getScope().isEmpty()) {

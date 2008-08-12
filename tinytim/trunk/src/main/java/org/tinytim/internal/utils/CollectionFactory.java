@@ -18,11 +18,12 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.utils;
+package org.tinytim.internal.utils;
 
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 /**
  * 
@@ -31,9 +32,9 @@ import java.util.Set;
  * @version $Rev$ - $Date$
  */
 public final class CollectionFactory {
-    
-    private static final String _COLL_FACTORY_TROVE = "org.tinytim.utils.TroveCollectionFactory";
-    
+
+    private static final String _COLL_FACTORY_TROVE = "org.tinytim.internal.utils.TroveCollectionFactory";
+
     private static final ICollectionFactory _COLL_FACTORY;
 
     static {
@@ -46,6 +47,10 @@ public final class CollectionFactory {
             collFactory = new JavaCollectionFactory();
         }
         _COLL_FACTORY = collFactory;
+    }
+
+    private CollectionFactory() {
+        // noop.
     }
 
     /* (non-Javadoc)
@@ -76,6 +81,10 @@ public final class CollectionFactory {
         return _COLL_FACTORY.createIdentitySet();
     }
 
+    public static <E> Set<E> createIdentitySet(Set<? extends E> elements) {
+        return _COLL_FACTORY.createIdentitySet(elements);
+    }
+
     /* (non-Javadoc)
      * @see org.tinytim.utils.ICollectionFactory#createMap()
      */
@@ -88,6 +97,10 @@ public final class CollectionFactory {
      */
     public static <K, V> Map<K, V> createMap(int size) {
         return _COLL_FACTORY.createMap(size);
+    }
+
+    public static <K, V> Map<K, V> createMap(Map<? extends K,? extends V> map) {
+        return _COLL_FACTORY.createMap(map);
     }
 
     /* (non-Javadoc)
@@ -112,4 +125,15 @@ public final class CollectionFactory {
         return _COLL_FACTORY.createIntObjectMap(size);
     }
 
+    public static <E> List<E> createList() {
+        return _COLL_FACTORY.createList();
+    }
+
+    public static <E> List<E> createList(int size) {
+        return _COLL_FACTORY.createList(size);
+    }
+
+    public static <E> List<E> createList(Collection<? extends E> values) {
+        return _COLL_FACTORY.createList(values);
+    }
 }

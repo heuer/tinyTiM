@@ -20,11 +20,12 @@
  */
 package org.tinytim.core;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Set;
 
+import org.tinytim.internal.utils.CollectionFactory;
 import org.tmapi.core.Association;
+import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
@@ -41,12 +42,12 @@ final class AssociationImpl extends ScopedImpl implements Association {
 
     AssociationImpl(TopicMapImpl tm) {
         super(tm);
-        _roles = _makeSet(2);
+        _roles = CollectionFactory.createIdentitySet(IConstant.ASSOC_ROLE_SIZE);
     }
 
     AssociationImpl(TopicMapImpl topicMap, Topic type, IScope scope) {
         super(topicMap, type, scope);
-        _roles = _makeSet(2);
+        _roles = CollectionFactory.createIdentitySet(IConstant.ASSOC_ROLE_SIZE);
     }
 
     /* (non-Javadoc)
@@ -101,10 +102,10 @@ final class AssociationImpl extends ScopedImpl implements Association {
      */
     public Role createRole(Topic type, Topic player) {
         if (type == null) {
-            throw new IllegalArgumentException("The type must not be null");
+            throw new ModelConstraintException(this, "The type must not be null");
         }
         if (player == null) {
-            throw new IllegalArgumentException("The player must not be null");
+            throw new ModelConstraintException(this, "The player must not be null");
         }
         RoleImpl role = new RoleImpl(_tm, type, player);
         addRole(role);
@@ -122,7 +123,7 @@ final class AssociationImpl extends ScopedImpl implements Association {
      * @see org.tmapi.core.Association#getRoleTypes()
      */
     public Set<Topic> getRoleTypes() {
-        Set<Topic> roleTypes = _makeSet(_roles.size());
+        Set<Topic> roleTypes = CollectionFactory.createIdentitySet(_roles.size());
         for (Role role: _roles) {
             roleTypes.add(role.getType());
         }
@@ -136,7 +137,7 @@ final class AssociationImpl extends ScopedImpl implements Association {
         if (type == null) {
             throw new IllegalArgumentException("The type must not be null");
         }
-        Set<Role> roles = _makeSet(_roles.size());
+        Set<Role> roles = CollectionFactory.createIdentitySet(_roles.size());
         for (Role role: _roles) {
             if (type == role.getType()) {
                 roles.add(role);
@@ -158,7 +159,7 @@ final class AssociationImpl extends ScopedImpl implements Association {
      */
     public void remove() {
         _tm.removeAssociation(this);
-        for (Role role: new ArrayList<Role>(_roles)) {
+        for (Role role: CollectionFactory.createList(_roles)) {
             role.remove();
         }
         _roles = null;
