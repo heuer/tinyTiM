@@ -25,6 +25,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import org.tinytim.internal.utils.CollectionFactory;
+import org.tinytim.utils.TopicUtils;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
@@ -52,9 +54,9 @@ final class TopicImpl extends ConstructImpl implements Topic {
 
     TopicImpl(TopicMapImpl topicMap) {
         super(topicMap);
-        _sids = _makeSet(2);
-        _occs = _makeSet(2);
-        _names = _makeSet(2);
+        _sids = CollectionFactory.createIdentitySet(IConstant.TOPIC_SID_SIZE);
+        _occs = CollectionFactory.createIdentitySet(IConstant.TOPIC_OCCURRENCE_SIZE);
+        _names = CollectionFactory.createIdentitySet(IConstant.TOPIC_NAME_SIZE);
     }
 
     /* (non-Javadoc)
@@ -117,7 +119,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
         }
         _fireEvent(Event.ADD_SLO, null, slo);
         if (_slos == null) {
-            _slos = _makeSet(2);
+            _slos = CollectionFactory.createIdentitySet(IConstant.TOPIC_SLO_SIZE);
         }
         _slos.add(slo);
     }
@@ -250,7 +252,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
         if (type == null) {
             throw new IllegalArgumentException("The type must not be null");
         }
-        Set<Name> names = _makeSet();
+        Set<Name> names = CollectionFactory.createIdentitySet();
         for (Name name: _names) {
             if (type == name.getType()) {
                 names.add(name);
@@ -280,7 +282,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
         if (type == null) {
             throw new IllegalArgumentException("The type must not be null");
         }
-        Set<Occurrence> occs = _makeSet();
+        Set<Occurrence> occs = CollectionFactory.createIdentitySet();
         for (Occurrence occ: _occs) {
             if (type == occ.getType()) {
                 occs.add(occ);
@@ -372,7 +374,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
         if (_rolesPlayed == null) {
             return Collections.emptySet();
         }
-        Set<Role> roles = _makeSet(_rolesPlayed.size());
+        Set<Role> roles = CollectionFactory.createIdentitySet(_rolesPlayed.size());
         for (Role role: _rolesPlayed) {
             if (type == role.getType()) {
                 roles.add(role);
@@ -394,7 +396,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
         if (_rolesPlayed == null) {
             return Collections.emptySet();
         }
-        Set<Role> roles = _makeSet(_rolesPlayed.size());
+        Set<Role> roles = CollectionFactory.createIdentitySet(_rolesPlayed.size());
         for (Role role: _rolesPlayed) {
             if (type == role.getType() && assoc == role.getParent().getType()) {
                 roles.add(role);
@@ -405,7 +407,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
 
     void addRolePlayed(Role role) {
         if (_rolesPlayed == null) {
-            _rolesPlayed = _makeSet(4);
+            _rolesPlayed = CollectionFactory.createIdentitySet(IConstant.TOPIC_ROLE_SIZE);
         }
         _rolesPlayed.add(role);
     }
@@ -437,7 +439,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
         }
         _fireEvent(Event.ADD_TYPE, null, type);
         if (_types == null) {
-            _types = _makeSet();
+            _types = CollectionFactory.createIdentitySet(IConstant.TOPIC_TYPE_SIZE);
         }
         _types.add(type);
     }

@@ -22,6 +22,7 @@ package org.tinytim.core;
 
 import java.util.Set;
 
+import org.tinytim.internal.utils.CollectionFactory;
 import org.tmapi.core.Name;
 import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
@@ -59,7 +60,7 @@ final class VariantImpl extends DatatypeAwareConstruct implements
         if (_tm == null || _parent == null) {
             return super.getScope();
         }
-        Set<Topic> scope = _makeSet(4);
+        Set<Topic> scope = CollectionFactory.createIdentitySet(4);
         scope.addAll(super.getScope());
         scope.addAll(((Scoped) _parent).getScope());
         return scope;

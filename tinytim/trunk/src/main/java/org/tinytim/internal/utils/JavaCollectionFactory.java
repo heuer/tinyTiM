@@ -18,16 +18,18 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.utils;
+package org.tinytim.internal.utils;
 
 import java.util.AbstractSet;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 /**
  * {@link ICollectionFactory} which uses the standard Java collections.
@@ -40,17 +42,15 @@ final class JavaCollectionFactory implements ICollectionFactory {
     /* (non-Javadoc)
      * @see org.tinytim.utils.ICollectionFactory#createIntObjectMap()
      */
-    @Override
     public <E> IIntObjectMap<E> createIntObjectMap() {
-        return new JavaIntObjectMap<E>();
+        return new DefaultIntObjectMap<E>(this.<Integer, E>createMap());
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.utils.ICollectionFactory#createIntObjectMap(int)
      */
-    @Override
     public <E> IIntObjectMap<E> createIntObjectMap(int size) {
-        return new JavaIntObjectMap<E>(size);
+        return new DefaultIntObjectMap<E>(this.<Integer, E>createMap(size));
     }
 
     /* (non-Javadoc)
@@ -65,6 +65,13 @@ final class JavaCollectionFactory implements ICollectionFactory {
      */
     public <K, V> Map<K, V> createMap() {
         return new HashMap<K, V>();
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createMap(java.util.Map)
+     */
+    public <K, V> Map<K, V> createMap(Map<? extends K, ? extends V> map) {
+        return new HashMap<K, V>(map);
     }
 
     /* (non-Javadoc)
@@ -96,6 +103,13 @@ final class JavaCollectionFactory implements ICollectionFactory {
     }
 
     /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createSet(java.util.Set)
+     */
+    public <E> Set<E> createSet(Set<? extends E> elements) {
+        return new HashSet<E>(elements);
+    }
+
+    /* (non-Javadoc)
      * @see org.tinytim.core.ICollectionFactory#createIdentitySet()
      */
     public <E> Set<E> createIdentitySet() {
@@ -107,6 +121,36 @@ final class JavaCollectionFactory implements ICollectionFactory {
      */
     public <E> Set<E> createIdentitySet(int size) {
         return new IdentityHashSet<E>(size);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createIdentitySet(java.util.Set)
+     */
+    public <E> Set<E> createIdentitySet(Set<? extends E> elements) {
+        Set<E> set = createIdentitySet(elements.size());
+        set.addAll(elements);
+        return set;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createList()
+     */
+    public <E> List<E> createList() {
+        return new ArrayList<E>();
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createList(java.util.Collection)
+     */
+    public <E> List<E> createList(Collection<? extends E> values) {
+        return new ArrayList<E>(values);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createList(int)
+     */
+    public <E> List<E> createList(int size) {
+        return new ArrayList<E>(size);
     }
 
     /**
@@ -174,35 +218,4 @@ final class JavaCollectionFactory implements ICollectionFactory {
         }
     }
 
-    private static final class JavaIntObjectMap<V> implements IIntObjectMap<V> {
-
-        private final Map<Integer, V> _map;
-
-        JavaIntObjectMap() {
-            _map = new HashMap<Integer, V>();
-        }
-
-        JavaIntObjectMap(int size) {
-            _map = new HashMap<Integer, V>(size);
-        }
-
-        /* (non-Javadoc)
-         * @see org.tinytim.utils.IIntObjectMap#get(int)
-         */
-        public V get(int key) {
-            return _map.get(key);
-        }
-
-        /* (non-Javadoc)
-         * @see org.tinytim.utils.IIntObjectMap#put(int, java.lang.Object)
-         */
-        public V put(int key, V value) {
-            return _map.put(Integer.valueOf(key), value);
-        }
-
-        public void clear() {
-            _map.clear();
-        }
-
-    }
 }

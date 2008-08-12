@@ -22,7 +22,7 @@ package org.tinytim.core;
 
 import java.util.Map;
 
-import org.tinytim.utils.CollectionFactory;
+import org.tinytim.internal.utils.CollectionFactory;
 import org.tmapi.core.Construct;
 import org.tmapi.core.IdentityConstraintException;
 import org.tmapi.core.Locator;
@@ -33,6 +33,8 @@ import org.tmapi.core.Topic;
 /**
  * The identity manager takes care about the TMDM identity constraints and
  * provides an index to get Topic Maps constructs by their identity.
+ * 
+ * This class is not meant to be used outside of the tinyTiM package.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -45,10 +47,10 @@ final class IdentityManager {
     private Map<String, IConstruct> _id2Construct;
 
     IdentityManager(TopicMapImpl tm) {
-        _id2Construct = CollectionFactory.createIdentityMap();
-        _sid2Topic = CollectionFactory.createIdentityMap();
-        _slo2Topic = CollectionFactory.createIdentityMap();
-        _iid2Construct = CollectionFactory.createIdentityMap();
+        _id2Construct = CollectionFactory.createIdentityMap(IConstant.IDENTITY_ID2CONSTRUCT_SIZE);
+        _sid2Topic = CollectionFactory.createIdentityMap(IConstant.IDENTITY_SID2TOPIC_SIZE);
+        _slo2Topic = CollectionFactory.createIdentityMap(IConstant.IDENTITY_SLO2TOPIC_SIZE);
+        _iid2Construct = CollectionFactory.createIdentityMap(IConstant.IDENTITY_IID2CONSTRUCT_SIZE);
         _subscribe(tm);
         _register(tm);
     }

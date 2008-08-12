@@ -20,6 +20,7 @@
  */
 package org.tinytim.core;
 
+import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Reifiable;
 import org.tmapi.core.Topic;
 
@@ -60,7 +61,7 @@ abstract class TypedImpl extends ConstructImpl implements Reifiable {
      */
     public void setType(Topic type) {
         if (type == null) {
-            throw new IllegalArgumentException("The type cannot be set to null");
+            throw new ModelConstraintException(this, "The type cannot be set to null");
         }
         if (_type == type) {
             return;

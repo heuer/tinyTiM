@@ -18,16 +18,18 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.utils;
+package org.tinytim.internal.utils;
 
 import gnu.trove.THashMap;
 import gnu.trove.THashSet;
 import gnu.trove.TIntObjectHashMap;
 import gnu.trove.TObjectIdentityHashingStrategy;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 
 /**
  * {@link ICollectionFactory} which uses the
@@ -38,12 +40,16 @@ import java.util.Set;
  */
 final class TroveCollectionFactory implements ICollectionFactory {
 
-    @Override
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createIntObjectMap()
+     */
     public <E> IIntObjectMap<E> createIntObjectMap() {
         return new TroveIntObjectMap<E>();
     }
 
-    @Override
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createIntObjectMap(int)
+     */
     public <E> IIntObjectMap<E> createIntObjectMap(int size) {
         return new TroveIntObjectMap<E>(size);
     }
@@ -60,6 +66,15 @@ final class TroveCollectionFactory implements ICollectionFactory {
      */
     public <K, V> Map<K, V> createMap() {
         return new THashMap<K, V>();
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createMap(java.util.Map)
+     */
+    public <K, V> Map<K, V> createMap(Map<? extends K, ? extends V> map) {
+        Map<K, V> result = createMap(map.size());
+        result.putAll(map);
+        return result;
     }
 
     /* (non-Javadoc)
@@ -91,6 +106,13 @@ final class TroveCollectionFactory implements ICollectionFactory {
     }
 
     /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createSet(java.util.Set)
+     */
+    public <E> Set<E> createSet(Set<? extends E> elements) {
+        return new THashSet<E>(elements);
+    }
+
+    /* (non-Javadoc)
      * @see org.tinytim.core.ICollectionFactory#createIdentitySet()
      */
     public <E> Set<E> createIdentitySet() {
@@ -104,6 +126,33 @@ final class TroveCollectionFactory implements ICollectionFactory {
         return new THashSet<E>(size, new TObjectIdentityHashingStrategy<E>());
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createIdentitySet(java.util.Set)
+     */
+    public <E> Set<E> createIdentitySet(Set<? extends E> elements) {
+        return new THashSet<E>(elements, new TObjectIdentityHashingStrategy<E>());
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createList()
+     */
+    public <E> List<E> createList() {
+        return new ArrayList<E>();
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createList(java.util.Collection)
+     */
+    public <E> List<E> createList(Collection<? extends E> values) {
+        return new ArrayList<E>(values);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.utils.ICollectionFactory#createList(int)
+     */
+    public <E> List<E> createList(int size) {
+        return new ArrayList<E>(size);
+    }
 
     private static final class TroveIntObjectMap<V> implements IIntObjectMap<V> {
 

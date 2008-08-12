@@ -18,8 +18,9 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.core;
+package org.tinytim.utils;
 
+import org.tinytim.core.TopicMapImpl;
 import org.tinytim.index.IIndexManager;
 import org.tmapi.core.Topic;
 import org.tmapi.index.ScopedIndex;
@@ -38,17 +39,17 @@ public final class TopicUtils {
     }
 
     /**
-     * Returns if the <code>topic</code> is removable.
-     * 
+     * Returns if the <tt>topic</tt> is removable.
+     * <p>
      * A topic is removable iff it plays no role, is not used as type of
      * a typed Topic Maps construct, and is not not used as theme of a scoped
      * Topic Maps construct.
-     * 
+     * </p>
      * This function returns the same result as 
-     * <code>isRemovable(topic, false)</code>.
+     * <tt>isRemovable(topic, false)</tt>.
      *
      * @param topic The topic to check.
-     * @return <code>true</code> if the topic is removable, <code>false</code> 
+     * @return <tt>true</tt> if the topic is removable, <tt>false</tt> 
      *          otherwise.
      */
     public static boolean isRemovable(Topic topic) {
@@ -56,17 +57,18 @@ public final class TopicUtils {
     }
 
     /**
-     * Returns if the <code>topic</code> is removable.
-     * 
+     * Returns if the <tt>topic</tt> is removable.
+     * <p>
      * A topic is removable iff it plays no role, is not used as type of
      * a typed Topic Maps construct, is not not used as theme of a scoped
      * Topic Maps construct and iff it is not used reifier 
-     * (if <code>includeReified</code> is <code>true</code>).
+     * (if <tt>includeReified</tt> is <tt>true</tt>).
+     * </p>
      *
      * @param topic The topic to check.
      * @param includeReified Indicates if a reified Topic Maps construct (if any)
      *          is considered as dependency.
-     * @return <code>true</code> if the topic is removable, <code>false</code> 
+     * @return <tt>true</tt> if the topic is removable, <tt>false</tt> 
      *          otherwise.
      */
     public static boolean isRemovable(Topic topic, boolean includeReified) {

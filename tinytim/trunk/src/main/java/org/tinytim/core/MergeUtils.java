@@ -25,8 +25,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.tinytim.index.IIndexManager;
-import org.tinytim.utils.CollectionFactory;
-import org.tinytim.utils.IIntObjectMap;
+import org.tinytim.internal.utils.CollectionFactory;
+import org.tinytim.internal.utils.IIntObjectMap;
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
@@ -52,7 +52,7 @@ import org.tmapi.index.TypeInstanceIndex;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-final class MergeUtils {
+public final class MergeUtils {
 
     private MergeUtils() {
         // noop.
@@ -176,7 +176,7 @@ final class MergeUtils {
      * @param source The association to remove the characteristics from.
      * @param target The association which takes the role characteristics.
      */
-    static void moveRoleCharacteristics(Association source, Association target) {
+    public static void moveRoleCharacteristics(Association source, Association target) {
         IIntObjectMap<Role> sigs = CollectionFactory.createIntObjectMap();
         for (Role role: target.getRoles()) {
             sigs.put(SignatureGenerator.generateSignature(role), role);
@@ -194,7 +194,7 @@ final class MergeUtils {
      * @param source The name to take the variants from.
      * @param target The target to add the variants to.
      */
-    static void moveVariants(Name source, Name target) {
+    public static void moveVariants(Name source, Name target) {
         IIntObjectMap<Variant> sigs = CollectionFactory.createIntObjectMap();
         for (Variant var: target.getVariants()) {
             sigs.put(SignatureGenerator.generateSignature(var), var);
@@ -224,7 +224,7 @@ final class MergeUtils {
      * @param source The source Topic Maps construct.
      * @param target The target Topic Maps construct.
      */
-    static void handleExistingConstruct(Reifiable source, Reifiable target) {
+    public static void handleExistingConstruct(Reifiable source, Reifiable target) {
         _moveItemIdentifiers(source, target);
         if (source.getReifier() == null) {
             return;

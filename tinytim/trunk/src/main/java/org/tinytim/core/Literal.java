@@ -23,7 +23,7 @@ package org.tinytim.core;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.tinytim.utils.WeakObjectRegistry;
+import org.tinytim.internal.utils.WeakObjectRegistry;
 import org.tinytim.voc.XSD;
 import org.tmapi.core.Locator;
 
@@ -37,9 +37,9 @@ import org.tmapi.core.Locator;
  */
 public final class Literal implements ILiteral {
 
-    private static final WeakObjectRegistry<IRI> _IRIS = new WeakObjectRegistry<IRI>();
-    private static final WeakObjectRegistry<ILiteral> _STRINGS = new WeakObjectRegistry<ILiteral>();
-    private static final WeakObjectRegistry<ILiteral> _LITERALS = new WeakObjectRegistry<ILiteral>();;
+    private static final WeakObjectRegistry<IRI> _IRIS = new WeakObjectRegistry<IRI>(IConstant.LITERAL_IRI_SIZE);
+    private static final WeakObjectRegistry<ILiteral> _STRINGS = new WeakObjectRegistry<ILiteral>(IConstant.LITERAL_STRING_SIZE);
+    private static final WeakObjectRegistry<ILiteral> _OTHERS = new WeakObjectRegistry<ILiteral>(IConstant.LITERAL_OTHER_SIZE);
 
     private final String _value;
     private final Locator _datatype;
@@ -84,7 +84,7 @@ public final class Literal implements ILiteral {
         if (XSD.STRING.equals(datatype)) {
             return get(value);
         }
-        return _LITERALS.get(new Literal(value, datatype));
+        return _OTHERS.get(new Literal(value, datatype));
         
     }
 
@@ -102,11 +102,11 @@ public final class Literal implements ILiteral {
             return create(value);
         }
         ILiteral literal = new Literal(value, datatype);
-        ILiteral existing = _LITERALS.get(literal);
+        ILiteral existing = _OTHERS.get(literal);
         if (existing != null) {
             return existing;
         }
-        _LITERALS.add(literal);
+        _OTHERS.add(literal);
         return literal;
     }
 

@@ -20,6 +20,9 @@
  */
 package org.tinytim.core;
 
+import org.tinytim.utils.TestDuplicateRemovalUtils;
+import org.tinytim.utils.TestTopicUtils;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 

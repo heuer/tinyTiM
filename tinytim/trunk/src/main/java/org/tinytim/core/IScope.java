@@ -34,16 +34,53 @@ import org.tmapi.core.Topic;
  */
 public interface IScope extends Iterable<Topic> {
 
+    /**
+     * Returns the scope as set of topics.
+     *
+     * @return A set of topics.
+     */
     public Set<Topic> asSet();
 
+    /**
+     * Returns <tt>true</tt> if the theme is part of this scope.
+     *
+     * @param theme A topic.
+     * @return <tt>true</tt> if the theme is part of this scope, otherwise <tt>false</tt>.
+     */
     public boolean contains(Topic theme);
 
+    /**
+     * Returns a <tt>IScope</tt> consisting of all themes contained in this
+     * scope and the <tt>theme</tt>.
+     *
+     * @param theme The theme to add.
+     * @return A scope instance which is contains all themes of this scope plus
+     *          the specified <tt>theme</tt>.
+     */
     public IScope add(Topic theme);
 
+    /**
+     * Returns a <tt>IScope</tt> where the <tt>theme</tt> is removed from this
+     * set of themes..
+     *
+     * @param theme The theme to remove.
+     * @return A scope instance which is contains all themes of this scope minus
+     *          the specified <tt>theme</tt>.
+     */
     public IScope remove(Topic theme);
 
+    /**
+     * Returns if this scope is unconstrained (empty).
+     *
+     * @return <tt>true</tt> if the scope is unconstrained, <tt>false</tt> otherwise.
+     */
     public boolean isUnconstrained();
 
+    /**
+     * Returns the number of themes contained in this scope.
+     *
+     * @return Number of themes.
+     */
     public int size();
 
 }

@@ -25,8 +25,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
-import org.tinytim.utils.CollectionFactory;
-import org.tinytim.utils.WeakObjectRegistry;
+import org.tinytim.internal.utils.CollectionFactory;
+import org.tinytim.internal.utils.WeakObjectRegistry;
 import org.tmapi.core.Topic;
 
 /**
@@ -39,7 +39,7 @@ final class Scope implements IScope {
 
     public static final IScope UCS = new Scope();
 
-    private static final WeakObjectRegistry<IScope> _SCOPES = new WeakObjectRegistry<IScope>();
+    private static final WeakObjectRegistry<IScope> _SCOPES = new WeakObjectRegistry<IScope>(IConstant.SCOPE_SCOPES_SIZE);
 
     private final Set<Topic> _set; 
 
@@ -50,10 +50,6 @@ final class Scope implements IScope {
     private Scope(Collection<Topic> themes) {
         _set = CollectionFactory.createIdentitySet(themes.size());
         _set.addAll(themes);
-    }
-
-    private Scope(Set<Topic> themes) {
-        _set = themes;
     }
 
     /* (non-Javadoc)
@@ -75,19 +71,17 @@ final class Scope implements IScope {
         return _set.hashCode();
     }
 
-    public static synchronized IScope create(Collection<Topic> scope) {
-        if (scope.isEmpty()) {
+    public static synchronized IScope create(Collection<Topic> themes) {
+        if (themes.isEmpty()) {
             return UCS;
         }
-        Set<Topic> themes = CollectionFactory.createIdentitySet(scope.size());
-        themes.addAll(scope);
-        IScope scope_ = new Scope(themes);
-        IScope existing = _SCOPES.get(scope_);
+        IScope scope = new Scope(themes);
+        IScope existing = _SCOPES.get(scope);
         if (existing != null) {
             return existing;
         }
-        _SCOPES.add(scope_);
-        return scope_;
+        _SCOPES.add(scope);
+        return scope;
     }
 
     /* (non-Javadoc)
@@ -111,8 +105,7 @@ final class Scope implements IScope {
         if (_set.contains(theme)) {
             return this;
         }
-        Collection<Topic> themes = CollectionFactory.createIdentitySet(_set.size());
-        themes.addAll(_set);
+        Collection<Topic> themes = CollectionFactory.createList(_set);
         themes.add(theme);
         return create(themes);
     }
@@ -124,8 +117,7 @@ final class Scope implements IScope {
         if (!_set.contains(theme)) {
             return this;
         }
-        Collection<Topic> themes = CollectionFactory.createIdentitySet(_set.size());
-        themes.addAll(_set);
+        Collection<Topic> themes = CollectionFactory.createList(_set);
         themes.remove(theme);
         return create(themes);
     }

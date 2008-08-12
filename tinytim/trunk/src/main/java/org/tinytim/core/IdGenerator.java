@@ -23,7 +23,9 @@ package org.tinytim.core;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
+ * Class used to generate identifiers.
  * 
+ * This class is not meant to be used outside of the tinyTiM package.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -32,6 +34,11 @@ final class IdGenerator {
 
     private static final AtomicLong _COUNTER = new AtomicLong();
 
+    /**
+     * Returns the next identifier.
+     *
+     * @return <tt>long</tt> value.
+     */
     public static long nextId() {
         return _COUNTER.getAndIncrement();
     }

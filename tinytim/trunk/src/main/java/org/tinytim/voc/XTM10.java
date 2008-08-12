@@ -24,12 +24,12 @@ import org.tmapi.core.Locator;
 
 /**
  * Constants for XTM 1.0 PSIs.
- * 
+ * <p>
  * The XTM 1.0 PSIs are outdated and have no relevance for the 
  * Topic Maps Data Model. These constants are provided for (de-)serializing
  * topic maps which depend on the XTM 1.0 "model" but they should not be
  * used for new topic maps, use {@link TMDM}.
- *
+ * </p>
  * Copied from the Semagia MIO project.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>

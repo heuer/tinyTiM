@@ -23,8 +23,8 @@ package org.tinytim.core;
 import java.util.Map;
 import java.util.Set;
 
-import org.tinytim.utils.CollectionFactory;
-import org.tinytim.utils.IIntObjectMap;
+import org.tinytim.internal.utils.CollectionFactory;
+import org.tinytim.internal.utils.IIntObjectMap;
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;

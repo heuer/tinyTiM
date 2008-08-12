@@ -30,7 +30,7 @@ import java.util.Set;
 
 import org.tinytim.index.IndexManager;
 import org.tinytim.index.IIndexManager;
-import org.tinytim.utils.CollectionFactory;
+import org.tinytim.internal.utils.CollectionFactory;
 import org.tinytim.voc.TMDM;
 import org.tmapi.core.Association;
 import org.tmapi.core.IdentityConstraintException;
@@ -68,8 +68,8 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
         super._tm = this;
         _sys = sys;
         _locator = locator;
-        _topics = CollectionFactory.createIdentitySet(100);
-        _assocs = CollectionFactory.createIdentitySet(100);
+        _topics = CollectionFactory.createIdentitySet(IConstant.TM_TOPIC_SIZE);
+        _assocs = CollectionFactory.createIdentitySet(IConstant.TM_ASSOCIATION_SIZE);
         _evtHandlers = CollectionFactory.createIdentityMap();
         _identityManager = new IdentityManager(this);
         _indexManager = new IndexManager(this);

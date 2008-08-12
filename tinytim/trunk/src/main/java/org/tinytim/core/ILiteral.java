@@ -26,7 +26,7 @@ import java.math.BigInteger;
 import org.tmapi.core.Locator;
 
 /**
- * 
+ * Represents an immutable value with a datatype.
  * 
  * This interface is not meant to be used outside of the tinyTiM package.
  * 
@@ -35,18 +35,53 @@ import org.tmapi.core.Locator;
  */
 public interface ILiteral {
 
+    /**
+     * Returns the string value.
+     *
+     * @return The string value.
+     */
     public String getValue();
 
+    /**
+     * Returns the datatype.
+     *
+     * @return The datatype.
+     */
     public Locator getDatatype();
 
+    /**
+     * Returns the BigDecimal value.
+     *
+     * @return BigDecimal value.
+     */
     public BigDecimal decimalValue();
 
+    /**
+     * Returns the float value.
+     *
+     * @return Float value.
+     */
     public float floatValue();
 
+    /**
+     * Returns the BigInteger value.
+     *
+     * @return BigInteger value.
+     */
     public BigInteger integerValue();
 
+    /**
+     * Returns the int value.
+     *
+     * @return Int value.
+     */
     public int intValue();
 
+    /**
+     * Returns the long value.
+     *
+     * @return Long value.
+     */
     public long longValue();
 
 }
