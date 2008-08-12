@@ -23,7 +23,6 @@ package org.tinytim.cxtm;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.AbstractSet;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,10 +34,9 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.tinytim.core.DuplicateRemovalUtils;
-import org.tinytim.core.ILiteralAware;
 import org.tinytim.core.TopicMapImpl;
-import org.tinytim.utils.CollectionFactory;
+import org.tinytim.internal.utils.CollectionFactory;
+import org.tinytim.utils.DuplicateRemovalUtils;
 import org.tinytim.voc.TMDM;
 import org.tinytim.voc.XSD;
 import org.tmapi.core.Association;
@@ -137,14 +135,10 @@ public final class Canonicalizer {
     }
 
     /**
-     * Serializes the specified <code>topicMap</code> into the CXTM format.
+     * Serializes the specified <tt>topicMap</tt> into the CXTM format.
      * <p>
      * <em>CAUTION</em>: This method MAY modify the topic map since duplicate 
      * Topic Maps constructs (if any) are removed in advance.
-     * </p>
-     * <p>
-     * The topic map's base locator 
-     * ({@link org.tmapi.core.TopicMap#getBaseLocator()}) is ignored.
      * </p>
      * 
      * @param topicMap The topic map to serialize.
@@ -198,14 +192,14 @@ public final class Canonicalizer {
      * @param idx A (upto date) type instance index.
      * @return All topics which must be included into the output.
      */
-    private Topic[] _fetchTopics(TopicMap topicMap, TypeInstanceIndex idx) {
+    private Topic[] _fetchTopics(final TopicMap topicMap, final TypeInstanceIndex idx) {
         Collection<Topic> types = idx.getTopicTypes();
         if (types.isEmpty()) {
             Set<Topic> topics = topicMap.getTopics();
             return topics.toArray(new Topic[topics.size()]);
         }
         else {
-            List<Topic> topics = new ArrayList<Topic>(topicMap.getTopics());
+            List<Topic> topics = CollectionFactory.createList(topicMap.getTopics());
             TopicMapImpl tm = (TopicMapImpl) topicMap;
             _typeInstance = _getTopicBySubjectIdentifier(tm, topics, TMDM.TYPE_INSTANCE);
             _type = _getTopicBySubjectIdentifier(tm, topics, TMDM.TYPE);
@@ -216,7 +210,7 @@ public final class Canonicalizer {
 
     /**
      * Returns a topic by its subject identifier. If the topic is null, a 
-     * {@link TypeInstanceTopic} is created, added to the <code>topics</code>
+     * {@link TypeInstanceTopic} is created, added to the <tt>topics</tt>
      * and returned.
      *
      * @param tm The topic map to fetch the topic from.
@@ -224,7 +218,7 @@ public final class Canonicalizer {
      * @param sid The subject identifier.
      * @return A topic with the specified subject identifier.
      */
-    private Topic _getTopicBySubjectIdentifier(TopicMapImpl tm, Collection<Topic> topics, Locator sid) {
+    private Topic _getTopicBySubjectIdentifier(TopicMap tm, Collection<Topic> topics, Locator sid) {
         Topic topic = tm.getTopicBySubjectIdentifier(sid);
         if (topic == null) {
             topic = new TypeInstanceTopic(sid);
@@ -244,14 +238,14 @@ public final class Canonicalizer {
      * @param idx A (upto date) type instance index.
      * @return An unsorted array of associations which must be included into the output.
      */
-    private Association[] _fetchAssociations(TopicMap tm, TypeInstanceIndex idx) {
+    private Association[] _fetchAssociations(final TopicMap tm, final TypeInstanceIndex idx) {
         Collection<Topic> types = idx.getTopicTypes();
         if (types.isEmpty()) {
             Set<Association> assocs = tm.getAssociations();
             return assocs.toArray(new Association[assocs.size()]);
         }
         else {
-            List<Association> assocs = new ArrayList<Association>(tm.getAssociations());
+            List<Association> assocs = CollectionFactory.createList(tm.getAssociations());
             for (Topic type: types) {
                 for (Topic instance: idx.getTopics(type)) {
                     assocs.add(new TypeInstanceAssociation(type, instance));
@@ -297,7 +291,7 @@ public final class Canonicalizer {
      * @param assoc The association to retrieve the roles from.
      * @return A (maybe empty) sorted array of roles.
      */
-    private Role[] _getRoles(Association assoc) {
+    private Role[] _getRoles(final Association assoc) {
         Role[] roles = _assoc2Roles.get(assoc);
         return roles != null ? roles : _EMPTY_ROLES;
     }
@@ -308,7 +302,7 @@ public final class Canonicalizer {
      * @param topic The topic to retrieve the names from.
      * @return A (maybe empty) sorted array of names.
      */
-    private Name[] _getNames(Topic topic) {
+    private Name[] _getNames(final Topic topic) {
         Set<Name> names_ = topic.getNames();
         Name[] names = names_.toArray(new Name[names_.size()]);
         Arrays.sort(names, _nameComparator);
@@ -321,7 +315,7 @@ public final class Canonicalizer {
      * @param name The name to retrieve the variants from.
      * @return A (maybe empty) sorted array of variants.
      */
-    private Variant[] _getVariants(Name name) {
+    private Variant[] _getVariants(final Name name) {
         Set<Variant> variants_ = name.getVariants();
         Variant[] variants = variants_.toArray(new Variant[variants_.size()]);
         Arrays.sort(variants, _variantComparator);
@@ -334,7 +328,7 @@ public final class Canonicalizer {
      * @param topic The topic to retrieve the occurrences from.
      * @return A (maybe emtpy) sorted array of occurrences.
      */
-    private Occurrence[] _getOccurrences(Topic topic) {
+    private Occurrence[] _getOccurrences(final Topic topic) {
         Set<Occurrence> occs_ = topic.getOccurrences();
         Occurrence[] occs = occs_.toArray(new Occurrence[occs_.size()]);
         Arrays.sort(occs, _occComparator);
@@ -351,17 +345,17 @@ public final class Canonicalizer {
      * @param tmo The Topic Maps construct to return the index of.
      * @return The index of the Topic Maps construct.
      */
-    private int _indexOf(Construct tmo) {
+    private int _indexOf(final Construct tmo) {
         return _construct2Id.get(tmo).intValue();
     }
 
     /**
-     * Serializes the <code>topic</code>.
+     * Serializes the <tt>topic</tt>.
      *
      * @param topic The topic to serialize.
      * @throws IOException If an error occurs.
      */
-    private void _writeTopic(Topic topic) throws IOException {
+    private void _writeTopic(final Topic topic) throws IOException {
         AttributesImpl attrs = new AttributesImpl();
         attrs.addAttribute("", "number", null, null, "" +_indexOf(topic));
         _out.startElement("topic", attrs);
@@ -377,7 +371,7 @@ public final class Canonicalizer {
         for (int i=0; i < occs.length; i++) {
             _writeOccurrence(occs[i], i+1);
         }
-        List<Role> roles_ = new ArrayList<Role>(topic.getRolesPlayed());
+        List<Role> roles_ = CollectionFactory.createList(topic.getRolesPlayed());
         List<Role> alienRoles = _topic2Roles.get(topic);
         if (alienRoles != null) {
             roles_.addAll(alienRoles);
@@ -385,7 +379,7 @@ public final class Canonicalizer {
         Role[] roles = roles_.toArray(new Role[roles_.size()]);
         Arrays.sort(roles, _roleComparator);
         AttributesImpl roleAttrs = new AttributesImpl();
-        StringBuilder sb = new StringBuilder();
+        StringBuilder sb = new StringBuilder(20);
         for (int i=0; i < roles.length; i++) {
             sb.append("association.")
                 .append(_indexOf(roles[i].getParent()))
@@ -408,7 +402,7 @@ public final class Canonicalizer {
      * @param assoc The association to serialize.
      * @throws IOException If an error occurs.
      */
-    private void _writeAssociation(Association assoc) throws IOException {
+    private void _writeAssociation(final Association assoc) throws IOException {
         _out.startElement("association", _attributes(assoc, _indexOf(assoc)));
         _out.newline();
         _writeType(assoc);
@@ -433,9 +427,10 @@ public final class Canonicalizer {
      * Serializes an occurrence.
      *
      * @param occ The occurrence to serialize.
+     * @param pos The position of the occurrence within the parent container.
      * @throws IOException If an error occurs.
      */
-    private void _writeOccurrence(Occurrence occ, int pos) throws IOException {
+    private void _writeOccurrence(final Occurrence occ, int pos) throws IOException {
         _out.startElement("occurrence", _attributes(occ, pos));
         _out.newline();
         _writeDatatyped(occ);
@@ -452,9 +447,10 @@ public final class Canonicalizer {
      * @param obj The construct to serialize.
      * @throws IOException If an error occurs.
      */
-    private void _writeDatatyped(DatatypeAware obj) throws IOException {
-        String value = XSD.ANY_URI.equals(obj.getDatatype()) ? _normalizeLocator(obj.locatorValue())
-                                                             : LiteralCanonicalizer.canonicalize((ILiteralAware) obj);
+    private void _writeDatatyped(final DatatypeAware obj) throws IOException {
+        final String value = XSD.ANY_URI.equals(obj.getDatatype()) 
+                                        ? _normalizeLocator(obj.locatorValue())
+                                        : obj.getValue();
         _out.startElement("value");
         _out.characters(value);
         _out.endElement("value");
@@ -469,9 +465,10 @@ public final class Canonicalizer {
      * Serializes a topic name.
      *
      * @param name The name to serialize.
+     * @param pos The position of the name within the parent container.
      * @throws IOException If an error occurs.
      */
-    private void _writeName(Name name, int pos) throws IOException {
+    private void _writeName(final Name name, int pos) throws IOException {
         _out.startElement("name", _attributes(name, pos));
         _out.newline();
         _out.startElement("value");
@@ -504,11 +501,7 @@ public final class Canonicalizer {
      *                  serialized.
      * @throws IOException If an error occurs.
      */
-    private void _writeType(Typed typed) throws IOException {
-        Topic type = typed.getType();
-        if (type == null) {
-            _reportInvalid("The type of " + typed + " is null");
-        }
+    private void _writeType(final Typed typed) throws IOException {
         _out.startElement("type", _topicRef(typed.getType()));
         _out.endElement("type");
         _out.newline();
@@ -522,7 +515,7 @@ public final class Canonicalizer {
      * @param scoped The scoped Topic Maps construct.
      * @throws IOException If an error occurs.
      */
-    private void _writeScope(Scoped scoped) throws IOException {
+    private void _writeScope(final Scoped scoped) throws IOException {
         Set<Topic> scope = scoped.getScope();
         if (scope.isEmpty()) {
             return;
@@ -548,7 +541,7 @@ public final class Canonicalizer {
      * @param loc The locator to serialize.
      * @throws IOException If an error occurs.
      */
-    private void _writeLocator(Locator loc) throws IOException {
+    private void _writeLocator(final Locator loc) throws IOException {
         _out.startElement("locator");
         _out.characters(_normalizeLocator(loc));
         _out.endElement("locator");
@@ -561,21 +554,21 @@ public final class Canonicalizer {
      * @param tmo The Topic Maps construct to take the item identifiers from.
      * @throws IOException If an error occurs.
      */
-    private void _writeItemIdentifiers(Construct tmo) throws IOException {
+    private void _writeItemIdentifiers(final Construct tmo) throws IOException {
         _writeLocatorSet("itemIdentifiers", tmo.getItemIdentifiers());
     }
 
     /**
-     * Serializes the <code>locators</code> using the <code>localName</code> as
+     * Serializes the <tt>locators</tt> using the <tt>localName</tt> as
      * element name.
      * 
-     * If the set of <code>locators</code> is empty, this method does nothing.
+     * If the set of <tt>locators</tt> is empty, this method does nothing.
      *
      * @param localName The element's name.
      * @param locators The locators to serialize.
      * @throws IOException If an error occurs. 
      */
-    private void _writeLocatorSet(String localName, Set<Locator> locators) throws IOException {
+    private void _writeLocatorSet(final String localName, final Set<Locator> locators) throws IOException {
         if (locators.isEmpty()) {
             return;
         }
@@ -596,13 +589,13 @@ public final class Canonicalizer {
      * @param topic The topic to which the reference should point to.
      * @return Attributes with a topic reference.
      */
-    private Attributes _topicRef(Topic topic) {
+    private Attributes _topicRef(final Topic topic) {
         if (topic == null) {
             _reportInvalid("The topic reference is null");
             return CXTMWriter.EMPTY_ATTRS;
         }
         AttributesImpl attrs = new AttributesImpl();
-        attrs.addAttribute("", "topicref", null, null, ""+_indexOf(topic));
+        attrs.addAttribute("", "topicref", null, null, "" + _indexOf(topic));
         return attrs;
     }
 
@@ -611,10 +604,11 @@ public final class Canonicalizer {
      * of the provided Topic Maps construct (not a topic).
      *
      * @param reifiable The Topic Maps construct.
+     * @param The position of the reifiable within the parent container.
      * @return Attributes which contain a reference to the reifier (if any) and
      *          the number of the provided Topic Maps construct.
      */
-    private Attributes _attributes(Reifiable reifiable, int i) {
+    private Attributes _attributes(final Reifiable reifiable, int i) {
         AttributesImpl attrs = new AttributesImpl();
         _addReifier(attrs, reifiable);
         attrs.addAttribute("", "number", null, null, "" + i);
@@ -629,7 +623,7 @@ public final class Canonicalizer {
      * @param attrs The attributes.
      * @param reifiable The reifiable Topic Maps construct.
      */
-    private void _addReifier(AttributesImpl attrs, Reifiable reifiable) {
+    private void _addReifier(final AttributesImpl attrs, final Reifiable reifiable) {
         Topic reifier = reifiable.getReifier();
         if (reifier != null) {
             attrs.addAttribute("", "reifier", null, null, "" + _indexOf(reifier));
@@ -647,24 +641,22 @@ public final class Canonicalizer {
         if (normLoc != null) {
             return normLoc;
         }
-        final String ref = locator.getReference();
-        normLoc = ref;
-        if (ref.startsWith(_normBase)) {
-            normLoc = ref.substring(_normBase.length());
+        normLoc = locator.getReference();
+        if (normLoc.startsWith(_normBase)) {
+            normLoc = normLoc.substring(_normBase.length());
         }
         else {
             int i = 0;
             int slashPos = -1;
-            final int max = _normBase.length() < ref.length() ? _normBase.length()
-                                                              : ref.length();
-            while(i < max && _normBase.charAt(i) == ref.charAt(i)) {
+            final int max = Math.min(_normBase.length(), normLoc.length());
+            while(i < max && _normBase.charAt(i) == normLoc.charAt(i)) {
                 if (_normBase.charAt(i) == '/') {
                     slashPos = i;
                 }
                 i++;
             }
             if (slashPos > -1) {
-                normLoc = ref.substring(slashPos);
+                normLoc = normLoc.substring(slashPos);
             }
         }
         if (normLoc.startsWith("/")) {
@@ -683,7 +675,7 @@ public final class Canonicalizer {
      * @param baseLocator
      * @return
      */
-    private static String _normalizeBaseLocator(String baseLocator) {
+    private static String _normalizeBaseLocator(final String baseLocator) {
         String loc = baseLocator;
         int i = loc.indexOf('#');
         if (i > 0) {
@@ -707,7 +699,7 @@ public final class Canonicalizer {
      *
      * @param msg The warning message.
      */
-    private static void _reportInvalid(String msg) {
+    private static void _reportInvalid(final String msg) {
         LOG.warning("Invalid CXTM: '" + msg + "'");
     }
 
@@ -1170,7 +1162,7 @@ public final class Canonicalizer {
             _parent = parent;
             List<Role> roles = _topic2Roles.get(player);
             if (roles == null) {
-                roles = new ArrayList<Role>();
+                roles = CollectionFactory.createList();
                 _topic2Roles.put(player, roles);
             }
             roles.add(this);
