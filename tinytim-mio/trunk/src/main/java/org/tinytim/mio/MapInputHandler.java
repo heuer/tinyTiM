@@ -115,8 +115,7 @@ public class MapInputHandler implements IMapHandler {
      * @see com.semagia.mio.IMapHandler#endTopic()
      */
     public void endTopic() throws MIOException {
-        Topic topic = _peekTopic();
-        _leaveStatePopConstruct(State.TOPIC);
+        Topic topic = (Topic) _leaveStatePopConstruct(State.TOPIC);
         _handleTopic(topic);
     }
 
@@ -190,8 +189,7 @@ public class MapInputHandler implements IMapHandler {
      * @see com.semagia.mio.IMapHandler#endName()
      */
     public void endName() throws MIOException {
-        TopicName name = (TopicName) _peekConstruct();
-        _leaveStatePopConstruct(State.NAME);
+        TopicName name = (TopicName) _leaveStatePopConstruct(State.NAME);
         if (name.getType() == null) {
             name.setType(_topicBySubjectIdentifier(TMDM.TOPIC_NAME));
         }
@@ -210,8 +208,7 @@ public class MapInputHandler implements IMapHandler {
      */
     @SuppressWarnings("unchecked")
     public void endVariant() throws MIOException {
-        Variant variant = (Variant) _peekConstruct();
-        _leaveStatePopConstruct(State.VARIANT);
+        Variant variant = (Variant) _leaveStatePopConstruct(State.VARIANT);
         Collection<Topic> scope = variant.getScope();
         if (scope.isEmpty() || variant.getTopicName().getScope().equals(scope)) {
             throw new MIOException("The variant has no scope");
@@ -434,11 +431,12 @@ public class MapInputHandler implements IMapHandler {
      * construct stack.
      *
      * @param state The state to leave.
+     * @return The removed construct.
      * @throws MIOException If the state is not equals to the current state.
      */
-    private void _leaveStatePopConstruct(State state) throws MIOException {
+    private TopicMapObject _leaveStatePopConstruct(State state) throws MIOException {
         _leaveState(state);
-        _constructStack.remove(_constructStack.size()-1);
+        return _constructStack.remove(_constructStack.size()-1);
     }
 
     /**
@@ -484,11 +482,11 @@ public class MapInputHandler implements IMapHandler {
     }
 
     /**
-     * Merges the <code>source</code> topic with the <code>target</code>.
+     * Merges the <tt>source</tt> topic with the <tt>target</tt>.
      * 
      * Further, this method ensures that the construct stack stays valid: If
-     * the <code>source</code> is part of the stack, it is replaced with
-     * <code>target</code>.
+     * the <tt>source</tt> is part of the stack, it is replaced with
+     * <tt>target</tt>.
      *
      * @param source The source topic (will be removed).
      * @param target The target topic.

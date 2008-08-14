@@ -36,7 +36,7 @@ import com.semagia.mio.helpers.Ref;
 import junit.framework.TestCase;
 
 /**
- * Tests against the {@link org.tinytim.io.MapInputHandler}.
+ * Tests against the {@link org.tinytim.mio.MapInputHandler}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

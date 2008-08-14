@@ -33,6 +33,7 @@ import org.xml.sax.InputSource;
 import com.semagia.mio.DeserializerRegistry;
 import com.semagia.mio.IDeserializer;
 import com.semagia.mio.MIOException;
+import com.semagia.mio.Property;
 import com.semagia.mio.Syntax;
 
 /**
@@ -48,8 +49,8 @@ public final class TopicMapImporter {
     }
 
     /**
-     * Reads a XML topic map from <code>input</code> and adds the content to the 
-     * specified <code>topicMap</code>. The <code>docIRI</code> is used to
+     * Reads a XML topic map from <tt>input</tt> and adds the content to the 
+     * specified <tt>topicMap</tt>. The <tt>docIRI</tt> is used to
      * resolve IRIs against.
      *
      * @param topicMap The topic map instance which receives the 
@@ -63,8 +64,8 @@ public final class TopicMapImporter {
     }
 
     /**
-     * Reads a XML topic map from <code>input</code> and adds the content to the 
-     * specified <code>topicMap</code>. The <code>docIRI</code> is used to
+     * Reads a XML topic map from <tt>input</tt> and adds the content to the 
+     * specified <tt>topicMap</tt>. The <tt>docIRI</tt> is used to
      * resolve IRIs against.
      *
      * @param topicMap The topic map instance which receives the 
@@ -78,8 +79,8 @@ public final class TopicMapImporter {
     }
 
     /**
-     * Reads a topic map from <code>file</code> and adds the content to the 
-     * specified <code>topicMap</code>. The <code>docIRI</code> is used to
+     * Reads a topic map from <tt>file</tt> and adds the content to the 
+     * specified <tt>topicMap</tt>. The <tt>docIRI</tt> is used to
      * resolve IRIs against.
      * 
      * The syntax of the serialized topic map is guessed by the file name. If
@@ -97,11 +98,11 @@ public final class TopicMapImporter {
     }
 
     /**
-     * Reads a topic map from <code>file</code> and adds the content to the 
-     * specified <code>topicMap</code>. The <code>docIRI</code> is used to
+     * Reads a topic map from <tt>file</tt> and adds the content to the 
+     * specified <tt>topicMap</tt>. The <tt>docIRI</tt> is used to
      * resolve IRIs against.
      * 
-     * The <code>syntax</code> is a string with the abbreviated Topic Maps syntax
+     * The <tt>syntax</tt> is a string with the abbreviated Topic Maps syntax
      * name; i.e. "xtm", "ltm", "ctm". The name is matched case-insensitve, that
      * means "xtm" is the same as "xTm", "XTM" etc.
      *
@@ -117,11 +118,11 @@ public final class TopicMapImporter {
     }
 
     /**
-     * Reads a topic map from <code>input</code> and adds the content to the 
-     * specified <code>topicMap</code>. The <code>docIRI</code> is used to
+     * Reads a topic map from <tt>input</tt> and adds the content to the 
+     * specified <tt>topicMap</tt>. The <tt>docIRI</tt> is used to
      * resolve IRIs against.
      * 
-     * The <code>syntax</code> is a string with the abbreviated Topic Maps syntax
+     * The <tt>syntax</tt> is a string with the abbreviated Topic Maps syntax
      * name; i.e. "xtm", "ltm", "ctm". The name is matched case-insensitve, that
      * means "xtm" is the same as "xTm", "XTM" etc.
      *
@@ -137,11 +138,11 @@ public final class TopicMapImporter {
     }
 
     /**
-     * Reads a topic map from <code>input</code> and adds the content to the 
-     * specified <code>topicMap</code>. The <code>docIRI</code> is used to
+     * Reads a topic map from <tt>input</tt> and adds the content to the 
+     * specified <tt>topicMap</tt>. The <tt>docIRI</tt> is used to
      * resolve IRIs against.
      * 
-     * The <code>syntax</code> is a string with the abbreviated Topic Maps syntax
+     * The <tt>syntax</tt> is a string with the abbreviated Topic Maps syntax
      * name; i.e. "xtm", "ltm", "ctm". The name is matched case-insensitve, that
      * means "xtm" is the same as "xTm", "XTM" etc.
      *
@@ -176,8 +177,8 @@ public final class TopicMapImporter {
     }
 
     /**
-     * Reads a topic map from <code>input</code> and adds the content to the
-     * <code>topicMap</code>.
+     * Reads a topic map from <tt>input</tt> and adds the content to the
+     * <tt>topicMap</tt>.
      *
      * @param syntax A syntax instance.
      * @param topicMap A topic map instance.
@@ -191,8 +192,8 @@ public final class TopicMapImporter {
     }
 
     /**
-     * Reads a topic map from <code>input</code> and adds the content to the
-     * <code>topicMap</code>.
+     * Reads a topic map from <tt>input</tt> and adds the content to the
+     * <tt>topicMap</tt>.
      *
      * @param syntax A syntax instance.
      * @param topicMap A topic map instance.
@@ -206,6 +207,7 @@ public final class TopicMapImporter {
         if (deser == null) {
             throw new IOException("No deserializer found for the syntax '" + syntax.getName() + "'");
         }
+        deser.setProperty(Property.VALIDATE, "false");
         deser.setMapHandler(new MapInputHandler(topicMap));
         try {
             deser.parse(input, docIRI);
@@ -215,6 +217,7 @@ public final class TopicMapImporter {
                 throw (IOException) ex.getException();
             }
             else {
+                ex.printStackTrace();
                 throw new TMAPIRuntimeException(ex);
             }
         }
