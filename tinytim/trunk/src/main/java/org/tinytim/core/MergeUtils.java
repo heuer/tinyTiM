@@ -20,7 +20,6 @@
  */
 package org.tinytim.core;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -107,12 +106,12 @@ public final class MergeUtils {
         if (sourceReifiable != null) {
             sourceReifiable.setReifier(target);
         }
-        List<Locator> locs = new ArrayList<Locator>(source.getSubjectIdentifiers());
+        List<Locator> locs = CollectionFactory.createList(source.getSubjectIdentifiers());
         for (Locator sid: locs) {
             source.removeSubjectIdentifier(sid);
             target.addSubjectIdentifier(sid);
         }
-        locs = new ArrayList<Locator>(source.getSubjectLocators());
+        locs = CollectionFactory.createList(source.getSubjectLocators());
         for (Locator slo: locs) {
             source.removeSubjectLocator(slo);
             target.addSubjectLocator(slo);
@@ -126,7 +125,7 @@ public final class MergeUtils {
             sigs.put(SignatureGenerator.generateSignature(occ), occ);
         }
         Reifiable existing = null;
-        for (Occurrence occ: new ArrayList<Occurrence>(source.getOccurrences())) {
+        for (Occurrence occ: CollectionFactory.createList(source.getOccurrences())) {
             existing = sigs.get(SignatureGenerator.generateSignature(occ));
             if (existing != null) {
                 handleExistingConstruct(occ, existing);
@@ -140,7 +139,7 @@ public final class MergeUtils {
         for (Name name: target.getNames()) {
             sigs.put(SignatureGenerator.generateSignature(name), name);
         }
-        for (Name name: new ArrayList<Name>(source.getNames())) {
+        for (Name name: CollectionFactory.createList(source.getNames())) {
             existing = sigs.get(SignatureGenerator.generateSignature(name));
             if (existing != null) {
                 handleExistingConstruct(name, existing);
@@ -156,7 +155,7 @@ public final class MergeUtils {
             Association parent = role.getParent();
             sigs.put(SignatureGenerator.generateSignature(parent), parent);
         }
-        for (Role role: new ArrayList<Role>(source.getRolesPlayed())) {
+        for (Role role: CollectionFactory.createList(source.getRolesPlayed())) {
             role.setPlayer(target);
             Association parent = role.getParent();
             existing = sigs.get(SignatureGenerator.generateSignature(parent));
@@ -181,8 +180,7 @@ public final class MergeUtils {
         for (Role role: target.getRoles()) {
             sigs.put(SignatureGenerator.generateSignature(role), role);
         }
-        List<Role> roles = new ArrayList<Role>(source.getRoles());
-        for (Role role: roles) {
+        for (Role role: CollectionFactory.createList(source.getRoles())) {
             handleExistingConstruct(role, sigs.get(SignatureGenerator.generateSignature(role)));
             role.remove();
         }
@@ -200,7 +198,7 @@ public final class MergeUtils {
             sigs.put(SignatureGenerator.generateSignature(var), var);
         }
         Variant existing = null;
-        for (Variant var: new ArrayList<Variant>(source.getVariants())) {
+        for (Variant var: CollectionFactory.createList(source.getVariants())) {
             existing = sigs.get(SignatureGenerator.generateSignature(var));
             if (existing != null) {
                 handleExistingConstruct(var, existing);
@@ -311,7 +309,7 @@ public final class MergeUtils {
      * @param target The target which get the item identifiers.
      */
     private static void _moveItemIdentifiers(Construct source, Construct target) {
-        List<Locator> iids = new ArrayList<Locator>(source.getItemIdentifiers());
+        List<Locator> iids = CollectionFactory.createList(source.getItemIdentifiers());
         for (Locator iid: iids) {
             source.removeItemIdentifier(iid);
             target.addItemIdentifier(iid);

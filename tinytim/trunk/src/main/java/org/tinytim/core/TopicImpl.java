@@ -25,9 +25,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import org.tinytim.internal.utils.Check;
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tinytim.utils.TopicUtils;
 import org.tmapi.core.Locator;
+import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Reifiable;
@@ -79,7 +81,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
      */
     public void addSubjectIdentifier(Locator sid) {
         if (sid == null) {
-            throw new IllegalArgumentException("The subject identifier must not be null");
+            throw new ModelConstraintException(this, "The subject identifier must not be null");
         }
         if (_sids.contains(sid)) {
             return;
@@ -112,7 +114,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
      */
     public void addSubjectLocator(Locator slo) {
         if (slo == null) {
-            throw new IllegalArgumentException("The subject locator must not be null");
+            throw new ModelConstraintException(this, "The subject locator must not be null");
         }
         if (_slos != null && _sids.contains(slo)) {
             return;
@@ -146,6 +148,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
      * @see org.tmapi.core.Topic#createOccurrence(org.tmapi.core.Topic, java.lang.String, java.util.Collection)
      */
     public Occurrence createOccurrence(Topic type, String value, Collection<Topic> scope) {
+        Check.valueNotNull(this, value);
         return _createOccurrence(type, Literal.create(value), scope);
     }
 
@@ -153,6 +156,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
      * @see org.tmapi.core.Topic#createOccurrence(org.tmapi.core.Locator, org.tmapi.core.Topic, java.util.Collection)
      */
     public Occurrence createOccurrence(Topic type, Locator value, Collection<Topic> scope) {
+        Check.valueNotNull(this, value);
         return _createOccurrence(type, Literal.create(value), scope);
     }
 
@@ -160,41 +164,37 @@ final class TopicImpl extends ConstructImpl implements Topic {
      * @see org.tmapi.core.Topic#createOccurrence(org.tmapi.core.Topic, java.lang.String, org.tmapi.core.Locator, java.util.Collection)
      */
     public Occurrence createOccurrence(Topic type, String value, Locator datatype, Collection<Topic> scope) {
+        Check.valueNotNull(this, value, datatype);
         return _createOccurrence(type, Literal.create(value, datatype), scope);
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#createOccurrence(org.tmapi.core.Topic, java.lang.String, org.tmapi.core.Locator, org.tmapi.core.Topic[])
      */
-    public Occurrence createOccurrence(Topic type, String value, Locator datatype, Topic... themes) {
-        return _createOccurrence(type, Literal.create(value, datatype), Arrays.asList(themes));
+    public Occurrence createOccurrence(Topic type, String value, Locator datatype, Topic... scope) {
+        Check.scopeNotNull(this, scope);
+        return createOccurrence(type, value, datatype, Arrays.asList(scope));
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#createOccurrence(org.tmapi.core.Topic, org.tmapi.core.Locator, org.tmapi.core.Topic[])
      */
-    public Occurrence createOccurrence(Topic type, Locator value,
-            Topic... scope) {
-        return _createOccurrence(type, Literal.create(value), Arrays.asList(scope));
+    public Occurrence createOccurrence(Topic type, Locator value, Topic... scope) {
+        Check.scopeNotNull(this, scope);
+        return createOccurrence(type, value, Arrays.asList(scope));
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#createOccurrence(org.tmapi.core.Topic, java.lang.String, org.tmapi.core.Topic[])
      */
     public Occurrence createOccurrence(Topic type, String value, Topic... scope) {
+        Check.scopeNotNull(this, scope);
         return createOccurrence(type, value, Arrays.asList(scope));
     }
 
     Occurrence _createOccurrence(Topic type, ILiteral literal, Collection<Topic> scope) {
-        if (type == null) {
-            throw new IllegalArgumentException("The type must not be null");
-        }
-        if (literal == null) {
-            throw new IllegalArgumentException("The value must not be null");
-        }
-        if (scope == null) {
-            throw new IllegalArgumentException("The scope must not be null");
-        }
+        Check.typeNotNull(this, type);
+        Check.scopeNotNull(this, scope);
         Occurrence occ = new OccurrenceImpl(_tm, type, literal, Scope.create(scope));
         addOccurrence(occ);
         return occ;
@@ -265,6 +265,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
      * @see org.tmapi.core.Topic#createName(java.lang.String, org.tmapi.core.Topic[])
      */
     public Name createName(String value, Topic... scope) {
+        Check.scopeNotNull(this, scope);
         return createName(value, Arrays.asList(scope));
     }
 
@@ -272,6 +273,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
      * @see org.tmapi.core.Topic#createName(org.tmapi.core.Topic, java.lang.String, org.tmapi.core.Topic[])
      */
     public Name createName(Topic type, String value, Topic... scope) {
+        Check.scopeNotNull(this, scope);
         return createName(type, value, Arrays.asList(scope));
     }
 
@@ -302,19 +304,13 @@ final class TopicImpl extends ConstructImpl implements Topic {
      * @see org.tmapi.core.Topic#createName(org.tmapi.core.Topic, java.lang.String, java.util.Collection)
      */
     public Name createName(Topic type, String value, Collection<Topic> scope) {
+        Check.valueNotNull(this, value);
         return _createName(type, Literal.create(value), scope);
     }
 
     public Name _createName(Topic type, ILiteral literal, Collection<Topic> scope) {
-        if (type == null) {
-            throw new IllegalArgumentException("The type must not be null");
-        }
-        if (literal == null) {
-            throw new IllegalArgumentException("The value must not be null");
-        }
-        if (scope == null) {
-            throw new IllegalArgumentException("The scope must not be null");
-        }
+        Check.typeNotNull(this, type);
+        Check.scopeNotNull(this, scope);
         NameImpl name = new NameImpl(_tm, type, literal, Scope.create(scope));
         addName(name);
         return name;
@@ -431,9 +427,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
      * @see org.tmapi.core.Topic#addType(org.tmapi.core.Topic)
      */
     public void addType(Topic type) {
-        if (type == null) {
-            throw new IllegalArgumentException("The type must not be null");
-        }
+        Check.typeNotNull(this, type);
         if (_types != null && _types.contains(type)) {
             return;
         }
@@ -475,7 +469,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
      */
     public void remove() throws TopicInUseException {
         if (!TopicUtils.isRemovable(this, true)) {
-            throw new TopicInUseException(this, "The topic is used as type, player, or theme");
+            throw new TopicInUseException(this, "The topic is used as type, player, reifier, or theme");
         }
         if (_reified != null) {
             _reified.setReifier(null);

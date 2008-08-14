@@ -26,6 +26,7 @@ import java.util.Set;
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
+import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.TopicMap;
 
 /**
@@ -79,7 +80,7 @@ abstract class ConstructImpl implements IConstruct {
      */
     public void addItemIdentifier(Locator itemIdentifier) {
         if (itemIdentifier == null) {
-            throw new IllegalArgumentException("The item identifier must not be null");
+            throw new ModelConstraintException(this, "The item identifier must not be null");
         }
         if (_iids != null && _iids.contains(itemIdentifier)) {
             return;
