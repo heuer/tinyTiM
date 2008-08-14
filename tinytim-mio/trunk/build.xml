@@ -29,10 +29,9 @@
 
     <property name="lib.junit" value="${dir.lib}/junit-4.4.jar"/>
     <property name="lib.tmapi" value="${dir.lib}/tmapi-1_0SP1.jar"/>
-    <property name="lib.tinytim" value="${dir.lib}/tinytim-1.5.0alpha2.jar"/>
-    <property name="lib.log.api" value="${dir.lib}/slf4j-api-1.5.0.jar"/>
-    <property name="lib.log" value="${dir.lib}/slf4j-jdk14-1.5.0.jar"/>
-    <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.0.jar"/>
+    <property name="lib.tinytim" value="${dir.lib}/tinytim-1.5.0beta.jar"/>
+    <property name="lib.logging" value="${dir.lib}/slf4j-api-1.5.2.jar"/>
+    <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.2.jar"/>
 
     <target name="help">
         <echo message="------------------------"/>
@@ -87,14 +86,13 @@
         <javadoc destdir="${dir.javadocs}"
             packagenames="org.tinytim.*"
             author="true"
-            version="true"
+            version="false"
             use="true"
             splitindex="true"
             noindex="false"
             windowtitle="tinyTiM MIO API v${dist.version}"
             doctitle="tinyTiM API MIO v${dist.version}">
             <fileset dir="${dir.src}">
-                <exclude name="**/MapInputHandler.*"/>
             </fileset>
             <link href="http://www.tmapi.org/apiDocs/"/>
         </javadoc>
@@ -149,8 +147,7 @@
                 <pathelement location="${lib.tmapi}"/>
                 <pathelement location="${lib.tinytim}"/>
                 <pathelement location="${lib.mio}"/>
-                <pathelement location="${lib.log.api}"/>
-                <pathelement location="${lib.log}"/>
+                <pathelement location="${lib.logging}"/>
             </classpath>
             <src path="${dir.src}"/>
         </javac>
@@ -188,8 +185,8 @@
         </copy>
         <copy todir="${dir.dist}/lib">
             <fileset dir="${dir.lib}">
-                <exclude name="**/tinytim-*"/>
-                <exclude name="**/tmapi-*"/>
+                <exclude name="**/tmapi*.jar"/>
+                <exclude name="**/tinytim*.jar"/>
             </fileset>
         </copy>
        
