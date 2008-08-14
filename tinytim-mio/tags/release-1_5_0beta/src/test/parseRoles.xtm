@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<topicMap xmlns="http://www.topicmaps.org/xtm/1.0/">
+  <topic id="1073409678563">
+    <instanceOf>
+      <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#picture"></topicRef>
+    </instanceOf>
+    <subjectIdentity>
+      <resourceRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="http://www.ivs.tu-berlin.de/Lischke/bilderbuch/1mai/images/Foto(03).jpg"></resourceRef>
+    </subjectIdentity>
+  </topic>
+  <topic id="1073409692594">
+    <instanceOf>
+      <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#person"></topicRef>
+    </instanceOf>
+    <baseName id="1073409692595">
+      <baseNameString>Joachim Fuchs</baseNameString>
+    </baseName>
+  </topic>
+
+  <association id="1073409717985">
+    <instanceOf>
+      <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#personinaction"></topicRef>
+    </instanceOf>
+    <member id="1073409717986">
+      <roleSpec>
+        <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#picture"></topicRef>
+      </roleSpec>
+      <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#1073409678563"></topicRef>
+    </member>
+    <member id="1073409717987">
+      <roleSpec>
+        <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#person"></topicRef>
+      </roleSpec>
+      <topicRef xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#1073409692594"></topicRef>
+    </member>
+  </association>
+</topicMap>
