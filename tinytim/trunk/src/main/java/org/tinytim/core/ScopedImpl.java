@@ -22,6 +22,7 @@ package org.tinytim.core;
 
 import java.util.Set;
 
+import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Topic;
 
 /**
@@ -77,7 +78,7 @@ abstract class ScopedImpl extends TypedImpl implements IScoped {
      */
     public void addTheme(Topic theme) {
         if (theme == null) {
-            throw new IllegalArgumentException("The theme must not be null");
+            throw new ModelConstraintException(this, "The theme must not be null");
         }
         setScopeObject(_scope.add(theme));
     }

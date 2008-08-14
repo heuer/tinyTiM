@@ -20,7 +20,7 @@
  */
 package org.tinytim.core;
 
-import org.tmapi.core.ModelConstraintException;
+import org.tinytim.internal.utils.Check;
 import org.tmapi.core.Reifiable;
 import org.tmapi.core.Topic;
 
@@ -60,9 +60,7 @@ abstract class TypedImpl extends ConstructImpl implements Reifiable {
      * @see org.tinytim.ITyped#setType(org.tmapi.core.Topic)
      */
     public void setType(Topic type) {
-        if (type == null) {
-            throw new ModelConstraintException(this, "The type cannot be set to null");
-        }
+        Check.typeNotNull(this, type);
         if (_type == type) {
             return;
         }

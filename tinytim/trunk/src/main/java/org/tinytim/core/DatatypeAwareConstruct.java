@@ -23,6 +23,7 @@ package org.tinytim.core;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.tinytim.internal.utils.Check;
 import org.tinytim.voc.XSD;
 import org.tmapi.core.DatatypeAware;
 import org.tmapi.core.Locator;
@@ -82,6 +83,7 @@ abstract class DatatypeAwareConstruct extends ScopedImpl implements
      * @see org.tmapi.core.DatatypeAware#setValue(java.lang.String)
      */
     public void setValue(String value) {
+        Check.valueNotNull(this, value);
         setLiteral(Literal.create(value));
     }
 
@@ -89,6 +91,7 @@ abstract class DatatypeAwareConstruct extends ScopedImpl implements
      * @see org.tmapi.core.DatatypeAware#setValue(java.math.BigDecimal)
      */
     public void setValue(BigDecimal value) {
+        Check.valueNotNull(this, value);
         setLiteral(Literal.create(value));
     }
 
@@ -96,6 +99,7 @@ abstract class DatatypeAwareConstruct extends ScopedImpl implements
      * @see org.tmapi.core.DatatypeAware#setValue(java.math.BigInteger)
      */
     public void setValue(BigInteger value) {
+        Check.valueNotNull(this, value);
         setLiteral(Literal.create(value));
     }
 
@@ -117,6 +121,7 @@ abstract class DatatypeAwareConstruct extends ScopedImpl implements
      * @see org.tmapi.core.DatatypeAware#setValue(org.tmapi.core.Locator)
      */
     public void setValue(Locator value) {
+        Check.valueNotNull(this, value);
         setLiteral(Literal.create(value));
     }
 
@@ -131,6 +136,7 @@ abstract class DatatypeAwareConstruct extends ScopedImpl implements
      * @see org.tmapi.core.DatatypeAware#setValue(java.lang.String, org.tmapi.core.Locator)
      */
     public void setValue(String value, Locator datatype) {
+        Check.valueNotNull(this, value, datatype);
         setLiteral(Literal.create(value, datatype));
     }
 

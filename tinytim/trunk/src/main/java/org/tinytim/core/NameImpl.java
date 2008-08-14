@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import org.tinytim.internal.utils.Check;
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tmapi.core.Locator;
 import org.tmapi.core.ModelConstraintException;
@@ -88,10 +89,34 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
      * @see org.tmapi.core.Name#setValue(java.lang.String)
      */
     public void setValue(String value) {
-        if (value == null) {
-            throw new ModelConstraintException(this, "The value must not be null");
-        }
+        Check.valueNotNull(this, value);
         setLiteral(Literal.create(value));
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.ScopedImpl#addTheme(org.tmapi.core.Topic)
+     */
+    @Override
+    public void addTheme(Topic theme) {
+        super.addTheme(theme);
+        if (_variants != null) {
+            for (Variant variant: _variants) {
+                variant.addTheme(theme);
+            }
+        }
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.ScopedImpl#removeTheme(org.tmapi.core.Topic)
+     */
+    @Override
+    public void removeTheme(Topic theme) {
+        super.removeTheme(theme);
+        if (_variants != null) {
+            for (Variant variant: _variants) {
+                variant.removeTheme(theme);
+            }
+        }
     }
 
     /* (non-Javadoc)
@@ -102,30 +127,11 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
                                  : Collections.unmodifiableSet(_variants);
     }
 
-    private void _checkVariantValue(Object value) {
-        if (value == null) {
-            throw new ModelConstraintException(this, "The variant's value must not be null");
-        }
-    }
-
-    private void _checkVariantValue(String value, Locator datatype) {
-        _checkVariantValue(value);
-        if (datatype == null) {
-            throw new ModelConstraintException(this, "The variant's datatype must not be null");
-        }
-    }
-
-    private void _checkVariantScope(Topic[] scope) {
-        if (scope == null) {
-            throw new ModelConstraintException(this, "The variant's scope must not be null");
-        }
-    }
-
     /* (non-Javadoc)
      * @see org.tmapi.core.Name#createVariant(org.tmapi.core.Locator, java.util.Collection)
      */
     public Variant createVariant(Locator value, Collection<Topic> scope) {
-        _checkVariantValue(value);
+        Check.valueNotNull(this, value);
         return _createVariant(Literal.create(value), scope);
     }
 
@@ -133,7 +139,7 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
      * @see org.tmapi.core.Name#createVariant(java.lang.String, java.util.Collection)
      */
     public Variant createVariant(String value, Collection<Topic> scope) {
-        _checkVariantValue(value);
+        Check.valueNotNull(this, value);
         return _createVariant(Literal.create(value), scope);
     }
 
@@ -141,7 +147,7 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
      * @see org.tmapi.core.Name#createVariant(org.tmapi.core.Locator, org.tmapi.core.Topic[])
      */
     public Variant createVariant(Locator value, Topic... scope) {
-        _checkVariantScope(scope);
+        Check.scopeNotNull(this, scope);
         return createVariant(value, Arrays.asList(scope));
     }
 
@@ -150,7 +156,7 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
      */
     public Variant createVariant(String value, Locator datatype,
             Collection<Topic> scope) {
-        _checkVariantValue(value, datatype);
+        Check.valueNotNull(this, value, datatype);
         return _createVariant(value, datatype, scope);
     }
 
@@ -158,7 +164,7 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
      * @see org.tmapi.core.Name#createVariant(java.lang.String, org.tmapi.core.Locator, org.tmapi.core.Topic[])
      */
     public Variant createVariant(String value, Locator datatype, Topic... scope) {
-        _checkVariantScope(scope);
+        Check.scopeNotNull(this, scope);
         return createVariant(value, datatype, Arrays.asList(scope));
     }
 
@@ -166,12 +172,12 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
      * @see org.tmapi.core.Name#createVariant(java.lang.String, org.tmapi.core.Topic[])
      */
     public Variant createVariant(String value, Topic... scope) {
-        _checkVariantScope(scope);
+        Check.scopeNotNull(this, scope);
         return createVariant(value, Arrays.asList(scope));
     }
 
     private Variant _createVariant(String value, Locator datatype, Collection<Topic> scope) {
-        _checkVariantValue(value, datatype);
+        Check.valueNotNull(this, value, datatype);
         return _createVariant(Literal.create(value, datatype), scope);
     }
 
@@ -179,12 +185,13 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
         if (scope.isEmpty()) {
             throw new ModelConstraintException(this, "The scope of the variant must not be unconstrained");
         }
-        Set<Topic> scope_ = CollectionFactory.createIdentitySet(scope.size());
-        scope_.addAll(scope);
-        scope_.removeAll(super.getScope());
-        if (scope_.isEmpty()) {
+        Set<Topic> nameScope = super.getScope();
+        if (nameScope.containsAll(scope)) {
             throw new ModelConstraintException(this, "The variant's scope is not a true superset of the parent's scope");
         }
+        Set<Topic> scope_ = CollectionFactory.createIdentitySet(scope.size() + nameScope.size());
+        scope_.addAll(scope);
+        scope_.addAll(nameScope);
         Variant variant = new VariantImpl(_tm, literal, Scope.create(scope_));
         addVariant(variant);
         return variant;

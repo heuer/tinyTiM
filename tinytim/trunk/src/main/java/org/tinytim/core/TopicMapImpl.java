@@ -20,7 +20,6 @@
  */
 package org.tinytim.core;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,10 +29,12 @@ import java.util.Set;
 
 import org.tinytim.index.IndexManager;
 import org.tinytim.index.IIndexManager;
+import org.tinytim.internal.utils.Check;
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tinytim.voc.TMDM;
 import org.tmapi.core.Association;
 import org.tmapi.core.IdentityConstraintException;
+import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Role;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Occurrence;
@@ -117,7 +118,7 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
      */
     public Topic createTopicByItemIdentifier(Locator iid) {
         if (iid == null) {
-            throw new IllegalArgumentException("The item identifier must not be null");
+            throw new ModelConstraintException(null, "The item identifier must not be null");
         }
         Construct construct = getConstructByItemIdentifier(iid);
         if (construct != null) {
@@ -148,7 +149,7 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
      */
     public Topic createTopicBySubjectIdentifier(Locator sid) {
         if (sid == null) {
-            throw new IllegalArgumentException("The subject identifier must not be null");
+            throw new ModelConstraintException(null, "The subject identifier must not be null");
         }
         Topic topic = getTopicBySubjectIdentifier(sid);
         if (topic != null) {
@@ -170,7 +171,7 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
 
     public Topic createTopicBySubjectLocator(Locator slo) {
         if (slo == null) {
-            throw new IllegalArgumentException("The subject locator must not be null");
+            throw new ModelConstraintException(null, "The subject locator must not be null");
         }
         Topic topic = getTopicBySubjectLocator(slo);
         if (topic != null) {
@@ -223,16 +224,13 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
     }
 
     public Association createAssociation(Topic type, Topic... scope) {
+        Check.scopeNotNull(this, scope);
         return createAssociation(type, Arrays.asList(scope));
     }
 
     public Association createAssociation(Topic type, Collection<Topic> scope) {
-        if (type == null) {
-            throw new IllegalArgumentException("The type must not be null");
-        }
-        if (scope == null) {
-            throw new IllegalArgumentException("The scope must not be null");
-        }
+        Check.typeNotNull(this, type);
+        Check.scopeNotNull(this, scope);
         AssociationImpl assoc = new AssociationImpl(this, type, Scope.create(scope));
         addAssociation(assoc);
         return assoc;
@@ -399,7 +397,7 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
     public void subscribe(Event event, IEventHandler handler) {
         List<IEventHandler> handlers = _evtHandlers.get(event);
         if (handlers == null) {
-            handlers = new ArrayList<IEventHandler>();
+            handlers = CollectionFactory.createList();
             _evtHandlers.put(event, handlers);
         }
         handlers.add(handler);

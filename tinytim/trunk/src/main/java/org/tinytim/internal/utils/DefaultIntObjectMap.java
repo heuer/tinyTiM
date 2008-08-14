@@ -26,7 +26,7 @@ import java.util.Map;
  * Default implementation of the {@link IIntObjectMap} which wraps a map.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 final class DefaultIntObjectMap<E> implements IIntObjectMap<E> {
 

@@ -23,9 +23,9 @@ package org.tinytim.core;
 import java.util.Collections;
 import java.util.Set;
 
+import org.tinytim.internal.utils.Check;
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tmapi.core.Association;
-import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
@@ -101,12 +101,8 @@ final class AssociationImpl extends ScopedImpl implements Association {
      * @see org.tmapi.core.Association#createRole(org.tmapi.core.Topic, org.tmapi.core.Topic)
      */
     public Role createRole(Topic type, Topic player) {
-        if (type == null) {
-            throw new ModelConstraintException(this, "The type must not be null");
-        }
-        if (player == null) {
-            throw new ModelConstraintException(this, "The player must not be null");
-        }
+        Check.typeNotNull(this, type);
+        Check.playerNotNull(this, player);
         RoleImpl role = new RoleImpl(_tm, type, player);
         addRole(role);
         return role;
