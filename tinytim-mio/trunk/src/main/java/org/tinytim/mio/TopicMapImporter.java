@@ -25,6 +25,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.tinytim.core.TinyTimMapInputHandler;
 import org.tmapi.core.TMAPIRuntimeException;
 import org.tmapi.core.TopicMap;
 
@@ -33,7 +34,6 @@ import org.xml.sax.InputSource;
 import com.semagia.mio.DeserializerRegistry;
 import com.semagia.mio.IDeserializer;
 import com.semagia.mio.MIOException;
-import com.semagia.mio.Property;
 import com.semagia.mio.Syntax;
 
 /**
@@ -207,8 +207,7 @@ public final class TopicMapImporter {
         if (deser == null) {
             throw new IOException("No deserializer found for the syntax '" + syntax.getName() + "'");
         }
-        deser.setProperty(Property.VALIDATE, "false");
-        deser.setMapHandler(new MapInputHandler(topicMap));
+        deser.setMapHandler(new TinyTimMapInputHandler(topicMap));
         try {
             deser.parse(input, docIRI);
         }
@@ -217,7 +216,6 @@ public final class TopicMapImporter {
                 throw (IOException) ex.getException();
             }
             else {
-                ex.printStackTrace();
                 throw new TMAPIRuntimeException(ex);
             }
         }

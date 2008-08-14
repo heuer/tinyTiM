@@ -18,47 +18,39 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.mio;
+package org.tinytim.core;
 
-import org.tinytim.Property;
-import org.tinytim.TopicMapImpl;
+import org.tinytim.core.TinyTimTestCase;
 import org.tinytim.voc.TMDM;
+import org.tinytim.voc.XSD;
 import org.tmapi.core.Locator;
+import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
-import org.tmapi.core.TopicMapSystem;
-import org.tmapi.core.TopicMapSystemFactory;
-import org.tmapi.core.TopicName;
 
 import com.semagia.mio.MIOException;
 import com.semagia.mio.helpers.Ref;
 
-import junit.framework.TestCase;
-
 /**
- * Tests against the {@link org.tinytim.mio.MapInputHandler}.
+ * Tests against the {@link org.tinytim.core.TinyTimMapInputHandler}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestMapInputHandler extends TestCase {
+public class TestTinyTimMapInputHandler extends TinyTimTestCase {
 
     private static final String _XSD_STRING = "http://www.w3.org/2001/XMLSchema#string";
     private static final String _XSD_ANY_URI = "http://www.w3.org/2001/XMLSchema#anyURI";
 
-    private TopicMapImpl _tm;
-    private MapInputHandler _handler;
+    private TinyTimMapInputHandler _handler;
 
     /* (non-Javadoc)
      * @see junit.framework.TestCase#setUp()
      */
     @Override
     protected void setUp() throws Exception {
-        TopicMapSystemFactory tmSysFactory = TopicMapSystemFactory.newInstance();
-        tmSysFactory.setProperty(Property.XTM10_REIFICATION, "false");
-        TopicMapSystem tmSys = tmSysFactory.newTopicMapSystem();
-        _tm = (TopicMapImpl) tmSys.createTopicMap("http://sf.net/projects/tinytim/test");
-        _handler = new MapInputHandler();
+        super.setUp();
+        _handler = new TinyTimMapInputHandler();
         _handler.setTopicMap(_tm);
     }
 
@@ -89,7 +81,7 @@ public class TestMapInputHandler extends TestCase {
         _handler.endTopicMap();
         assertEquals(1, _tm.getTopics().size());
         assertEquals(0, _tm.getAssociations().size());
-        Topic topic = (Topic) _tm.getObjectByItemIdentifier(_tm.createLocator(itemIdent));
+        Topic topic = (Topic) _tm.getConstructByItemIdentifier(_tm.createLocator(itemIdent));
         assertNotNull(topic);
         assertNotNull(_tm.getReifier());
         assertEquals(topic, _tm.getReifier());
@@ -105,7 +97,7 @@ public class TestMapInputHandler extends TestCase {
         _handler.endTopic();
         _handler.endTopicMap();
         assertEquals(1, _tm.getTopics().size());
-        Topic topic = (Topic) _tm.getObjectByItemIdentifier(_tm.createLocator(itemIdent));
+        Topic topic = (Topic) _tm.getConstructByItemIdentifier(_tm.createLocator(itemIdent));
         assertNotNull(topic);
     }
 
@@ -157,8 +149,8 @@ public class TestMapInputHandler extends TestCase {
         assertEquals(1, _tm.getTopics().size());
         Topic topic = _tm.getTopicBySubjectIdentifier(_tm.createLocator(ref));
         assertNotNull(topic);
-        assertEquals(topic, _tm.getObjectByItemIdentifier(_tm.createLocator(ref)));
-        assertEquals(topic, _tm.getObjectByItemIdentifier(_tm.createLocator(itemIdent)));
+        assertEquals(topic, _tm.getConstructByItemIdentifier(_tm.createLocator(ref)));
+        assertEquals(topic, _tm.getConstructByItemIdentifier(_tm.createLocator(itemIdent)));
         assertEquals(1, topic.getOccurrences().size());
         Occurrence occ = (Occurrence) topic.getOccurrences().iterator().next();
         assertEquals("tinyTiM", occ.getValue());
@@ -178,7 +170,7 @@ public class TestMapInputHandler extends TestCase {
         Locator loc = _tm.createLocator(ref);
         Topic topic = _tm.getTopicBySubjectIdentifier(loc);
         assertNotNull(topic);
-        assertEquals(topic, _tm.getObjectByItemIdentifier(loc));
+        assertEquals(topic, _tm.getConstructByItemIdentifier(loc));
     }
 
     /**
@@ -195,7 +187,7 @@ public class TestMapInputHandler extends TestCase {
         Locator loc = _tm.createLocator(ref);
         Topic topic = _tm.getTopicBySubjectIdentifier(loc);
         assertNotNull(topic);
-        assertEquals(topic, _tm.getObjectByItemIdentifier(loc));
+        assertEquals(topic, _tm.getConstructByItemIdentifier(loc));
     }
 
     /**
@@ -232,6 +224,7 @@ public class TestMapInputHandler extends TestCase {
         assertNotNull(topic);
         Occurrence occ = (Occurrence) topic.getOccurrences().iterator().next();
         assertEquals(val, occ.getValue());
+        assertEquals(XSD.STRING, occ.getDatatype());
     }
 
     /**
@@ -250,8 +243,8 @@ public class TestMapInputHandler extends TestCase {
         Topic topic = _tm.getTopicBySubjectIdentifier(_tm.createLocator(ref));
         assertNotNull(topic);
         Occurrence occ = (Occurrence) topic.getOccurrences().iterator().next();
-        assertNull(occ.getValue());
-        assertEquals(val, occ.getResource().getReference());
+        assertEquals(val, occ.getValue());
+        assertEquals(XSD.ANY_URI, occ.getDatatype());
     }
 
     /**
@@ -269,7 +262,7 @@ public class TestMapInputHandler extends TestCase {
         _handler.endTopicMap();
         Topic topic = _tm.getTopicBySubjectIdentifier(_tm.createLocator(ref));
         assertNotNull(topic);
-        TopicName name = (TopicName) topic.getTopicNames().iterator().next();
+        Name name = topic.getNames().iterator().next();
         assertEquals(val, name.getValue());
         assertNotNull(name.getType());
         assertTrue(name.getType().getSubjectIdentifiers().contains(TMDM.TOPIC_NAME));
