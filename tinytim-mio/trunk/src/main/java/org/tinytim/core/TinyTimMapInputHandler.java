@@ -18,33 +18,27 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.mio;
+package org.tinytim.core;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.logging.Logger;
 
-import org.tinytim.IReifiable;
-import org.tinytim.ITyped;
-import org.tinytim.TopicMapImpl;
-import org.tinytim.TypeInstanceConverter;
+import org.tinytim.utils.TypeInstanceConverter;
 import org.tinytim.voc.TMDM;
-import org.tmapi.core.Association;
-import org.tmapi.core.AssociationRole;
+import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
+import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
-import org.tmapi.core.ScopedObject;
+import org.tmapi.core.Reifiable;
+import org.tmapi.core.Role;
+import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
-import org.tmapi.core.TopicMapObject;
-import org.tmapi.core.TopicName;
-import org.tmapi.core.Variant;
+import org.tmapi.core.Typed;
 
 import com.semagia.mio.IMapHandler;
 import com.semagia.mio.IRef;
 import com.semagia.mio.MIOException;
-import com.semagia.mio.voc.XSD;
 
 /**
  * {@link com.semagia.mio.IMapHandler} implementation.
@@ -52,23 +46,23 @@ import com.semagia.mio.voc.XSD;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class MapInputHandler implements IMapHandler {
+public class TinyTimMapInputHandler implements IMapHandler {
 
     private enum State {
         INITIAL, TOPIC, ASSOCIATION, ROLE, OCCURRENCE, NAME, VARIANT,
         SCOPE, THEME, REIFIER, PLAYER, ISA, TYPE;
     }
 
-    private static final Logger LOG = Logger.getLogger(MapInputHandler.class.getName());
-
     private TopicMapImpl _tm;
     private List<State> _stateStack;
-    private List<TopicMapObject> _constructStack;
+    private List<Construct> _constructStack;
+    private List<Topic> _scope;
 
-    public MapInputHandler() {
+    public TinyTimMapInputHandler() {
+        // noop.
     }
 
-    public MapInputHandler(TopicMap topicMap) {
+    public TinyTimMapInputHandler(TopicMap topicMap) {
         this();
         setTopicMap(topicMap);
     }
@@ -89,8 +83,9 @@ public class MapInputHandler implements IMapHandler {
      * @see com.semagia.mio.IMapHandler#startTopicMap()
      */
     public void startTopicMap() throws MIOException {
-        _constructStack = new ArrayList<TopicMapObject>();
+        _constructStack = new ArrayList<Construct>();
         _stateStack = new ArrayList<State>();
+        _scope = new ArrayList<Topic>();
         _enterState(State.INITIAL, _tm);
     }
 
@@ -101,6 +96,7 @@ public class MapInputHandler implements IMapHandler {
         TypeInstanceConverter.convertAssociationsToTypes(_tm);
         _constructStack = null;
         _stateStack = null;
+        _scope = null;
         _tm = null;
     }
 
@@ -123,14 +119,15 @@ public class MapInputHandler implements IMapHandler {
      * @see com.semagia.mio.IMapHandler#startAssociation()
      */
     public void startAssociation() throws MIOException {
-        _enterState(State.ASSOCIATION, _tm.createAssociation());
+        _enterState(State.ASSOCIATION, new AssociationImpl(_tm));
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endAssociation()
      */
     public void endAssociation() throws MIOException {
-        _leaveStatePopConstruct(State.ASSOCIATION);
+        AssociationImpl assoc = (AssociationImpl) _leaveStatePopConstruct(State.ASSOCIATION);
+        _tm.addAssociation(assoc);
     }
 
     /* (non-Javadoc)
@@ -138,14 +135,15 @@ public class MapInputHandler implements IMapHandler {
      */
     public void startRole() throws MIOException {
         assert _state() == State.ASSOCIATION;
-        _enterState(State.ROLE, ((Association) _peekConstruct()).createAssociationRole(null, null));
+        _enterState(State.ROLE, new RoleImpl(_tm));
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endRole()
      */
     public void endRole() throws MIOException {
-        _leaveStatePopConstruct(State.ROLE);
+        Role role = (Role) _leaveStatePopConstruct(State.ROLE);
+        ((AssociationImpl) _peekConstruct()).addRole(role);
     }
 
     /* (non-Javadoc)
@@ -168,31 +166,33 @@ public class MapInputHandler implements IMapHandler {
      * @see com.semagia.mio.IMapHandler#startOccurrence()
      */
     public void startOccurrence() throws MIOException {
-        _enterState(State.OCCURRENCE, _peekTopic().createOccurrence((Locator) null, null, null));
+        _enterState(State.OCCURRENCE, new OccurrenceImpl(_tm));
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endOccurrence()
      */
     public void endOccurrence() throws MIOException {
-        _leaveStatePopConstruct(State.OCCURRENCE);
+        Occurrence occ = (Occurrence) _leaveStatePopConstruct(State.OCCURRENCE);
+        _peekTopic().addOccurrence(occ);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startName()
      */
     public void startName() throws MIOException {
-        _enterState(State.NAME, _peekTopic().createTopicName(null, null));
+        _enterState(State.NAME, new NameImpl(_tm));
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endName()
      */
     public void endName() throws MIOException {
-        TopicName name = (TopicName) _leaveStatePopConstruct(State.NAME);
+        Name name = (Name) _leaveStatePopConstruct(State.NAME);
         if (name.getType() == null) {
-            name.setType(_topicBySubjectIdentifier(TMDM.TOPIC_NAME));
+            name.setType(_tm.createTopicBySubjectIdentifier(TMDM.TOPIC_NAME));
         }
+        _peekTopic().addName(name);
     }
 
     /* (non-Javadoc)
@@ -200,26 +200,27 @@ public class MapInputHandler implements IMapHandler {
      */
     public void startVariant() throws MIOException {
         assert _state() == State.NAME;
-        _enterState(State.VARIANT, ((TopicName) _peekConstruct()).createVariant((Locator) null, null));
+        _enterState(State.VARIANT, new VariantImpl(_tm));
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endVariant()
      */
-    @SuppressWarnings("unchecked")
     public void endVariant() throws MIOException {
-        Variant variant = (Variant) _leaveStatePopConstruct(State.VARIANT);
-        Collection<Topic> scope = variant.getScope();
-        if (scope.isEmpty() || variant.getTopicName().getScope().equals(scope)) {
+        VariantImpl variant = (VariantImpl) _leaveStatePopConstruct(State.VARIANT);
+        NameImpl name = (NameImpl) _peekConstruct();
+        IScope scope = variant.getScopeObject();
+        if (scope.isUnconstrained() || name.getScopeObject() == scope) {
             throw new MIOException("The variant has no scope");
         }
+        name.addVariant(variant);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startType()
      */
     public void startType() throws MIOException {
-        assert _peekConstruct() instanceof ITyped;
+        assert _peekConstruct() instanceof Typed;
         _enterState(State.TYPE);
     }
 
@@ -228,14 +229,14 @@ public class MapInputHandler implements IMapHandler {
      */
     public void endType() throws MIOException {
         _leaveState(State.TYPE);
-        assert _peekConstruct() instanceof ITyped;
+        assert _peekConstruct() instanceof Typed;
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startScope()
      */
     public void startScope() throws MIOException {
-        assert _peekConstruct() instanceof ScopedObject;
+        assert _peekConstruct() instanceof Scoped;
         _enterState(State.SCOPE);
     }
 
@@ -244,7 +245,8 @@ public class MapInputHandler implements IMapHandler {
      */
     public void endScope() throws MIOException {
         _leaveState(State.SCOPE);
-        assert _peekConstruct() instanceof ScopedObject;
+        ((IScoped) _peekConstruct()).setScopeObject(Scope.create(_scope));
+        _scope.clear();
     }
 
     /* (non-Javadoc)
@@ -270,11 +272,11 @@ public class MapInputHandler implements IMapHandler {
         Locator sid = _tm.createLocator(subjectIdentifier);
         Topic topic = _peekTopic();
         Topic existing = _tm.getTopicBySubjectIdentifier(sid);
-        if (existing != null && !existing.equals(topic)) {
+        if (existing != null && !(existing == topic)) {
             _merge(existing, topic);
         }
         else {
-            TopicMapObject tmo = _tm.getObjectByItemIdentifier(sid);
+            Construct tmo = _tm.getConstructByItemIdentifier(sid);
             if (tmo != null && tmo instanceof Topic && !tmo.equals(topic)) {
                 _merge((Topic) tmo, topic);
             }
@@ -289,7 +291,7 @@ public class MapInputHandler implements IMapHandler {
         Locator slo = _tm.createLocator(subjectLocator);
         Topic topic = _peekTopic();
         Topic existing = _tm.getTopicBySubjectLocator(slo);
-        if (existing != null && !existing.equals(topic)) {
+        if (existing != null && !(existing == topic)) {
             _merge(existing, topic);
         }
         topic.addSubjectLocator(slo);
@@ -300,9 +302,9 @@ public class MapInputHandler implements IMapHandler {
      */
     public void itemIdentifier(String itemIdentifier) throws MIOException {
         Locator iid = _tm.createLocator(itemIdentifier);
-        TopicMapObject tmo = _peekConstruct();
+        Construct tmo = _peekConstruct();
         if (_state() == State.TOPIC) {
-            TopicMapObject existing = _tm.getObjectByItemIdentifier(iid);
+            Construct existing = _tm.getConstructByItemIdentifier(iid);
             if (existing != null && existing instanceof Topic && !existing.equals(tmo)) {
                 _merge((Topic) existing, (Topic) tmo);
             }
@@ -313,7 +315,7 @@ public class MapInputHandler implements IMapHandler {
                 }
             }
         }
-        tmo.addSourceLocator(iid);
+        tmo.addItemIdentifier(iid);
     }
 
     /* (non-Javadoc)
@@ -336,7 +338,7 @@ public class MapInputHandler implements IMapHandler {
      * @see com.semagia.mio.IMapHandler#startReifier()
      */
     public void startReifier() throws MIOException {
-        assert _peekConstruct() instanceof IReifiable;
+        assert _peekConstruct() instanceof Reifiable;
         _enterState(State.REIFIER);
     }
 
@@ -345,7 +347,7 @@ public class MapInputHandler implements IMapHandler {
      */
     public void endReifier() throws MIOException {
         _leaveState(State.REIFIER);
-        assert _peekConstruct() instanceof IReifiable;
+        assert _peekConstruct() instanceof Reifiable;
     }
 
     /* (non-Javadoc)
@@ -360,36 +362,14 @@ public class MapInputHandler implements IMapHandler {
      */
     public void value(String value) throws MIOException {
         assert _state() == State.NAME;
-        ((TopicName) _peekConstruct()).setValue(value);
+        ((Name) _peekConstruct()).setValue(value);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#value(java.lang.String, java.lang.String)
      */
     public void value(String value, String datatype) throws MIOException {
-        boolean isLocator = XSD.ANY_URI.equals(datatype);
-        if (!isLocator && !XSD.STRING.equals(datatype)) {
-            LOG.warning("The datatype '" + datatype + "' was converted into xsd:string");
-        }
-        if (_state() == State.OCCURRENCE) {
-            Occurrence occ = (Occurrence) _peekConstruct();
-            if (isLocator) {
-                occ.setResource(_tm.createLocator(value));
-            }
-            else {
-                occ.setValue(value);
-            }
-        }
-        else {
-            assert _state() == State.VARIANT;
-            Variant variant = (Variant) _peekConstruct();
-            if (isLocator) {
-                variant.setResource(_tm.createLocator(value));
-            }
-            else {
-                variant.setValue(value);
-            }
-        }
+        ((ILiteralAware) _peekConstruct()).setLiteral(Literal.create(value, datatype));
     }
 
     /**
@@ -408,7 +388,7 @@ public class MapInputHandler implements IMapHandler {
      * @param state The state to enter.
      * @param tmo The Topic Maps construct which should be pushed to the stack.
      */
-    private void _enterState(State state, TopicMapObject tmo) {
+    private void _enterState(State state, Construct tmo) {
         _enterState(state);
         _constructStack.add(tmo);
     }
@@ -431,10 +411,9 @@ public class MapInputHandler implements IMapHandler {
      * construct stack.
      *
      * @param state The state to leave.
-     * @return The removed construct.
      * @throws MIOException If the state is not equals to the current state.
      */
-    private TopicMapObject _leaveStatePopConstruct(State state) throws MIOException {
+    private Construct _leaveStatePopConstruct(State state) throws MIOException {
         _leaveState(state);
         return _constructStack.remove(_constructStack.size()-1);
     }
@@ -444,7 +423,7 @@ public class MapInputHandler implements IMapHandler {
      *
      * @return The Topic Maps construct.
      */
-    private TopicMapObject _peekConstruct() {
+    private Construct _peekConstruct() {
         return _constructStack.get(_constructStack.size()-1);
     }
 
@@ -453,8 +432,8 @@ public class MapInputHandler implements IMapHandler {
      *
      * @return The topic.
      */
-    private Topic _peekTopic() {
-        return (Topic) _peekConstruct();
+    private TopicImpl _peekTopic() {
+        return (TopicImpl) _peekConstruct();
     }
 
     /**
@@ -474,10 +453,10 @@ public class MapInputHandler implements IMapHandler {
     private void _handleTopic(Topic topic) {
         switch (_state()) {
             case ISA: _peekTopic().addType(topic); break;
-            case TYPE: ((ITyped) _peekConstruct()).setType(topic); break;
-            case PLAYER: ((AssociationRole) _peekConstruct()).setPlayer(topic); break;
-            case THEME: ((ScopedObject) _peekConstruct()).addScopingTopic(topic); break;
-            case REIFIER: ((IReifiable) _peekConstruct()).setReifier(topic); break;
+            case TYPE: ((Typed) _peekConstruct()).setType(topic); break;
+            case PLAYER: ((Role) _peekConstruct()).setPlayer(topic); break;
+            case THEME: _scope.add(topic); break;
+            case REIFIER: ((Reifiable) _peekConstruct()).setReifier(topic); break;
         }
     }
 
@@ -485,7 +464,7 @@ public class MapInputHandler implements IMapHandler {
      * Merges the <tt>source</tt> topic with the <tt>target</tt>.
      * 
      * Further, this method ensures that the construct stack stays valid: If
-     * the <tt>source</tt> is part of the stack, it is replaced with
+     * the <tt>source</tt> is part of the stack, it is replaced with 
      * <tt>target</tt>.
      *
      * @param source The source topic (will be removed).
@@ -511,75 +490,13 @@ public class MapInputHandler implements IMapHandler {
     private Topic _createTopic(IRef ref) throws MIOException {
         Locator loc = _tm.createLocator(ref.getIRI());
         switch (ref.getType()) {
-            case IRef.ITEM_IDENTIFIER: return _topicByItemIdentifier(loc);
-            case IRef.SUBJECT_IDENTIFIER: return _topicBySubjectIdentifier(loc);
-            case IRef.SUBJECT_LOCATOR: return _topicBySubjectLocator(loc);
+            case IRef.ITEM_IDENTIFIER: return _tm.createTopicByItemIdentifier(loc);
+            case IRef.SUBJECT_IDENTIFIER: return _tm.createTopicBySubjectIdentifier(loc);
+            case IRef.SUBJECT_LOCATOR: return _tm.createTopicBySubjectLocator(loc);
             default: _reportError("Unknown reference type " + ref.getType());
         }
         // Never returned, an exception was thrown
         return null;
-    }
-
-    /**
-     * Returns either an existing topic with the specified item identfier,
-     * or creates a topic with the given item identifier.
-     *
-     * @param iid The item identifier of the topic.
-     * @return A topic instance.
-     */
-    private Topic _topicByItemIdentifier(Locator iid) {
-        TopicMapObject tmo = _tm.getObjectByItemIdentifier(iid);
-        Topic topic = (tmo instanceof Topic) ? (Topic) tmo : null;
-        if (topic == null) {
-            topic = _tm.getTopicBySubjectIdentifier(iid);
-            if (topic != null) {
-                topic.addSourceLocator(iid);
-            }
-        }
-        if (topic == null) {
-            topic = _tm.createTopic();
-            topic.addSourceLocator(iid);
-        }
-        return topic;
-    }
-
-    /**
-     * Returns either an existing topic with the specified subject identfier,
-     * or creates a topic with the given subject identifier.
-     *
-     * @param sid The subject identifier of the topic.
-     * @return A topic instance.
-     */
-    private Topic _topicBySubjectIdentifier(Locator sid) {
-        Topic topic = _tm.getTopicBySubjectIdentifier(sid);
-        if (topic == null) {
-            TopicMapObject tmo = _tm.getObjectByItemIdentifier(sid);
-            if (tmo instanceof Topic) {
-                topic = (Topic) tmo;
-                topic.addSubjectIdentifier(sid);
-            }
-        }
-        if (topic == null) {
-            topic = _tm.createTopic();
-            topic.addSubjectIdentifier(sid);
-        }
-        return topic;
-    }
-
-    /**
-     * Returns either an existing topic with the specified subject locator,
-     * or creates a topic with the given subject locator.
-     *
-     * @param slo The subject locator of the topic.
-     * @return A topic instance.
-     */
-    private Topic _topicBySubjectLocator(Locator slo) {
-        Topic topic = _tm.getTopicBySubjectLocator(slo);
-        if (topic == null) {
-            topic = _tm.createTopic();
-            topic.addSubjectLocator(slo);
-        }
-        return topic;
     }
 
     /**
