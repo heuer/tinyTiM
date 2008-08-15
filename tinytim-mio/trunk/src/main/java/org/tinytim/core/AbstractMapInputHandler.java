@@ -20,12 +20,11 @@
  */
 package org.tinytim.core;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.tinytim.internal.utils.CollectionFactory;
 import org.tinytim.utils.TypeInstanceConverter;
 import org.tinytim.voc.TMDM;
-import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
@@ -41,29 +40,40 @@ import com.semagia.mio.IRef;
 import com.semagia.mio.MIOException;
 
 /**
- * {@link com.semagia.mio.IMapHandler} implementation.
+ * Abstract {@link com.semagia.mio.IMapHandler} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TinyTimMapInputHandler implements IMapHandler {
+public abstract class AbstractMapInputHandler implements IMapHandler {
 
-    private enum State {
-        INITIAL, TOPIC, ASSOCIATION, ROLE, OCCURRENCE, NAME, VARIANT,
-        SCOPE, THEME, REIFIER, PLAYER, ISA, TYPE;
-    }
+    private final int 
+        INITIAL = 0,
+        TOPIC = 1,
+        ASSOCIATION = 2,
+        ROLE = 3,
+        OCCURRENCE = 4,
+        NAME = 5,
+        VARIANT = 6,
+        SCOPE = 7,
+        THEME = 8,
+        REIFIER = 9,
+        PLAYER = 10,
+        ISA = 11,
+        TYPE = 12;
+
+    private final int _CONSTRUCTS = 6;
+    private final int _STATES = 8;
+    private final int _SCOPE = 4;
 
     private TopicMapImpl _tm;
-    private List<State> _stateStack;
-    private List<Construct> _constructStack;
+    private int[] _stateStack;
+    private int _stateSize = -1;
+    private IConstruct[] _constructStack;
+    private int _constructSize = -1;
     private List<Topic> _scope;
 
-    public TinyTimMapInputHandler() {
-        // noop.
-    }
-
-    public TinyTimMapInputHandler(TopicMap topicMap) {
-        this();
+    protected AbstractMapInputHandler(TopicMap topicMap) {
         setTopicMap(topicMap);
     }
 
@@ -72,7 +82,7 @@ public class TinyTimMapInputHandler implements IMapHandler {
      *
      * @param topicMap The topic map.
      */
-    public void setTopicMap(TopicMap topicMap) {
+    private final void setTopicMap(TopicMap topicMap) {
         if (topicMap == null) {
             throw new IllegalArgumentException("The topic map must not be null");
         }
@@ -82,17 +92,17 @@ public class TinyTimMapInputHandler implements IMapHandler {
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startTopicMap()
      */
-    public void startTopicMap() throws MIOException {
-        _constructStack = new ArrayList<Construct>();
-        _stateStack = new ArrayList<State>();
-        _scope = new ArrayList<Topic>();
-        _enterState(State.INITIAL, _tm);
+    public final void startTopicMap() throws MIOException {
+        _constructStack = new IConstruct[_CONSTRUCTS];
+        _stateStack = new int[_STATES];
+        _scope = CollectionFactory.createList(_SCOPE);
+        _enterState(INITIAL, _tm);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endTopicMap()
      */
-    public void endTopicMap() throws MIOException {
+    public final void endTopicMap() throws MIOException {
         TypeInstanceConverter.convertAssociationsToTypes(_tm);
         _constructStack = null;
         _stateStack = null;
@@ -104,91 +114,90 @@ public class TinyTimMapInputHandler implements IMapHandler {
      * @see com.semagia.mio.IMapHandler#startTopic(com.semagia.mio.IRef)
      */
     public void startTopic(IRef identity) throws MIOException {
-        _enterState(State.TOPIC, _createTopic(identity));
+        _enterState(TOPIC, _createTopic(identity));
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endTopic()
      */
-    public void endTopic() throws MIOException {
-        Topic topic = (Topic) _leaveStatePopConstruct(State.TOPIC);
-        _handleTopic(topic);
+    public final void endTopic() throws MIOException {
+        _handleTopic((Topic) _leaveStatePopConstruct(TOPIC));
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startAssociation()
      */
-    public void startAssociation() throws MIOException {
-        _enterState(State.ASSOCIATION, new AssociationImpl(_tm));
+    public final void startAssociation() throws MIOException {
+        _enterState(ASSOCIATION, new AssociationImpl(_tm));
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endAssociation()
      */
-    public void endAssociation() throws MIOException {
-        AssociationImpl assoc = (AssociationImpl) _leaveStatePopConstruct(State.ASSOCIATION);
+    public final void endAssociation() throws MIOException {
+        AssociationImpl assoc = (AssociationImpl) _leaveStatePopConstruct(ASSOCIATION);
         _tm.addAssociation(assoc);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startRole()
      */
-    public void startRole() throws MIOException {
-        assert _state() == State.ASSOCIATION;
-        _enterState(State.ROLE, new RoleImpl(_tm));
+    public final void startRole() throws MIOException {
+        assert _state() == ASSOCIATION;
+        _enterState(ROLE, new RoleImpl(_tm));
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endRole()
      */
-    public void endRole() throws MIOException {
-        Role role = (Role) _leaveStatePopConstruct(State.ROLE);
+    public final void endRole() throws MIOException {
+        Role role = (Role) _leaveStatePopConstruct(ROLE);
         ((AssociationImpl) _peekConstruct()).addRole(role);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startPlayer()
      */
-    public void startPlayer() throws MIOException {
-        assert _state() == State.ROLE;
-        _enterState(State.PLAYER);
+    public final void startPlayer() throws MIOException {
+        assert _state() == ROLE;
+        _enterState(PLAYER);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endPlayer()
      */
-    public void endPlayer() throws MIOException {
-        _leaveState(State.PLAYER);
-        assert _state() == State.ROLE;
+    public final void endPlayer() throws MIOException {
+        _leaveState(PLAYER);
+        assert _state() == ROLE;
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startOccurrence()
      */
-    public void startOccurrence() throws MIOException {
-        _enterState(State.OCCURRENCE, new OccurrenceImpl(_tm));
+    public final void startOccurrence() throws MIOException {
+        _enterState(OCCURRENCE, new OccurrenceImpl(_tm));
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endOccurrence()
      */
-    public void endOccurrence() throws MIOException {
-        Occurrence occ = (Occurrence) _leaveStatePopConstruct(State.OCCURRENCE);
+    public final void endOccurrence() throws MIOException {
+        Occurrence occ = (Occurrence) _leaveStatePopConstruct(OCCURRENCE);
         _peekTopic().addOccurrence(occ);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startName()
      */
-    public void startName() throws MIOException {
-        _enterState(State.NAME, new NameImpl(_tm));
+    public final void startName() throws MIOException {
+        _enterState(NAME, new NameImpl(_tm));
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endName()
      */
-    public void endName() throws MIOException {
-        Name name = (Name) _leaveStatePopConstruct(State.NAME);
+    public final void endName() throws MIOException {
+        Name name = (Name) _leaveStatePopConstruct(NAME);
         if (name.getType() == null) {
             name.setType(_tm.createTopicBySubjectIdentifier(TMDM.TOPIC_NAME));
         }
@@ -198,16 +207,16 @@ public class TinyTimMapInputHandler implements IMapHandler {
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startVariant()
      */
-    public void startVariant() throws MIOException {
-        assert _state() == State.NAME;
-        _enterState(State.VARIANT, new VariantImpl(_tm));
+    public final void startVariant() throws MIOException {
+        assert _state() == NAME;
+        _enterState(VARIANT, new VariantImpl(_tm));
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endVariant()
      */
-    public void endVariant() throws MIOException {
-        VariantImpl variant = (VariantImpl) _leaveStatePopConstruct(State.VARIANT);
+    public final void endVariant() throws MIOException {
+        VariantImpl variant = (VariantImpl) _leaveStatePopConstruct(VARIANT);
         NameImpl name = (NameImpl) _peekConstruct();
         IScope scope = variant.getScopeObject();
         if (scope.isUnconstrained() || name.getScopeObject() == scope) {
@@ -219,32 +228,32 @@ public class TinyTimMapInputHandler implements IMapHandler {
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startType()
      */
-    public void startType() throws MIOException {
+    public final void startType() throws MIOException {
         assert _peekConstruct() instanceof Typed;
-        _enterState(State.TYPE);
+        _enterState(TYPE);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endType()
      */
-    public void endType() throws MIOException {
-        _leaveState(State.TYPE);
+    public final void endType() throws MIOException {
+        _leaveState(TYPE);
         assert _peekConstruct() instanceof Typed;
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startScope()
      */
-    public void startScope() throws MIOException {
+    public final void startScope() throws MIOException {
         assert _peekConstruct() instanceof Scoped;
-        _enterState(State.SCOPE);
+        _enterState(SCOPE);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endScope()
      */
-    public void endScope() throws MIOException {
-        _leaveState(State.SCOPE);
+    public final void endScope() throws MIOException {
+        _leaveState(SCOPE);
         ((IScoped) _peekConstruct()).setScopeObject(Scope.create(_scope));
         _scope.clear();
     }
@@ -252,32 +261,32 @@ public class TinyTimMapInputHandler implements IMapHandler {
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startTheme()
      */
-    public void startTheme() throws MIOException {
-        assert _state() == State.SCOPE;
-        _enterState(State.THEME);
+    public final void startTheme() throws MIOException {
+        assert _state() == SCOPE;
+        _enterState(THEME);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endTheme()
      */
-    public void endTheme() throws MIOException {
-        _leaveState(State.THEME);
-        assert _state() == State.SCOPE;
+    public final void endTheme() throws MIOException {
+        _leaveState(THEME);
+        assert _state() == SCOPE;
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#subjectIdentifier(java.lang.String)
      */
-    public void subjectIdentifier(String subjectIdentifier) throws MIOException {
+    public final void subjectIdentifier(String subjectIdentifier) throws MIOException {
         Locator sid = _tm.createLocator(subjectIdentifier);
-        Topic topic = _peekTopic();
+        TopicImpl topic = _peekTopic();
         Topic existing = _tm.getTopicBySubjectIdentifier(sid);
         if (existing != null && !(existing == topic)) {
             _merge(existing, topic);
         }
         else {
-            Construct tmo = _tm.getConstructByItemIdentifier(sid);
-            if (tmo != null && tmo instanceof Topic && !tmo.equals(topic)) {
+            IConstruct tmo = (IConstruct) _tm.getConstructByItemIdentifier(sid);
+            if (tmo != null && tmo.isTopic() && !tmo.equals(topic)) {
                 _merge((Topic) tmo, topic);
             }
         }
@@ -287,9 +296,9 @@ public class TinyTimMapInputHandler implements IMapHandler {
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#subjectLocator(java.lang.String)
      */
-    public void subjectLocator(String subjectLocator) throws MIOException {
+    public final void subjectLocator(String subjectLocator) throws MIOException {
         Locator slo = _tm.createLocator(subjectLocator);
-        Topic topic = _peekTopic();
+        TopicImpl topic = _peekTopic();
         Topic existing = _tm.getTopicBySubjectLocator(slo);
         if (existing != null && !(existing == topic)) {
             _merge(existing, topic);
@@ -300,18 +309,18 @@ public class TinyTimMapInputHandler implements IMapHandler {
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#itemIdentifier(java.lang.String)
      */
-    public void itemIdentifier(String itemIdentifier) throws MIOException {
+    public final void itemIdentifier(String itemIdentifier) throws MIOException {
         Locator iid = _tm.createLocator(itemIdentifier);
-        Construct tmo = _peekConstruct();
-        if (_state() == State.TOPIC) {
-            Construct existing = _tm.getConstructByItemIdentifier(iid);
-            if (existing != null && existing instanceof Topic && !existing.equals(tmo)) {
-                _merge((Topic) existing, (Topic) tmo);
+        IConstruct tmo = _peekConstruct();
+        if (_state() == TOPIC) {
+            IConstruct existing = (IConstruct) _tm.getConstructByItemIdentifier(iid);
+            if (existing != null && existing.isTopic() && !existing.equals(tmo)) {
+                _merge((Topic) existing, (TopicImpl) tmo);
             }
             else {
                 Topic topic = _tm.getTopicBySubjectIdentifier(iid);
                 if (topic != null && !topic.equals(tmo)) {
-                    _merge(topic, (Topic) tmo);
+                    _merge(topic, (TopicImpl) tmo);
                 }
             }
         }
@@ -321,54 +330,54 @@ public class TinyTimMapInputHandler implements IMapHandler {
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startIsa()
      */
-    public void startIsa() throws MIOException {
-        assert _state() == State.TOPIC;
-        _enterState(State.ISA);
+    public final void startIsa() throws MIOException {
+        assert _state() == TOPIC;
+        _enterState(ISA);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endIsa()
      */
-    public void endIsa() throws MIOException {
-        _leaveState(State.ISA);
-        assert _state() == State.TOPIC;
+    public final void endIsa() throws MIOException {
+        _leaveState(ISA);
+        assert _state() == TOPIC;
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startReifier()
      */
-    public void startReifier() throws MIOException {
+    public final void startReifier() throws MIOException {
         assert _peekConstruct() instanceof Reifiable;
-        _enterState(State.REIFIER);
+        _enterState(REIFIER);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#endReifier()
      */
-    public void endReifier() throws MIOException {
-        _leaveState(State.REIFIER);
+    public final void endReifier() throws MIOException {
+        _leaveState(REIFIER);
         assert _peekConstruct() instanceof Reifiable;
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#topicRef(com.semagia.mio.IRef)
      */
-    public void topicRef(IRef identity) throws MIOException {
+    public final void topicRef(IRef identity) throws MIOException {
         _handleTopic(_createTopic(identity));
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#value(java.lang.String)
      */
-    public void value(String value) throws MIOException {
-        assert _state() == State.NAME;
+    public final void value(String value) throws MIOException {
+        assert _state() == NAME;
         ((Name) _peekConstruct()).setValue(value);
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#value(java.lang.String, java.lang.String)
      */
-    public void value(String value, String datatype) throws MIOException {
+    public final void value(String value, String datatype) throws MIOException {
         ((ILiteralAware) _peekConstruct()).setLiteral(Literal.create(value, datatype));
     }
 
@@ -377,8 +386,14 @@ public class TinyTimMapInputHandler implements IMapHandler {
      *
      * @param state The state to push ontop of the state stack.
      */
-    private void _enterState(State state) {
-        _stateStack.add(state);
+    private void _enterState(int state) {
+        if (_stateSize + 1 > _stateStack.length) {
+            int[] states = new int[_stateSize*2];
+            System.arraycopy(_stateStack, 0, states, 0, _stateSize);
+            _stateStack = states;
+        }
+        _stateSize++;
+        _stateStack[_stateSize] = state;
     }
 
     /**
@@ -388,9 +403,15 @@ public class TinyTimMapInputHandler implements IMapHandler {
      * @param state The state to enter.
      * @param tmo The Topic Maps construct which should be pushed to the stack.
      */
-    private void _enterState(State state, Construct tmo) {
+    private void _enterState(int state, IConstruct tmo) {
         _enterState(state);
-        _constructStack.add(tmo);
+        if (_constructSize + 1 > _constructStack.length) {
+            IConstruct[] constructs = new IConstruct[_constructSize*2];
+            System.arraycopy(_constructStack, 0, constructs, 0, _constructSize);
+            _constructStack = constructs;
+        }
+        _constructSize++;
+        _constructStack[_constructSize] = tmo;
     }
 
     /**
@@ -399,11 +420,12 @@ public class TinyTimMapInputHandler implements IMapHandler {
      * @param state The state to leave.
      * @throws MIOException If the state is not equals to the current state.
      */
-    private void _leaveState(State state) throws MIOException {
-        State current = _stateStack.remove(_stateStack.size()-1);
+    private void _leaveState(int state) throws MIOException {
+        final int current = _stateStack[_stateSize];
         if (state != current) {
             _reportError("Unexpected state: " + current + ", expected: " + state);
         }
+        _stateSize--;
     }
 
     /**
@@ -413,9 +435,12 @@ public class TinyTimMapInputHandler implements IMapHandler {
      * @param state The state to leave.
      * @throws MIOException If the state is not equals to the current state.
      */
-    private Construct _leaveStatePopConstruct(State state) throws MIOException {
+    private IConstruct _leaveStatePopConstruct(int state) throws MIOException {
         _leaveState(state);
-        return _constructStack.remove(_constructStack.size()-1);
+        final IConstruct construct = _peekConstruct();
+        _constructStack[_constructSize] = null;
+        _constructSize--;
+        return construct;
     }
 
     /**
@@ -423,8 +448,8 @@ public class TinyTimMapInputHandler implements IMapHandler {
      *
      * @return The Topic Maps construct.
      */
-    private Construct _peekConstruct() {
-        return _constructStack.get(_constructStack.size()-1);
+    private IConstruct _peekConstruct() {
+        return _constructStack[_constructSize];
     }
 
     /**
@@ -441,8 +466,8 @@ public class TinyTimMapInputHandler implements IMapHandler {
      *
      * @return The current state.
      */
-    private State _state() {
-        return _stateStack.get(_stateStack.size()-1);
+    private int _state() {
+        return _stateStack[_stateSize];
     }
 
     /**
@@ -470,11 +495,11 @@ public class TinyTimMapInputHandler implements IMapHandler {
      * @param source The source topic (will be removed).
      * @param target The target topic.
      */
-    private void _merge(Topic source, Topic target) {
-        int i = _constructStack.indexOf(source);
-        while (i > -1) {
-            _constructStack.set(i, target);
-            i = _constructStack.indexOf(source);
+    private void _merge(Topic source, TopicImpl target) {
+        for (int i=0; i<_constructSize; i++) {
+            if (_constructStack[i] == source) {
+                _constructStack[i] = target;
+            }
         }
         target.mergeIn(source);
     }
@@ -487,12 +512,12 @@ public class TinyTimMapInputHandler implements IMapHandler {
      * @return A topic instance.
      * @throws MIOException 
      */
-    private Topic _createTopic(IRef ref) throws MIOException {
+    private TopicImpl _createTopic(IRef ref) throws MIOException {
         Locator loc = _tm.createLocator(ref.getIRI());
         switch (ref.getType()) {
-            case IRef.ITEM_IDENTIFIER: return _tm.createTopicByItemIdentifier(loc);
-            case IRef.SUBJECT_IDENTIFIER: return _tm.createTopicBySubjectIdentifier(loc);
-            case IRef.SUBJECT_LOCATOR: return _tm.createTopicBySubjectLocator(loc);
+            case IRef.ITEM_IDENTIFIER: return (TopicImpl) _tm.createTopicByItemIdentifier(loc);
+            case IRef.SUBJECT_IDENTIFIER: return (TopicImpl) _tm.createTopicBySubjectIdentifier(loc);
+            case IRef.SUBJECT_LOCATOR: return (TopicImpl) _tm.createTopicBySubjectLocator(loc);
             default: _reportError("Unknown reference type " + ref.getType());
         }
         // Never returned, an exception was thrown
