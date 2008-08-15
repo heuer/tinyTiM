@@ -25,7 +25,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.tinytim.core.TinyTimMapInputHandler;
 import org.tmapi.core.TMAPIRuntimeException;
 import org.tmapi.core.TopicMap;
 
@@ -207,7 +206,7 @@ public final class TopicMapImporter {
         if (deser == null) {
             throw new IOException("No deserializer found for the syntax '" + syntax.getName() + "'");
         }
-        deser.setMapHandler(new TinyTimMapInputHandler(topicMap));
+        deser.setMapHandler(new MapInputHandler(topicMap));
         try {
             deser.parse(input, docIRI);
         }

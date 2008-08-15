@@ -18,7 +18,7 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.core;
+package org.tinytim.mio;
 
 import org.tinytim.core.TinyTimTestCase;
 import org.tinytim.voc.TMDM;
@@ -32,17 +32,17 @@ import com.semagia.mio.MIOException;
 import com.semagia.mio.helpers.Ref;
 
 /**
- * Tests against the {@link org.tinytim.core.TinyTimMapInputHandler}.
+ * Tests against the {@link org.tinytim.core.AbstractMapInputHandler}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestTinyTimMapInputHandler extends TinyTimTestCase {
+public class TestMapInputHandler extends TinyTimTestCase {
 
-    private static final String _XSD_STRING = "http://www.w3.org/2001/XMLSchema#string";
-    private static final String _XSD_ANY_URI = "http://www.w3.org/2001/XMLSchema#anyURI";
+    private static final String _XSD_STRING = XSD.STRING.getReference();
+    private static final String _XSD_ANY_URI = XSD.ANY_URI.getReference();
 
-    private TinyTimMapInputHandler _handler;
+    private MapInputHandler _handler;
 
     /* (non-Javadoc)
      * @see junit.framework.TestCase#setUp()
@@ -50,8 +50,7 @@ public class TestTinyTimMapInputHandler extends TinyTimTestCase {
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        _handler = new TinyTimMapInputHandler();
-        _handler.setTopicMap(_tm);
+        _handler = new MapInputHandler(_tm);
     }
 
     /**
