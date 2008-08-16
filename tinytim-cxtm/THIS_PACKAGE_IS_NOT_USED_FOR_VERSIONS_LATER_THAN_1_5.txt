@@ -1,0 +1,2 @@
+2008-08-16: The .cxtm package has been moved into the .mio package.
+The Canonicalizer is the .mio.CXTMWriter and implements .mio.ITopicMapWriter
