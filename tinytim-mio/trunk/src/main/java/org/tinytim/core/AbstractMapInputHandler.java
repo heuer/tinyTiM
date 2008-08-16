@@ -48,23 +48,23 @@ import com.semagia.mio.MIOException;
 public abstract class AbstractMapInputHandler implements IMapHandler {
 
     private final int 
-        INITIAL = 0,
-        TOPIC = 1,
-        ASSOCIATION = 2,
-        ROLE = 3,
-        OCCURRENCE = 4,
-        NAME = 5,
-        VARIANT = 6,
-        SCOPE = 7,
-        THEME = 8,
-        REIFIER = 9,
-        PLAYER = 10,
-        ISA = 11,
-        TYPE = 12;
+        INITIAL = 1,
+        TOPIC = 2,
+        ASSOCIATION = 3,
+        ROLE = 4,
+        OCCURRENCE = 5,
+        NAME = 6,
+        VARIANT = 7,
+        SCOPE = 8,
+        THEME = 9,
+        REIFIER = 10,
+        PLAYER = 11,
+        ISA = 12,
+        TYPE = 13;
 
     private final int _CONSTRUCTS = 6;
-    private final int _STATES = 8;
-    private final int _SCOPE = 4;
+    private final int _STATES = 10;
+    private final int _SCOPE = 6;
 
     private TopicMapImpl _tm;
     private int[] _stateStack;
@@ -388,7 +388,7 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      */
     private void _enterState(int state) {
         if (_stateSize + 1 > _stateStack.length) {
-            int[] states = new int[_stateSize*2];
+            int[] states = new int[Math.min(_stateSize*2, Integer.MAX_VALUE)];
             System.arraycopy(_stateStack, 0, states, 0, _stateSize);
             _stateStack = states;
         }
@@ -406,7 +406,7 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
     private void _enterState(int state, IConstruct tmo) {
         _enterState(state);
         if (_constructSize + 1 > _constructStack.length) {
-            IConstruct[] constructs = new IConstruct[_constructSize*2];
+            IConstruct[] constructs = new IConstruct[Math.min(_constructSize*2, Integer.MAX_VALUE)];
             System.arraycopy(_constructStack, 0, constructs, 0, _constructSize);
             _constructStack = constructs;
         }
