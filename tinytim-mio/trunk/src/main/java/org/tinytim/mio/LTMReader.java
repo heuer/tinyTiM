@@ -29,7 +29,7 @@ import com.semagia.mio.Syntax;
  * <a href="http://www.ontopia.net/download/ltm.html">Linear Topic Map Notation (LTM) 1.3</a>.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public final class LTMReader extends AbstractTopicMapReader {
 

@@ -85,6 +85,8 @@ public final class CXTMWriter implements ITopicMapWriter {
 
     private static final Role[] _EMPTY_ROLES = new Role[0];
 
+    private AttributesImpl _attrs;
+
     private Topic _type;
     private Topic _instance;
     private Topic _typeInstance;
@@ -119,6 +121,7 @@ public final class CXTMWriter implements ITopicMapWriter {
             throw new IllegalArgumentException("The base locator must not be null");
         }
         _out = new XMLC14NWriter(out);
+        _attrs = new AttributesImpl();
         _normBase = _normalizeBaseLocator(baseLocator);
         _topicComparator = new TopicComparator();
         _assocComparator = new AssociationComparator();
@@ -353,7 +356,7 @@ public final class CXTMWriter implements ITopicMapWriter {
      */
     private void _writeTopic(final Topic topic) throws IOException {
         AttributesImpl attrs = new AttributesImpl();
-        attrs.addAttribute("", "number", null, null, "" +_indexOf(topic));
+        attrs.addAttribute("", "number", "", "CDATA", "" +_indexOf(topic));
         _out.startElement("topic", attrs);
         _out.newline();
         _writeLocatorSet("subjectIdentifiers", topic.getSubjectIdentifiers());
@@ -381,7 +384,7 @@ public final class CXTMWriter implements ITopicMapWriter {
                 .append(_indexOf(roles[i].getParent()))
                 .append(".role.")
                 .append(_indexOf(roles[i]));
-            roleAttrs.addAttribute("", "ref", null, null, sb.toString());
+            roleAttrs.addAttribute("", "ref", "", "CDATA", sb.toString());
             _out.startElement("rolePlayed", roleAttrs);
             _out.endElement("rolePlayed");
             _out.newline();
@@ -591,7 +594,7 @@ public final class CXTMWriter implements ITopicMapWriter {
             return XMLC14NWriter.EMPTY_ATTRS;
         }
         AttributesImpl attrs = new AttributesImpl();
-        attrs.addAttribute("", "topicref", null, null, "" + _indexOf(topic));
+        attrs.addAttribute("", "topicref", "", "CDATA", "" + _indexOf(topic));
         return attrs;
     }
 
@@ -605,10 +608,10 @@ public final class CXTMWriter implements ITopicMapWriter {
      *          the number of the provided Topic Maps construct.
      */
     private Attributes _attributes(final Reifiable reifiable, int i) {
-        AttributesImpl attrs = new AttributesImpl();
-        _addReifier(attrs, reifiable);
-        attrs.addAttribute("", "number", null, null, "" + i);
-        return attrs;
+        _attrs.clear();
+        _addReifier(_attrs, reifiable);
+        _attrs.addAttribute("", "number", "", "CDATA", "" + i);
+        return _attrs;
     }
 
     /**
@@ -622,7 +625,7 @@ public final class CXTMWriter implements ITopicMapWriter {
     private void _addReifier(final AttributesImpl attrs, final Reifiable reifiable) {
         Topic reifier = reifiable.getReifier();
         if (reifier != null) {
-            attrs.addAttribute("", "reifier", null, null, "" + _indexOf(reifier));
+            attrs.addAttribute("", "reifier", "", "CDATA", "" + _indexOf(reifier));
         }
     }
 

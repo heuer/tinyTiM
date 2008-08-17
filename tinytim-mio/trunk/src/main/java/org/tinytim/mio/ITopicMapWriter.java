@@ -28,7 +28,7 @@ import org.tmapi.core.TopicMap;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public interface ITopicMapWriter {
 

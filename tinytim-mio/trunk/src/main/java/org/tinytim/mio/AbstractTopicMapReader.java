@@ -41,7 +41,7 @@ import com.semagia.mio.Syntax;
  * the discovery of an appropriate deserializer transparently.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 abstract class AbstractTopicMapReader implements ITopicMapReader  {
 
@@ -52,7 +52,7 @@ abstract class AbstractTopicMapReader implements ITopicMapReader  {
         if (_deserializer == null) {
             throw new TMAPIRuntimeException("Appropriate deserializer not found for syntax " + syntax.getName());
         }
-        _deserializer.setMapHandler(new MapInputHandler(topicMap));
+        _deserializer.setMapHandler(new TinyTimMapInputHandler(topicMap));
     }
 
     /* (non-Javadoc)
