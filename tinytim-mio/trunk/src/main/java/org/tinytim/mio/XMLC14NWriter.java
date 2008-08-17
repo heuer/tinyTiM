@@ -100,7 +100,7 @@ final class XMLC14NWriter {
             _out.write(' ');
             _out.write(names[i]);
             _out.write("=\"");
-            _out.write(_escapeAttributeValue(attrs.getValue("", names[i])));
+            _writeEscapedAttributeValue(attrs.getValue("", names[i]));
             _out.write('"');
         }
         _out.write('>');
@@ -136,7 +136,7 @@ final class XMLC14NWriter {
      * @throws IOException If an error occurs.
      */
     public void characters(String data) throws IOException {
-        _out.write(_escapeTextContent(data));
+        _writeEscapedTextContent(data);
     }
 
     /**
@@ -144,29 +144,28 @@ final class XMLC14NWriter {
      *
      * @param value The value.
      * @return The escaped value.
+     * @throws IOException 
      */
-    private String _escapeTextContent(String value) {
-        char[] data = value.toCharArray();
-        StringBuilder sb = new StringBuilder(data.length);
-        for (int i=0; i < data.length; i++) {
-            char c = data[i];
-            if (c == '\r') {
-                sb.append("&#xD;");
-            }
-            else if (c == '&') {
-                sb.append("&amp;");
-            }
-            else if (c == '<') {
-                sb.append("&lt;");
-            }
-            else if (c == '>') {
-                sb.append("&gt;");
-            }
-            else { 
-                sb.append(c);
+    private void _writeEscapedTextContent(String value) throws IOException {
+        char[] ch = value.toCharArray();
+        for (int i=0; i < ch.length; i++) {
+            switch(ch[i]) {
+                case '\r':
+                    _out.write("&#xD;");
+                    break;
+                case '&':
+                    _out.write("&amp;");
+                    break;
+                case '<':
+                    _out.write("&lt;");
+                    break;
+                case '>':
+                    _out.write("&gt;");
+                    break;
+                default:
+                    _out.write(ch[i]);
             }
         }
-        return sb.toString();
     }
 
     /**
@@ -174,34 +173,33 @@ final class XMLC14NWriter {
      *
      * @param value The value to escape.
      * @return The escaped value.
+     * @throws IOException 
      */
-    private String _escapeAttributeValue(String value) {
-        char[] data = value.toCharArray();
-        StringBuilder sb = new StringBuilder(data.length);
-        for (int i=0; i<data.length; i++) {
-            char c = data[i];
-            if (c == '\t') {
-                sb.append("&#x9;");
-            }
-            else if (c == '\n') {
-                sb.append("&#xA;");
-            }
-            else if (c == '\r') {
-                sb.append("&#xD;");
-            }
-            else if (c == '\"') {
-                sb.append("&quot;");
-            }
-            else if (c == '&') {
-                sb.append("&amp;");
-            }
-            else if (c == '<') {
-                sb.append("&lt;");
-            }
-            else { 
-                sb.append(c);
+    private void _writeEscapedAttributeValue(String value) throws IOException {
+        char[] ch = value.toCharArray();
+        for (int i=0; i<ch.length; i++) {
+            switch(ch[i]) {
+            case '\t':
+                _out.write("&#x9;");
+                break;
+            case '\n':
+                _out.write("&#xA;");
+                break;
+            case '\r':
+                _out.write("&#xD;");
+                break;
+            case '\"':
+                _out.write("&quot;");
+                break;
+            case '&':
+                _out.write("&amp;");
+                break;
+            case '<':
+                _out.write("&lt;");
+                break;
+            default:
+                _out.write(ch[i]);
             }
         }
-        return sb.toString();
     }
 }

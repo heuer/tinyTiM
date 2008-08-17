@@ -29,7 +29,7 @@ import org.tmapi.core.TopicMap;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class MapInputHandler extends AbstractMapInputHandler {
+public final class TinyTimMapInputHandler extends AbstractMapInputHandler {
 
     /**
      * Intitializes a new <tt>MapInputHandler</tt> instance with the specified
@@ -37,7 +37,7 @@ public final class MapInputHandler extends AbstractMapInputHandler {
      *
      * @param topicMap The {@link TopicMap} instance.
      */
-    public MapInputHandler(final TopicMap topicMap) {
+    public TinyTimMapInputHandler(final TopicMap topicMap) {
         super(topicMap);
     }
 
