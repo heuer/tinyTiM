@@ -356,7 +356,7 @@ public final class CXTMWriter implements ITopicMapWriter {
      */
     private void _writeTopic(final Topic topic) throws IOException {
         AttributesImpl attrs = new AttributesImpl();
-        attrs.addAttribute("", "number", "", "CDATA", "" +_indexOf(topic));
+        attrs.addAttribute("", "number", "", "CDATA", Integer.toString(_indexOf(topic)));
         _out.startElement("topic", attrs);
         _out.newline();
         _writeLocatorSet("subjectIdentifiers", topic.getSubjectIdentifiers());
@@ -594,7 +594,7 @@ public final class CXTMWriter implements ITopicMapWriter {
             return XMLC14NWriter.EMPTY_ATTRS;
         }
         AttributesImpl attrs = new AttributesImpl();
-        attrs.addAttribute("", "topicref", "", "CDATA", "" + _indexOf(topic));
+        attrs.addAttribute("", "topicref", "", "CDATA", Integer.toString(_indexOf(topic)));
         return attrs;
     }
 
@@ -603,14 +603,14 @@ public final class CXTMWriter implements ITopicMapWriter {
      * of the provided Topic Maps construct (not a topic).
      *
      * @param reifiable The Topic Maps construct.
-     * @param The position of the reifiable within the parent container.
+     * @param pos The position of the reifiable within the parent container.
      * @return Attributes which contain a reference to the reifier (if any) and
      *          the number of the provided Topic Maps construct.
      */
-    private Attributes _attributes(final Reifiable reifiable, int i) {
+    private Attributes _attributes(final Reifiable reifiable, int pos) {
         _attrs.clear();
         _addReifier(_attrs, reifiable);
-        _attrs.addAttribute("", "number", "", "CDATA", "" + i);
+        _attrs.addAttribute("", "number", "", "CDATA", Integer.toString(pos));
         return _attrs;
     }
 
@@ -625,7 +625,7 @@ public final class CXTMWriter implements ITopicMapWriter {
     private void _addReifier(final AttributesImpl attrs, final Reifiable reifiable) {
         Topic reifier = reifiable.getReifier();
         if (reifier != null) {
-            attrs.addAttribute("", "reifier", "", "CDATA", "" + _indexOf(reifier));
+            attrs.addAttribute("", "reifier", "", "CDATA", Integer.toString(_indexOf(reifier)));
         }
     }
 
