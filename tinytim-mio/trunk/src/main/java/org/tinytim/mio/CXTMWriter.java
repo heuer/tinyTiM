@@ -159,9 +159,9 @@ public final class CXTMWriter implements ITopicMapWriter {
         typeInstanceIndex.close();
         _createIndex(topics, assocs);
         _out.startDocument();
-        AttributesImpl attrs = new AttributesImpl();
-        _addReifier(attrs, topicMap);
-        _out.startElement("topicMap", attrs);
+        _attrs.clear();
+        _addReifier(_attrs, topicMap);
+        _out.startElement("topicMap", _attrs);
         _out.newline();
         _writeItemIdentifiers(topicMap);
         for (Topic topic: topics) {
@@ -174,6 +174,7 @@ public final class CXTMWriter implements ITopicMapWriter {
         _out.newline();
         _out.endDocument();
         _out = null;
+        _attrs = null;
         _construct2Id = null;
         _locator2Norm = null;
         _assoc2Roles = null;
@@ -355,9 +356,9 @@ public final class CXTMWriter implements ITopicMapWriter {
      * @throws IOException If an error occurs.
      */
     private void _writeTopic(final Topic topic) throws IOException {
-        AttributesImpl attrs = new AttributesImpl();
-        attrs.addAttribute("", "number", "", "CDATA", Integer.toString(_indexOf(topic)));
-        _out.startElement("topic", attrs);
+        _attrs.clear();
+        _attrs.addAttribute("", "number", "", "CDATA", Integer.toString(_indexOf(topic)));
+        _out.startElement("topic", _attrs);
         _out.newline();
         _writeLocatorSet("subjectIdentifiers", topic.getSubjectIdentifiers());
         _writeLocatorSet("subjectLocators", topic.getSubjectLocators());
@@ -377,19 +378,18 @@ public final class CXTMWriter implements ITopicMapWriter {
         }
         Role[] roles = roles_.toArray(new Role[roles_.size()]);
         Arrays.sort(roles, _roleComparator);
-        AttributesImpl roleAttrs = new AttributesImpl();
         StringBuilder sb = new StringBuilder(20);
         for (int i=0; i < roles.length; i++) {
             sb.append("association.")
                 .append(_indexOf(roles[i].getParent()))
                 .append(".role.")
                 .append(_indexOf(roles[i]));
-            roleAttrs.addAttribute("", "ref", "", "CDATA", sb.toString());
-            _out.startElement("rolePlayed", roleAttrs);
+            _attrs.clear();
+            _attrs.addAttribute("", "ref", "", "CDATA", sb.toString());
+            _out.startElement("rolePlayed", _attrs);
             _out.endElement("rolePlayed");
             _out.newline();
             sb.setLength(0);
-            roleAttrs.clear();
         }
         _out.endElement("topic");
         _out.newline();
@@ -593,9 +593,9 @@ public final class CXTMWriter implements ITopicMapWriter {
             _reportInvalid("The topic reference is null");
             return XMLC14NWriter.EMPTY_ATTRS;
         }
-        AttributesImpl attrs = new AttributesImpl();
-        attrs.addAttribute("", "topicref", "", "CDATA", Integer.toString(_indexOf(topic)));
-        return attrs;
+        _attrs.clear();
+        _attrs.addAttribute("", "topicref", "", "CDATA", Integer.toString(_indexOf(topic)));
+        return _attrs;
     }
 
     /**
