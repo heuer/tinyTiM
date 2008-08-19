@@ -1,0 +1,43 @@
+.. highlight:: java
+
+Quickstart
+==========
+
+:Author: Lars Heuer (heuer[at]semagia.com)
+:Date: $Date:$
+:Version: $Rev:$
+
+This section presents some examples how to get started with tinyTiM and TMAPI.
+These examples should work with any TMAPI-compatible Topic Maps processor but
+the focus stays clearly on tinyTiM.
+
+tinyTiM requires almost no installation since the core Topic Maps engine
+was designed to require nothing more than the TMAPI interfaces.
+
+Optional packages like ``mio`` introduce dependencies, though. Anyway,
+any TMAPI conformant application should be executable with tinyTiM and the 
+TMAPI 2.0 lib in the classpath. If `Trove for Java <http://sourceforge.net/projects/trove4j>`_
+is available, tinyTiM will use that library for its collections; this
+may enable tinyTiM to use less memory and / or to run faster. But this library represents no
+strong dependency, tinyTiM detects it automatically and can be executed without it.
+
+Once tinyTiM and TMAPI is in the classpath the following example should 
+work::
+
+    import org.tmapi.core.TopicMapSystemFactory;
+    import org.tmapi.core.TopicMapSystem;
+    import org.tmapi.core.TopicMap;
+    import org.tmapi.core.Topic;
+    import org.tmapi.core.Name;
+    
+    TopicMapSystemFactory tmSysFactory = TopicMapSystemFactory.newInstance();
+    TopicMapSystem tmSys = tmSysFactory.newTopicMapSystem();
+    
+    TopicMap tm = tmSys.createTopicMap("http://www.example.org/map1");
+    // Creates a topic with an automatically assigned item identifier
+    // Note: This is method IS NOT recommended, creating a topic with an 
+    // explicit identity should be preferred
+    Topic example = tm.createTopic();
+    
+    Name name = example.createName("Example");
+
