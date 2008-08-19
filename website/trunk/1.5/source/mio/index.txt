@@ -1,0 +1,18 @@
+Importing and Exporting Topic Maps
+==================================
+
+:Author: Lars Heuer (heuer[at]semagia.com)
+:Date: $Date:$
+:Version: $Rev:$
+
+tinyTiM provides a native, not TMAPI-compatible, way to import
+and export topic maps. Even if the ``mio.TopicMapImporter`` accepts an instance of 
+``org.tmapi.core.TopicMap``, it cannot be used to deserialize ``org.tmapi.core.TopicMap`` 
+instances in a generic, TMAPI-compatible way.
+
+
+.. toctree::
+    :maxdepth: 2
+
+    topicmaps-import
+    topicmaps-export
