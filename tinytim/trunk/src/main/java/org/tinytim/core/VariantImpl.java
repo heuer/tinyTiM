@@ -20,7 +20,11 @@
  */
 package org.tinytim.core;
 
+import java.util.Set;
+
+import org.tinytim.internal.utils.CollectionFactory;
 import org.tmapi.core.Name;
+import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
 /**
@@ -70,6 +74,27 @@ final class VariantImpl extends DatatypeAwareConstruct implements
     public void remove() {
         ((NameImpl) _parent).removeVariant(this);
         super.dispose();
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.ScopedImpl#getScope()
+     */
+    @Override
+    public Set<Topic> getScope() {
+        Set<Topic> scope = CollectionFactory.createIdentitySet(getParent().getScope());
+        scope.addAll(_scope.asSet());
+        return scope;
+    }
+
+    void _addNameTheme(Topic theme) {
+        if (!_scope.contains(theme)) {
+            _fireEvent(Event.SET_SCOPE, _scope, _scope.add(theme));
+        }
+    }
+
+    void _removeNameTheme(Topic theme) {
+        IScope scope = Scope.create(getScope());
+        _fireEvent(Event.SET_SCOPE, scope.add(theme), scope);
     }
 
 }

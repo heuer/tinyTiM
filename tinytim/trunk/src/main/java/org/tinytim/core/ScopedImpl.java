@@ -36,7 +36,7 @@ abstract class ScopedImpl extends TypedImpl implements IScoped {
 
     //NOTE: This class does NOT implement IScoped by intention!
 
-    private IScope _scope;
+    protected IScope _scope;
 
     ScopedImpl(TopicMapImpl tm) {
         super(tm);

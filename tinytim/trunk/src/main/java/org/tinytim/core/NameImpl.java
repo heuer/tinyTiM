@@ -98,10 +98,13 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
      */
     @Override
     public void addTheme(Topic theme) {
+        IScope scope = _scope;
         super.addTheme(theme);
-        if (_variants != null) {
-            for (Variant variant: _variants) {
-                variant.addTheme(theme);
+        if (scope != _scope) {
+            if (_variants != null) {
+                for (Variant variant: _variants) {
+                    ((VariantImpl) variant)._addNameTheme(theme);
+                }
             }
         }
     }
@@ -111,10 +114,13 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
      */
     @Override
     public void removeTheme(Topic theme) {
+        IScope scope = _scope;
         super.removeTheme(theme);
-        if (_variants != null) {
-            for (Variant variant: _variants) {
-                variant.removeTheme(theme);
+        if (scope != _scope) {
+            if (_variants != null) {
+                for (Variant variant: _variants) {
+                    ((VariantImpl) variant)._removeNameTheme(theme);
+                }
             }
         }
     }
@@ -185,15 +191,14 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
         if (scope.isEmpty()) {
             throw new ModelConstraintException(this, "The scope of the variant must not be unconstrained");
         }
-        Set<Topic> nameScope = super.getScope();
-        if (nameScope.containsAll(scope)) {
+        if (_scope.containsAll(scope)) {
             throw new ModelConstraintException(this, "The variant's scope is not a true superset of the parent's scope");
         }
-        Set<Topic> scope_ = CollectionFactory.createIdentitySet(scope.size() + nameScope.size());
-        scope_.addAll(scope);
-        scope_.addAll(nameScope);
-        Variant variant = new VariantImpl(_tm, literal, Scope.create(scope_));
+        VariantImpl variant = new VariantImpl(_tm, literal, Scope.create(scope));
         addVariant(variant);
+        for (Topic theme: _scope) {
+            variant._addNameTheme(theme);
+        }
         return variant;
     }
 
