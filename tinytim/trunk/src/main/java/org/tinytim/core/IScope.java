@@ -20,6 +20,7 @@
  */
 package org.tinytim.core;
 
+import java.util.Collection;
 import java.util.Set;
 
 import org.tmapi.core.Topic;
@@ -82,5 +83,7 @@ public interface IScope extends Iterable<Topic> {
      * @return Number of themes.
      */
     public int size();
+
+    public boolean containsAll(Collection<Topic> scope);
 
 }

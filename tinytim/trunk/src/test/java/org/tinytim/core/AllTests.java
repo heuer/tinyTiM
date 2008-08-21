@@ -42,6 +42,7 @@ public class AllTests extends TestSuite {
         TestSuite suite = new TestSuite();
         suite.addTestSuite(TestDuplicateRemovalUtils.class);
         suite.addTestSuite(TestIRI.class);
+        suite.addTestSuite(TestIConstruct.class);
         suite.addTestSuite(TestScope.class);
         suite.addTestSuite(TestLiteral.class);
         suite.addTestSuite(TestItemIdentifierConstraint.class);

@@ -99,6 +99,13 @@ final class Scope implements IScope {
     }
 
     /* (non-Javadoc)
+     * @see org.tinytim.core.IScope#containsAll(java.util.Collection)
+     */
+    public boolean containsAll(Collection<Topic> scope) {
+        return _set.containsAll(scope);
+    }
+
+    /* (non-Javadoc)
      * @see org.tinytim.core.IScope#add(org.tmapi.core.Topic)
      */
     public IScope add(Topic theme) {
