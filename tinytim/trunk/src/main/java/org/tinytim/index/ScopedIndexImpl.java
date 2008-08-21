@@ -87,6 +87,9 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      */
     public Collection<Association> getAssociations(Topic[] themes,
             boolean matchAll) {
+        if (themes == null) {
+            throw new IllegalArgumentException("The themes must not be null");
+        }
         Set<Association> result = CollectionFactory.createIdentitySet();
         if (!matchAll) {
             for (Topic theme: themes) {
@@ -125,6 +128,9 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      */
     public Collection<Occurrence> getOccurrences(Topic[] themes,
             boolean matchAll) {
+        if (themes == null) {
+            throw new IllegalArgumentException("The themes must not be null");
+        }
         Set<Occurrence> result = CollectionFactory.createIdentitySet();
         if (!matchAll) {
             for (Topic theme: themes) {
@@ -162,6 +168,9 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      * @see org.tmapi.index.ScopedIndex#getNames(org.tmapi.core.Topic[], boolean)
      */
     public Collection<Name> getNames(Topic[] themes, boolean matchAll) {
+        if (themes == null) {
+            throw new IllegalArgumentException("The themes must not be null");
+        }
         Set<Name> result = CollectionFactory.createIdentitySet();
         if (!matchAll) {
             for (Topic theme: themes) {
@@ -190,6 +199,9 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      * @see org.tmapi.index.ScopedIndex#getVariants(org.tmapi.core.Topic)
      */
     public Collection<Variant> getVariants(Topic theme) {
+        if (theme == null) {
+            throw new IllegalArgumentException("The theme must not be null");
+        }
         Collection<Variant> vars = _theme2Variants.get(theme);
         return vars == null ? Collections.<Variant>emptySet()
                             : CollectionFactory.createList(vars);
@@ -199,6 +211,9 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
      * @see org.tmapi.index.ScopedIndex#getVariants(org.tmapi.core.Topic[], boolean)
      */
     public Collection<Variant> getVariants(Topic[] themes, boolean matchAll) {
+        if (themes == null) {
+            throw new IllegalArgumentException("The themes must not be null");
+        }
         Set<Variant> result = CollectionFactory.createIdentitySet();
         if (!matchAll) {
             for (Topic theme: themes) {

@@ -116,7 +116,7 @@ abstract class ConstructImpl implements IConstruct {
      */
     @Override
     public final int hashCode() {
-        return _id.hashCode();
+        return super.hashCode();
     }
 
     /**

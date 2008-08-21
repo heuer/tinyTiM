@@ -21,8 +21,6 @@
 package org.tinytim.internal.utils;
 
 import java.lang.ref.WeakReference;
-import java.util.AbstractSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -32,7 +30,7 @@ import java.util.WeakHashMap;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class WeakObjectRegistry<E> extends AbstractSet<E> {
+public final class WeakObjectRegistry<E> {
 
     private final Map<E, WeakReference<E>> _obj2Ref;
 
@@ -60,7 +58,6 @@ public final class WeakObjectRegistry<E> extends AbstractSet<E> {
     /* (non-Javadoc)
      * @see java.util.AbstractCollection#add(java.lang.Object)
      */
-    @Override
     public boolean add(E obj) {
         WeakReference<E> ref = new WeakReference<E>(obj);
         ref = _obj2Ref.put(obj, ref);
@@ -68,42 +65,15 @@ public final class WeakObjectRegistry<E> extends AbstractSet<E> {
     }
 
     /* (non-Javadoc)
-     * @see java.util.AbstractCollection#remove(java.lang.Object)
-     */
-    @Override
-    public boolean remove(Object obj) {
-        WeakReference<E> ref = _obj2Ref.remove(obj);
-        return ref != null && ref.get() != null;
-    }
-
-    /* (non-Javadoc)
      * @see java.util.AbstractCollection#clear()
      */
-    @Override
     public void clear() {
         _obj2Ref.clear();
     }
 
     /* (non-Javadoc)
-     * @see java.util.AbstractCollection#contains(java.lang.Object)
-     */
-    @Override
-    public boolean contains(Object obj) {
-        return get(obj) != null;
-    }
-
-    /* (non-Javadoc)
-     * @see java.util.AbstractCollection#iterator()
-     */
-    @Override
-    public Iterator<E> iterator() {
-        return _obj2Ref.keySet().iterator();
-    }
-
-    /* (non-Javadoc)
      * @see java.util.AbstractCollection#size()
      */
-    @Override
     public int size() {
         return _obj2Ref.size();
     }
