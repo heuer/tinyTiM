@@ -47,6 +47,10 @@ import org.tmapi.core.Variant;
  */
 final class CopyUtils {
 
+    private CopyUtils() {
+        // noop.
+    }
+
     /**
      * Copies the topics and associations from the <tt>source</tt> to the
      * <tt>target</tt> topic map.

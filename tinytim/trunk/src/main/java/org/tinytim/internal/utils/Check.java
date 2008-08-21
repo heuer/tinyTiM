@@ -28,7 +28,9 @@ import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Topic;
 
 /**
- * 
+ * Utility class to check arguments and to throw 
+ * {@link org.tmapi.core.ModelConstraintException}s if the arg violates a 
+ * constraint.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
