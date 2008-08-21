@@ -22,6 +22,7 @@ package org.tinytim.core;
 
 import org.tinytim.utils.TestDuplicateRemovalUtils;
 import org.tinytim.utils.TestTopicUtils;
+import org.tinytim.utils.TestTypeInstanceConverter;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -51,6 +52,7 @@ public class AllTests extends TestSuite {
         suite.addTest(TestTMAPIIndex.suite());
         suite.addTestSuite(TestTopicMapSystemFactoryImpl.class);
         suite.addTestSuite(TestTopicUtils.class);
+        suite.addTestSuite(TestTypeInstanceConverter.class);
         return suite;
     }
 }
