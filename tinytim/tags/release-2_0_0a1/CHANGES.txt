@@ -1,0 +1,47 @@
+===========
+Changes Log
+===========
+
+2.0.0 a1 (26.08.2008)
+---------------------
+* Implementation of the TMAPI 2.0 interfaces
+* Internal code refactoring
+
+
+1.5.0 beta (08.08.2008)
+-----------------------
+Bugfixes:
+---------
+* Bug #1970502 (Locator impl does no reference unescaping)
+* Bug #2038853 (Subject locators are not removable)
+
+
+1.5.0 alpha2 (05.05.2008)
+-------------------------
+Bugfixes:
+--------
+* ``DatatypeAwareConstruct`` sent wrong event. Fixed
+* All indexes return copies of their collections to avoid
+  concurrent modification exceptions.
+
+Features:
+---------
+* ``voc`` package added which provides access to common PSIs.
+* ``DuplicateRemovalUtils`` added. Used to remove
+  duplicate Topic Maps constructs from topic maps, topics, 
+  associations, and names
+* ``TypeInstanceConverter`` added. Used to convert
+  type-instance associations into the topic's [types]
+  property.
+* ``tmapi.TopicNamesIndex``, ``tmapi.OccurrenceIndex`` 
+  and ``tmapi.VarinatsIndex`` use an optimized reindex 
+  algorithm.
+* Property to let ``Variant`` instances return the union 
+  of their 'own' scope and the parent's scope.
+
+
+1.5.0 alpha1 (25.04.2008)
+-------------------------
+* Initial 1.5.x release
+* New code base
+* Java 1.5
