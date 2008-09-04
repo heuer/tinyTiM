@@ -48,14 +48,20 @@ public final class Literal implements ILiteral {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
-        _value = value;
+        _value = LiteralNormalizer.normalize(value, datatype);
         _datatype = datatype;
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.core.ILiteral#getDatatype()
+     */
     public Locator getDatatype() {
         return _datatype;
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.core.ILiteral#getValue()
+     */
     public String getValue() {
         return _value;
     }

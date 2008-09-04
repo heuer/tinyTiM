@@ -23,7 +23,7 @@ package org.tinytim.voc;
 import org.tmapi.core.Locator;
 
 /**
- * 
+ * Provides PSIs for the XML Schema Datatypes.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -49,5 +49,7 @@ public final class XSD extends Vocabulary {
     public final static Locator FLOAT = _createLocator(_BASE + "float");
 
     public final static Locator LONG = _createLocator(_BASE + "long");
+
+    public static final Locator BOOLEAN = _createLocator(_BASE + "boolean");
 
 }

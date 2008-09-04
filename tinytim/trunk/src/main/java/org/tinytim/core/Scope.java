@@ -30,7 +30,7 @@ import org.tinytim.internal.utils.WeakObjectRegistry;
 import org.tmapi.core.Topic;
 
 /**
- * 
+ * {@link IScope} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

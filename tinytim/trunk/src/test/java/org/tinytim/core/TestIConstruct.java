@@ -30,7 +30,7 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.Variant;
 
 /**
- * 
+ * Tests against {@link IConstruct}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev:$ - $Date:$

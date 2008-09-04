@@ -51,6 +51,15 @@ public interface IScope extends Iterable<Topic> {
     public boolean contains(Topic theme);
 
     /**
+     * Returns <tt>true</tt> if all themes of the other <tt>scope</tt> are part 
+     * of this scope.
+     *
+     * @param scope A collection of themes.
+     * @return <tt>true</tt> if all themes are part of this scope, otherwise <tt>false</tt>.
+     */
+    public boolean containsAll(Collection<Topic> scope);
+
+    /**
      * Returns a <tt>IScope</tt> consisting of all themes contained in this
      * scope and the <tt>theme</tt>.
      *
@@ -83,7 +92,5 @@ public interface IScope extends Iterable<Topic> {
      * @return Number of themes.
      */
     public int size();
-
-    public boolean containsAll(Collection<Topic> scope);
 
 }
