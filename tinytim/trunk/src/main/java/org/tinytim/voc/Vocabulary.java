@@ -24,13 +24,19 @@ import org.tinytim.core.Literal;
 import org.tmapi.core.Locator;
 
 /**
- * 
+ * Base for classes which provide PSIs.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
 abstract class Vocabulary {
 
+    /**
+     * Returns a locator with the specified <tt>reference</tt>.
+     *
+     * @param reference The address of the locator.
+     * @return A locator.
+     */
     protected final static Locator _createLocator(String reference) {
         return Literal.createIRI(reference);
     }

@@ -34,10 +34,6 @@ final class IdGenerator {
 
     private static final AtomicLong _COUNTER = new AtomicLong();
 
-    private IdGenerator() {
-        // noop.
-    }
-
     /**
      * Returns the next identifier.
      *

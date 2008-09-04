@@ -25,7 +25,7 @@ import java.util.Arrays;
 import org.tmapi.core.Topic;
 
 /**
- * 
+ * Tests against {@link Scope}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -38,11 +38,11 @@ public class TestScope extends TinyTimTestCase {
     }
 
     public void testEquals() {
-        Topic theme1 = createTopic();
-        Topic theme2 = createTopic();
-        IScope scope1 = Scope.create(Arrays.asList(theme1, theme2));
+        final Topic theme1 = createTopic();
+        final Topic theme2 = createTopic();
+        final IScope scope1 = Scope.create(Arrays.asList(theme1, theme2));
         assertEquals(2, scope1.size());
-        IScope scope2 = Scope.create(Arrays.asList(theme2, theme1));
+        final IScope scope2 = Scope.create(Arrays.asList(theme2, theme1));
         assertSame(scope1, scope2);
     }
 }
