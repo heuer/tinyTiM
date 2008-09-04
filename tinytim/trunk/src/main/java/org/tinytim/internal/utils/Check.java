@@ -35,6 +35,17 @@ import org.tmapi.core.Topic;
  */
 public final class Check {
 
+    private Check() {
+        // noop.
+    }
+
+    /**
+     * Throws a {@link ModelConstraintException} with the specified <tt>sender</tt>
+     * and <tt>msg</tt>
+     *
+     * @param sender The sender
+     * @param msg The error message
+     */
     private static void _reportError(Construct sender, String msg) {
         throw new ModelConstraintException(sender, msg);
     }
