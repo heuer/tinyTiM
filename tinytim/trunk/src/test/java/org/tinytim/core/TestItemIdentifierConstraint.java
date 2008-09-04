@@ -40,11 +40,11 @@ public class TestItemIdentifierConstraint extends TinyTimTestCase {
      *
      * @param tmo The Topic Maps construct to test.
      */
-    private void _testConstraint(Construct tmo) throws Exception {
+    private void _testConstraint(final Construct tmo) {
         assertTrue(tmo.getItemIdentifiers().isEmpty());
-        Locator iid = createLocator("http://sf.net/projects/tinytim");
-        Locator iid2 = createLocator("http://sf.net/projects/tinytim2");
-        Association assoc = createAssociation();
+        final Locator iid = createLocator("http://sf.net/projects/tinytim");
+        final Locator iid2 = createLocator("http://sf.net/projects/tinytim2");
+        final Association assoc = createAssociation();
         assoc.addItemIdentifier(iid);
         assertFalse(tmo.getItemIdentifiers().contains(iid));
         try {
@@ -72,14 +72,14 @@ public class TestItemIdentifierConstraint extends TinyTimTestCase {
     /**
      * Tests against a topic map.
      */
-    public void testTopicMap() throws Exception {
+    public void testTopicMap() {
         _testConstraint(_tm);
     }
 
     /**
      * Tests againts a topic.
      */
-    public void testTopic() throws Exception {
+    public void testTopic() {
         Topic topic = createTopic();
         Locator iid = createLocator("http://sf.net/projects/tinytim");
         topic.addItemIdentifier(iid);
@@ -107,35 +107,35 @@ public class TestItemIdentifierConstraint extends TinyTimTestCase {
     /**
      * Tests against an association.
      */
-    public void testAssociation() throws Exception {
+    public void testAssociation() {
         _testConstraint(createAssociation());
     }
 
     /**
      * Tests against a role.
      */
-    public void testRole() throws Exception {
+    public void testRole() {
         _testConstraint(createRole());
     }
 
     /**
      * Tests against an occurrence.
      */
-    public void testOccurrence() throws Exception {
+    public void testOccurrence() {
         _testConstraint(createOccurrence());
     }
 
     /**
      * Tests against a name.
      */
-    public void testName() throws Exception {
+    public void testName() {
         _testConstraint(createName());
     }
 
     /**
      * Tests against a variant.
      */
-    public void testVariant() throws Exception {
+    public void testVariant() {
         _testConstraint(createVariant());
     }
 
