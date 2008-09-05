@@ -107,6 +107,12 @@ public final class Literal implements ILiteral {
         if (XSD.STRING.equals(datatype)) {
             return create(value);
         }
+        if (XSD.DECIMAL.equals(datatype)) {
+            return createDecimal(value);
+        }
+        if (XSD.INTEGER.equals(datatype)) {
+            return createInteger(value);
+        }
         ILiteral literal = new Literal(value, datatype);
         ILiteral existing = _OTHERS.get(literal);
         if (existing != null) {
@@ -127,11 +133,11 @@ public final class Literal implements ILiteral {
     }
 
     public static ILiteral create(BigDecimal value) {
-        return create(value, XSD.DECIMAL);
+        return createDecimal(value);
     }
 
     public static ILiteral create(BigInteger value) {
-        return create(value, XSD.INTEGER);
+        return createInteger(value);
     }
 
     public static ILiteral create(float value) {
@@ -172,6 +178,58 @@ public final class Literal implements ILiteral {
         }
         _IRIS.add(iri);
         return iri;
+    }
+
+    public static synchronized ILiteral createDecimal(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("The value must not be null");
+        }
+        ILiteral lit = new DecimalLiteral(value);
+        ILiteral existing = _OTHERS.get(lit);
+        if (existing != null) {
+            return existing;
+        }
+        _OTHERS.add(lit);
+        return lit;
+    }
+
+    public static synchronized ILiteral createDecimal(BigDecimal value) {
+        if (value == null) {
+            throw new IllegalArgumentException("The value must not be null");
+        }
+        ILiteral lit = new DecimalLiteral(value);
+        ILiteral existing = _OTHERS.get(lit);
+        if (existing != null) {
+            return existing;
+        }
+        _OTHERS.add(lit);
+        return lit;
+    }
+
+    public static synchronized ILiteral createInteger(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("The value must not be null");
+        }
+        ILiteral lit = new IntegerLiteral(value);
+        ILiteral existing = _OTHERS.get(lit);
+        if (existing != null) {
+            return existing;
+        }
+        _OTHERS.add(lit);
+        return lit;
+    }
+
+    public static synchronized ILiteral createInteger(BigInteger value) {
+        if (value == null) {
+            throw new IllegalArgumentException("The value must not be null");
+        }
+        ILiteral lit = new IntegerLiteral(value);
+        ILiteral existing = _OTHERS.get(lit);
+        if (existing != null) {
+            return existing;
+        }
+        _OTHERS.add(lit);
+        return lit;
     }
 
     public BigDecimal decimalValue() {
