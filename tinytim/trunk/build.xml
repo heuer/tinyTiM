@@ -29,7 +29,7 @@
     <property name="dir.res" value="${basedir}/src/main/resources"/>
     <property name="dir.coverage" value="${basedir}/coverage"/>
 
-    <property name="lib.junit" value="${dir.lib}/junit-4.4.jar"/>
+    <property name="lib.junit" value="${dir.lib}/junit-4.5.jar"/>
     <property name="lib.trove" value="${dir.lib}/trove-2.0.4.jar"/>
     <property name="lib.tmapi" value="${dir.lib}/tmapi-2.0a1.jar"/>
     <property name="lib.tmapi.tests" value="${dir.lib}/tmapi-2.0a1-tests.jar"/>
