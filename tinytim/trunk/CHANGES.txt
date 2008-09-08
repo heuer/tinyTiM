@@ -2,6 +2,12 @@
 Changes Log
 ===========
 
+2.0.0 a2 (08.09.2008)
+---------------------
+* Internal code refactoring
+* Better duplicate literal supression
+
+
 2.0.0 a1 (26.08.2008)
 ---------------------
 * Implementation of the TMAPI 2.0 interfaces
