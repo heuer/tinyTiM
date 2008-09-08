@@ -92,7 +92,7 @@ abstract class DatatypeAwareConstruct extends ScopedImpl implements
      */
     public void setValue(BigDecimal value) {
         Check.valueNotNull(this, value);
-        setLiteral(Literal.create(value));
+        setLiteral(Literal.createDecimal(value));
     }
 
     /* (non-Javadoc)
@@ -100,7 +100,7 @@ abstract class DatatypeAwareConstruct extends ScopedImpl implements
      */
     public void setValue(BigInteger value) {
         Check.valueNotNull(this, value);
-        setLiteral(Literal.create(value));
+        setLiteral(Literal.createInteger(value));
     }
 
     /* (non-Javadoc)

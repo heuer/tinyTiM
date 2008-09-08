@@ -94,6 +94,15 @@ public final class Literal implements ILiteral {
         
     }
 
+    private static synchronized <L extends ILiteral> L _registerIfAbsent(final WeakObjectRegistry<L> registry, final L lit) {
+        final L existing = registry.get(lit);
+        if (existing != null) {
+            return existing;
+        }
+        registry.add(lit);
+        return lit;
+    }
+
     public static synchronized ILiteral create(final String value, final Locator datatype) {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
@@ -113,31 +122,11 @@ public final class Literal implements ILiteral {
         if (XSD.INTEGER.equals(datatype)) {
             return createInteger(value);
         }
-        ILiteral literal = new Literal(value, datatype);
-        ILiteral existing = _OTHERS.get(literal);
-        if (existing != null) {
-            return existing;
-        }
-        _OTHERS.add(literal);
-        return literal;
+        return _registerIfAbsent(_OTHERS, new Literal(value, datatype));
     }
 
     public static synchronized ILiteral create(String value) {
-        ILiteral literal = new Literal(value, XSD.STRING);
-        ILiteral existing = _STRINGS.get(literal);
-        if (existing != null) {
-            return existing;
-        }
-        _STRINGS.add(literal);
-        return literal;
-    }
-
-    public static ILiteral create(BigDecimal value) {
-        return createDecimal(value);
-    }
-
-    public static ILiteral create(BigInteger value) {
-        return createInteger(value);
+        return _registerIfAbsent(_STRINGS, new Literal(value, XSD.STRING));
     }
 
     public static ILiteral create(float value) {
@@ -171,65 +160,35 @@ public final class Literal implements ILiteral {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
-        IRI iri = new IRI(value);
-        IRI existing = _IRIS.get(iri);
-        if (existing != null) {
-            return existing;
-        }
-        _IRIS.add(iri);
-        return iri;
+        return _registerIfAbsent(_IRIS, new IRI(value));
     }
 
     public static synchronized ILiteral createDecimal(String value) {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
-        ILiteral lit = new DecimalLiteral(value);
-        ILiteral existing = _OTHERS.get(lit);
-        if (existing != null) {
-            return existing;
-        }
-        _OTHERS.add(lit);
-        return lit;
+        return _registerIfAbsent(_OTHERS, new DecimalLiteral(value));
     }
 
     public static synchronized ILiteral createDecimal(BigDecimal value) {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
-        ILiteral lit = new DecimalLiteral(value);
-        ILiteral existing = _OTHERS.get(lit);
-        if (existing != null) {
-            return existing;
-        }
-        _OTHERS.add(lit);
-        return lit;
+        return _registerIfAbsent(_OTHERS, new DecimalLiteral(value));
     }
 
     public static synchronized ILiteral createInteger(String value) {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
-        ILiteral lit = new IntegerLiteral(value);
-        ILiteral existing = _OTHERS.get(lit);
-        if (existing != null) {
-            return existing;
-        }
-        _OTHERS.add(lit);
-        return lit;
+        return _registerIfAbsent(_OTHERS, new IntegerLiteral(value));
     }
 
     public static synchronized ILiteral createInteger(BigInteger value) {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
-        ILiteral lit = new IntegerLiteral(value);
-        ILiteral existing = _OTHERS.get(lit);
-        if (existing != null) {
-            return existing;
-        }
-        _OTHERS.add(lit);
-        return lit;
+        return _registerIfAbsent(_OTHERS, new IntegerLiteral(value));
     }
 
     public BigDecimal decimalValue() {
