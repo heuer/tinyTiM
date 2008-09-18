@@ -30,5 +30,5 @@ latest version.
 
 License
 -------
-tinyTiM is licensed under the GNU Lesser General Public License (LGPL) 
-Version 2.1, see LICENSE.txt for details.
+tinyTiM is licensed under the Apache License Version 2.0, see LICENSE.txt 
+for details.
