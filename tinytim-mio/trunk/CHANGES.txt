@@ -2,6 +2,12 @@
 Changes Log
 ===========
 
+2.0.0 a1 (xx.09.2008)
+-------------------------
+* Adapted MIO to tinyTiM 2.0.0
+* Changed license to Apache License 2.0
+
+
 1.5.0 beta (13.08.2008)
 -------------------------
 * Renamed ``org.tinyim.io`` to ``org.tinytim.mio``
