@@ -37,10 +37,15 @@ import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
 
 /**
- * 
+ * Console to issue commands against a {@link org.tmapi.core.TopicMapSystem}.
+ * <p>
+ * Even if the implementation tries to use TMAPI as much as possible, the console
+ * needs tinyTiM and is not compatible to other TMAPI implementations. Adapting the code
+ * to pure TMAPI should be possible with some effort, though.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class Console {
 
@@ -143,7 +148,6 @@ public class Console {
         _print(">>> ");
         String line = _reader.readLine();
         if (line == null) {
-            // EOF
             return null;
         }
         StringBuilder buf = new StringBuilder(256);
@@ -154,7 +158,7 @@ public class Console {
             buf.append('\n')
                 .append(line);
         }
-        // Remove closing dot
+        // Remove command delimiter
         buf.setLength(buf.length() - 1);
         return buf.toString().trim();
     }
@@ -200,6 +204,9 @@ public class Console {
     }
 
 
+    /**
+     * Creates a new topic map with the specified locator
+     */
     private class CreateCommand extends AbstractCommand {
 
         public CreateCommand() {
@@ -224,8 +231,10 @@ public class Console {
         }
     }
 
-
-    public class ReadCommand extends AbstractCommand {
+    /**
+     * Deserializes a topic map and adds the content to a local topic map.
+     */
+    private class ReadCommand extends AbstractCommand {
 
         public ReadCommand() {
             super("read <source:url> into <target:url> [using <syntax:identifier>]", 
@@ -242,7 +251,10 @@ public class Console {
 
     }
 
-    public class ShowCommand extends AbstractCommand {
+    /**
+     * Shows an overview about the topic maps available in the system.
+     */
+    private class ShowCommand extends AbstractCommand {
 
         public ShowCommand() {
             super("show", "Returns a list of topic maps");
@@ -266,6 +278,9 @@ public class Console {
         }
     }
 
+    /**
+     * Serializes a topic map.
+     */
     private class WriteCommand extends AbstractCommand {
 
         public WriteCommand() {
