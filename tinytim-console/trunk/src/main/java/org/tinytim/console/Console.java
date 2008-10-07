@@ -39,9 +39,9 @@ import org.tmapi.core.TopicMapSystemFactory;
 /**
  * Console to issue commands against a {@link org.tmapi.core.TopicMapSystem}.
  * <p>
- * Even if the implementation tries to use TMAPI as much as possible, the console
- * needs tinyTiM and is not compatible to other TMAPI implementations. Adapting the code
- * to pure TMAPI should be possible with some effort, though.
+ * Even if the implementation tries to use TMAPI as much as possible, the 
+ * console needs tinyTiM and is not compatible to other TMAPI implementations. 
+ * Adapting the code to pure TMAPI should be possible with some effort, though.
  * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
@@ -88,10 +88,10 @@ public class Console {
     }
 
     private void _registerCommands() {
-        ICommand cmd = new CreateCommand();
-        _registerCommand(cmd);
-        cmd = new ShowCommand();
-        _registerCommand(cmd);
+        _registerCommand(new CreateCommand());
+        _registerCommand(new ShowCommand());
+        _registerCommand(new ReadCommand());
+        _registerCommand(new WriteCommand());
     }
 
     private void _registerCommand(ICommand cmd) {
@@ -110,6 +110,7 @@ public class Console {
             exit = _executeCommand(command);
         }
         _println("Thanks for using tinyTiM.");
+        _println();
         _println("Bye.");
     }
 
@@ -169,8 +170,8 @@ public class Console {
         _print(_VERSION);
         _print(" using tinyTiM v");
         _println(Version.RELEASE);
-        _println("Commands end with a '.'");
-        _println("Type 'help.' for more information");
+        _println("Commands end with a '.'.");
+        _println("Type 'help.' for more information. Use 'exit.' to leave the console.");
     }
 
     private void _print(String s) {
@@ -219,36 +220,20 @@ public class Console {
                 _printError("Too many arguments");
                 return;
             }
+            else if (args.length < 2) {
+                _printError("No IRI specified");
+                return;
+            }
             String iri = args[1];
             try {
                 _tmSys.createTopicMap(iri);
             }
             catch (TopicMapExistsException ex) {
-                _printError("Topic map exists");
+                _printError("A topic map with the IRI <" + iri + "> exists");
                 return;
             }
             _println("<" + iri + "> created.");
         }
-    }
-
-    /**
-     * Deserializes a topic map and adds the content to a local topic map.
-     */
-    private class ReadCommand extends AbstractCommand {
-
-        public ReadCommand() {
-            super("read <source:url> into <target:url> [using <syntax:identifier>]", 
-                    "Reads the content from a source into a local topic map");
-        }
-
-        /* (non-Javadoc)
-         * @see org.tinytim.console.ICommand#execute(java.lang.String[], java.io.PrintStream)
-         */
-        public void execute(String[] args) {
-            // TODO Auto-generated method stub
-            
-        }
-
     }
 
     /**
@@ -279,22 +264,9 @@ public class Console {
     }
 
     /**
-     * Serializes a topic map.
+     * Deserializes a topic map and adds the content to a local topic map.
      */
-    private class WriteCommand extends AbstractCommand {
+    private class ReadCommand extends AbstractCommand {
 
-        public WriteCommand() {
-            super("write <source:url> to <target:url> [<syntax:identifier>]", 
-                    "Exports a topic map");
-        }
-
-        /* (non-Javadoc)
-         * @see org.tinytim.console.ICommand#execute(java.lang.String[])
-         */
-        public void execute(String[] args) {
-            // TODO Auto-generated method stub
-            
-        }
-
-    }
-}
+        public ReadCommand() {
+            super("read <source:
