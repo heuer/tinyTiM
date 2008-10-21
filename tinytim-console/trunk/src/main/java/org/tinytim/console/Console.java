@@ -269,4 +269,35 @@ public class Console {
     private class ReadCommand extends AbstractCommand {
 
         public ReadCommand() {
-            super("read <source:
+            super("read <source:url> into <target:url> [using <syntax:identifier>]", 
+                    "Reads the content from a source into a local topic map");
+        }
+
+        /* (non-Javadoc)
+         * @see org.tinytim.console.ICommand#execute(java.lang.String[], java.io.PrintStream)
+         */
+        public void execute(String[] args) {
+            _println("Not implemented yet. Sorry.");
+        }
+
+    }
+
+    /**
+     * Serializes a topic map.
+     */
+    private class WriteCommand extends AbstractCommand {
+
+        public WriteCommand() {
+            super("write <source:url> to <target:url> [<syntax:identifier>]", 
+                    "Exports a topic map");
+        }
+
+        /* (non-Javadoc)
+         * @see org.tinytim.console.ICommand#execute(java.lang.String[])
+         */
+        public void execute(String[] args) {
+            _println("Not implemented yet. Sorry.");
+        }
+
+    }
+}
