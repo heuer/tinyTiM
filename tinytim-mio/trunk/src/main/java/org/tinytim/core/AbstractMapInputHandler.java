@@ -15,6 +15,7 @@
  */
 package org.tinytim.core;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.tinytim.internal.utils.CollectionFactory;
@@ -36,6 +37,10 @@ import com.semagia.mio.MIOException;
 
 /**
  * Abstract {@link com.semagia.mio.IMapHandler} implementation.
+ * <p>
+ * This class utilises the <tt>.core</tt> package since some <tt>...Impl</tt>
+ * classes have only package visibility.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -57,15 +62,13 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
         ISA = 12,
         TYPE = 13;
 
-    private final int _CONSTRUCTS = 6;
-    private final int _STATES = 10;
-    private final int _SCOPE = 6;
+    private final int _CONSTRUCT_SIZE = 6;
+    private final int _STATE_SIZE = 10;
+    private final int _SCOPE_SIZE = 6;
 
     private TopicMapImpl _tm;
-    private int[] _stateStack;
-    private int _stateSize = -1;
-    private IConstruct[] _constructStack;
-    private int _constructSize = -1;
+    private List<Integer> _stateStack;
+    private List<IConstruct> _constructStack;
     private List<Topic> _scope;
 
     protected AbstractMapInputHandler(TopicMap topicMap) {
@@ -88,9 +91,9 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      * @see com.semagia.mio.IMapHandler#startTopicMap()
      */
     public final void startTopicMap() throws MIOException {
-        _constructStack = new IConstruct[_CONSTRUCTS];
-        _stateStack = new int[_STATES];
-        _scope = CollectionFactory.createList(_SCOPE);
+        _constructStack = CollectionFactory.createList(_CONSTRUCT_SIZE);
+        _stateStack = CollectionFactory.createList(_STATE_SIZE);
+        _scope = CollectionFactory.createList(_SCOPE_SIZE);
         _enterState(INITIAL, _tm);
     }
 
@@ -382,13 +385,7 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      * @param state The state to push ontop of the state stack.
      */
     private void _enterState(int state) {
-        if (_stateSize + 1 > _stateStack.length) {
-            int[] states = new int[Math.min(_stateSize*2, Integer.MAX_VALUE)];
-            System.arraycopy(_stateStack, 0, states, 0, _stateSize);
-            _stateStack = states;
-        }
-        _stateSize++;
-        _stateStack[_stateSize] = state;
+        _stateStack.add(state);
     }
 
     /**
@@ -400,13 +397,7 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      */
     private void _enterState(int state, IConstruct tmo) {
         _enterState(state);
-        if (_constructSize + 1 > _constructStack.length) {
-            IConstruct[] constructs = new IConstruct[Math.min(_constructSize*2, Integer.MAX_VALUE)];
-            System.arraycopy(_constructStack, 0, constructs, 0, _constructSize);
-            _constructStack = constructs;
-        }
-        _constructSize++;
-        _constructStack[_constructSize] = tmo;
+        _constructStack.add(tmo);
     }
 
     /**
@@ -416,11 +407,10 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      * @throws MIOException If the state is not equals to the current state.
      */
     private void _leaveState(int state) throws MIOException {
-        final int current = _stateStack[_stateSize];
+        final int current = _stateStack.remove(_stateStack.size()-1);
         if (state != current) {
             _reportError("Unexpected state: " + current + ", expected: " + state);
         }
-        _stateSize--;
     }
 
     /**
@@ -432,10 +422,7 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      */
     private IConstruct _leaveStatePopConstruct(int state) throws MIOException {
         _leaveState(state);
-        final IConstruct construct = _peekConstruct();
-        _constructStack[_constructSize] = null;
-        _constructSize--;
-        return construct;
+        return _constructStack.remove(_constructStack.size()-1);
     }
 
     /**
@@ -444,7 +431,7 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      * @return The Topic Maps construct.
      */
     private IConstruct _peekConstruct() {
-        return _constructStack[_constructSize];
+        return _constructStack.get(_constructStack.size()-1);
     }
 
     /**
@@ -462,7 +449,7 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      * @return The current state.
      */
     private int _state() {
-        return _stateStack[_stateSize];
+        return _stateStack.get(_stateStack.size()-1);
     }
 
     /**
@@ -491,9 +478,9 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      * @param target The target topic.
      */
     private void _merge(Topic source, TopicImpl target) {
-        for (int i=0; i<_constructSize; i++) {
-            if (_constructStack[i] == source) {
-                _constructStack[i] = target;
+        for (int i=0; i<_constructStack.size(); i++) {
+            if (_constructStack.get(i) == source) {
+                _constructStack.set(i, target);
             }
         }
         target.mergeIn(source);
