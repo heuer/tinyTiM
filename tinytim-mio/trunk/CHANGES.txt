@@ -2,10 +2,16 @@
 Changes Log
 ===========
 
-2.0.0 a1 (xx.10.2008)
+2.0.0 a3 (xx.11.2008)
 -------------------------
 * Adapted MIO to tinyTiM 2.0.0
 * Changed license to Apache License 2.0
+* Introduced TopicMapReader/TopicMapWriter interfaces
+* Added dedicated, syntax-specific TopicMapReader implementations
+* Moved CXTMWriter into .mio package, implements TopicMapWriter
+* XTM 1.0/2.0 serializers
+* Deprecated some TopicMapImporter methods which take a xml.InputSource 
+  as argument
 
 
 1.5.0 beta (13.08.2008)
