@@ -20,8 +20,9 @@ import org.tmapi.core.Construct;
 /**
  * Indicates that a Topic Maps construct is able to be detached from the 
  * current parent and attached to another parent.
- * 
+ * <p>
  * This interface is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

@@ -15,6 +15,7 @@
  */
 package org.tinytim.index;
 
+import org.tinytim.core.IEventPublisherAware;
 import org.tmapi.index.LiteralIndex;
 import org.tmapi.index.ScopedIndex;
 import org.tmapi.index.TypeInstanceIndex;
@@ -25,7 +26,7 @@ import org.tmapi.index.TypeInstanceIndex;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public interface IIndexManager {
+public interface IIndexManager extends IEventPublisherAware {
 
     /**
      * Returns the {@link TypeInstanceIndex}.
@@ -42,10 +43,15 @@ public interface IIndexManager {
     public ScopedIndex getScopedIndex();
 
     /**
-     * 
+     * Returns the {@link LiteralIndex}.
      *
-     * @return
+     * @return A {@link LiteralIndex} instance.
      */
     public LiteralIndex getLiteralIndex();
+
+    /**
+     * Closes this index manager.
+     */
+    public void close();
 
 }

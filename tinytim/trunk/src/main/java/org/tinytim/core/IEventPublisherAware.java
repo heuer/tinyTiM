@@ -16,30 +16,33 @@
 package org.tinytim.core;
 
 /**
- * Publisher for Topic Maps events.
+ * Something that subscribes and unsubscribes itself to an 
+ * {org.tinytim.core.IEventPublisher}.
  * <p>
- * This interface is not meant to be used outside of the tinyTiM package.
+ * Implementations MUST have a default (public) constructor.
  * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public interface IEventPublisher {
+public interface IEventPublisherAware {
 
     /**
-     * Subscribes the handler for the specified event.
+     * Subscribes this instance to the specified <tt>publisher</tt>.
      *
-     * @param event The event of interesst.
-     * @param handler The event handler.
+     * @param publisher An event publisher.
      */
-    public void subscribe(Event event, IEventHandler handler);
+    public void subscribe(IEventPublisher publisher);
 
     /**
-     * Removes the handler from the publisher.
+     * Unsubscribes this instance from the specified <tt>publisher</tt>.
+     * <p>
+     * This method is only invoked if this instance has been subscribed to 
+     * the <tt>publisher</tt>.
+     * </p>
      *
-     * @param event The event.
-     * @param handler The event handler.
+     * @param publisher The publisher to unsubscribe from.
      */
-    public void unsubscribe(Event event, IEventHandler handler);
+    public void unsubscribe(IEventPublisher publisher);
 
 }

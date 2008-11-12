@@ -29,7 +29,7 @@ public final class XSD extends Vocabulary {
         // noop.
     }
     
-    private static final String _BASE = "http://www.w3.org/2001/XMLSchema#";
+    private static final String _BASE = Namespace.XSD;
     
     public final static Locator STRING = _createLocator(_BASE + "string");
 

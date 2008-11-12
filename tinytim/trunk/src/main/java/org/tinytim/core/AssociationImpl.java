@@ -35,12 +35,12 @@ final class AssociationImpl extends ScopedImpl implements Association {
 
     private Set<Role> _roles;
 
-    AssociationImpl(TopicMapImpl tm) {
+    AssociationImpl(ITopicMap tm) {
         super(tm);
         _roles = CollectionFactory.createIdentitySet(IConstant.ASSOC_ROLE_SIZE);
     }
 
-    AssociationImpl(TopicMapImpl topicMap, Topic type, IScope scope) {
+    AssociationImpl(ITopicMap topicMap, Topic type, IScope scope) {
         super(topicMap, type, scope);
         _roles = CollectionFactory.createIdentitySet(IConstant.ASSOC_ROLE_SIZE);
     }

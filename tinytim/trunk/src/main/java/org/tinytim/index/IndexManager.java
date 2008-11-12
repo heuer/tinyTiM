@@ -29,14 +29,32 @@ import org.tmapi.index.TypeInstanceIndex;
  */
 public final class IndexManager implements IIndexManager {
 
-    private TypeInstanceIndexImpl _typeInstanceIndex;
-    private ScopedIndexImpl _scopedIndex;
-    private LiteralIndexImpl _literalIndex;
+    private final TypeInstanceIndexImpl _typeInstanceIndex;
+    private final ScopedIndexImpl _scopedIndex;
+    private final LiteralIndexImpl _literalIndex;
 
-    public IndexManager(IEventPublisher publisher) {
-        _typeInstanceIndex = new TypeInstanceIndexImpl(publisher);
-        _scopedIndex = new ScopedIndexImpl(publisher);
-        _literalIndex = new LiteralIndexImpl(publisher);
+    public IndexManager() {
+        _typeInstanceIndex = new TypeInstanceIndexImpl();
+        _scopedIndex = new ScopedIndexImpl();
+        _literalIndex = new LiteralIndexImpl();
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IEventPublisherAware#subscribe(org.tinytim.core.IEventPublisher)
+     */
+    public void subscribe(final IEventPublisher publisher) {
+        _typeInstanceIndex.subscribe(publisher);
+        _scopedIndex.subscribe(publisher);
+        _literalIndex.subscribe(publisher);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IEventPublisherAware#unsubscribe(org.tinytim.core.IEventPublisher)
+     */
+    public void unsubscribe(IEventPublisher publisher) {
+        _typeInstanceIndex.unsubscribe(publisher);
+        _scopedIndex.unsubscribe(publisher);
+        _literalIndex.unsubscribe(publisher);
     }
 
     /* (non-Javadoc)
@@ -64,8 +82,5 @@ public final class IndexManager implements IIndexManager {
         _typeInstanceIndex.clear();
         _scopedIndex.clear();
         _literalIndex.clear();
-        _typeInstanceIndex = null;
-        _scopedIndex = null;
-        _literalIndex = null;
     }
 }

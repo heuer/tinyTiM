@@ -31,7 +31,7 @@ public final class TMDM extends Vocabulary {
         // noop.
     }
 
-    private static final String _BASE = "http://psi.topicmaps.org/iso13250/model/";
+    private static final String _BASE = Namespace.TMDM_MODEL;
 
     /**
      * Core concept of type-instance relationships. 

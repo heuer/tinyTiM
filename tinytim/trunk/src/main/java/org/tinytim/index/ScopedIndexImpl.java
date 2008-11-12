@@ -37,7 +37,7 @@ import org.tmapi.core.Variant;
 import org.tmapi.index.ScopedIndex;
 
 /**
- * {@link ScopedIndex} implementation.
+ * {@link org.tmapi.index.ScopedIndex} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -49,8 +49,14 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
     private Map<Topic, Set<Name>> _theme2Names;
     private Map<Topic, Set<Variant>> _theme2Variants;
 
-    public ScopedIndexImpl(IEventPublisher publisher) {
+    public ScopedIndexImpl() {
         super();
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IEventPublisherAware#subscribe(org.tinytim.core.IEventPublisher)
+     */
+    public void subscribe(IEventPublisher publisher) {
         _theme2Assocs = CollectionFactory.createIdentityMap();
         _theme2Occs = CollectionFactory.createIdentityMap();
         _theme2Names = CollectionFactory.createIdentityMap();
@@ -58,13 +64,13 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
         publisher.subscribe(Event.SET_SCOPE, new SetScopeHandler());
         IEventHandler handler = new AddScopedHandler();
         publisher.subscribe(Event.ADD_ASSOCIATION, handler);
-        publisher.subscribe(Event.ADD_OCCURRENCE, handler);
-        publisher.subscribe(Event.ADD_NAME, handler);
+        publisher.subscribe(Event.ATTACHED_OCCURRENCE, handler);
+        publisher.subscribe(Event.ATTACHED_NAME, handler);
         publisher.subscribe(Event.ADD_VARIANT, handler);
         handler = new RemoveScopedHandler();
         publisher.subscribe(Event.REMOVE_ASSOCIATION, handler);
-        publisher.subscribe(Event.REMOVE_OCCURRENCE, handler);
-        publisher.subscribe(Event.REMOVE_NAME, handler);
+        publisher.subscribe(Event.DETACHED_OCCURRENCE, handler);
+        publisher.subscribe(Event.DETACHED_NAME, handler);
         publisher.subscribe(Event.REMOVE_VARIANT, handler);
     }
 

@@ -41,11 +41,11 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
     private Set<Variant> _variants;
 
 
-    NameImpl(TopicMapImpl tm) {
+    NameImpl(ITopicMap tm) {
         super(tm);
     }
 
-    NameImpl(TopicMapImpl topicMap, Topic type, ILiteral literal, IScope scope) {
+    NameImpl(ITopicMap topicMap, Topic type, ILiteral literal, IScope scope) {
         super(topicMap, type, scope);
         _literal = literal;
     }
@@ -233,9 +233,9 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
      * @see org.tinytim.core.IMovable#moveTo(org.tmapi.core.Construct)
      */
     public void moveTo(Topic newParent) {
-        _fireEvent(Event.MOVE_NAME, _parent, newParent);
-        ((TopicImpl) _parent).detachName(this);
-        ((TopicImpl) newParent).attachName(this);
+        ((TopicImpl) _parent).detachName(this, true);
+        ((TopicImpl) newParent).attachName(this, true);
+        _fireEvent(Event.MOVED_NAME, _parent, newParent);
     }
 
     /* (non-Javadoc)

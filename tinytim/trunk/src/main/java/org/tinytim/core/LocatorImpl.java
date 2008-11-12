@@ -1,17 +1,22 @@
 /*
- * Copyright 2008 Lars Heuer (heuer[at]semagia.com)
+ * This is tinyTiM, a tiny Topic Maps engine.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Copyright (C) 2008 Lars Heuer (heuer[at]semagia.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the Free
+ * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
  */
 package org.tinytim.core;
 
@@ -31,12 +36,12 @@ import org.tmapi.core.TMAPIRuntimeException;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-final class IRI implements ILocator {
+final class LocatorImpl implements ILocator {
 
     private final URI _uri;
     private final String _reference;
 
-    IRI(String reference) {
+    LocatorImpl(String reference) {
         try {
             _reference = URLDecoder.decode(reference, "utf-8");
         }
@@ -46,7 +51,7 @@ final class IRI implements ILocator {
         _uri = URI.create(_reference.replace(" ", "%20"));
     }
 
-    private IRI(URI uri) {
+    private LocatorImpl(URI uri) {
         try {
             _reference = URLDecoder.decode(uri.toString(), "utf-8");
         }
@@ -101,7 +106,7 @@ final class IRI implements ILocator {
      * @see org.tmapi.core.Locator#resolve(java.lang.String)
      */
     public Locator resolve(String reference) {
-        return new IRI(_uri.resolve(reference));
+        return new LocatorImpl(_uri.resolve(reference));
     }
 
     /* (non-Javadoc)
@@ -116,7 +121,7 @@ final class IRI implements ILocator {
      */
     @Override
     public boolean equals(Object obj) {
-        return this == obj || (obj instanceof IRI && _reference.equals(((IRI) obj)._reference));
+        return this == obj || (obj instanceof LocatorImpl && _reference.equals(((LocatorImpl) obj)._reference));
     }
 
     /* (non-Javadoc)

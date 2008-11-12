@@ -13,33 +13,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim;
 
 /**
- * Publisher for Topic Maps events.
- * <p>
- * This interface is not meant to be used outside of the tinyTiM package.
- * </p>
+ * Provides the version information.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public interface IEventPublisher {
+public class Version {
+
+    private static final String _MAJOR = "@MAJOR@";
+    private static final String _MINOR = "@MINOR@";
+    private static final String _MICRO = "@MICRO@";
+    private static final String _STATE ="@STATE@";
+    private static final String _DATE = "@DATE@";
 
     /**
-     * Subscribes the handler for the specified event.
-     *
-     * @param event The event of interesst.
-     * @param handler The event handler.
+     * The release information.
      */
-    public void subscribe(Event event, IEventHandler handler);
-
-    /**
-     * Removes the handler from the publisher.
-     *
-     * @param event The event.
-     * @param handler The event handler.
-     */
-    public void unsubscribe(Event event, IEventHandler handler);
+    public static final String RELEASE = _MAJOR + "." + _MINOR + "." + _MICRO + _STATE + _DATE;
 
 }

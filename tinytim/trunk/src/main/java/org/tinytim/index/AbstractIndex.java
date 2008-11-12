@@ -15,15 +15,25 @@
  */
 package org.tinytim.index;
 
+import org.tinytim.core.IEventPublisher;
+import org.tinytim.core.IEventPublisherAware;
 import org.tmapi.index.Index;
 
 /**
- * 
+ * Abstract base class for {@link org.tmapi.index.Index} implementation which 
+ * are autoupdated.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-abstract class AbstractIndex implements Index {
+abstract class AbstractIndex implements Index, IEventPublisherAware {
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IEventPublisherAware#unsubscribe(org.tinytim.core.IEventPublisher)
+     */
+    public void unsubscribe(IEventPublisher publisher) {
+        // noop.
+    }
 
     /* (non-Javadoc)
      * @see org.tmapi.index.Index#close()

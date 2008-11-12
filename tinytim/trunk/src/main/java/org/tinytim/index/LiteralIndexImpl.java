@@ -35,7 +35,7 @@ import org.tmapi.core.Variant;
 import org.tmapi.index.LiteralIndex;
 
 /**
- * 
+ * {@link org.tmapi.index.LiteralIndex} implementation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -46,15 +46,21 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
     private Map<ILiteral, List<Occurrence>> _lit2Occs;
     private Map<ILiteral, List<Variant>> _lit2Variants;
 
-    public LiteralIndexImpl(IEventPublisher publisher) {
+    public LiteralIndexImpl() {
         super();
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IEventPublisherAware#subscribe(org.tinytim.core.IEventPublisher)
+     */
+    public void subscribe(IEventPublisher publisher) {
         _lit2Names = CollectionFactory.createIdentityMap();
         _lit2Occs = CollectionFactory.createIdentityMap();
         _lit2Variants = CollectionFactory.createIdentityMap();
         publisher.subscribe(Event.SET_LITERAL, new LiteralHandler());
         IEventHandler handler = new AddLiteralAwareHandler();
-        publisher.subscribe(Event.ADD_OCCURRENCE, handler);
-        publisher.subscribe(Event.ADD_NAME, handler);
+        publisher.subscribe(Event.ATTACHED_OCCURRENCE, handler);
+        publisher.subscribe(Event.ATTACHED_NAME, handler);
         publisher.subscribe(Event.ADD_VARIANT, handler);
         handler = new RemoveLiteralAwareHandler();
         publisher.subscribe(Event.REMOVE_OCCURRENCE, handler);

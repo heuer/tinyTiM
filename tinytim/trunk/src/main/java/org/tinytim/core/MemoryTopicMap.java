@@ -46,20 +46,20 @@ import org.tmapi.index.Index;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class TopicMapImpl extends ConstructImpl implements TopicMap, 
+final class MemoryTopicMap extends ConstructImpl implements ITopicMap, 
         IEventHandler, IEventPublisher {
 
     private IdentityManager _identityManager;
-    private IndexManager _indexManager;
+    private IIndexManager _indexManager;
     private Locator _locator;
     private Set<Topic> _topics;
     private Set<Association> _assocs;
-    private TopicMapSystemImpl _sys;
+    private AbstractTopicMapSystem _sys;
     private Topic _reifier;
     private Map<Event, List<IEventHandler>> _evtHandlers;
     private EventMultiplier _eventMultiplier;
 
-    TopicMapImpl(TopicMapSystemImpl sys, Locator locator) {
+    MemoryTopicMap(AbstractTopicMapSystem sys, Locator locator) {
         super(null);
         super._tm = this;
         _sys = sys;
@@ -68,7 +68,8 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
         _assocs = CollectionFactory.createIdentitySet(IConstant.TM_ASSOCIATION_SIZE);
         _evtHandlers = CollectionFactory.createIdentityMap();
         _identityManager = new IdentityManager(this);
-        _indexManager = new IndexManager(this);
+        _indexManager = new IndexManager();
+        _indexManager.subscribe(this);
         _eventMultiplier = new EventMultiplier(this);
     }
 
@@ -77,7 +78,7 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.Construct#getTopicMap()
+     * @see org.tinytim.core.ConstructImpl#getTopicMap()
      */
     @Override
     public TopicMap getTopicMap() {
@@ -99,17 +100,25 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.core.TopicMap#createTopic()
+     * @see org.tinytim.core.ITopicMap#createTopicWithoutIdentity()
      */
-    public Topic createTopic() {
+    public TopicImpl createTopicWithoutIdentity() {
         TopicImpl topic = new TopicImpl(this);
         addTopic(topic);
-        topic.addItemIdentifier(Literal.createIRI("urn:x-tinytim:" + IdGenerator.nextId()));
         return topic;
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#createTopic()
+     */
+    public Topic createTopic() {
+        Topic topic = createTopicWithoutIdentity();
+        topic.addItemIdentifier(Literal.createIRI("urn:x-tinytim:" + IdGenerator.nextId()));
+        return topic;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tmapi.core.TopicMap#createTopicByItemIdentifier(org.tmapi.core.Locator)
      */
     public Topic createTopicByItemIdentifier(Locator iid) {
         if (iid == null) {
@@ -129,13 +138,12 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
                 return topic;
             }
         }
-        TopicImpl topic = new TopicImpl(this);
-        addTopic(topic);
+        TopicImpl topic = createTopicWithoutIdentity();
         topic.addItemIdentifier(iid);
         return topic;
     }
 
-    Topic getDefaultTopicNameType() {
+    public Topic getDefaultTopicNameType() {
         return createTopicBySubjectIdentifier(TMDM.TOPIC_NAME);
     }
 
@@ -158,8 +166,7 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
                 return topic;
             }
         }
-        topic = new TopicImpl(this);
-        addTopic((TopicImpl)topic);
+        topic = createTopicWithoutIdentity();
         topic.addSubjectIdentifier(sid);
         return topic;
     }
@@ -172,8 +179,7 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
         if (topic != null) {
             return topic;
         }
-        topic = new TopicImpl(this);
-        addTopic((TopicImpl)topic);
+        topic = createTopicWithoutIdentity();
         topic.addSubjectLocator(slo);
         return topic;
     }
@@ -192,16 +198,8 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
         _topics.add(topic);
     }
 
-    /**
-     * Removes a topic from the topics property.
-     * 
-     * Caution: This method does not check if a topic has any dependencies;
-     * this method never reports that a topic is not removable. This
-     * method should only be used if a topic should be detached.
-     *
-     * @param topic The topic to remove.
-     */
-    void removeTopic(TopicImpl topic) {
+    public void removeTopic(Topic topic_) {
+        TopicImpl topic = (TopicImpl) topic_; 
         if (topic._parent != this) {
             return;
         }
@@ -231,7 +229,8 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
         return assoc;
     }
 
-    void addAssociation(AssociationImpl assoc) {
+    public void addAssociation(Association assoc_) {
+        AssociationImpl assoc = (AssociationImpl) assoc_;
         if (assoc._parent == this) {
             return;
         }
@@ -240,7 +239,8 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
         _assocs.add(assoc);
     }
 
-    void removeAssociation(AssociationImpl assoc) {
+    public void removeAssociation(Association assoc_) {
+        AssociationImpl assoc = (AssociationImpl) assoc_;
         if (assoc._parent != this) {
             return;
         }
@@ -414,9 +414,9 @@ public final class TopicMapImpl extends ConstructImpl implements TopicMap,
 
     private static class EventMultiplier implements IEventHandler {
 
-        private TopicMapImpl _handler;
+        private MemoryTopicMap _handler;
 
-        EventMultiplier(TopicMapImpl handler) {
+        EventMultiplier(MemoryTopicMap handler) {
             _handler = handler;
         }
 

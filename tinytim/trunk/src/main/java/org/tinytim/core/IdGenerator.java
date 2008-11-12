@@ -19,8 +19,9 @@ import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Class used to generate identifiers.
- * 
+ * <p>
  * This class is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

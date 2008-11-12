@@ -15,7 +15,7 @@
  */
 package org.tinytim.utils;
 
-import org.tinytim.core.TopicMapImpl;
+import org.tinytim.core.IIndexManagerAware;
 import org.tinytim.index.IIndexManager;
 import org.tmapi.core.Topic;
 import org.tmapi.index.ScopedIndex;
@@ -56,7 +56,7 @@ public final class TopicUtils {
      * <p>
      * A topic is removable iff it plays no role, is not used as type of
      * a typed Topic Maps construct, is not not used as theme of a scoped
-     * Topic Maps construct and iff it is not used reifier 
+     * Topic Maps construct and iff it is not used as reifier 
      * (if <tt>includeReified</tt> is <tt>true</tt>).
      * </p>
      *
@@ -73,7 +73,7 @@ public final class TopicUtils {
         if (!topic.getRolesPlayed().isEmpty()) {
             return false;
         }
-        IIndexManager idxMan = ((TopicMapImpl) topic.getTopicMap()).getIndexManager();
+        IIndexManager idxMan = ((IIndexManagerAware) topic.getTopicMap()).getIndexManager();
         TypeInstanceIndex typeInstanceIdx = idxMan.getTypeInstanceIndex();
         if (!typeInstanceIdx.isAutoUpdated()) {
             typeInstanceIdx.reindex();
@@ -81,7 +81,8 @@ public final class TopicUtils {
         boolean removable = typeInstanceIdx.getAssociations(topic).isEmpty()
                                 && typeInstanceIdx.getRoles(topic).isEmpty()
                                 && typeInstanceIdx.getOccurrences(topic).isEmpty()
-                                && typeInstanceIdx.getNames(topic).isEmpty();
+                                && typeInstanceIdx.getNames(topic).isEmpty()
+                                && typeInstanceIdx.getTopics(topic).isEmpty();
         typeInstanceIdx.close();
         if (removable) {
             ScopedIndex scopedIdx = idxMan.getScopedIndex();

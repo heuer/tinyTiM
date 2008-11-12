@@ -25,14 +25,16 @@ import org.tmapi.core.Locator;
  * topic maps which depend on the XTM 1.0 "model" but they should not be
  * used for new topic maps, use {@link TMDM}.
  * </p>
+ * <p>
  * Copied from the Semagia MIO project.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
 public final class XTM10 extends Vocabulary {
 
-    private static final String _BASE = "http://www.topicmaps.org/xtm/1.0/core.xtm#";
+    private static final String _BASE = Namespace.XTM_10_MODEL;
 
     /**
      * The core concept of class-instance; the class of association that 

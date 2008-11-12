@@ -15,31 +15,40 @@
  */
 package org.tinytim.core;
 
+import org.tmapi.core.Association;
+import org.tmapi.core.Topic;
+import org.tmapi.core.TopicMap;
+
 /**
- * Publisher for Topic Maps events.
- * <p>
- * This interface is not meant to be used outside of the tinyTiM package.
- * </p>
+ * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public interface IEventPublisher {
+interface ITopicMap extends TopicMap, IEventHandler, IConstruct, IIndexManagerAware {
 
     /**
-     * Subscribes the handler for the specified event.
+     * 
      *
-     * @param event The event of interesst.
-     * @param handler The event handler.
+     * @return
      */
-    public void subscribe(Event event, IEventHandler handler);
+    Topic getDefaultTopicNameType();
+
+    void removeTopic(Topic topic);
+
+    void removeAssociation(Association association);
+
+    void addAssociation(Association assoc);
 
     /**
-     * Removes the handler from the publisher.
+     * Returns a topic without any identity.
+     * <p>
+     * The topic won't have an item identifier, subject identifier, or subject
+     * locator, just an internal identifier.
+     * </p>
      *
-     * @param event The event.
-     * @param handler The event handler.
+     * @return A topic without any identity.
      */
-    public void unsubscribe(Event event, IEventHandler handler);
+    public Topic createTopicWithoutIdentity();
 
 }

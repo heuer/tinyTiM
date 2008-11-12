@@ -48,8 +48,14 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
     private Map<Topic, List<Occurrence>> _type2Occs;
     private Map<Topic, List<Name>> _type2Names;
 
-    public TypeInstanceIndexImpl(IEventPublisher publisher) {
+    public TypeInstanceIndexImpl() {
         super();
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IEventPublisherAware#subscribe(org.tinytim.core.IEventPublisher)
+     */
+    public void subscribe(IEventPublisher publisher) {
         _type2Topics = CollectionFactory.createIdentityMap();
         _type2Assocs = CollectionFactory.createIdentityMap();
         _type2Roles = CollectionFactory.createIdentityMap();

@@ -15,6 +15,7 @@
  */
 package org.tinytim.core;
 
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 
@@ -24,7 +25,9 @@ import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
+import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
+import org.tmapi.core.TopicMapSystemFactory;
 import org.tmapi.core.Variant;
 
 import junit.framework.TestCase;
@@ -33,8 +36,8 @@ import junit.framework.TestCase;
  * Base class of all tinyTiM-specific test cases.
  * 
  * This class sets up a default {@link org.tinytim.TopicMapSystemFactoryImpl},
- * a {@link org.tinytim.TopicMapSystemImpl}, and a 
- * {@link org.tinytim.TopicMapImpl}.
+ * a {@link org.tinytim.MemoryTopicMapSystem}, and a 
+ * {@link org.tinytim.MemoryTopicMap}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -43,9 +46,9 @@ public class TinyTimTestCase extends TestCase {
 
     protected static final String _IRI = "http://www.semagia.com/tinyTiM/testTopicMap/";
     protected Locator _base;
-    protected TopicMapImpl _tm;
+    protected TopicMap _tm;
     protected TopicMapSystem _sys;
-    protected TopicMapSystemFactoryImpl _sysFactory;
+    protected TopicMapSystemFactory _sysFactory;
 
     public TinyTimTestCase() {
         super();
@@ -63,7 +66,20 @@ public class TinyTimTestCase extends TestCase {
      *          default properties should be set.
      */
     protected Properties getAdditionalProperties() {
-        return null;
+        Properties props = new Properties();
+        for (Enumeration<?> e = System.getProperties().propertyNames(); e.hasMoreElements();) {
+            String name = null;
+            try {
+                name = (String) e.nextElement();
+            }
+            catch (ClassCastException ex) {
+                continue;
+            }
+            if (name.startsWith("org.tmapi") || name.startsWith("http://tinytim")) {
+                props.setProperty(name, System.getProperty(name));
+            }
+        }
+        return props;
     }
 
     /**
@@ -140,9 +156,9 @@ public class TinyTimTestCase extends TestCase {
                 _sysFactory.setProperty(name, properties.getProperty(name));
             }
         }
-        _sys =  (TopicMapSystemImpl) _sysFactory.newTopicMapSystem();
+        _sys =  _sysFactory.newTopicMapSystem();
         _base = _sys.createLocator(_IRI);
-        _tm = (TopicMapImpl) _sys.createTopicMap(_base);
+        _tm = (ITopicMap) _sys.createTopicMap(_base);
     }
 
     /* (non-Javadoc)
@@ -151,6 +167,10 @@ public class TinyTimTestCase extends TestCase {
     @Override
     protected void tearDown() throws Exception {
         super.tearDown();
+        for (Locator loc: new ArrayList<Locator>(_sys.getLocators())) {
+            _sys.getTopicMap(loc).remove();
+        }
+        _sys.close();
         _sysFactory = null;
         _sys = null;
         _tm = null;

@@ -49,7 +49,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
     private Set<Occurrence> _occs;
     private Set<Name> _names;
 
-    TopicImpl(TopicMapImpl topicMap) {
+    TopicImpl(ITopicMap topicMap) {
         super(topicMap);
         _sids = CollectionFactory.createIdentitySet(IConstant.TOPIC_SID_SIZE);
         _occs = CollectionFactory.createIdentitySet(IConstant.TOPIC_OCCURRENCE_SIZE);
@@ -206,7 +206,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
             return;
         }
         _fireEvent(Event.ADD_OCCURRENCE, null, o);
-        attachOccurrence(o);
+        attachOccurrence(o, false);
     }
 
     /**
@@ -220,17 +220,23 @@ final class TopicImpl extends ConstructImpl implements Topic {
             return;
         }
         _fireEvent(Event.REMOVE_OCCURRENCE, o, null);
-        detachOccurrence(o);
+        detachOccurrence(o, false);
     }
 
-    void attachOccurrence(OccurrenceImpl occ) {
+    void attachOccurrence(OccurrenceImpl occ, boolean silently) {
         occ._parent = this;
         _occs.add(occ);
+        if (!silently) {
+            _fireEvent(Event.ATTACHED_OCCURRENCE, null, occ);
+        }
     }
 
-    void detachOccurrence(OccurrenceImpl occ) {
+    void detachOccurrence(OccurrenceImpl occ, boolean silently) {
         _occs.remove(occ);
         occ._parent = null;
+        if (!silently) {
+            _fireEvent(Event.DETACHED_OCCURRENCE, occ, null);
+        }
     }
 
     /* (non-Javadoc)
@@ -318,7 +324,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
         }
         assert n._parent == null;
         _fireEvent(Event.ADD_NAME, null, n);
-        attachName(n);
+        attachName(n, false);
     }
 
     void removeName(Name name) {
@@ -327,17 +333,23 @@ final class TopicImpl extends ConstructImpl implements Topic {
             return;
         }
         _fireEvent(Event.REMOVE_NAME, n, null);
-        detachName(n);
+        detachName(n, false);
     }
 
-    void attachName(NameImpl name) {
+    void attachName(NameImpl name, boolean silently) {
         name._parent = this;
         _names.add(name);
+        if (!silently) {
+            _fireEvent(Event.ATTACHED_NAME, null, name);
+        }
     }
 
-    void detachName(NameImpl name) {
+    void detachName(NameImpl name, boolean silently) {
         _names.remove(name);
         name._parent = null;
+        if (!silently) {
+            _fireEvent(Event.DETACHED_NAME, name, null);
+        }
     }
 
     /* (non-Javadoc)

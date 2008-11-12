@@ -20,8 +20,9 @@ import org.tmapi.core.Scoped;
 /**
  * Enhancement of the {@link org.tmapi.core.Scoped} interface which is 
  * {@link IScope} aware.
- * 
+ * <p>
  * This interface is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -41,4 +42,5 @@ public interface IScoped extends Scoped, IConstruct {
      * @param scope The scope.
      */
     public void setScopeObject(IScope scope);
+
 }

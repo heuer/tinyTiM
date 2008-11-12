@@ -31,11 +31,11 @@ import org.tmapi.core.Variant;
 final class VariantImpl extends DatatypeAwareConstruct implements 
         Variant, IMovable<Name> {
 
-    VariantImpl(TopicMapImpl tm) {
+    VariantImpl(ITopicMap tm) {
         super(tm);
     }
 
-    VariantImpl(TopicMapImpl topicMap, ILiteral literal, IScope scope) {
+    VariantImpl(ITopicMap topicMap, ILiteral literal, IScope scope) {
         super(topicMap, null, literal, scope);
     }
 
@@ -50,9 +50,9 @@ final class VariantImpl extends DatatypeAwareConstruct implements
      * @see org.tinytim.IMovable#moveTo(java.lang.Object)
      */
     public void moveTo(Name newParent) {
-        _fireEvent(Event.MOVE_VARIANT, _parent, newParent);
         ((NameImpl) _parent).detachVariant(this);
         ((NameImpl) newParent).attachVariant(this);
+        _fireEvent(Event.MOVED_VARIANT, _parent, newParent);
     }
 
     /* (non-Javadoc)
