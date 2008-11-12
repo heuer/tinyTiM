@@ -4,14 +4,14 @@ tinyTiM - The tiny Topic Maps engine
 
 What is tinyTiM?
 ----------------
-tinyTiM is a tiny Topic Maps engine which keeps topic maps in-memory.
+tinyTiM is a tiny Topic Maps engine with a small jar footprint.
 This Topic Maps engine is meant to be used together with the TMAPI interfaces,
 see <http://www.tmapi.org/2.0/> for details.
 
 
 Installation
 ------------
-No real installation needed, simply put the ``tinytim-2.0.0a2.jar`` and
+No real installation needed, simply put the ``tinytim-2.0.0a3.jar`` and
 ``tmapi-2.0a1.jar`` into your classpath. That's all. :)
 Optionally, you can put the ``trove-<VERSION>.jar`` into your classpath which
 makes tinyTiM slightly more memory efficient and faster.
@@ -24,7 +24,7 @@ If you have questions or suggestions, use our mailinglist
 
 Latest Version
 --------------
-Visit tinyTiM's homepage <http://sourceforge.net/projects/tinytim> for the
+Visit tinyTiM's homepage <http://tinytim.sourceforge.net/> for the
 latest version.
 
 
