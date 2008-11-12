@@ -22,54 +22,95 @@ import java.io.InputStream;
 
 import org.tmapi.core.TMAPIRuntimeException;
 import org.tmapi.core.TopicMap;
-import org.xml.sax.InputSource;
 
 import com.semagia.mio.DeserializerRegistry;
 import com.semagia.mio.IDeserializer;
+import com.semagia.mio.IMapHandler;
 import com.semagia.mio.MIOException;
+import com.semagia.mio.Property;
+import com.semagia.mio.Source;
 import com.semagia.mio.Syntax;
 
 /**
- * Base class for {@link ITopicMapReader} implementations.
- * 
+ * Base class for {@link TopicMapReader} implementations.
+ * <p>
  * This class provides a layer to <tt>com.semagia.mio</tt> and handles
  * the discovery of an appropriate deserializer transparently.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-abstract class AbstractTopicMapReader implements ITopicMapReader  {
+abstract class AbstractTopicMapReader implements TopicMapReader  {
 
     protected IDeserializer _deserializer;
+    private final Source _source;
 
-    AbstractTopicMapReader(final TopicMap topicMap, final Syntax syntax) {
-        _deserializer = DeserializerRegistry.createDeserializer(syntax);
+    /**
+     * 
+     *
+     * @param topicMap
+     * @param syntax
+     * @param source
+     * @throws IOException
+     */
+    protected AbstractTopicMapReader(final TopicMap topicMap, final Syntax syntax, 
+            final File source) throws IOException {
+        this(topicMap, syntax, source, source.toURL().toString());
+    }
+
+    /**
+     * 
+     *
+     * @param topicMap
+     * @param syntax
+     * @param source
+     * @param docIRI
+     * @throws IOException
+     */
+    protected AbstractTopicMapReader(final TopicMap topicMap, final Syntax syntax, 
+            final File source, final String docIRI) throws IOException {
+        this(topicMap, syntax, new Source(new FileInputStream(source), docIRI));
+    }
+
+    /**
+     * 
+     *
+     * @param topicMap
+     * @param syntax
+     * @param source
+     * @param docIRI
+     */
+    protected AbstractTopicMapReader(TopicMap topicMap, Syntax syntax,
+            InputStream source, String docIRI) {
+        this(topicMap, syntax, new Source(source, docIRI));
+    }
+
+    protected AbstractTopicMapReader(final TopicMap topicMap, final Syntax syntax,
+            final Source source) {
+        this(new TinyTimMapInputHandler(topicMap), syntax, source);
+    }
+
+    protected AbstractTopicMapReader(final IMapHandler handler, final Syntax syntax,
+                final Source source) {
+        this(handler, DeserializerRegistry.createDeserializer(syntax), source);
+    }
+
+    protected AbstractTopicMapReader(final IMapHandler handler, final IDeserializer deserializer, final Source source) {
         if (_deserializer == null) {
-            throw new TMAPIRuntimeException("Appropriate deserializer not found for syntax " + syntax.getName());
+            throw new IllegalArgumentException("Deserializer not found");
         }
-        _deserializer.setMapHandler(new TinyTimMapInputHandler(topicMap));
+        _deserializer.setProperty(Property.VALIDATE, Boolean.FALSE);
+        _deserializer.setMapHandler(handler);
+        _source = source;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.mio.ITopicMapReader#read(java.io.File, java.lang.String)
+     * @see org.tinytim.mio.ITopicMapReader#read()
      */
-    public void read(File source, String baseIRI) throws IOException {
-        read(new FileInputStream(source), baseIRI);
-    }
-
-    /* (non-Javadoc)
-     * @see org.tinytim.mio.ITopicMapReader#read(java.io.InputStream, java.lang.String)
-     */
-    public void read(InputStream source, String baseIRI) throws IOException {
-        read(new InputSource(source), baseIRI);
-    }
-
-    /* (non-Javadoc)
-     * @see org.tinytim.mio.ITopicMapReader#read(org.xml.sax.InputSource, java.lang.String)
-     */
-    public void read(InputSource source, String baseIRI) throws IOException {
+    public void read() throws IOException {
         try {
-            _deserializer.parse(source, baseIRI);
+            _deserializer.parse(_source);
         }
         catch (MIOException ex) {
             if (ex.getException() instanceof IOException) {
@@ -83,5 +124,4 @@ abstract class AbstractTopicMapReader implements ITopicMapReader  {
             _deserializer = null;
         }
     }
-
 }

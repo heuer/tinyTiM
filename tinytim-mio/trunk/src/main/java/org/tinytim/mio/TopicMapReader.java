@@ -15,24 +15,25 @@
  */
 package org.tinytim.mio;
 
-import org.tinytim.core.AbstractMapInputHandler;
-import org.tmapi.core.TopicMap;
+import java.io.IOException;
 
 /**
- * {@link com.semagia.mio.IMapHandler} implementation.
+ * This interface represents a reader to deserialize a topic map from a source.
+ * <p>
+ * The reader is not meant to be reused and should be thrown away once the 
+ * {@link #read()} method was invoked.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class TinyTimMapInputHandler extends AbstractMapInputHandler {
+public interface TopicMapReader {
 
     /**
-     * Intitializes a new instance with the specified <tt>topicMap</tt>.
+     * Reads a topic map.
      *
-     * @param topicMap The {@link TopicMap} instance.
+     * @throws IOException If an error occurs.
      */
-    public TinyTimMapInputHandler(TopicMap topicMap) {
-        super(topicMap);
-    }
+    public void read() throws IOException;
 
 }

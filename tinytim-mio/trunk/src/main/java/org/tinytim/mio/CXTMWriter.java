@@ -29,7 +29,6 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.tinytim.core.TopicMapImpl;
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tinytim.utils.DuplicateRemovalUtils;
 import org.tinytim.voc.TMDM;
@@ -74,35 +73,34 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class CXTMWriter implements ITopicMapWriter {
+public final class CXTMWriter implements TopicMapWriter {
 
     private static final Logger LOG = Logger.getLogger(CXTMWriter.class.getName());
 
     private static final Role[] _EMPTY_ROLES = new Role[0];
 
-    private AttributesImpl _attrs;
+    private final AttributesImpl _attrs;
 
     private Topic _type;
     private Topic _instance;
     private Topic _typeInstance;
 
-    private XMLC14NWriter _out;
+    private final XMLC14NWriter _out;
     private final String _normBase;
-    private Map<Construct, Integer> _construct2Id;
-    private Map<Topic, List<Role>> _topic2Roles;
-    private Map<Locator, String> _locator2Norm;
+    private final Map<Construct, Integer> _construct2Id;
+    private final Map<Topic, List<Role>> _topic2Roles;
+    private final Map<Locator, String> _locator2Norm;
+    private final Map<Association, Role[]> _assoc2Roles;
 
-    private Comparator<Topic> _topicComparator;
-    private Comparator<Association> _assocComparator;
-    private Comparator<Role> _roleComparator;
-    private Comparator<Occurrence> _occComparator;
-    private Comparator<Name> _nameComparator;
-    private Comparator<Variant> _variantComparator;
-    private Comparator<Set<Locator>> _locSetComparator;
-    private Comparator<Locator> _locComparator;
-    private Comparator<Set<Topic>> _scopeComparator;
-
-    private Map<Association, Role[]> _assoc2Roles;
+    private final Comparator<Topic> _topicComparator;
+    private final Comparator<Association> _assocComparator;
+    private final Comparator<Role> _roleComparator;
+    private final Comparator<Occurrence> _occComparator;
+    private final Comparator<Name> _nameComparator;
+    private final Comparator<Variant> _variantComparator;
+    private final Comparator<Set<Locator>> _locSetComparator;
+    private final Comparator<Locator> _locComparator;
+    private final Comparator<Set<Topic>> _scopeComparator;
 
     /**
      * Creates a canonicalizer.
@@ -118,6 +116,10 @@ public final class CXTMWriter implements ITopicMapWriter {
         _out = new XMLC14NWriter(out);
         _attrs = new AttributesImpl();
         _normBase = _normalizeBaseLocator(baseLocator);
+        _construct2Id = CollectionFactory.createIdentityMap();
+        _locator2Norm = CollectionFactory.createIdentityMap();
+        _assoc2Roles = CollectionFactory.createIdentityMap();
+        _topic2Roles = CollectionFactory.createIdentityMap();
         _topicComparator = new TopicComparator();
         _assocComparator = new AssociationComparator();
         _roleComparator = new RoleComparator();
@@ -141,11 +143,7 @@ public final class CXTMWriter implements ITopicMapWriter {
      */
     public void write(TopicMap topicMap) throws IOException {
         DuplicateRemovalUtils.removeDuplicates(topicMap);
-        _construct2Id = CollectionFactory.createIdentityMap();
-        _locator2Norm = CollectionFactory.createIdentityMap();
-        _assoc2Roles = CollectionFactory.createIdentityMap();
-        _topic2Roles = CollectionFactory.createIdentityMap();
-        TypeInstanceIndex typeInstanceIndex = ((TopicMapImpl) topicMap).getIndexManager().getTypeInstanceIndex();
+        TypeInstanceIndex typeInstanceIndex = topicMap.getIndex(TypeInstanceIndex.class);
         if (!typeInstanceIndex.isAutoUpdated()) {
             typeInstanceIndex.reindex();
         }
@@ -168,22 +166,22 @@ public final class CXTMWriter implements ITopicMapWriter {
         _out.endElement("topicMap");
         _out.newline();
         _out.endDocument();
-        _out = null;
-        _attrs = null;
-        _construct2Id = null;
-        _locator2Norm = null;
-        _assoc2Roles = null;
-        _topic2Roles = null;
+        _attrs.clear();
+        _construct2Id.clear();
+        _topic2Roles.clear();
+        _locator2Norm.clear();
+        _assoc2Roles.clear();
     }
 
     /**
      * Returns an unsorted array of topics which should be included into
      * the output.
-     * 
+     * <p>
      * This method may return more topics than {@link TopicMap#getTopics()}
      * since this method creates virtual topics to model type-instance
      * relationships properly.
-     *
+     * </p>
+     * 
      * @param topicMap The topic map from which the topic should be serialized.
      * @param idx A (upto date) type instance index.
      * @return All topics which must be included into the output.
@@ -555,9 +553,10 @@ public final class CXTMWriter implements ITopicMapWriter {
     /**
      * Serializes the <tt>locators</tt> using the <tt>localName</tt> as
      * element name.
-     * 
+     * <p>
      * If the set of <tt>locators</tt> is empty, this method does nothing.
-     *
+     * </p>
+     * 
      * @param localName The element's name.
      * @param locators The locators to serialize.
      * @throws IOException If an error occurs. 

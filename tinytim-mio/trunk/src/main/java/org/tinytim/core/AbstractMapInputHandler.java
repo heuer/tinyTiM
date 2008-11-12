@@ -46,7 +46,7 @@ import com.semagia.mio.MIOException;
  */
 public abstract class AbstractMapInputHandler implements IMapHandler {
 
-    private final int 
+    private static final int 
         INITIAL = 1,
         TOPIC = 2,
         ASSOCIATION = 3,
@@ -61,13 +61,15 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
         ISA = 12,
         TYPE = 13;
 
-    private final int _CONSTRUCT_SIZE = 6;
-    private final int _STATE_SIZE = 10;
-    private final int _SCOPE_SIZE = 6;
+    private static final int _CONSTRUCT_SIZE = 6;
+    private static final int _STATE_SIZE = 10;
+    private static final int _SCOPE_SIZE = 6;
 
-    private TopicMapImpl _tm;
-    private List<Integer> _stateStack;
-    private List<IConstruct> _constructStack;
+    private ITopicMap _tm;
+    private int[] _stateStack;
+    private int _stateSize;
+    private IConstruct[] _constructStack;
+    private int _constructSize;
     private List<Topic> _scope;
 
     protected AbstractMapInputHandler(TopicMap topicMap) {
@@ -83,15 +85,17 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
         if (topicMap == null) {
             throw new IllegalArgumentException("The topic map must not be null");
         }
-        _tm = (TopicMapImpl) topicMap;
+        _tm = (ITopicMap) topicMap;
     }
 
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startTopicMap()
      */
     public final void startTopicMap() throws MIOException {
-        _constructStack = CollectionFactory.createList(_CONSTRUCT_SIZE);
-        _stateStack = CollectionFactory.createList(_STATE_SIZE);
+        _constructStack = new IConstruct[_CONSTRUCT_SIZE];
+        _stateStack = new int[_STATE_SIZE];
+        _constructSize = 0;
+        _stateSize = 0;
         _scope = CollectionFactory.createList(_SCOPE_SIZE);
         _enterState(INITIAL, _tm);
     }
@@ -217,7 +221,7 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
         NameImpl name = (NameImpl) _peekConstruct();
         IScope scope = variant.getScopeObject();
         if (scope.isUnconstrained() || name.getScopeObject() == scope) {
-            throw new MIOException("The variant has no scope");
+            _reportError("The variant has no scope");
         }
         name.addVariant(variant);
     }
@@ -384,7 +388,12 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      * @param state The state to push ontop of the state stack.
      */
     private void _enterState(int state) {
-        _stateStack.add(state);
+        if (_stateSize >= _stateStack.length) {
+            int[] states = new int[_stateStack.length*2];
+            System.arraycopy(_stateStack, 0, states, 0, _stateStack.length);
+            _stateStack = states;
+        }
+        _stateStack[_stateSize++] = state;
     }
 
     /**
@@ -396,7 +405,12 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      */
     private void _enterState(int state, IConstruct tmo) {
         _enterState(state);
-        _constructStack.add(tmo);
+        if (_constructSize >= _constructStack.length) {
+            IConstruct[] constructs = new IConstruct[_constructStack.length*2];
+            System.arraycopy(_constructStack, 0, constructs, 0, _constructStack.length);
+            _constructStack = constructs;
+        }
+        _constructStack[_constructSize++] = tmo;
     }
 
     /**
@@ -406,10 +420,10 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      * @throws MIOException If the state is not equals to the current state.
      */
     private void _leaveState(int state) throws MIOException {
-        final int current = _stateStack.remove(_stateStack.size()-1);
-        if (state != current) {
-            _reportError("Unexpected state: " + current + ", expected: " + state);
+        if (state != _state()) {
+            _reportError("Unexpected state: " + _state() + ", expected: " + state);
         }
+        _stateSize--;
     }
 
     /**
@@ -421,7 +435,10 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      */
     private IConstruct _leaveStatePopConstruct(int state) throws MIOException {
         _leaveState(state);
-        return _constructStack.remove(_constructStack.size()-1);
+        final IConstruct construct = _peekConstruct();
+        _constructStack[_constructSize] = null;
+        _constructSize--;
+        return construct;
     }
 
     /**
@@ -430,7 +447,7 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      * @return The Topic Maps construct.
      */
     private IConstruct _peekConstruct() {
-        return _constructStack.get(_constructStack.size()-1);
+        return _constructStack[_constructSize-1];
     }
 
     /**
@@ -448,7 +465,7 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      * @return The current state.
      */
     private int _state() {
-        return _stateStack.get(_stateStack.size()-1);
+        return _stateStack[_stateSize-1];
     }
 
     /**
@@ -477,9 +494,9 @@ public abstract class AbstractMapInputHandler implements IMapHandler {
      * @param target The target topic.
      */
     private void _merge(Topic source, TopicImpl target) {
-        for (int i=0; i<_constructStack.size(); i++) {
-            if (_constructStack.get(i) == source) {
-                _constructStack.set(i, target);
+        for (int i=0; i <_constructSize; i++) {
+            if (_constructStack[i] == source) {
+                _constructStack[i] = target;
             }
         }
         target.mergeIn(source);

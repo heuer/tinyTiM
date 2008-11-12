@@ -25,9 +25,10 @@ import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * Simple SAX-alike XML writer that respects canonical XML to some extend.
- * 
- * This class is not meant to be a generic XML-C14N writer, but it should be
- * good enough to support CXTM.
+ * <p>
+ * This class is not meant to be a generic XML-C14N writer, but it is good 
+ * enough to support CXTM.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -38,7 +39,7 @@ final class XMLC14NWriter {
 
     private static final char _NL = '\n';
 
-    private OutputStreamWriter _out;
+    private final OutputStreamWriter _out;
 
     public XMLC14NWriter(OutputStream out) throws IOException {
         _out = new OutputStreamWriter(out, "UTF-8");
@@ -124,9 +125,10 @@ final class XMLC14NWriter {
 
     /**
      * Writes the specified characters to the output.
-     * 
+     * <p>
      * The data is written according to the rules of canonicalized XML.
-     *
+     * </p>
+     * 
      * @param data The data to write.
      * @throws IOException If an error occurs.
      */
