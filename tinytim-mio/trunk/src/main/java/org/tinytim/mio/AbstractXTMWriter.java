@@ -15,6 +15,10 @@
  */
 package org.tinytim.mio;
 
+import java.io.IOException;
+import java.io.OutputStream;
+
+import org.tmapi.core.TMAPIRuntimeException;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -22,7 +26,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 abstract class AbstractXTMWriter extends AbstractTopicMapWriter {
 
@@ -30,13 +34,15 @@ abstract class AbstractXTMWriter extends AbstractTopicMapWriter {
     
     protected AttributesImpl _attrs;
     protected XMLWriter _out;
-    /**
-     * 
-     *
-     * @param baseIRI
-     */
-    public AbstractXTMWriter(String baseIRI) {
+
+    public AbstractXTMWriter(final OutputStream out, final String baseIRI) {
         super(baseIRI);
+        try {
+            _out = new XMLWriter(out);
+        }
+        catch (IOException ex) {
+            throw new TMAPIRuntimeException(ex);
+        }
     }
 
 }

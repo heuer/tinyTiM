@@ -16,6 +16,7 @@
 package org.tinytim.mio;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Set;
 
 import org.tinytim.core.IConstruct;
@@ -46,7 +47,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * representation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class XTM20Writer extends AbstractXTMWriter {
 
@@ -55,8 +56,8 @@ public class XTM20Writer extends AbstractXTMWriter {
      *
      * @param baseIRI
      */
-    public XTM20Writer(String baseIRI) {
-        super(baseIRI);
+    public XTM20Writer(final OutputStream out, final String baseIRI) {
+        super(out, baseIRI);
     }
 
     /* (non-Javadoc)
