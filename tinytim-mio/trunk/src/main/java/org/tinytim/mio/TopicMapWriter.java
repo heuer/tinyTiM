@@ -15,26 +15,28 @@
  */
 package org.tinytim.mio;
 
+import java.io.IOException;
+
 import org.tmapi.core.TopicMap;
 
-import com.semagia.mio.Syntax;
-
 /**
- * {@link ITopicMapReader} implementation that is able to deserialize 
- * <a href="http://www.semagia.com/tr/btm/1.0/">Binary Topic Maps (BTM) 1.0</a>.
+ * This interface represents a writer to serialize a topic map.
+ * <p>
+ * The writer is not meant to be reused and should be thrown away once the 
+ * {{@link #write(TopicMap)} method was invoked.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class BTMReader extends AbstractTopicMapReader {
+public interface TopicMapWriter {
 
     /**
-     * Constructs a new instance.
+     * Serializes the specified <tt>topicMap</tt>.
      *
-     * @param topicMap The topic map to which the content is added to.
+     * @param topicMap The topic map to serialize.
+     * @throws IOException If an error ocurrs.
      */
-    public BTMReader(final TopicMap topicMap) {
-        super(topicMap, Syntax.BTM);
-    }
+    public void write(TopicMap topicMap) throws IOException;
 
 }

@@ -15,17 +15,28 @@
  */
 package org.tinytim.mio;
 
-import java.io.IOException;
-
-import org.tmapi.core.TopicMap;
+import org.xml.sax.Attributes;
+import org.xml.sax.helpers.AttributesImpl;
 
 /**
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public interface ITopicMapWriter {
+abstract class AbstractXTMWriter extends AbstractTopicMapWriter {
 
-    public void write(TopicMap topicMap) throws IOException;
+    protected final Attributes _EMPTY_ATTRS = XMLWriter.EMPTY_ATTRS;
+    
+    protected AttributesImpl _attrs;
+    protected XMLWriter _out;
+    /**
+     * 
+     *
+     * @param baseIRI
+     */
+    public AbstractXTMWriter(String baseIRI) {
+        super(baseIRI);
+    }
+
 }

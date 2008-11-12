@@ -15,12 +15,17 @@
  */
 package org.tinytim.mio;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.tmapi.core.TopicMap;
 
+import com.semagia.mio.Source;
 import com.semagia.mio.Syntax;
 
 /**
- * {@link ITopicMapReader} implementation that is able to deserialize 
+ * {@link TopicMapReader} implementation that is able to deserialize 
  * <a href="http://www.semagia.com/tr/snello/1.0/">Snello Topic Maps (STM) 1.0</a>.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
@@ -32,9 +37,48 @@ public final class SnelloReader extends AbstractTopicMapReader {
      * Constructs a new instance.
      *
      * @param topicMap The topic map to which the content is added to.
+     * @param source The source to read the topic map from.
+     * @param docIRI The document IRI which is used to resolve IRIs against.
+     * @throws IOException If an error occurs. 
      */
-    public SnelloReader(final TopicMap topicMap) {
-        super(topicMap, Syntax.SNELLO);
+    public SnelloReader(final TopicMap topicMap, final File source, final String docIRI) throws IOException {
+        super(topicMap, Syntax.SNELLO, source, docIRI);
+    }
+
+    /**
+     * Constructs a new instance.
+     * <p>
+     * The <tt>source</tt> is converted into an absolute IRI which will be
+     * utilised as document IRI
+     * </p>
+     *
+     * @param topicMap The topic map to which the content is added to.
+     * @param source The source to read the topic map from.
+     * @throws IOException If an error occurs. 
+     */
+    public SnelloReader(final TopicMap topicMap, final File source) throws IOException {
+        super(topicMap, Syntax.SNELLO, source);
+    }
+
+    /**
+     * Constructs a new instance.
+     *
+     * @param topicMap The topic map to which the content is added to.
+     * @param source The source to read the topic map from.
+     * @param docIRI The document IRI which is used to resolve IRIs against.
+     */
+    public SnelloReader(final TopicMap topicMap, final InputStream source, final String docIRI) {
+        super(topicMap, Syntax.SNELLO, source, docIRI);
+    }
+
+    /**
+     * Constructs a new instance.
+     *
+     * @param topicMap The topic map to which the content is added to.
+     * @param source The source to read the serialized topic map from.
+     */
+    public SnelloReader(final TopicMap topicMap, final Source source) {
+        super(topicMap, Syntax.SNELLO, source);
     }
 
 }
