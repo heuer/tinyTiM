@@ -24,15 +24,16 @@ import org.tmapi.core.Locator;
 
 /**
  * 
- * 
+ * <p>
  * This class is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
 public final class Literal implements ILiteral {
 
-    private static final WeakObjectRegistry<IRI> _IRIS = new WeakObjectRegistry<IRI>(IConstant.LITERAL_IRI_SIZE);
+    private static final WeakObjectRegistry<LocatorImpl> _IRIS = new WeakObjectRegistry<LocatorImpl>(IConstant.LITERAL_IRI_SIZE);
     private static final WeakObjectRegistry<ILiteral> _STRINGS = new WeakObjectRegistry<ILiteral>(IConstant.LITERAL_STRING_SIZE);
     private static final WeakObjectRegistry<ILiteral> _OTHERS = new WeakObjectRegistry<ILiteral>(IConstant.LITERAL_OTHER_SIZE);
 
@@ -69,7 +70,7 @@ public final class Literal implements ILiteral {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
-        return _IRIS.get(new IRI(value));
+        return _IRIS.get(new LocatorImpl(value));
     }
 
     public static synchronized ILiteral get(String value, Locator datatype) {
@@ -155,7 +156,7 @@ public final class Literal implements ILiteral {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
-        return _registerIfAbsent(_IRIS, new IRI(value));
+        return _registerIfAbsent(_IRIS, new LocatorImpl(value));
     }
 
     public static synchronized ILiteral createDecimal(String value) {

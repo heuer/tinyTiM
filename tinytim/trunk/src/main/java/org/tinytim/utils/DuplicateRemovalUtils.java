@@ -17,9 +17,9 @@ package org.tinytim.utils;
 
 import java.util.Collection;
 
+import org.tinytim.core.IIndexManagerAware;
 import org.tinytim.core.MergeUtils;
 import org.tinytim.core.SignatureGenerator;
-import org.tinytim.core.TopicMapImpl;
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tinytim.internal.utils.IIntObjectMap;
 import org.tmapi.core.Association;
@@ -49,12 +49,11 @@ public final class DuplicateRemovalUtils {
      * @param topicMap The topic map to remove the duplicates from.
      */
     public static void removeDuplicates(TopicMap topicMap) {
-        TopicMapImpl tm = (TopicMapImpl) topicMap;
-        for (Topic topic: tm.getTopics()) {
+        for (Topic topic: topicMap.getTopics()) {
             removeDuplicates(topic);
         }
         IIntObjectMap<Association> sig2Assoc = CollectionFactory.createIntObjectMap();
-        TypeInstanceIndex typeInstanceIdx = tm.getIndexManager().getTypeInstanceIndex();
+        TypeInstanceIndex typeInstanceIdx = ((IIndexManagerAware) topicMap).getIndexManager().getTypeInstanceIndex();
         if (!typeInstanceIdx.isAutoUpdated()) {
             typeInstanceIdx.reindex();
         }
@@ -63,6 +62,12 @@ public final class DuplicateRemovalUtils {
         }
     }
 
+    /**
+     * 
+     *
+     * @param sig2Assoc
+     * @param assocs
+     */
     private static void _removeDuplicateAssociations(IIntObjectMap<Association> sig2Assoc, Collection<Association> assocs) {
         sig2Assoc.clear();
         Association existing = null;

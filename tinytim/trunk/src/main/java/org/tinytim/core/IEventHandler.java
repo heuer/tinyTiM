@@ -17,8 +17,9 @@ package org.tinytim.core;
 
 /**
  * Event handler that is able to handle Topic Maps events.
- * 
+ * <p>
  * This interface is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

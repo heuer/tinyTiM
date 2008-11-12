@@ -35,11 +35,11 @@ abstract class TypedImpl extends ConstructImpl implements Reifiable {
     private Topic _type;
     private Topic _reifier;
 
-    TypedImpl(TopicMapImpl tm) {
+    TypedImpl(ITopicMap tm) {
         super(tm);
     }
 
-    TypedImpl(TopicMapImpl topicMap, Topic type) {
+    TypedImpl(ITopicMap topicMap, Topic type) {
         super(topicMap);
         _type = type;
     }

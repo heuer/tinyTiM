@@ -18,7 +18,7 @@ package org.tinytim.utils;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-import org.tinytim.core.TopicMapImpl;
+import org.tinytim.core.IIndexManagerAware;
 import org.tinytim.voc.TMDM;
 import org.tinytim.voc.XTM10;
 import org.tmapi.core.Association;
@@ -32,8 +32,9 @@ import org.tmapi.index.TypeInstanceIndex;
  * This class provides functions that can be used to convert the type-instance
  * relationships that are modelled as associations into the [types] property
  * of {@link org.tmapi.core.Topic}s.
- * 
+ * <p>
  * Copied from the TMAPIX-project.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -88,20 +89,19 @@ public final class TypeInstanceConverter {
 
     private static void _associationsToTypes(final TopicMap topicMap, 
             final Locator typeInstance_, final Locator type_, final Locator instance_) {
-        TopicMapImpl tm = (TopicMapImpl) topicMap;
-        final Topic typeInstance = tm.getTopicBySubjectIdentifier(typeInstance_);
+        final Topic typeInstance = topicMap.getTopicBySubjectIdentifier(typeInstance_);
         if (typeInstance == null) {
             return;
         }
-        final Topic type = tm.getTopicBySubjectIdentifier(type_);
+        final Topic type = topicMap.getTopicBySubjectIdentifier(type_);
         if (type == null) {
             return;
         }
-        final Topic instance = tm.getTopicBySubjectIdentifier(instance_);
+        final Topic instance = topicMap.getTopicBySubjectIdentifier(instance_);
         if (instance == null) {
             return;
         }
-        TypeInstanceIndex typeInstanceIdx = tm.getIndexManager().getTypeInstanceIndex();
+        TypeInstanceIndex typeInstanceIdx = ((IIndexManagerAware) topicMap).getIndexManager().getTypeInstanceIndex();
         if (!typeInstanceIdx.isAutoUpdated()) {
             typeInstanceIdx.reindex();
         }

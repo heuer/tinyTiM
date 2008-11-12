@@ -36,12 +36,11 @@ public class AllTests extends TestSuite {
     public static Test suite() {
         TestSuite suite = new TestSuite();
         suite.addTestSuite(TestDuplicateRemovalUtils.class);
-        suite.addTestSuite(TestIRI.class);
+        suite.addTestSuite(TestLocatorImpl.class);
         suite.addTestSuite(TestIConstruct.class);
         suite.addTestSuite(TestScope.class);
         suite.addTestSuite(TestLiteral.class);
         suite.addTestSuite(TestLiteralNormalizer.class);
-        suite.addTestSuite(TestItemIdentifierConstraint.class);
         suite.addTestSuite(TestSignatureGenerator.class);
         suite.addTest(TestTMAPICore.suite());
         suite.addTest(TestTMAPIIndex.suite());
@@ -49,4 +48,5 @@ public class AllTests extends TestSuite {
         suite.addTestSuite(TestTopicUtils.class);
         return suite;
     }
+
 }

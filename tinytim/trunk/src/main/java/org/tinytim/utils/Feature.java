@@ -18,8 +18,9 @@ package org.tinytim.utils;
 /**
  * This class provides access to the feature strings that TMAPI-compatible
  * Topic Maps processors must recognize (but not necessarily support).
- * 
+ * <p>
  * Copied from the TMAPIX-project.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

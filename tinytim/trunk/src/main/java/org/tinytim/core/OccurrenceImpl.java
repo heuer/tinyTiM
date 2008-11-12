@@ -27,11 +27,11 @@ import org.tmapi.core.Topic;
 final class OccurrenceImpl extends DatatypeAwareConstruct implements 
         Occurrence, IMovable<Topic> {
 
-    OccurrenceImpl(TopicMapImpl tm) {
+    OccurrenceImpl(ITopicMap tm) {
         super(tm);
     }
 
-    OccurrenceImpl(TopicMapImpl topicMap, Topic type, ILiteral literal, IScope scope) {
+    OccurrenceImpl(ITopicMap topicMap, Topic type, ILiteral literal, IScope scope) {
         super(topicMap, type, literal, scope);
     }
 
@@ -46,9 +46,9 @@ final class OccurrenceImpl extends DatatypeAwareConstruct implements
      * @see org.tinytim.IMovable#moveTo(java.lang.Object)
      */
     public void moveTo(Topic newParent) {
-        _fireEvent(Event.MOVE_OCCURRENCE, _parent, newParent);
-        ((TopicImpl) _parent).detachOccurrence(this);
-        ((TopicImpl) newParent).attachOccurrence(this);
+        ((TopicImpl) _parent).detachOccurrence(this, true);
+        ((TopicImpl) newParent).attachOccurrence(this, true);
+        _fireEvent(Event.MOVED_OCCURRENCE, _parent, newParent);
     }
 
     /* (non-Javadoc)

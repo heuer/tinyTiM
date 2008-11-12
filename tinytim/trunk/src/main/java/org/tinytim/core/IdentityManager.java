@@ -28,34 +28,33 @@ import org.tmapi.core.Topic;
 /**
  * The identity manager takes care about the TMDM identity constraints and
  * provides an index to get Topic Maps constructs by their identity.
- * 
+ * <p>
  * This class is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-final class IdentityManager {
+final class IdentityManager implements IEventPublisherAware {
 
     private Map<Locator, Topic> _sid2Topic;
     private Map<Locator, Topic> _slo2Topic;
     private Map<Locator, IConstruct> _iid2Construct;
     private Map<String, IConstruct> _id2Construct;
 
-    IdentityManager(TopicMapImpl tm) {
+    IdentityManager(MemoryTopicMap tm) {
         _id2Construct = CollectionFactory.createIdentityMap(IConstant.IDENTITY_ID2CONSTRUCT_SIZE);
         _sid2Topic = CollectionFactory.createIdentityMap(IConstant.IDENTITY_SID2TOPIC_SIZE);
         _slo2Topic = CollectionFactory.createIdentityMap(IConstant.IDENTITY_SLO2TOPIC_SIZE);
         _iid2Construct = CollectionFactory.createIdentityMap(IConstant.IDENTITY_IID2CONSTRUCT_SIZE);
-        _subscribe(tm);
+        subscribe(tm);
         _register(tm);
     }
 
-    /**
-     * Subscribes itself to the specified event publisher.
-     *
-     * @param publisher The publisher to subscribe to.
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IEventPublisherAware#subscribe(org.tinytim.core.IEventPublisher)
      */
-    private void _subscribe(IEventPublisher publisher) {
+    public void subscribe(IEventPublisher publisher) {
         IEventHandler handler = new TopicMapsConstructAddHandler();
         publisher.subscribe(Event.ADD_TOPIC, handler);
         publisher.subscribe(Event.ADD_ASSOCIATION, handler);
@@ -84,6 +83,13 @@ final class IdentityManager {
         publisher.subscribe(Event.REMOVE_SLO, handler);
         handler = new ReifierConstraintHandler();
         publisher.subscribe(Event.SET_REIFIER, handler);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.core.IEventPublisherAware#unsubscribe(org.tinytim.core.IEventPublisher)
+     */
+    public void unsubscribe(IEventPublisher publisher) {
+        // noop.
     }
 
     /**

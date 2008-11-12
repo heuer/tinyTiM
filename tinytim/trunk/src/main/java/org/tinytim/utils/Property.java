@@ -13,33 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.utils;
 
 /**
- * Publisher for Topic Maps events.
- * <p>
- * This interface is not meant to be used outside of the tinyTiM package.
- * </p>
+ * This class provides access to tinyTiM-specifc properties.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public interface IEventPublisher {
+public final class Property {
+
+    private static final String _PROPERTY_BASE = "http://tinytim.sourceforge.net/property/";
+
+    public static final String SYSTEM = _PROPERTY_BASE + "system";
 
     /**
-     * Subscribes the handler for the specified event.
-     *
-     * @param event The event of interesst.
-     * @param handler The event handler.
+     * 
      */
-    public void subscribe(Event event, IEventHandler handler);
+    public static final String TMSHARE = _PROPERTY_BASE + "tmshare";
 
     /**
-     * Removes the handler from the publisher.
-     *
-     * @param event The event.
-     * @param handler The event handler.
+     * 
      */
-    public void unsubscribe(Event event, IEventHandler handler);
+    public static final String TMSHARE_SUBSCRIBE = TMSHARE + "-subscribe";
+
+    /**
+     * 
+     */
+    public static final String TMSHARE_INTERVALL = TMSHARE + "-intervall";
+
+    public static final String PERSISTENT = _PROPERTY_BASE + "persistent";
+
+    public static final String PERSISTENT_DIRECTORY = PERSISTENT + "-directoy";
 
 }

@@ -25,7 +25,11 @@ import junit.framework.TestSuite;
  */
 public abstract class AbstractTMAPITestSuite extends TestSuite {
 
+    private static final String _PROPERTY_NAME = "org.tmapi.core.TopicMapSystemFactory";
+
     static {
-        System.setProperty("org.tmapi.core.TopicMapSystemFactory", "org.tinytim.core.TopicMapSystemFactoryImpl");
+        if (System.getProperty(_PROPERTY_NAME) == null) {
+            System.setProperty("org.tmapi.core.TopicMapSystemFactory", "org.tinytim.core.TopicMapSystemFactoryImpl");
+        }
     }
 }

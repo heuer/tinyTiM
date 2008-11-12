@@ -25,11 +25,11 @@ package org.tinytim.core;
  */
 interface IConstant {
     /**
-     * Initial size of the {@link TopicMapImpl} topic set
+     * Initial size of the {@link MemoryTopicMap} topic set
      */
     public static final int TM_TOPIC_SIZE = 100;
     /**
-     * Initial size of the {@link TopicMapImpl} association set
+     * Initial size of the {@link MemoryTopicMap} association set
      */
     public static final int TM_ASSOCIATION_SIZE = 100;
     /**
@@ -101,7 +101,7 @@ interface IConstant {
      */
     public static final int SCOPE_SCOPES_SIZE = 10;
     /**
-     * Initial size of the {@link TopicMapSystemImpl} topic map map.
+     * Initial size of the {@link MemoryTopicMapSystem} topic map map.
      */
     public static final int SYSTEM_TM_SIZE = 4;
 }

@@ -23,7 +23,7 @@ import org.tmapi.core.Locator;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestIRI extends TinyTimTestCase {
+public class TestLocatorImpl extends TinyTimTestCase {
 
     public void testNormalization() {
         Locator loc = _tm.createLocator("http://www.example.org/test+me/");
@@ -37,7 +37,6 @@ public class TestIRI extends TinyTimTestCase {
         assertEquals("http://www.example.org/test%20me/", loc3.toExternalForm());
     }
 
-    //TODO!
 //    public void testLowerCaseScheme() {
 //        Locator loc = _tm.createLocator("HTTP://www.example.org/test+me/");
 //        assertEquals("http://www.example.org/test me/", loc.getReference());

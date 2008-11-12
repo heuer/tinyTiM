@@ -54,13 +54,13 @@ final class CopyUtils {
      * @param target The topic map which should receive the topics and associations.
      */
     public static void copy(TopicMap source, TopicMap target) {
-        _copy(source, (TopicMapImpl) target);
+        _copy(source, (ITopicMap) target);
     }
 
     /**
      * @see #copy(TopicMap, TopicMap)
      */
-    private static void _copy(TopicMap source, TopicMapImpl target) {
+    private static void _copy(TopicMap source, ITopicMap target) {
         if (source == null || target == null) {
             throw new IllegalArgumentException("Neither the source topic map nor the target topic map must be null");
         }
@@ -123,9 +123,9 @@ final class CopyUtils {
      * @param mergeMap The map which holds the merge mappings.
      * @return The newly created topic in the target topic map.
      */
-    private static Topic _copyTopic(Topic topic, TopicMap target,
+    private static Topic _copyTopic(Topic topic, ITopicMap target,
             Map<Topic, Topic> mergeMap) {
-        Topic targetTopic = target.createTopic();
+        Topic targetTopic = target.createTopicWithoutIdentity();
         _copyIdentities(topic, targetTopic);
         _copyTypes(topic, targetTopic, mergeMap);
         _copyCharacteristics(topic, (TopicImpl)targetTopic, mergeMap);
@@ -161,7 +161,7 @@ final class CopyUtils {
         for (Topic type: topic.getTypes()) {
             Topic targetType = mergeMap.get(type);
             if (targetType == null) {
-                targetType = _copyTopic(type, targetTopic.getTopicMap(), mergeMap);
+                targetType = _copyTopic(type, (ITopicMap) targetTopic.getTopicMap(), mergeMap);
             }
             targetTopic.addType(targetType);
         }
@@ -261,7 +261,7 @@ final class CopyUtils {
             return;
         }
         Topic reifier = mergeMap.containsKey(sourceReifier) ? mergeMap.get(sourceReifier)
-                            : _copyTopic(sourceReifier, target.getTopicMap(), mergeMap);
+                            : _copyTopic(sourceReifier, (ITopicMap) target.getTopicMap(), mergeMap);
         target.setReifier(reifier);
     }
 
@@ -276,7 +276,7 @@ final class CopyUtils {
                 Map<Topic, Topic> mergeMap) {
         Topic sourceType = source.getType();
        return mergeMap.containsKey(sourceType) ? mergeMap.get(sourceType)
-                            : _copyTopic(sourceType, tm, mergeMap);
+                            : _copyTopic(sourceType, (ITopicMap) tm, mergeMap);
     }
 
     /**
@@ -293,7 +293,7 @@ final class CopyUtils {
         Topic theme = null;
         for (Topic sourceTheme: source.getScope()) {
             theme = mergeMap.containsKey(sourceTheme) ? mergeMap.get(sourceTheme)
-                            : _copyTopic(sourceTheme, tm, mergeMap);
+                            : _copyTopic(sourceTheme, (ITopicMap) tm, mergeMap);
             themes.add(theme);
         }
         return themes;
@@ -320,7 +320,7 @@ final class CopyUtils {
      * @param mergeMap The map which holds the merge mappings.
      */
     private static void _copyAssociations(TopicMap source, 
-            TopicMapImpl target, Map<Topic, Topic> mergeMap) {
+            TopicMap target, Map<Topic, Topic> mergeMap) {
         Set<Association> assocs = target.getAssociations();
         IIntObjectMap<Association> sigs = CollectionFactory.createIntObjectMap(assocs.size());
         for (Association assoc: assocs) {

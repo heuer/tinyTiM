@@ -33,11 +33,11 @@ import org.tmapi.core.TopicMap;
 abstract class ConstructImpl implements IConstruct {
 
     protected String _id;
-    protected TopicMapImpl _tm;
+    protected ITopicMap _tm;
     protected Construct _parent;
     private Set<Locator> _iids;
 
-    ConstructImpl(TopicMapImpl topicMap) {
+    ConstructImpl(ITopicMap topicMap) {
         _tm = topicMap;
     }
 

@@ -30,11 +30,11 @@ final class RoleImpl extends TypedImpl implements Role {
 
     private Topic _player;
 
-    RoleImpl(TopicMapImpl tm) {
+    RoleImpl(ITopicMap tm) {
         super(tm);
     }
 
-    RoleImpl(TopicMapImpl tm, Topic type, Topic player) {
+    RoleImpl(ITopicMap tm, Topic type, Topic player) {
         super(tm, type);
         _player = player;
     }

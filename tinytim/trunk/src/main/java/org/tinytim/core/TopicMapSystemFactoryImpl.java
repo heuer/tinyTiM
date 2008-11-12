@@ -15,10 +15,14 @@
  */
 package org.tinytim.core;
 
+import java.lang.reflect.Constructor;
+import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tinytim.utils.Feature;
+import org.tinytim.utils.Property;
 import org.tmapi.core.FeatureNotRecognizedException;
 import org.tmapi.core.FeatureNotSupportedException;
 import org.tmapi.core.TMAPIException;
@@ -43,6 +47,11 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
         new FeatureInfo(Feature.READ_ONLY, false, true)
     };
 
+    private static final TMSystemInfo[] _SYSTEMS = new TMSystemInfo[] {
+        new TMSystemInfo(Property.PERSISTENT, "org.tinytim.core.PersistentTopicMapSystem"),
+        new TMSystemInfo(Property.TMSHARE, "org.tinytim.core.TMShareTopicMapSystem"),
+    };
+
     private Map<String, Object> _properties;
     private Map<String, Boolean> _features;
 
@@ -59,7 +68,40 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
      */
     @Override
     public TopicMapSystem newTopicMapSystem() throws TMAPIException {
-        return new TopicMapSystemImpl(CollectionFactory.createMap(_features), CollectionFactory.createMap(_properties));
+        String system = (String) _properties.get(Property.SYSTEM);
+        if (system != null) {
+            String klass = null;
+            for (TMSystemInfo info: _SYSTEMS) {
+                if (info.name.equals(system)) {
+                    klass = info.klass;
+                    break;
+                }
+            }
+            if (klass == null) {
+                throw new TMAPIException("Unknown TopicMapSystem: '" + system + "'");
+            }
+            return _newNonDefaultTopicMapSystem(klass);
+        }
+        return new MemoryTopicMapSystem(CollectionFactory.createMap(_features), CollectionFactory.createMap(_properties));
+    }
+
+    /**
+     * 
+     *
+     * @param className
+     * @return
+     * @throws TMAPIException
+     */
+    private TopicMapSystem _newNonDefaultTopicMapSystem(final String className) throws TMAPIException {
+        try {
+            @SuppressWarnings("unchecked")
+            Class<TopicMapSystem> klass = (Class<TopicMapSystem>) Class.forName(className);
+            Constructor<TopicMapSystem> constructor = klass.getConstructor(Map.class, Map.class);
+            return constructor.newInstance(CollectionFactory.createMap(_features), CollectionFactory.createMap(_properties));
+        }
+        catch (Exception ex) {
+            throw new TMAPIException(ex);
+        }
     }
 
     /* (non-Javadoc)
@@ -116,8 +158,18 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
      * @see org.tmapi.core.TopicMapSystemFactory#setProperty(java.lang.String, java.lang.Object)
      */
     @Override
-    public void setProperty(String propertyName, Object value) {
-        _properties.put(propertyName, value);
+    public void setProperty(final String propertyName, Object value) {
+        if (value != null) {
+            if (Property.TMSHARE.equals(propertyName)) {
+                if (!(value instanceof Set)) {
+                    value = Collections.singleton(value);
+                }
+            }
+            _properties.put(propertyName, value);
+        }
+        else {
+            _properties.remove(propertyName);
+        }
     }
 
     /**
@@ -131,19 +183,34 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
         throw new FeatureNotRecognizedException("The feature '" + featureName + "' is unknown");
     }
 
+
     /**
      * Simple structure that holds a feature name, the default value and an
      * indication if the feature is changable.
      */
     private static class FeatureInfo {
-        String name;
-        boolean defaultValue;
-        boolean fixed;
+        final String name;
+        final boolean defaultValue;
+        final boolean fixed;
 
         FeatureInfo(String name, boolean defaultValue, boolean fixed) {
             this.name = name;
             this.defaultValue = defaultValue;
             this.fixed = fixed;
+        }
+    }
+
+    /**
+     * Simple structure that holds a property name (an IRI) and a class name of
+     * a TopicMapSystemFactory.
+     */
+    private static class TMSystemInfo {
+        final String name;
+        final String klass;
+
+        TMSystemInfo(String name, String klass) {
+            this.name = name;
+            this.klass = klass;
         }
     }
 

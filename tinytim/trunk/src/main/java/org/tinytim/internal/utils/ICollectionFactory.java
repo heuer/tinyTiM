@@ -22,16 +22,30 @@ import java.util.Set;
 
 /**
  * Factory for collections.
- * 
+ * <p>
  * Implementations of this interface must provide a default constructor.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
 interface ICollectionFactory {
 
+    /**
+     * 
+     *
+     * @param <E>
+     * @return
+     */
     <E> IIntObjectMap<E> createIntObjectMap();
 
+    /**
+     * 
+     *
+     * @param <E>
+     * @param size
+     * @return
+     */
     <E> IIntObjectMap<E> createIntObjectMap(int size);
 
     /**

@@ -17,11 +17,13 @@ package org.tinytim.core;
 
 /**
  * Event constants.
- * 
+ * <p>
  * All events are sent before a change happens. This allows to check
  * some constraints.
- * 
+ * </p>
+ * <p>
  * This class is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -76,6 +78,7 @@ public enum Event {
      * Notification that a variant should be removed.
      */
     REMOVE_VARIANT,
+    
 
     /**
      * Notification that a subject identifier should be added.
@@ -137,8 +140,19 @@ public enum Event {
      */
     SET_LITERAL,
 
-    MOVE_OCCURRENCE,
-    MOVE_NAME,
-    MOVE_VARIANT
+    /**
+     * Notification that an occurrence should be moved from one topic to another.
+     */
+    MOVED_OCCURRENCE,
+    /**
+     * Notification that a name should be moved from one topic to another.
+     */
+    MOVED_NAME,
+    /**
+     * Notification that a variant should be moved from one name to another.
+     */
+    MOVED_VARIANT, 
+    
+    ATTACHED_NAME, DETACHED_NAME, ATTACHED_OCCURRENCE, DETACHED_OCCURRENCE,
 
 }

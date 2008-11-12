@@ -20,8 +20,9 @@ import org.tmapi.core.Locator;
 /**
  * Marker interface which unifies the {@link org.tmapi.core.Locator} and 
  * tinyTiM's {@link ILiteral}.
- * 
+ * <p>
  * This interface is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

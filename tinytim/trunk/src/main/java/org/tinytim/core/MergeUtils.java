@@ -39,9 +39,13 @@ import org.tmapi.index.TypeInstanceIndex;
 
 /**
  * This class provides functions to merge topic maps and topics.
- * 
+ * <p>
+ * This class is not meant to be used outside the tinyTiM package
+ * </p>
+ * <p>
  * This class relies on the implementation of tinyTiM, if the implementation
  * changes, check the <tt>==</tt> comparisons.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -242,7 +246,7 @@ public final class MergeUtils {
      * @param replacement The topic which replaces the <tt>source</tt>.
      */
     private static void _replaceTopics(Topic source, Topic replacement) {
-        TopicMapImpl tm = (TopicMapImpl) replacement.getTopicMap();
+        MemoryTopicMap tm = (MemoryTopicMap) replacement.getTopicMap();
         IIndexManager idxMan = tm.getIndexManager();
         TypeInstanceIndex typeInstanceIndex = idxMan.getTypeInstanceIndex();
         if (!typeInstanceIndex.isAutoUpdated()) {

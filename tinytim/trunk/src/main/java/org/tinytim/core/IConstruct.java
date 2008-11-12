@@ -19,20 +19,65 @@ import org.tmapi.core.Construct;
 
 /**
  * Enhancement of the {@link org.tmapi.core.Construct} interface.
- * 
+ * <p>
+ * Avoids <tt>foo instanceof Bar</tt> checks. Each construct knows its type.
+ * </p>
+ * <p>
  * This interface is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
 public interface IConstruct extends Construct {
 
+    /**
+     * Returns <tt>true</tt> if this is a topic map.
+     *
+     * @return <tt>true</tt> if this is a topic map, <tt>false</tt> otherwise.
+     */
     public boolean isTopicMap();
+
+    /**
+     * Returns <tt>true</tt> if this is a topic.
+     *
+     * @return <tt>true</tt> if this is a topic, <tt>false</tt> otherwise.
+     */
     public boolean isTopic();
+
+    /**
+     * Returns <tt>true</tt> if this is an association.
+     *
+     * @return <tt>true</tt> if this is an association, <tt>false</tt> otherwise.
+     */
     public boolean isAssociation();
+
+    /**
+     * Returns <tt>true</tt> if this is a role.
+     *
+     * @return <tt>true</tt> if this is a role, <tt>false</tt> otherwise.
+     */
     public boolean isRole();
+
+    /**
+     * Returns <tt>true</tt> if this is an occurrence.
+     *
+     * @return <tt>true</tt> if this is an occurrence, <tt>false</tt> otherwise.
+     */
     public boolean isOccurrence();
+
+    /**
+     * Returns <tt>true</tt> if this is a name.
+     *
+     * @return <tt>true</tt> if this is a name, <tt>false</tt> otherwise.
+     */
     public boolean isName();
+
+    /**
+     * Returns <tt>true</tt> if this is a variant.
+     *
+     * @return <tt>true</tt> if this is a variant, <tt>false</tt> otherwise.
+     */
     public boolean isVariant();
 
 }

@@ -15,31 +15,16 @@
  */
 package org.tinytim.core;
 
+import org.tinytim.index.IIndexManager;
+
 /**
- * Publisher for Topic Maps events.
- * <p>
- * This interface is not meant to be used outside of the tinyTiM package.
- * </p>
+ * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public interface IEventPublisher {
+public interface IIndexManagerAware {
 
-    /**
-     * Subscribes the handler for the specified event.
-     *
-     * @param event The event of interesst.
-     * @param handler The event handler.
-     */
-    public void subscribe(Event event, IEventHandler handler);
-
-    /**
-     * Removes the handler from the publisher.
-     *
-     * @param event The event.
-     * @param handler The event handler.
-     */
-    public void unsubscribe(Event event, IEventHandler handler);
+    IIndexManager getIndexManager();
 
 }
