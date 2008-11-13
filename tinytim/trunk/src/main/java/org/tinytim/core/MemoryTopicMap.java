@@ -217,7 +217,6 @@ final class MemoryTopicMap extends ConstructImpl implements ITopicMap,
         if (topic._parent != this) {
             return;
         }
-        assert topic._parent == null;
         _fireEvent(Event.REMOVE_TOPIC, topic, null);
         _topics.remove(topic);
         topic._parent = null;
