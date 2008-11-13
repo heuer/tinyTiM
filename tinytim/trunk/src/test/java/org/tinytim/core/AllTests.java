@@ -15,6 +15,10 @@
  */
 package org.tinytim.core;
 
+import org.tinytim.core.value.TestLiteral;
+import org.tinytim.core.value.TestLiteralNormalizer;
+import org.tinytim.core.value.TestLocatorImpl;
+import org.tinytim.internal.utils.TestSignatureGenerator;
 import org.tinytim.utils.TestDuplicateRemovalUtils;
 import org.tinytim.utils.TestTopicUtils;
 

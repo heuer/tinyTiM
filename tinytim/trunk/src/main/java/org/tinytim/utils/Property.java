@@ -19,7 +19,7 @@ package org.tinytim.utils;
  * This class provides access to tinyTiM-specifc properties.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public final class Property {
 

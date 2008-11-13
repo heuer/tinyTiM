@@ -20,11 +20,19 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import org.tinytim.core.value.Literal;
+import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.IConstant;
+import org.tinytim.internal.api.ILiteral;
+import org.tinytim.internal.api.IName;
+import org.tinytim.internal.api.IScope;
+import org.tinytim.internal.api.ITopicMap;
+import org.tinytim.internal.api.IVariant;
 import org.tinytim.internal.utils.Check;
 import org.tinytim.internal.utils.CollectionFactory;
+
 import org.tmapi.core.Locator;
 import org.tmapi.core.ModelConstraintException;
-import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 import org.tmapi.core.Variant;
 
@@ -34,8 +42,7 @@ import org.tmapi.core.Variant;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
-    ILiteralAware {
+final class NameImpl extends ScopedImpl implements IName {
 
     private ILiteral _literal;
     private Set<Variant> _variants;
@@ -133,7 +140,7 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
      */
     public Variant createVariant(Locator value, Collection<Topic> scope) {
         Check.valueNotNull(this, value);
-        return _createVariant(Literal.create(value), scope);
+        return createVariant(Literal.create(value), scope);
     }
 
     /* (non-Javadoc)
@@ -141,7 +148,7 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
      */
     public Variant createVariant(String value, Collection<Topic> scope) {
         Check.valueNotNull(this, value);
-        return _createVariant(Literal.create(value), scope);
+        return createVariant(Literal.create(value), scope);
     }
 
    /* (non-Javadoc)
@@ -179,10 +186,10 @@ final class NameImpl extends ScopedImpl implements Name, IMovable<Topic>,
 
     private Variant _createVariant(String value, Locator datatype, Collection<Topic> scope) {
         Check.valueNotNull(this, value, datatype);
-        return _createVariant(Literal.create(value, datatype), scope);
+        return createVariant(Literal.create(value, datatype), scope);
     }
 
-    Variant _createVariant(ILiteral literal, Collection<Topic> scope) {
+    public IVariant createVariant(ILiteral literal, Collection<Topic> scope) {
         if (scope.isEmpty()) {
             throw new ModelConstraintException(this, "The scope of the variant must not be unconstrained");
         }

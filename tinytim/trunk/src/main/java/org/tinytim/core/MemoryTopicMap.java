@@ -22,11 +22,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.tinytim.core.value.Literal;
 import org.tinytim.index.IndexManager;
 import org.tinytim.index.IIndexManager;
+import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.IConstant;
+import org.tinytim.internal.api.IConstruct;
+import org.tinytim.internal.api.IConstructFactory;
+import org.tinytim.internal.api.IEventHandler;
+import org.tinytim.internal.api.IEventPublisher;
+import org.tinytim.internal.api.ITopicMap;
 import org.tinytim.internal.utils.Check;
 import org.tinytim.internal.utils.CollectionFactory;
-import org.tinytim.voc.TMDM;
+import org.tinytim.internal.utils.MergeUtils;
+
 import org.tmapi.core.Association;
 import org.tmapi.core.IdentityConstraintException;
 import org.tmapi.core.ModelConstraintException;
@@ -49,19 +58,21 @@ import org.tmapi.index.Index;
 final class MemoryTopicMap extends ConstructImpl implements ITopicMap, 
         IEventHandler, IEventPublisher {
 
-    private IdentityManager _identityManager;
-    private IIndexManager _indexManager;
-    private Locator _locator;
-    private Set<Topic> _topics;
-    private Set<Association> _assocs;
+    private final IConstructFactory _factory;
+    private final IdentityManager _identityManager;
+    private final IIndexManager _indexManager;
+    private final Locator _locator;
+    private final Set<Topic> _topics;
+    private final Set<Association> _assocs;
     private AbstractTopicMapSystem _sys;
     private Topic _reifier;
-    private Map<Event, List<IEventHandler>> _evtHandlers;
+    private final Map<Event, List<IEventHandler>> _evtHandlers;
     private EventMultiplier _eventMultiplier;
 
     MemoryTopicMap(AbstractTopicMapSystem sys, Locator locator) {
         super(null);
         super._tm = this;
+        _factory = new MemoryConstructFactory(this);
         _sys = sys;
         _locator = locator;
         _topics = CollectionFactory.createIdentitySet(IConstant.TM_TOPIC_SIZE);
@@ -83,6 +94,13 @@ final class MemoryTopicMap extends ConstructImpl implements ITopicMap,
     @Override
     public TopicMap getTopicMap() {
         return this;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.api.internal.ITopicMap#getConstructFactory()
+     */
+    public IConstructFactory getConstructFactory() {
+        return _factory;
     }
 
     /* (non-Javadoc)
@@ -141,10 +159,6 @@ final class MemoryTopicMap extends ConstructImpl implements ITopicMap,
         TopicImpl topic = createTopicWithoutIdentity();
         topic.addItemIdentifier(iid);
         return topic;
-    }
-
-    public Topic getDefaultTopicNameType() {
-        return createTopicBySubjectIdentifier(TMDM.TOPIC_NAME);
     }
 
     /* (non-Javadoc)
@@ -352,13 +366,10 @@ final class MemoryTopicMap extends ConstructImpl implements ITopicMap,
     public void remove() {
         _sys.removeTopicMap(this);
         _sys = null;
-        _locator = null;
-        _topics = null;
-        _assocs = null;
+        _topics.clear();
+        _assocs.clear();
         _indexManager.close();
-        _indexManager = null;
         _identityManager.close();
-        _identityManager = null;
         _eventMultiplier = null;
         super.dispose();
     }

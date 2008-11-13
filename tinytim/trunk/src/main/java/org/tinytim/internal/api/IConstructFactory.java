@@ -13,26 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim;
+package org.tinytim.internal.api;
+
+import org.tmapi.core.Association;
+import org.tmapi.core.Role;
 
 /**
- * Provides the version information.
+ * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public class Version {
+public interface IConstructFactory {
 
-    private static final String _MAJOR = "@MAJOR@";
-    private static final String _MINOR = "@MINOR@";
-    private static final String _MICRO = "@MICRO@";
-    private static final String _STATE ="@STATE@";
-    private static final String _DATE = "@DATE@";
+    public Association createAssociation();
 
-    /**
-     * The release information.
-     */
-    // Not final since Java compilers copy the string into classes
-    public static String RELEASE = _MAJOR + "." + _MINOR + "." + _MICRO + _STATE + _DATE;
+    public Role createRole(Association parent);
+
+    public IVariant createVariant(IName parent);
+
+    public IOccurrence createOccurrence(ITopic parent);
+
+    public IName createName(ITopic parent);
+
+    public ITopic createTopic();
 
 }

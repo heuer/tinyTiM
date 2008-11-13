@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.internal.api;
 
-import org.tmapi.core.Construct;
+import org.tmapi.core.Scoped;
 
 /**
- * Indicates that a Topic Maps construct is able to be detached from the 
- * current parent and attached to another parent.
+ * Enhancement of the {@link org.tmapi.core.Scoped} interface which is 
+ * {@link IScope} aware.
  * <p>
  * This interface is not meant to be used outside of the tinyTiM package.
  * </p>
@@ -27,13 +27,20 @@ import org.tmapi.core.Construct;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-interface IMovable<T extends Construct> {
+public interface IScoped extends Scoped, IConstruct {
 
     /**
-     * Moves this Topic Maps construct to the new parent.
+     * Returns the scope.
      *
-     * @param newParent The parent to move this construct to.
+     * @return The scope.
      */
-    public void moveTo(T newParent);
+    public IScope getScopeObject();
+
+    /**
+     * Sets the scope.
+     *
+     * @param scope The scope.
+     */
+    public void setScopeObject(IScope scope);
 
 }

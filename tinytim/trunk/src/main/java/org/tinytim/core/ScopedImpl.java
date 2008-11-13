@@ -17,6 +17,11 @@ package org.tinytim.core;
 
 import java.util.Set;
 
+import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.IScope;
+import org.tinytim.internal.api.IScoped;
+import org.tinytim.internal.api.ITopicMap;
+
 import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Topic;
 

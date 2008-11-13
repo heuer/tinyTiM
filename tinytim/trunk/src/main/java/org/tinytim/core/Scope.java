@@ -20,8 +20,11 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Set;
 
+import org.tinytim.internal.api.IConstant;
+import org.tinytim.internal.api.IScope;
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tinytim.internal.utils.WeakObjectRegistry;
+
 import org.tmapi.core.Topic;
 
 /**
@@ -30,7 +33,7 @@ import org.tmapi.core.Topic;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-final class Scope implements IScope {
+public final class Scope implements IScope {
 
     public static final IScope UCS = new Scope();
 

@@ -13,20 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.internal.api;
 
-import org.tmapi.core.Locator;
+import java.util.Collection;
+
+import org.tmapi.core.Topic;
 
 /**
- * Marker interface which unifies the {@link org.tmapi.core.Locator} and 
- * tinyTiM's {@link ILiteral}.
- * <p>
- * This interface is not meant to be used outside of the tinyTiM package.
- * </p>
+ * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public interface ILocator extends ILiteral, Locator {
+public interface ITopic extends Topic, IConstruct {
+
+    public IOccurrence createOccurrence(Topic type, ILiteral literal, Collection<Topic> scope);
+
+    public IName createName(Topic type, ILiteral literal, Collection<Topic> scope);
 
 }

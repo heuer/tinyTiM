@@ -15,8 +15,8 @@
  */
 package org.tinytim.index;
 
-import org.tinytim.core.IEventPublisher;
-import org.tinytim.core.IEventPublisherAware;
+import org.tinytim.internal.api.IEventPublisher;
+import org.tinytim.internal.api.IEventPublisherAware;
 import org.tmapi.index.Index;
 
 /**

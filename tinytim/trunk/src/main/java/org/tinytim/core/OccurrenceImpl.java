@@ -15,7 +15,12 @@
  */
 package org.tinytim.core;
 
-import org.tmapi.core.Occurrence;
+import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.ILiteral;
+import org.tinytim.internal.api.IOccurrence;
+import org.tinytim.internal.api.IScope;
+import org.tinytim.internal.api.ITopicMap;
+
 import org.tmapi.core.Topic;
 
 /**
@@ -24,8 +29,7 @@ import org.tmapi.core.Topic;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-final class OccurrenceImpl extends DatatypeAwareConstruct implements 
-        Occurrence, IMovable<Topic> {
+final class OccurrenceImpl extends DatatypeAwareConstruct implements IOccurrence {
 
     OccurrenceImpl(ITopicMap tm) {
         super(tm);

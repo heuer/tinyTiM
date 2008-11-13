@@ -15,6 +15,7 @@
  */
 package org.tinytim.core;
 
+import org.tinytim.internal.api.IConstruct;
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Name;

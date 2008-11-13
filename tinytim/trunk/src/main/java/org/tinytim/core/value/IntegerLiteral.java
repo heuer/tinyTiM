@@ -13,39 +13,48 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.core.value;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.tinytim.internal.api.ILiteral;
 import org.tinytim.voc.XSD;
+
 import org.tmapi.core.Locator;
 
 /**
  * 
+ * <p>
+ * This class is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
-final class DecimalLiteral implements ILiteral {
+final class IntegerLiteral implements ILiteral {
 
-    private final BigDecimal _decimal;
+    private final BigInteger _integer;
     private final String _lexicalForm;
+    private BigDecimal _decimal;
 
-    public DecimalLiteral(BigDecimal decimal) {
-        _decimal = decimal;
-        _lexicalForm = LiteralNormalizer.normalizeDecimal(decimal.toPlainString());
+    public IntegerLiteral(BigInteger value) {
+        _integer = value;
+        _lexicalForm = LiteralNormalizer.normalizeInteger(value.toString());
     }
 
-    public DecimalLiteral(String value) {
-        _lexicalForm = LiteralNormalizer.normalizeDecimal(value);
-        _decimal = new BigDecimal(_lexicalForm);
+    public IntegerLiteral(String value) {
+        _lexicalForm = LiteralNormalizer.normalizeInteger(value);
+        _integer = new BigInteger(_lexicalForm);
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.core.ILiteral#decimalValue()
      */
     public BigDecimal decimalValue() {
+        if (_decimal == null) {
+            _decimal = new BigDecimal(_integer);
+        }
         return _decimal;
     }
 
@@ -53,14 +62,14 @@ final class DecimalLiteral implements ILiteral {
      * @see org.tinytim.core.ILiteral#floatValue()
      */
     public float floatValue() {
-        return _decimal.floatValue();
+        return _integer.floatValue();
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.core.ILiteral#getDatatype()
      */
     public Locator getDatatype() {
-        return XSD.DECIMAL;
+        return XSD.INTEGER;
     }
 
     /* (non-Javadoc)
@@ -74,21 +83,21 @@ final class DecimalLiteral implements ILiteral {
      * @see org.tinytim.core.ILiteral#intValue()
      */
     public int intValue() {
-        return _decimal.intValue();
+        return _integer.intValue();
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.core.ILiteral#integerValue()
      */
     public BigInteger integerValue() {
-        return _decimal.toBigInteger();
+        return _integer;
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.core.ILiteral#longValue()
      */
     public long longValue() {
-        return _decimal.longValue();
+        return _integer.longValue();
     }
 
     /* (non-Javadoc)
@@ -96,7 +105,7 @@ final class DecimalLiteral implements ILiteral {
      */
     @Override
     public int hashCode() {
-        return _decimal.hashCode();
+        return _integer.hashCode();
     }
 
     /* (non-Javadoc)
@@ -104,7 +113,7 @@ final class DecimalLiteral implements ILiteral {
      */
     @Override
     public boolean equals(Object obj) {
-        return this == obj || (obj instanceof DecimalLiteral) && ((DecimalLiteral) obj)._lexicalForm.equals(_lexicalForm);
+        return this == obj || (obj instanceof IntegerLiteral) && ((IntegerLiteral) obj)._lexicalForm.equals(_lexicalForm);
     }
 
 }

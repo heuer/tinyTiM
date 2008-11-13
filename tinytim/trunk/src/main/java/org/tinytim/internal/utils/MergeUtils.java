@@ -13,14 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.internal.utils;
 
 import java.util.Collection;
 import java.util.List;
 
 import org.tinytim.index.IIndexManager;
-import org.tinytim.internal.utils.CollectionFactory;
-import org.tinytim.internal.utils.IIntObjectMap;
+import org.tinytim.internal.api.IIndexManagerAware;
+import org.tinytim.internal.api.IName;
+import org.tinytim.internal.api.IOccurrence;
+import org.tinytim.internal.api.ITopic;
+import org.tinytim.internal.api.IVariant;
+
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
@@ -79,13 +83,13 @@ public final class MergeUtils {
      *                  <tt>source</tt>.
      */
     public static void merge(Topic source, Topic target) {
-        _merge((TopicImpl) source, (TopicImpl) target);
+        _merge((ITopic) source, target);
     }
 
     /**
      * @see #merge(Topic, Topic)
      */
-    private static void _merge(TopicImpl source, Topic target) {
+    private static void _merge(ITopic source, Topic target) {
         if (source == null || target == null) {
             throw new IllegalArgumentException("Neither the source topic nor the target topic must be null");
         }
@@ -131,7 +135,7 @@ public final class MergeUtils {
                 occ.remove();
             }
             else {
-                ((OccurrenceImpl) occ).moveTo(target);
+                ((IOccurrence) occ).moveTo(target);
             }
         }
         sigs.clear();
@@ -146,7 +150,7 @@ public final class MergeUtils {
                 name.remove();
             }
             else {
-                ((NameImpl) name).moveTo(target);
+                ((IName) name).moveTo(target);
             }
         }
         sigs.clear();
@@ -204,7 +208,7 @@ public final class MergeUtils {
                 var.remove();
             }
             else {
-                ((VariantImpl) var).moveTo(target);
+                ((IVariant) var).moveTo(target);
             }
         }
     }
@@ -246,8 +250,7 @@ public final class MergeUtils {
      * @param replacement The topic which replaces the <tt>source</tt>.
      */
     private static void _replaceTopics(Topic source, Topic replacement) {
-        MemoryTopicMap tm = (MemoryTopicMap) replacement.getTopicMap();
-        IIndexManager idxMan = tm.getIndexManager();
+        IIndexManager idxMan = ((IIndexManagerAware) replacement.getTopicMap()).getIndexManager();
         TypeInstanceIndex typeInstanceIndex = idxMan.getTypeInstanceIndex();
         if (!typeInstanceIndex.isAutoUpdated()) {
             typeInstanceIndex.reindex();

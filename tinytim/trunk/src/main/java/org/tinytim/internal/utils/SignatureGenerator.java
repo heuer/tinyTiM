@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.internal.utils;
 
 import java.util.Arrays;
 import java.util.Collection;
+
+import org.tinytim.internal.api.ILiteralAware;
+import org.tinytim.internal.api.IScoped;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Name;

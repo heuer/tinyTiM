@@ -13,26 +13,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim;
+package org.tinytim.internal.api;
+
+import org.tinytim.index.IIndexManager;
 
 /**
- * Provides the version information.
+ * Indicates that something provides access to the {@link IIndexManager}.
+ * <p>
+ * This interface is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class Version {
+public interface IIndexManagerAware {
 
-    private static final String _MAJOR = "@MAJOR@";
-    private static final String _MINOR = "@MINOR@";
-    private static final String _MICRO = "@MICRO@";
-    private static final String _STATE ="@STATE@";
-    private static final String _DATE = "@DATE@";
-
-    /**
-     * The release information.
-     */
-    // Not final since Java compilers copy the string into classes
-    public static String RELEASE = _MAJOR + "." + _MINOR + "." + _MICRO + _STATE + _DATE;
+    IIndexManager getIndexManager();
 
 }

@@ -17,7 +17,14 @@ package org.tinytim.core;
 
 import java.util.Map;
 
+import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.IConstant;
+import org.tinytim.internal.api.IConstruct;
+import org.tinytim.internal.api.IEventHandler;
+import org.tinytim.internal.api.IEventPublisher;
+import org.tinytim.internal.api.IEventPublisherAware;
 import org.tinytim.internal.utils.CollectionFactory;
+
 import org.tmapi.core.Construct;
 import org.tmapi.core.IdentityConstraintException;
 import org.tmapi.core.Locator;

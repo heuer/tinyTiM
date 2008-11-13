@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.internal.api;
 
-import org.tmapi.core.Association;
+import org.tmapi.core.Occurrence;
 import org.tmapi.core.Topic;
-import org.tmapi.core.TopicMap;
 
 /**
  * 
@@ -25,30 +24,6 @@ import org.tmapi.core.TopicMap;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev:$ - $Date:$
  */
-interface ITopicMap extends TopicMap, IEventHandler, IConstruct, IIndexManagerAware {
-
-    /**
-     * 
-     *
-     * @return
-     */
-    Topic getDefaultTopicNameType();
-
-    void removeTopic(Topic topic);
-
-    void removeAssociation(Association association);
-
-    void addAssociation(Association assoc);
-
-    /**
-     * Returns a topic without any identity.
-     * <p>
-     * The topic won't have an item identifier, subject identifier, or subject
-     * locator, just an internal identifier.
-     * </p>
-     *
-     * @return A topic without any identity.
-     */
-    public Topic createTopicWithoutIdentity();
+public interface IOccurrence extends Occurrence, IScoped, ILiteralAware, IMovable<Topic> {
 
 }

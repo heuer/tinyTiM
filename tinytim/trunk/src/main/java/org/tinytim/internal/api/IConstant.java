@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.internal.api;
 
 /**
  * Provides constants.
- * 
+ * <p>
  * This interface is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-interface IConstant {
+public interface IConstant {
     /**
      * Initial size of the {@link MemoryTopicMap} topic set
      */

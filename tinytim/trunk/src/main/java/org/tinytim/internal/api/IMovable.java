@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.internal.api;
+
+import org.tmapi.core.Construct;
 
 /**
- * Event handler that is able to handle Topic Maps events.
+ * Indicates that a Topic Maps construct is able to be detached from the 
+ * current parent and attached to another parent.
  * <p>
  * This interface is not meant to be used outside of the tinyTiM package.
  * </p>
@@ -24,20 +27,13 @@ package org.tinytim.core;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public interface IEventHandler {
+public interface IMovable<T extends Construct> {
 
     /**
-     * Callback method if a {@link IEventPublisher} sends an event to which
-     * this handler is subscribed to.
+     * Moves this Topic Maps construct to the new parent.
      *
-     * @param evt The event.
-     * @param sender The sender of the event (this is not necessarily the
-     *               publisher).
-     * @param oldValue The old value or <code>null</code> if the old value
-     *                 is not available or was <code>null</code>.
-     * @param newValue The new value or <code>null</code> if the new value
-     *                 is not available or should become <code>null</code>.
+     * @param newParent The parent to move this construct to.
      */
-    public void handleEvent(Event evt, IConstruct sender, Object oldValue, Object newValue);
+    public void moveTo(T newParent);
 
 }

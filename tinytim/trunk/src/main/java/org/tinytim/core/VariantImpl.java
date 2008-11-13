@@ -17,10 +17,15 @@ package org.tinytim.core;
 
 import java.util.Set;
 
+import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.ILiteral;
+import org.tinytim.internal.api.IScope;
+import org.tinytim.internal.api.ITopicMap;
+import org.tinytim.internal.api.IVariant;
 import org.tinytim.internal.utils.CollectionFactory;
+
 import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
-import org.tmapi.core.Variant;
 
 /**
  * {@link org.tmapi.core.Variant} implementation.
@@ -29,7 +34,7 @@ import org.tmapi.core.Variant;
  * @version $Rev$ - $Date$
  */
 final class VariantImpl extends DatatypeAwareConstruct implements 
-        Variant, IMovable<Name> {
+        IVariant {
 
     VariantImpl(ITopicMap tm) {
         super(tm);

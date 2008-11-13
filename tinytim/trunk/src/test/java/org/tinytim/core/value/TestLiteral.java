@@ -13,8 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.core.value;
 
+import org.tinytim.core.TinyTimTestCase;
+import org.tinytim.internal.api.ILiteral;
 import org.tinytim.voc.XSD;
 import org.tmapi.core.Locator;
 

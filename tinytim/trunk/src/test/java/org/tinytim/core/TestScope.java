@@ -16,7 +16,9 @@
 package org.tinytim.core;
 
 import java.util.Arrays;
+import java.util.Collections;
 
+import org.tinytim.internal.api.IScope;
 import org.tmapi.core.Topic;
 
 /**
@@ -40,4 +42,11 @@ public class TestScope extends TinyTimTestCase {
         final IScope scope2 = Scope.create(Arrays.asList(theme2, theme1));
         assertSame(scope1, scope2);
     }
+
+    public void testCreationUCS() {
+        final IScope scope = Scope.create(Collections.<Topic>emptyList());
+        assertTrue(scope.isUnconstrained());
+        assertSame(Scope.UCS, scope);
+    }
+
 }

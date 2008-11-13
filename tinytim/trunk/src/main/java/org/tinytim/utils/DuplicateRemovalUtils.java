@@ -17,11 +17,12 @@ package org.tinytim.utils;
 
 import java.util.Collection;
 
-import org.tinytim.core.IIndexManagerAware;
-import org.tinytim.core.MergeUtils;
-import org.tinytim.core.SignatureGenerator;
+import org.tinytim.internal.api.IIndexManagerAware;
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tinytim.internal.utils.IIntObjectMap;
+import org.tinytim.internal.utils.MergeUtils;
+import org.tinytim.internal.utils.SignatureGenerator;
+
 import org.tmapi.core.Association;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
