@@ -243,7 +243,7 @@ final class MemoryTopicMap extends ConstructImpl implements ITopicMap,
         return assoc;
     }
 
-    public void addAssociation(Association assoc_) {
+    void addAssociation(Association assoc_) {
         AssociationImpl assoc = (AssociationImpl) assoc_;
         if (assoc._parent == this) {
             return;
