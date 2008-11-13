@@ -20,8 +20,10 @@ import org.tinytim.internal.api.IName;
 import org.tinytim.internal.api.IOccurrence;
 import org.tinytim.internal.api.ITopic;
 import org.tinytim.internal.api.IVariant;
+
 import org.tmapi.core.Association;
 import org.tmapi.core.Role;
+import org.tmapi.core.Topic;
 
 /**
  * 
@@ -83,6 +85,9 @@ final class MemoryConstructFactory implements IConstructFactory {
      */
     public IVariant createVariant(IName parent) {
         VariantImpl variant = new VariantImpl(_tm);
+        for (Topic theme: parent.getScope()) {
+            variant._addNameTheme(theme);
+        }
         ((NameImpl) parent).addVariant(variant);
         return variant;
     }
