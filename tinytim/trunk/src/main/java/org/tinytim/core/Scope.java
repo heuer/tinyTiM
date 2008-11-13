@@ -46,8 +46,9 @@ public final class Scope implements IScope {
     }
 
     private Scope(Collection<Topic> themes) {
-        _set = CollectionFactory.createIdentitySet(themes.size());
-        _set.addAll(themes);
+        Set<Topic> set = CollectionFactory.createIdentitySet(themes.size());
+        set.addAll(themes);
+        _set = Collections.unmodifiableSet(set);
     }
 
     /* (non-Javadoc)
@@ -86,7 +87,8 @@ public final class Scope implements IScope {
      * @see org.tinytim.core.IScope#asSet()
      */
     public Set<Topic> asSet() {
-        return Collections.unmodifiableSet(_set);
+        // _set is immutable
+        return _set;
     }
 
     /* (non-Javadoc)
