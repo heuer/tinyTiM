@@ -41,7 +41,8 @@ public final class LTMReader extends AbstractTopicMapReader {
      * @param docIRI The document IRI which is used to resolve IRIs against.
      * @throws IOException If an error occurs. 
      */
-    public LTMReader(final TopicMap topicMap, final File source, final String docIRI) throws IOException {
+    public LTMReader(final TopicMap topicMap, final File source,
+            final String docIRI) throws IOException {
         super(topicMap, Syntax.LTM, source, docIRI);
     }
 
@@ -56,7 +57,8 @@ public final class LTMReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @throws IOException If an error occurs. 
      */
-    public LTMReader(final TopicMap topicMap, final File source) throws IOException {
+    public LTMReader(final TopicMap topicMap, final File source)
+            throws IOException {
         super(topicMap, Syntax.LTM, source);
     }
 
@@ -67,7 +69,8 @@ public final class LTMReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @param docIRI The document IRI which is used to resolve IRIs against.
      */
-    public LTMReader(final TopicMap topicMap, final InputStream source, final String docIRI) {
+    public LTMReader(final TopicMap topicMap, final InputStream source,
+            final String docIRI) {
         super(topicMap, Syntax.LTM, source, docIRI);
     }
 

@@ -44,7 +44,8 @@ public final class CTMReader extends AbstractTopicMapReader {
      * @param docIRI The document IRI which is used to resolve IRIs against.
      * @throws IOException If an error occurs. 
      */
-    public CTMReader(final TopicMap topicMap, final File source, final String docIRI) throws IOException {
+    public CTMReader(final TopicMap topicMap, final File source,
+            final String docIRI) throws IOException {
         super(topicMap, Syntax.CTM, source, docIRI);
     }
 
@@ -59,7 +60,8 @@ public final class CTMReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @throws IOException If an error occurs. 
      */
-    public CTMReader(final TopicMap topicMap, final File source) throws IOException {
+    public CTMReader(final TopicMap topicMap, final File source)
+            throws IOException {
         super(topicMap, Syntax.CTM, source);
     }
 
@@ -70,7 +72,8 @@ public final class CTMReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @param docIRI The document IRI which is used to resolve IRIs against.
      */
-    public CTMReader(final TopicMap topicMap, final InputStream source, final String docIRI) {
+    public CTMReader(final TopicMap topicMap, final InputStream source,
+            final String docIRI) {
         super(topicMap, Syntax.CTM, source, docIRI);
     }
 

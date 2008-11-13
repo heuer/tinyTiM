@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
 
+import org.tinytim.internal.api.IScope;
+import org.tinytim.internal.api.IScoped;
 import org.tinytim.voc.Namespace;
 import org.tinytim.voc.XSD;
 
@@ -52,12 +54,28 @@ public class XTM10Writer extends AbstractXTMWriter {
     //      warn if datatype not in (xsd:string, xsd:anyURI) 
 
     /**
-     * 
+     * Creates a XTM 1.0 writer using "utf-8" encoding.
      *
-     * @param baseIRI
+     * @param out The stream the XTM is written onto.
+     * @param baseIRI The base IRI which is used to resolve IRIs against.
+     * @throws IOException If an error occurs.
      */
-    public XTM10Writer(final OutputStream out, final String baseIRI) {
+    public XTM10Writer(final OutputStream out, final String baseIRI)
+            throws IOException {
         super(out, baseIRI);
+    }
+
+    /**
+     * Creates a XTM 1.0 writer.
+     *
+     * @param out The stream the XTM is written onto.
+     * @param baseIRI The base IRI which is used to resolve IRIs against.
+     * @param encoding The encoding to use.
+     * @throws IOException If an error occurs.
+     */
+    public XTM10Writer(final OutputStream out, final String baseIRI,
+            final String encoding) throws IOException {
+        super(out, baseIRI, encoding);
     }
 
     private String _getId(Reifiable reifiable) {
@@ -99,7 +117,6 @@ public class XTM10Writer extends AbstractXTMWriter {
     protected void _writeTopic(final Topic topic) throws IOException {
         _attrs.clear();
         _attrs.addAttribute("", "id", "", "CDATA",  _getId(topic));
-        _out.newline();
         _out.startElement("topic", _attrs);
         _writeIdentities(topic);
         for (Topic type: topic.getTypes()) {
@@ -126,7 +143,6 @@ public class XTM10Writer extends AbstractXTMWriter {
     protected void _writeAssociation(final Association assoc) throws IOException {
         _attrs.clear();
         _addId(_attrs, assoc);
-        _out.newline();
         _out.startElement("association", _attrs);
         _writeType(assoc);
         _writeScope(assoc);
@@ -217,8 +233,8 @@ public class XTM10Writer extends AbstractXTMWriter {
     }
 
     private void _writeScope(final Scoped scoped) throws IOException {
-        final Set<Topic> scope = scoped.getScope();
-        if (scope.isEmpty()) {
+        final IScope scope = ((IScoped) scoped).getScopeObject();
+        if (scope.isUnconstrained()) {
             return;
         }
         _out.newline();
@@ -242,6 +258,7 @@ public class XTM10Writer extends AbstractXTMWriter {
         _out.startElement("subjectIdentity");
         _out.newline();
         if (!slos.isEmpty()) {
+            // Choose one subject locator
             Locator slo = slos.iterator().next();
             _attrs.clear();
             _addLocator(_attrs, slo);

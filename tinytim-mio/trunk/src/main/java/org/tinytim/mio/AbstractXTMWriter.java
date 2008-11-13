@@ -18,31 +18,55 @@ package org.tinytim.mio;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.tmapi.core.TMAPIRuntimeException;
-import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
- * 
+ * Abstract superclass for XTM serializers.
+ * <p>
+ * Provides a XML writer and takes care about the encoding.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
 abstract class AbstractXTMWriter extends AbstractTopicMapWriter {
 
-    protected final Attributes _EMPTY_ATTRS = XMLWriter.EMPTY_ATTRS;
-    
-    protected AttributesImpl _attrs;
-    protected XMLWriter _out;
+    protected final AttributesImpl _attrs;
 
-    public AbstractXTMWriter(final OutputStream out, final String baseIRI) {
+    protected final XMLWriter _out;
+
+    /**
+     * Creates a new instance using "utf-8" encoding.
+     * 
+     * @param out The output stream to write onto.
+     * @param baseIRI The base IRI.
+     * @throws IOException If an error occurs.
+     */
+    protected AbstractXTMWriter(final OutputStream out, final String baseIRI)
+            throws IOException {
+        this(out, baseIRI, "utf-8");
+    }
+
+    /**
+     * Creates a new instance.
+     * 
+     * @param out
+     *            The output stream to write onto.
+     * @param baseIRI
+     *            The base IRI.
+     * @param encoding
+     *            The encoding to use.
+     * @throws IOException
+     *             If an error occurs.
+     */
+    protected AbstractXTMWriter(final OutputStream out, final String baseIRI,
+            final String encoding) throws IOException {
         super(baseIRI);
-        try {
-            _out = new XMLWriter(out);
+        if (encoding == null) {
+            throw new IOException("The encoding must not be null");
         }
-        catch (IOException ex) {
-            throw new TMAPIRuntimeException(ex);
-        }
+        _out = new XMLWriter(out, encoding);
+        _attrs = new AttributesImpl();
     }
 
 }
