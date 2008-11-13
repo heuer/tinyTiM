@@ -3,23 +3,22 @@ Changes Log
 ===========
 
 2.0.0 a3 (xx.11.2008)
--------------------------
-* Adapted MIO to tinyTiM 2.0.0
+---------------------
+* Initial .mio release for tinyTiM 2.x
 * Changed license to Apache License 2.0
-* Introduced TopicMapReader/TopicMapWriter interfaces
-* Added dedicated, syntax-specific TopicMapReader implementations
+* Introduced TopicMapReader / TopicMapWriter interfaces
+* Added dedicated, syntax-specific TopicMapReader implementations:
+  - XTM reader which supports 1.0 and 2.0
+  - XTM 1.0 reader (does not support mergeMap)
+  - XTM 2.0 reader
+  - CTM reader which implements draft dtd. 2008-05-15 
+    (does not suppot %include and %mergemap)
+  - TM/XML
+  - Snello
+  - LTM 1.3
 * Moved CXTMWriter into .mio package, implements TopicMapWriter
-* XTM 1.0/2.0 serializers
-* Deprecated some TopicMapImporter methods which take a xml.InputSource 
+* XTM 1.0 writer
+* XTM 2.0 writer
+* Deprecated some TopicMapImporter methods which take a sax.InputSource 
   as argument
-
-
-1.5.0 beta (13.08.2008)
--------------------------
-* Renamed ``org.tinyim.io`` to ``org.tinytim.mio``
-* Aligned version numbering scheme
-
-
-1.0.0 alpha1 (08.05.2008)
--------------------------
-* Initial tinyTiM I/O release
+* Added docs to TopicMapImporter that it may become deprecated
