@@ -48,34 +48,35 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
 
     /**
      * 
-     *
+     * 
      * @param topicMap
      * @param syntax
      * @param source
      * @throws IOException
      */
-    protected AbstractTopicMapReader(final TopicMap topicMap, final Syntax syntax, 
-            final File source) throws IOException {
+    protected AbstractTopicMapReader(final TopicMap topicMap,
+            final Syntax syntax, final File source) throws IOException {
         this(topicMap, syntax, source, source.toURL().toString());
     }
 
     /**
      * 
-     *
+     * 
      * @param topicMap
      * @param syntax
      * @param source
      * @param docIRI
      * @throws IOException
      */
-    protected AbstractTopicMapReader(final TopicMap topicMap, final Syntax syntax, 
-            final File source, final String docIRI) throws IOException {
+    protected AbstractTopicMapReader(final TopicMap topicMap,
+            final Syntax syntax, final File source, final String docIRI)
+            throws IOException {
         this(topicMap, syntax, new Source(new FileInputStream(source), docIRI));
     }
 
     /**
      * 
-     *
+     * 
      * @param topicMap
      * @param syntax
      * @param source
@@ -86,17 +87,32 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
         this(topicMap, syntax, new Source(source, docIRI));
     }
 
-    protected AbstractTopicMapReader(final TopicMap topicMap, final Syntax syntax,
-            final Source source) {
+    /**
+     * 
+     * 
+     * @param topicMap
+     * @param syntax
+     * @param source
+     */
+    protected AbstractTopicMapReader(final TopicMap topicMap,
+            final Syntax syntax, final Source source) {
         this(new TinyTimMapInputHandler(topicMap), syntax, source);
     }
 
-    protected AbstractTopicMapReader(final IMapHandler handler, final Syntax syntax,
-                final Source source) {
+    /**
+     * 
+     * 
+     * @param handler
+     * @param syntax
+     * @param source
+     */
+    protected AbstractTopicMapReader(final IMapHandler handler,
+            final Syntax syntax, final Source source) {
         this(handler, DeserializerRegistry.createDeserializer(syntax), source);
     }
 
-    protected AbstractTopicMapReader(final IMapHandler handler, final IDeserializer deserializer, final Source source) {
+    protected AbstractTopicMapReader(final IMapHandler handler,
+            final IDeserializer deserializer, final Source source) {
         if (_deserializer == null) {
             throw new IllegalArgumentException("Deserializer not found");
         }

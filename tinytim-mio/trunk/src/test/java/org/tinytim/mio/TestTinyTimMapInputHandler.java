@@ -27,7 +27,7 @@ import com.semagia.mio.MIOException;
 import com.semagia.mio.helpers.Ref;
 
 /**
- * Tests against the {@link org.tinytim.core.AbstractMapInputHandler}.
+ * Tests against the {@link org.tinytim.mio.TinyTimMapInputHandler}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

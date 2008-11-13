@@ -42,7 +42,8 @@ public final class TMXMLReader extends AbstractTopicMapReader {
      * @param docIRI The document IRI which is used to resolve IRIs against.
      * @throws IOException If an error occurs. 
      */
-    public TMXMLReader(final TopicMap topicMap, final File source, final String docIRI) throws IOException {
+    public TMXMLReader(final TopicMap topicMap, final File source,
+            final String docIRI) throws IOException {
         super(topicMap, Syntax.TMXML, source, docIRI);
     }
 
@@ -57,7 +58,8 @@ public final class TMXMLReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @throws IOException If an error occurs. 
      */
-    public TMXMLReader(final TopicMap topicMap, final File source) throws IOException {
+    public TMXMLReader(final TopicMap topicMap, final File source)
+            throws IOException {
         super(topicMap, Syntax.TMXML, source);
     }
 
@@ -68,7 +70,8 @@ public final class TMXMLReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @param docIRI The document IRI which is used to resolve IRIs against.
      */
-    public TMXMLReader(final TopicMap topicMap, final InputStream source, final String docIRI) {
+    public TMXMLReader(final TopicMap topicMap, final InputStream source,
+            final String docIRI) {
         super(topicMap, Syntax.TMXML, source, docIRI);
     }
 

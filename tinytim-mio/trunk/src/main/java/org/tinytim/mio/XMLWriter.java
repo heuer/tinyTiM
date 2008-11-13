@@ -27,7 +27,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * Simple SAX-alike XML writer.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 final class XMLWriter {
 
@@ -38,17 +38,17 @@ final class XMLWriter {
     private OutputStreamWriter _out;
 
     private final String _encoding;
-    
-    XMLWriter(OutputStream out) throws IOException {
+
+    public XMLWriter(OutputStream out) throws IOException {
         this(out, "utf-8");
     }
 
-    XMLWriter(OutputStream out, String encoding) throws IOException {
+    public XMLWriter(OutputStream out, String encoding) throws IOException {
         _out = new OutputStreamWriter(out, encoding);
         _encoding = encoding;
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.xml.sax.DocumentHandler#startDocument()
      */
     public void startDocument() throws IOException {
@@ -62,7 +62,7 @@ final class XMLWriter {
         newline();
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.xml.sax.DocumentHandler#endDocument()
      */
     public void endDocument() throws IOException {
@@ -79,7 +79,7 @@ final class XMLWriter {
         startElement(name, EMPTY_ATTRS);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.xml.sax.DocumentHandler#startElement(java.lang.String, org.xml.sax.AttributeList)
      */
     public void startElement(String name, Attributes attrs) throws IOException {
@@ -89,7 +89,7 @@ final class XMLWriter {
         _out.write('>');
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.xml.sax.DocumentHandler#endElement(java.lang.String)
      */
     public void endElement(String name) throws IOException {
@@ -138,8 +138,6 @@ final class XMLWriter {
 
     /**
      * Writes the specified characters to the output.
-     * 
-     * The data is written according to the rules of canonicalized XML.
      *
      * @param data The data to write.
      * @throws IOException If an error occurs.
@@ -149,7 +147,7 @@ final class XMLWriter {
         characters(chars, 0, chars.length);
     }
 
-    /* (non-Javadoc)
+    /**
      * @see org.xml.sax.DocumentHandler#characters(char[], int, int)
      */
     public void characters(char[] chars, int start, int length) throws IOException {

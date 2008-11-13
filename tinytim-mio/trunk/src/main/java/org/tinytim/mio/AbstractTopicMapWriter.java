@@ -19,7 +19,7 @@ import org.tmapi.core.Locator;
 import org.tmapi.core.Topic;
 
 /**
- * 
+ * Common, abstract superclass for {@link TopicMapWriter} implementations.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -32,9 +32,21 @@ abstract class AbstractTopicMapWriter implements TopicMapWriter {
         _baseIRI = baseIRI;
     }
 
-    protected String _getId(Topic tmo) {
+    /**
+     * Returns an identifier for the topic.
+     * <p>
+     * The algorithm tries to avoid to use the internal identifier which may
+     * cause yet another item identifier. If the topic has an item identifier
+     * which starts with the specified IRI provided in the constructor, the 
+     * algorithm tries to use the fragment identifier.
+     * </p>
+     *
+     * @param topic The topic to return an identifier for.
+     * @return An identifier, never <tt>null</tt>.
+     */
+    protected String _getId(final Topic topic) {
         String id = null;
-        for (Locator loc: tmo.getItemIdentifiers()) {
+        for (Locator loc: topic.getItemIdentifiers()) {
             String reference = loc.getReference();
             if (!reference.startsWith(_baseIRI)) {
                 continue;
@@ -51,6 +63,7 @@ abstract class AbstractTopicMapWriter implements TopicMapWriter {
                 break;
             }
         }
-        return id != null ? id : "id-" + tmo.getId();
+        return id != null ? id : "id-" + topic.getId();
     }
+
 }

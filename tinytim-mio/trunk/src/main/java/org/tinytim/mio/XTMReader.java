@@ -45,7 +45,8 @@ public final class XTMReader extends AbstractXTMTopicMapReader {
      * @param docIRI The document IRI which is used to resolve IRIs against.
      * @throws IOException If an error occurs. 
      */
-    public XTMReader(final TopicMap topicMap, final File source, final String docIRI) throws IOException {
+    public XTMReader(final TopicMap topicMap, final File source,
+            final String docIRI) throws IOException {
         super(topicMap, Syntax.XTM, source, docIRI);
     }
 
@@ -71,7 +72,8 @@ public final class XTMReader extends AbstractXTMTopicMapReader {
      * @param source The source to read the topic map from.
      * @param docIRI The document IRI which is used to resolve IRIs against.
      */
-    public XTMReader(final TopicMap topicMap, final InputStream source, final String docIRI) {
+    public XTMReader(final TopicMap topicMap, final InputStream source,
+            final String docIRI) {
         super(topicMap, Syntax.XTM, source, docIRI);
     }
 

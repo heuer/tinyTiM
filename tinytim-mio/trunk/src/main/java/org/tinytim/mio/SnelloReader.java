@@ -41,7 +41,8 @@ public final class SnelloReader extends AbstractTopicMapReader {
      * @param docIRI The document IRI which is used to resolve IRIs against.
      * @throws IOException If an error occurs. 
      */
-    public SnelloReader(final TopicMap topicMap, final File source, final String docIRI) throws IOException {
+    public SnelloReader(final TopicMap topicMap, final File source,
+            final String docIRI) throws IOException {
         super(topicMap, Syntax.SNELLO, source, docIRI);
     }
 
@@ -56,7 +57,8 @@ public final class SnelloReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @throws IOException If an error occurs. 
      */
-    public SnelloReader(final TopicMap topicMap, final File source) throws IOException {
+    public SnelloReader(final TopicMap topicMap, final File source)
+            throws IOException {
         super(topicMap, Syntax.SNELLO, source);
     }
 
@@ -67,7 +69,8 @@ public final class SnelloReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @param docIRI The document IRI which is used to resolve IRIs against.
      */
-    public SnelloReader(final TopicMap topicMap, final InputStream source, final String docIRI) {
+    public SnelloReader(final TopicMap topicMap, final InputStream source,
+            final String docIRI) {
         super(topicMap, Syntax.SNELLO, source, docIRI);
     }
 

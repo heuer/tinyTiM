@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
 
-import org.tinytim.core.IConstruct;
+import org.tinytim.internal.api.IConstruct;
+import org.tinytim.internal.api.IScope;
+import org.tinytim.internal.api.IScoped;
 import org.tinytim.voc.Namespace;
 import org.tinytim.voc.TMDM;
 import org.tinytim.voc.XSD;
@@ -52,12 +54,28 @@ import org.xml.sax.helpers.AttributesImpl;
 public class XTM20Writer extends AbstractXTMWriter {
 
     /**
-     * 
+     * Creates a XTM 2.0 writer using "utf-8" encoding.
      *
-     * @param baseIRI
+     * @param out The stream the XTM is written onto.
+     * @param baseIRI The base IRI which is used to resolve IRIs against.
+     * @throws IOException If an error occurs.
      */
-    public XTM20Writer(final OutputStream out, final String baseIRI) {
+    public XTM20Writer(final OutputStream out, final String baseIRI)
+            throws IOException {
         super(out, baseIRI);
+    }
+
+    /**
+     * Creates a XTM 2.0 writer.
+     *
+     * @param out The stream the XTM is written onto.
+     * @param baseIRI The base IRI which is used to resolve IRIs against.
+     * @param encoding The encoding to use.
+     * @throws IOException If an error occurs.
+     */
+    public XTM20Writer(final OutputStream out, final String baseIRI,
+            final String encoding) throws IOException {
+        super(out, baseIRI, encoding);
     }
 
     /* (non-Javadoc)
@@ -73,12 +91,10 @@ public class XTM20Writer extends AbstractXTMWriter {
         _out.startElement("topicMap", _attrs);
         _writeItemIdentifiers(topicMap);
         for (Topic topic: topicMap.getTopics()) {
-            _out.newline();
             _writeTopic(topic);
             _out.newline();
         }
         for (Association assoc: topicMap.getAssociations()) {
-            _out.newline();
             _writeAssociation(assoc);
             _out.newline();
         }
@@ -99,12 +115,10 @@ public class XTM20Writer extends AbstractXTMWriter {
             _out.endElement("instanceOf");
         }
         for (Name name: topic.getNames()) {
-            _out.newline();
             _writeName(name);
             _out.newline();
         }
         for (Occurrence occ: topic.getOccurrences()) {
-            _out.newline();
             _writeOccurrence(occ);
             _out.newline();
         }
@@ -117,7 +131,6 @@ public class XTM20Writer extends AbstractXTMWriter {
         _writeType(assoc);
         _writeScope(assoc);
         for (Role role: assoc.getRoles()) {
-            _out.newline();
             _writeRole(role);
             _out.newline();
         }
@@ -129,6 +142,7 @@ public class XTM20Writer extends AbstractXTMWriter {
         _writeItemIdentifiers(role);
         _writeType(role);
         _writeTopicRef(role.getPlayer());
+        _out.newline();
         _out.endElement("role");
     }
 
@@ -139,7 +153,6 @@ public class XTM20Writer extends AbstractXTMWriter {
         _writeScope(name);
         _out.dataElement("value", name.getValue());
         for (Variant variant: name.getVariants()) {
-            _out.newline();
             _writeVariant(variant);
             _out.newline();
         }
@@ -194,7 +207,7 @@ public class XTM20Writer extends AbstractXTMWriter {
             _addReifier(_attrs, reifier);
             return _attrs;
         }
-        return _EMPTY_ATTRS;
+        return XMLWriter.EMPTY_ATTRS;
     }
 
     private void _addReifier(final AttributesImpl attrs, final Topic reifier) {
@@ -221,8 +234,8 @@ public class XTM20Writer extends AbstractXTMWriter {
     }
 
     private void _writeScope(final Scoped scoped) throws IOException {
-        final Set<Topic> scope = scoped.getScope();
-        if (scope.isEmpty()) {
+        final IScope scope = ((IScoped) scoped).getScopeObject();
+        if (scope.isUnconstrained()) {
             return;
         }
         _out.newline();

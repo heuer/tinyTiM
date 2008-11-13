@@ -31,7 +31,7 @@ import com.semagia.mio.Syntax;
  * to configure the reader.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 abstract class AbstractXTMTopicMapReader extends AbstractTopicMapReader {
 
@@ -79,7 +79,8 @@ abstract class AbstractXTMTopicMapReader extends AbstractTopicMapReader {
      * @return <tt>true</tt> if mergeMap is ignored, otherwise <tt>false</tt>.
      */
     public boolean isIgnoringMergeMap() {
-        return Boolean.TRUE.equals(_deserializer.getProperty(Property.IGNORE_MERGEMAP));
+        return Boolean.TRUE.equals(_deserializer
+                .getProperty(Property.IGNORE_MERGEMAP));
     }
 
     /**
@@ -102,6 +103,8 @@ abstract class AbstractXTMTopicMapReader extends AbstractTopicMapReader {
      * @return <tt>true</tt> if this reader validates the source, otherwise <tt>false</tt>.
      */
     public boolean isValidating() {
-        return Boolean.TRUE.equals(_deserializer.getProperty(Property.VALIDATE));
+        return Boolean.TRUE
+                .equals(_deserializer.getProperty(Property.VALIDATE));
     }
+
 }
