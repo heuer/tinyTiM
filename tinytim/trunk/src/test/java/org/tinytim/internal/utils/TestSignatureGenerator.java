@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.internal.utils;
+
+import org.tinytim.core.TinyTimTestCase;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.Name;

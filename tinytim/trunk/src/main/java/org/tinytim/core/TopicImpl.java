@@ -20,9 +20,20 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
 
+import org.tinytim.core.value.Literal;
+import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.IConstant;
+import org.tinytim.internal.api.ILiteral;
+import org.tinytim.internal.api.IName;
+import org.tinytim.internal.api.IOccurrence;
+import org.tinytim.internal.api.ITopic;
+import org.tinytim.internal.api.ITopicMap;
 import org.tinytim.internal.utils.Check;
 import org.tinytim.internal.utils.CollectionFactory;
+import org.tinytim.internal.utils.MergeUtils;
 import org.tinytim.utils.TopicUtils;
+import org.tinytim.voc.TMDM;
+
 import org.tmapi.core.Locator;
 import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Name;
@@ -39,15 +50,15 @@ import org.tmapi.core.TopicMap;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-final class TopicImpl extends ConstructImpl implements Topic {
+final class TopicImpl extends ConstructImpl implements ITopic {
 
     private Set<Role> _rolesPlayed;
     Reifiable _reified;
     private Set<Topic> _types;
-    private Set<Locator> _sids;
+    private final Set<Locator> _sids;
     private Set<Locator> _slos;
-    private Set<Occurrence> _occs;
-    private Set<Name> _names;
+    private final Set<Occurrence> _occs;
+    private final Set<Name> _names;
 
     TopicImpl(ITopicMap topicMap) {
         super(topicMap);
@@ -144,7 +155,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
      */
     public Occurrence createOccurrence(Topic type, String value, Collection<Topic> scope) {
         Check.valueNotNull(this, value);
-        return _createOccurrence(type, Literal.create(value), scope);
+        return createOccurrence(type, Literal.create(value), scope);
     }
 
     /* (non-Javadoc)
@@ -152,7 +163,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
      */
     public Occurrence createOccurrence(Topic type, Locator value, Collection<Topic> scope) {
         Check.valueNotNull(this, value);
-        return _createOccurrence(type, Literal.create(value), scope);
+        return createOccurrence(type, Literal.create(value), scope);
     }
 
     /* (non-Javadoc)
@@ -160,7 +171,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
      */
     public Occurrence createOccurrence(Topic type, String value, Locator datatype, Collection<Topic> scope) {
         Check.valueNotNull(this, value, datatype);
-        return _createOccurrence(type, Literal.create(value, datatype), scope);
+        return createOccurrence(type, Literal.create(value, datatype), scope);
     }
 
     /* (non-Javadoc)
@@ -187,10 +198,10 @@ final class TopicImpl extends ConstructImpl implements Topic {
         return createOccurrence(type, value, Arrays.asList(scope));
     }
 
-    Occurrence _createOccurrence(Topic type, ILiteral literal, Collection<Topic> scope) {
+    public IOccurrence createOccurrence(Topic type, ILiteral literal, Collection<Topic> scope) {
         Check.typeNotNull(this, type);
         Check.scopeNotNull(this, scope);
-        Occurrence occ = new OccurrenceImpl(_tm, type, literal, Scope.create(scope));
+        IOccurrence occ = new OccurrenceImpl(_tm, type, literal, Scope.create(scope));
         addOccurrence(occ);
         return occ;
     }
@@ -298,7 +309,7 @@ final class TopicImpl extends ConstructImpl implements Topic {
      * @see org.tmapi.core.Topic#createName(java.lang.String, java.util.Collection)
      */
     public Name createName(String value, Collection<Topic> scope) {
-        return createName(_tm.getDefaultTopicNameType(), value, scope);
+        return createName(_tm.createTopicBySubjectIdentifier(TMDM.TOPIC_NAME), value, scope);
     }
 
     /* (non-Javadoc)
@@ -306,10 +317,10 @@ final class TopicImpl extends ConstructImpl implements Topic {
      */
     public Name createName(Topic type, String value, Collection<Topic> scope) {
         Check.valueNotNull(this, value);
-        return _createName(type, Literal.create(value), scope);
+        return createName(type, Literal.create(value), scope);
     }
 
-    public Name _createName(Topic type, ILiteral literal, Collection<Topic> scope) {
+    public IName createName(Topic type, ILiteral literal, Collection<Topic> scope) {
         Check.typeNotNull(this, type);
         Check.scopeNotNull(this, scope);
         NameImpl name = new NameImpl(_tm, type, literal, Scope.create(scope));
@@ -482,11 +493,11 @@ final class TopicImpl extends ConstructImpl implements Topic {
             _reified.setReifier(null);
         }
         _tm.removeTopic(this);
-        _sids = null;
+        _sids.clear();
         _slos = null;
         _types = null;
-        _occs = null;
-        _names = null;
+        _occs.clear();
+        _names.clear();
         _rolesPlayed = null;
         _reified = null;
         super.dispose();

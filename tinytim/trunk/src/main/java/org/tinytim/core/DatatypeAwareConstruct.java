@@ -18,8 +18,15 @@ package org.tinytim.core;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.tinytim.core.value.Literal;
+import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.ILiteral;
+import org.tinytim.internal.api.ILiteralAware;
+import org.tinytim.internal.api.IScope;
+import org.tinytim.internal.api.ITopicMap;
 import org.tinytim.internal.utils.Check;
 import org.tinytim.voc.XSD;
+
 import org.tmapi.core.DatatypeAware;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Topic;

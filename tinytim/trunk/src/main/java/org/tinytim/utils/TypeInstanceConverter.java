@@ -18,9 +18,10 @@ package org.tinytim.utils;
 import java.util.Collection;
 import java.util.logging.Logger;
 
-import org.tinytim.core.IIndexManagerAware;
+import org.tinytim.internal.api.IIndexManagerAware;
 import org.tinytim.voc.TMDM;
 import org.tinytim.voc.XTM10;
+
 import org.tmapi.core.Association;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Role;

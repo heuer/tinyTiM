@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Properties;
 
+import org.tinytim.internal.api.ITopicMap;
 import org.tmapi.core.Association;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Name;

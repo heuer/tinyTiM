@@ -18,7 +18,7 @@
  * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  *
  */
-package org.tinytim.core;
+package org.tinytim.core.value;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -26,12 +26,18 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URLDecoder;
 
+import org.tinytim.internal.api.ILocator;
 import org.tinytim.voc.XSD;
+
 import org.tmapi.core.Locator;
 import org.tmapi.core.TMAPIRuntimeException;
 
 /**
  * Immutable representation of an IRI.
+ * 
+ * <p>
+ * This class is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

@@ -13,13 +13,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.core.value;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
+import org.tinytim.internal.api.IConstant;
+import org.tinytim.internal.api.ILiteral;
+import org.tinytim.internal.api.ILocator;
 import org.tinytim.internal.utils.WeakObjectRegistry;
 import org.tinytim.voc.XSD;
+
 import org.tmapi.core.Locator;
 
 /**

@@ -13,13 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
-
-import org.tmapi.core.Scoped;
+package org.tinytim.internal.api;
 
 /**
- * Enhancement of the {@link org.tmapi.core.Scoped} interface which is 
- * {@link IScope} aware.
+ * Event handler that is able to handle Topic Maps events.
  * <p>
  * This interface is not meant to be used outside of the tinyTiM package.
  * </p>
@@ -27,20 +24,20 @@ import org.tmapi.core.Scoped;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public interface IScoped extends Scoped, IConstruct {
+public interface IEventHandler {
 
     /**
-     * Returns the scope.
+     * Callback method if a {@link IEventPublisher} sends an event to which
+     * this handler is subscribed to.
      *
-     * @return The scope.
+     * @param evt The event.
+     * @param sender The sender of the event (this is not necessarily the
+     *               publisher).
+     * @param oldValue The old value or <code>null</code> if the old value
+     *                 is not available or was <code>null</code>.
+     * @param newValue The new value or <code>null</code> if the new value
+     *                 is not available or should become <code>null</code>.
      */
-    public IScope getScopeObject();
-
-    /**
-     * Sets the scope.
-     *
-     * @param scope The scope.
-     */
-    public void setScopeObject(IScope scope);
+    public void handleEvent(Event evt, IConstruct sender, Object oldValue, Object newValue);
 
 }

@@ -13,10 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.internal.api;
 
 /**
- * Indicates that a literal can be attached to a construct.
+ * Publisher for Topic Maps events.
  * <p>
  * This interface is not meant to be used outside of the tinyTiM package.
  * </p>
@@ -24,20 +24,22 @@ package org.tinytim.core;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public interface ILiteralAware {
+public interface IEventPublisher {
 
     /**
-     * Returns the literal.
+     * Subscribes the handler for the specified event.
      *
-     * @return The literal.
+     * @param event The event of interesst.
+     * @param handler The event handler.
      */
-    public ILiteral getLiteral();
+    public void subscribe(Event event, IEventHandler handler);
 
     /**
-     * Sets the literal.
+     * Removes the handler from the publisher.
      *
-     * @param literal The literal.
+     * @param event The event.
+     * @param handler The event handler.
      */
-    public void setLiteral(ILiteral literal);
+    public void unsubscribe(Event event, IEventHandler handler);
 
 }

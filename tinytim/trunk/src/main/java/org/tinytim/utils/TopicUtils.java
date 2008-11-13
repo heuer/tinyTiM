@@ -15,8 +15,9 @@
  */
 package org.tinytim.utils;
 
-import org.tinytim.core.IIndexManagerAware;
 import org.tinytim.index.IIndexManager;
+import org.tinytim.internal.api.IIndexManagerAware;
+
 import org.tmapi.core.Topic;
 import org.tmapi.index.ScopedIndex;
 import org.tmapi.index.TypeInstanceIndex;

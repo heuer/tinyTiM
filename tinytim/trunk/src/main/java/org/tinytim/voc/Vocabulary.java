@@ -15,7 +15,7 @@
  */
 package org.tinytim.voc;
 
-import org.tinytim.core.Literal;
+import org.tinytim.core.value.Literal;
 import org.tmapi.core.Locator;
 
 /**

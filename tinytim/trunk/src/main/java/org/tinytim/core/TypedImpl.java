@@ -15,7 +15,10 @@
  */
 package org.tinytim.core;
 
+import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.ITopicMap;
 import org.tinytim.internal.utils.Check;
+
 import org.tmapi.core.Reifiable;
 import org.tmapi.core.Topic;
 

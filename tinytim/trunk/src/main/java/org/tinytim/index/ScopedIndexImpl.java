@@ -21,12 +21,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.tinytim.core.Event;
-import org.tinytim.core.IConstruct;
-import org.tinytim.core.IEventHandler;
-import org.tinytim.core.IEventPublisher;
-import org.tinytim.core.IScope;
-import org.tinytim.core.IScoped;
+import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.IConstruct;
+import org.tinytim.internal.api.IEventHandler;
+import org.tinytim.internal.api.IEventPublisher;
+import org.tinytim.internal.api.IScope;
+import org.tinytim.internal.api.IScoped;
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tmapi.core.Association;
 import org.tmapi.core.Name;

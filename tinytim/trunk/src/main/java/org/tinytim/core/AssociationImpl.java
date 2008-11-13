@@ -18,8 +18,13 @@ package org.tinytim.core;
 import java.util.Collections;
 import java.util.Set;
 
+import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.IConstant;
+import org.tinytim.internal.api.IScope;
+import org.tinytim.internal.api.ITopicMap;
 import org.tinytim.internal.utils.Check;
 import org.tinytim.internal.utils.CollectionFactory;
+
 import org.tmapi.core.Association;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;

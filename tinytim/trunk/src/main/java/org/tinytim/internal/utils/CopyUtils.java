@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.core;
+package org.tinytim.internal.utils;
 
 import java.util.Map;
 import java.util.Set;
 
-import org.tinytim.internal.utils.CollectionFactory;
-import org.tinytim.internal.utils.IIntObjectMap;
+import org.tinytim.internal.api.ILiteralAware;
+import org.tinytim.internal.api.IName;
+import org.tinytim.internal.api.ITopic;
+import org.tinytim.internal.api.ITopicMap;
+
 import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
@@ -110,7 +113,7 @@ final class CopyUtils {
             Topic targetTopic = mergeMap.get(topic);
             _copyIdentities(topic, targetTopic);
             _copyTypes(topic, targetTopic, mergeMap);
-            _copyCharacteristics(topic, (TopicImpl)targetTopic, mergeMap);
+            _copyCharacteristics(topic, (ITopic)targetTopic, mergeMap);
         }
         _copyAssociations(source, target, mergeMap);
     }
@@ -125,10 +128,10 @@ final class CopyUtils {
      */
     private static Topic _copyTopic(Topic topic, ITopicMap target,
             Map<Topic, Topic> mergeMap) {
-        Topic targetTopic = target.createTopicWithoutIdentity();
+        Topic targetTopic = target.getConstructFactory().createTopic();
         _copyIdentities(topic, targetTopic);
         _copyTypes(topic, targetTopic, mergeMap);
-        _copyCharacteristics(topic, (TopicImpl)targetTopic, mergeMap);
+        _copyCharacteristics(topic, (ITopic)targetTopic, mergeMap);
         return targetTopic;
     }
 
@@ -175,7 +178,7 @@ final class CopyUtils {
      * @param targetTopic The target topic which gets the charateristics.
      * @param mergeMap The map which holds the merge mappings.
      */
-    private static void _copyCharacteristics(Topic topic, TopicImpl targetTopic,
+    private static void _copyCharacteristics(Topic topic, ITopic targetTopic,
             Map<Topic, Topic> mergeMap) {
         IIntObjectMap<Reifiable> sigs = CollectionFactory.createIntObjectMap();
         for (Occurrence occ: targetTopic.getOccurrences()) {
@@ -189,7 +192,7 @@ final class CopyUtils {
         for (Occurrence occ: topic.getOccurrences()) {
             type = _copyType(occ, tm, mergeMap);
             scope = _copyScope(occ, tm, mergeMap);
-            targetOcc = targetTopic._createOccurrence(type, ((ILiteralAware) occ).getLiteral(), scope);
+            targetOcc = targetTopic.createOccurrence(type, ((ILiteralAware) occ).getLiteral(), scope);
             existing = sigs.get(SignatureGenerator.generateSignature(targetOcc));
             if (existing != null) {
                 targetOcc.remove();
@@ -206,7 +209,7 @@ final class CopyUtils {
         for (Name name: topic.getNames()) {
             type = _copyType(name, tm, mergeMap);
             scope = _copyScope(name, tm, mergeMap);
-            Name targetName = targetTopic._createName(type, ((ILiteralAware) name).getLiteral(), scope);
+            Name targetName = targetTopic.createName(type, ((ILiteralAware) name).getLiteral(), scope);
             existing = sigs.get(SignatureGenerator.generateSignature(targetName));
             if (existing != null) {
                 targetName.remove();
@@ -214,7 +217,7 @@ final class CopyUtils {
             }
             _copyReifier(name, targetName, mergeMap);
             _copyItemIdentifiers(name, targetName);
-            _copyVariants(name, (NameImpl)targetName, mergeMap);
+            _copyVariants(name, (IName)targetName, mergeMap);
         }
     }
 
@@ -225,7 +228,7 @@ final class CopyUtils {
      * @param target The target name which receives the variants.
      * @param mergeMap The map which holds the merge mappings.
      */
-    private static void _copyVariants(Name source, NameImpl target,
+    private static void _copyVariants(Name source, IName target,
             Map<Topic, Topic> mergeMap) {
         IIntObjectMap<Variant> sigs = CollectionFactory.createIntObjectMap();
         for (Variant variant: target.getVariants()) {
@@ -236,7 +239,7 @@ final class CopyUtils {
         Set<Topic> scope = null;
         for (Variant variant: source.getVariants()) {
             scope = _copyScope( variant, tm, mergeMap);
-            Variant targetVar = target._createVariant(((ILiteralAware) variant).getLiteral(), scope);
+            Variant targetVar = target.createVariant(((ILiteralAware) variant).getLiteral(), scope);
             existing = sigs.get(SignatureGenerator.generateSignature(targetVar));
             if (existing != null) {
                 targetVar.remove();

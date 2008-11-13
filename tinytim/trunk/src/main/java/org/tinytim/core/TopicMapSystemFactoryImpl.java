@@ -23,6 +23,7 @@ import java.util.Set;
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tinytim.utils.Feature;
 import org.tinytim.utils.Property;
+
 import org.tmapi.core.FeatureNotRecognizedException;
 import org.tmapi.core.FeatureNotSupportedException;
 import org.tmapi.core.TMAPIException;

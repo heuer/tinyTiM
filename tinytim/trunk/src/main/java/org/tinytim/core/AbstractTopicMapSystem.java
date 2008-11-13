@@ -17,6 +17,8 @@ package org.tinytim.core;
 
 import java.util.Map;
 
+import org.tinytim.core.value.Literal;
+
 import org.tmapi.core.FeatureNotRecognizedException;
 import org.tmapi.core.Locator;
 import org.tmapi.core.TMAPIException;
@@ -28,7 +30,7 @@ import org.tmapi.core.TopicMapSystem;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 abstract class AbstractTopicMapSystem implements TopicMapSystem {
 
