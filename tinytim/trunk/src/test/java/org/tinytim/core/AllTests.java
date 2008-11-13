@@ -42,6 +42,7 @@ public class AllTests extends TestSuite {
         suite.addTestSuite(TestDuplicateRemovalUtils.class);
         suite.addTestSuite(TestLocatorImpl.class);
         suite.addTestSuite(TestIConstruct.class);
+        suite.addTestSuite(TestIConstructFactory.class);
         suite.addTestSuite(TestScope.class);
         suite.addTestSuite(TestLiteral.class);
         suite.addTestSuite(TestLiteralNormalizer.class);

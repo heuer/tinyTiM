@@ -43,14 +43,18 @@ final class MemoryConstructFactory implements IConstructFactory {
      * @see org.tinytim.internal.api.IConstructFactory#createTopic()
      */
     public ITopic createTopic() {
-        return new TopicImpl(_tm);
+        TopicImpl topic = new TopicImpl(_tm);
+        _tm.addTopic(topic);
+        return topic;
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IConstructFactory#createAssociation()
      */
     public Association createAssociation() {
-        return new AssociationImpl(_tm);
+        AssociationImpl assoc = new AssociationImpl(_tm);
+        _tm.addAssociation(assoc);
+        return assoc;
     }
 
     /* (non-Javadoc)
