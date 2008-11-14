@@ -23,16 +23,14 @@ package org.tinytim;
  */
 public class Version {
 
-    private static final String _MAJOR = "@MAJOR@";
-    private static final String _MINOR = "@MINOR@";
-    private static final String _MICRO = "@MICRO@";
-    private static final String _STATE ="@STATE@";
-    private static final String _DATE = "@DATE@";
+    private Version() {
+        // noop.
+    }
 
     /**
      * The release information.
      */
     // Not final since Java compilers copy the string into classes
-    public static String RELEASE = _MAJOR + "." + _MINOR + "." + _MICRO + _STATE + _DATE;
+    public static String RELEASE = "@RELEASE@";
 
 }
