@@ -23,6 +23,7 @@ import org.tinytim.internal.api.ILiteral;
 import org.tinytim.internal.api.ILocator;
 import org.tinytim.internal.utils.WeakObjectRegistry;
 import org.tinytim.voc.XSD;
+import static org.tinytim.core.value.LiteralNormalizer.normalizeBoolean;
 
 import org.tmapi.core.Locator;
 
@@ -53,14 +54,14 @@ public final class Literal implements ILiteral {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.ILiteral#getDatatype()
+     * @see org.tinytim.internal.api.ILiteral#getDatatype()
      */
     public Locator getDatatype() {
         return _datatype;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.ILiteral#getValue()
+     * @see org.tinytim.internal.api.ILiteral#getValue()
      */
     public String getValue() {
         return _value;
@@ -89,6 +90,10 @@ public final class Literal implements ILiteral {
         }
         if (XSD.STRING.equals(datatype)) {
             return get(value);
+        }
+        if (XSD.BOOLEAN.equals(datatype)) {
+            return normalizeBoolean(value).equals("true") ? BooleanLiteral.TRUE
+                                                          : BooleanLiteral.FALSE;
         }
         return _OTHERS.get(new Literal(value, datatype));
         
@@ -121,6 +126,9 @@ public final class Literal implements ILiteral {
         }
         if (XSD.INTEGER.equals(datatype)) {
             return createInteger(value);
+        }
+        if (XSD.BOOLEAN.equals(datatype)) {
+            return createBoolean(value);
         }
         return _registerIfAbsent(_OTHERS, new Literal(value, datatype));
     }
@@ -191,6 +199,11 @@ public final class Literal implements ILiteral {
         return _registerIfAbsent(_OTHERS, new IntegerLiteral(value));
     }
 
+    public static ILiteral createBoolean(String value) {
+        return normalizeBoolean(value).equals("true") ? BooleanLiteral.TRUE 
+                                                      : BooleanLiteral.FALSE;
+    }
+
     public BigDecimal decimalValue() {
         return new BigDecimal(_value);
     }
@@ -211,11 +224,17 @@ public final class Literal implements ILiteral {
         return Long.valueOf(_value);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
     @Override
     public int hashCode() {
         return _value.hashCode();
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

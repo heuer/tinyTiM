@@ -49,14 +49,14 @@ abstract class ScopedImpl extends TypedImpl implements IScoped {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IScoped#getScopeObject()
+     * @see org.tinytim.internal.api.IScoped#getScopeObject()
      */
     public IScope getScopeObject() {
         return _scope;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IScoped#setScopeObject(org.tinytim.core.IScope)
+     * @see org.tinytim.internal.api.IScoped#setScopeObject(org.tinytim.internal.api.IScope)
      */
     public void setScopeObject(IScope scope) {
         if (_scope == scope) {
@@ -67,14 +67,14 @@ abstract class ScopedImpl extends TypedImpl implements IScoped {
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.core.ScopedObject#getScope()
+     * @see org.tmapi.core.Scoped#getScope()
      */
     public Set<Topic> getScope() {
         return _scope.asSet();
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.Scoped#removeTheme(org.tmapi.core.Topic)
+     * @see org.tmapi.core.Scoped#addTheme(org.tmapi.core.Topic)
      */
     public void addTheme(Topic theme) {
         if (theme == null) {
@@ -84,7 +84,7 @@ abstract class ScopedImpl extends TypedImpl implements IScoped {
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.Scoped#removeTheme(org.tmapi.core.Topic)
+     * @see org.tmapi.core.Scoped#removeTheme(org.tmapi.core.Topic)
      */
     public void removeTheme(Topic theme) {
         setScopeObject(_scope.remove(theme));

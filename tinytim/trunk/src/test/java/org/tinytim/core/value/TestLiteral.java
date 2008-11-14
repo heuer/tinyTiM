@@ -88,4 +88,13 @@ public class TestLiteral extends TinyTimTestCase {
         ILiteral lit2 = Literal.create(loc);
         assertSame(lit1, lit2);
     }
+
+    public void testBooleanEquality() {
+        assertSame(BooleanLiteral.TRUE, Literal.get("true", XSD.BOOLEAN));
+        assertSame(BooleanLiteral.TRUE, Literal.get("1", XSD.BOOLEAN));
+        assertSame(BooleanLiteral.FALSE, Literal.get("false", XSD.BOOLEAN));
+        assertSame(BooleanLiteral.FALSE, Literal.get("0", XSD.BOOLEAN));
+        assertSame(BooleanLiteral.TRUE, Literal.create("1", XSD.BOOLEAN));
+        assertSame(BooleanLiteral.FALSE, Literal.create("0", XSD.BOOLEAN));
+    }
 }

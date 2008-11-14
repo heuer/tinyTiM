@@ -33,9 +33,6 @@ import org.tmapi.index.TypeInstanceIndex;
  * This class provides functions that can be used to convert the type-instance
  * relationships that are modelled as associations into the [types] property
  * of {@link org.tmapi.core.Topic}s.
- * <p>
- * Copied from the TMAPIX-project.
- * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

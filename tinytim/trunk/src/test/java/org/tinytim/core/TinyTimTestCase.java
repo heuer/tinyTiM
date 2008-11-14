@@ -26,7 +26,6 @@ import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
-import org.tmapi.core.TopicMap;
 import org.tmapi.core.TopicMapSystem;
 import org.tmapi.core.TopicMapSystemFactory;
 import org.tmapi.core.Variant;
@@ -47,7 +46,7 @@ public class TinyTimTestCase extends TestCase {
 
     protected static final String _IRI = "http://www.semagia.com/tinyTiM/testTopicMap/";
     protected Locator _base;
-    protected TopicMap _tm;
+    protected ITopicMap _tm;
     protected TopicMapSystem _sys;
     protected TopicMapSystemFactory _sysFactory;
 

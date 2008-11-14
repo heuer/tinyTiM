@@ -28,7 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 final class IdGenerator {
 
-    private static final AtomicLong _COUNTER = new AtomicLong();
+    private static final AtomicLong _COUNTER = new AtomicLong(1);
 
     /**
      * Returns the next identifier.

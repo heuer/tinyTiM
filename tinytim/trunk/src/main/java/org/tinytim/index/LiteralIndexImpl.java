@@ -42,21 +42,21 @@ import org.tmapi.index.LiteralIndex;
  */
 public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
 
-    private Map<ILiteral, List<Name>> _lit2Names;
-    private Map<ILiteral, List<Occurrence>> _lit2Occs;
-    private Map<ILiteral, List<Variant>> _lit2Variants;
+    private final Map<ILiteral, List<Name>> _lit2Names;
+    private final Map<ILiteral, List<Occurrence>> _lit2Occs;
+    private final Map<ILiteral, List<Variant>> _lit2Variants;
 
     public LiteralIndexImpl() {
         super();
-    }
-
-    /* (non-Javadoc)
-     * @see org.tinytim.core.IEventPublisherAware#subscribe(org.tinytim.core.IEventPublisher)
-     */
-    public void subscribe(IEventPublisher publisher) {
         _lit2Names = CollectionFactory.createIdentityMap();
         _lit2Occs = CollectionFactory.createIdentityMap();
         _lit2Variants = CollectionFactory.createIdentityMap();
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.IEventPublisherAware#subscribe(org.tinytim.internal.api.IEventPublisher)
+     */
+    public void subscribe(IEventPublisher publisher) {
         publisher.subscribe(Event.SET_LITERAL, new LiteralHandler());
         IEventHandler handler = new AddLiteralAwareHandler();
         publisher.subscribe(Event.ATTACHED_OCCURRENCE, handler);
@@ -75,6 +75,12 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
         return _getNames(Literal.get(value));
     }
 
+    /**
+     * 
+     *
+     * @param literal
+     * @return
+     */
     private Collection<Name> _getNames(ILiteral literal) {
         if (literal == null) {
             return Collections.<Name>emptySet();
@@ -108,6 +114,12 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
         return _getOccurrences(Literal.get(value, datatype));
     }
 
+    /**
+     * 
+     *
+     * @param literal
+     * @return
+     */
     private Collection<Occurrence> _getOccurrences(ILiteral literal) {
         if (literal == null) {
             return Collections.<Occurrence>emptySet();
@@ -141,6 +153,12 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
         return _getVariants(Literal.get(value, datatype));
     }
 
+    /**
+     * 
+     *
+     * @param literal
+     * @return
+     */
     private Collection<Variant> _getVariants(ILiteral literal) {
         if (literal == null) {
             return Collections.<Variant>emptySet();
@@ -150,6 +168,9 @@ public class LiteralIndexImpl extends AbstractIndex implements LiteralIndex {
                                 : CollectionFactory.createList(variants);
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.index.AbstractIndex#clear()
+     */
     public void clear() {
         _lit2Names.clear();
         _lit2Occs.clear();

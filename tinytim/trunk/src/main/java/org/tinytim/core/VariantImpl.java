@@ -52,7 +52,7 @@ final class VariantImpl extends DatatypeAwareConstruct implements
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.IMovable#moveTo(java.lang.Object)
+     * @see org.tinytim.internal.api.IMovable#moveTo(org.tmapi.core.Construct)
      */
     public void moveTo(Name newParent) {
         ((NameImpl) _parent).detachVariant(this);

@@ -42,7 +42,7 @@ abstract class ConstructImpl implements IConstruct {
     protected Construct _parent;
     private Set<Locator> _iids;
 
-    ConstructImpl(ITopicMap topicMap) {
+    protected ConstructImpl(ITopicMap topicMap) {
         _tm = topicMap;
     }
 
@@ -147,49 +147,49 @@ abstract class ConstructImpl implements IConstruct {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IConstruct#isAssociation()
+     * @see org.tinytim.internal.api.IConstruct#isAssociation()
      */
     public boolean isAssociation() {
         return false;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IConstruct#isName()
+     * @see org.tinytim.internal.api.IConstruct#isName()
      */
     public boolean isName() {
         return false;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IConstruct#isOccurrence()
+     * @see org.tinytim.internal.api.IConstruct#isOccurrence()
      */
     public boolean isOccurrence() {
         return false;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IConstruct#isRole()
+     * @see org.tinytim.internal.api.IConstruct#isRole()
      */
     public boolean isRole() {
         return false;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IConstruct#isTopic()
+     * @see org.tinytim.internal.api.IConstruct#isTopic()
      */
     public boolean isTopic() {
         return false;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IConstruct#isTopicMap()
+     * @see org.tinytim.internal.api.IConstruct#isTopicMap()
      */
     public boolean isTopicMap() {
         return false;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IConstruct#isVariant()
+     * @see org.tinytim.internal.api.IConstruct#isVariant()
      */
     public boolean isVariant() {
         return false;

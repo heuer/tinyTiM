@@ -64,7 +64,7 @@ final class MemoryTopicMapSystem extends AbstractTopicMapSystem {
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.core.TopicMapSystem#getBaseLocators()
+     * @see org.tmapi.core.TopicMapSystem#getLocators()
      */
     public Set<Locator> getLocators() {
         return Collections.unmodifiableSet(_topicMaps.keySet());

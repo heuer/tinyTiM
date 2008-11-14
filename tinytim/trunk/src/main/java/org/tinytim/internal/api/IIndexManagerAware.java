@@ -15,8 +15,6 @@
  */
 package org.tinytim.internal.api;
 
-import org.tinytim.index.IIndexManager;
-
 /**
  * Indicates that something provides access to the {@link IIndexManager}.
  * <p>
@@ -28,6 +26,11 @@ import org.tinytim.index.IIndexManager;
  */
 public interface IIndexManagerAware {
 
+    /**
+     * Returns the index manager.
+     *
+     * @return A index manager instance, never <tt>null</tt>.
+     */
     IIndexManager getIndexManager();
 
 }

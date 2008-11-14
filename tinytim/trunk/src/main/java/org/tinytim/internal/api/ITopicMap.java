@@ -15,8 +15,6 @@
  */
 package org.tinytim.internal.api;
 
-import org.tmapi.core.Association;
-import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
 /**
@@ -29,12 +27,9 @@ import org.tmapi.core.TopicMap;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public interface ITopicMap extends TopicMap, IEventHandler, IConstruct, IIndexManagerAware {
+public interface ITopicMap extends TopicMap, IConstruct, IIndexManagerAware,
+        IEventHandler, IEventPublisher {
 
     public IConstructFactory getConstructFactory();
-
-    public void removeTopic(Topic topic);
-
-    public void removeAssociation(Association association);
 
 }

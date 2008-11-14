@@ -18,7 +18,7 @@ package org.tinytim.internal.utils;
 import java.util.Collection;
 import java.util.List;
 
-import org.tinytim.index.IIndexManager;
+import org.tinytim.internal.api.IIndexManager;
 import org.tinytim.internal.api.IIndexManagerAware;
 import org.tinytim.internal.api.IName;
 import org.tinytim.internal.api.IOccurrence;

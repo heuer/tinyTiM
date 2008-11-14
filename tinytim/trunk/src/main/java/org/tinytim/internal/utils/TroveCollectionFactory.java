@@ -28,7 +28,7 @@ import java.util.Set;
 
 /**
  * {@link ICollectionFactory} which uses the
- * <a href="http://sourceforge.net/projects/trove4j/">Trove library </a>.
+ * <a href="http://sourceforge.net/projects/trove4j/">Trove library</a>.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -180,4 +180,5 @@ final class TroveCollectionFactory implements ICollectionFactory {
         }
 
     }
+
 }

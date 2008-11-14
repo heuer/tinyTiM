@@ -251,7 +251,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.core.Topic#getTopicNames()
+     * @see org.tmapi.core.Topic#getNames()
      */
     public Set<Name> getNames() {
         return Collections.unmodifiableSet(_names);
@@ -483,7 +483,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.core.TopicMapObject#remove()
+     * @see org.tmapi.core.Construct#remove()
      */
     public void remove() throws TopicInUseException {
         if (!TopicUtils.isRemovable(this, true)) {
@@ -492,7 +492,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
         if (_reified != null) {
             _reified.setReifier(null);
         }
-        _tm.removeTopic(this);
+        ((AbstractTopicMap) _tm).removeTopic(this);
         _sids.clear();
         _slos = null;
         _types = null;
@@ -522,6 +522,5 @@ final class TopicImpl extends ConstructImpl implements ITopic {
         sb.append("]");
         return sb.toString();
     }
-
 
 }

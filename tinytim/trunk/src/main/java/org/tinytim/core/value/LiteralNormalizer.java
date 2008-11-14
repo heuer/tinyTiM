@@ -42,14 +42,14 @@ final class LiteralNormalizer {
      * @return A normalized value.
      */
     public static String normalize(final String value, final Locator datatype) {
-        if (XSD.BOOLEAN.equals(datatype)) {
-            return normalizeBoolean(value);
-        }
-        else if (XSD.INTEGER.equals(datatype)) {
+        if (XSD.INTEGER.equals(datatype)) {
             return normalizeInteger(value);
         }
         else if (XSD.DECIMAL.equals(datatype)) {
             return normalizeDecimal(value);
+        }
+        else if (XSD.BOOLEAN.equals(datatype)) {
+            return normalizeBoolean(value);
         }
         return value;
     }
