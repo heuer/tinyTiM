@@ -107,7 +107,7 @@ final class IdentityManager implements IEventPublisherAware {
     private void _register(IConstruct construct) {
         ConstructImpl c = (ConstructImpl) construct;
         if (c._id == null) {
-            c._id = ("" + IdGenerator.nextId()).intern();
+            c._id = String.valueOf(IdGenerator.nextId()).intern();
         }
         if (!_id2Construct.containsKey(c._id)) {
             _id2Construct.put(c._id, c);
