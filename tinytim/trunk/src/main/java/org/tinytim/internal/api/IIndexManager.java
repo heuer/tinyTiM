@@ -13,15 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.index;
+package org.tinytim.internal.api;
 
-import org.tinytim.internal.api.IEventPublisherAware;
 import org.tmapi.index.LiteralIndex;
 import org.tmapi.index.ScopedIndex;
 import org.tmapi.index.TypeInstanceIndex;
 
 /**
  * The index manager provides access to the tinyTiM-specific indexes.
+ * 
+ * <p>
+ * This interface is not meant to be used outside of the tinyTiM package.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

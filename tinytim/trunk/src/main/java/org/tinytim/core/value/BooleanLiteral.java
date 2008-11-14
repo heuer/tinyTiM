@@ -20,92 +20,72 @@ import java.math.BigInteger;
 
 import org.tinytim.internal.api.ILiteral;
 import org.tinytim.voc.XSD;
-
 import org.tmapi.core.Locator;
 
 /**
  * 
- * <p>
- * This class is not meant to be used outside of the tinyTiM package.
- * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-final class IntegerLiteral implements ILiteral {
+final class BooleanLiteral implements ILiteral {
 
-    private final BigInteger _integer;
-    private final String _lexicalForm;
-    private BigDecimal _decimal;
+    public static final ILiteral TRUE = new BooleanLiteral(true);
+    public static final ILiteral FALSE = new BooleanLiteral(false);
 
-    public IntegerLiteral(BigInteger value) {
-        _integer = value;
-        _lexicalForm = LiteralNormalizer.normalizeInteger(value.toString());
-    }
+    private final boolean _value;
 
-    public IntegerLiteral(String value) {
-        _lexicalForm = LiteralNormalizer.normalizeInteger(value);
-        _integer = new BigInteger(_lexicalForm);
+    private BooleanLiteral(boolean value) {
+        _value = value;
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#decimalValue()
      */
     public BigDecimal decimalValue() {
-        if (_decimal == null) {
-            _decimal = new BigDecimal(_integer);
-        }
-        return _decimal;
+        return _value == true ? BigDecimal.ONE : BigDecimal.ZERO;
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#floatValue()
      */
     public float floatValue() {
-        return _integer.floatValue();
+        return _value == true ? 1.0F : 0.0F;
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#getDatatype()
      */
     public Locator getDatatype() {
-        return XSD.INTEGER;
+        return XSD.BOOLEAN;
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#getValue()
      */
     public String getValue() {
-        return _lexicalForm;
+        return _value == true ? "true" : "false";
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#intValue()
      */
     public int intValue() {
-        return _integer.intValue();
+        return _value == true ? 1 : 0;
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#integerValue()
      */
     public BigInteger integerValue() {
-        return _integer;
+        return _value == true ? BigInteger.ONE : BigInteger.ZERO;
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#longValue()
      */
     public long longValue() {
-        return _integer.longValue();
-    }
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        return _integer.hashCode();
+        return intValue();
     }
 
     /* (non-Javadoc)
@@ -113,7 +93,18 @@ final class IntegerLiteral implements ILiteral {
      */
     @Override
     public boolean equals(Object obj) {
-        return this == obj || (obj instanceof IntegerLiteral) && ((IntegerLiteral) obj)._lexicalForm.equals(_lexicalForm);
+        if (this == obj) {
+            return true;
+        }
+        return (obj instanceof BooleanLiteral) && _value == ((BooleanLiteral) obj)._value;
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        return _value == true ? 1 : 0;
     }
 
 }

@@ -154,7 +154,7 @@ final class AssociationImpl extends ScopedImpl implements Association {
      * @see org.tmapi.core.TopicMapObject#remove()
      */
     public void remove() {
-        _tm.removeAssociation(this);
+        ((AbstractTopicMap) _tm).removeAssociation(this);
         for (Role role: CollectionFactory.createList(_roles)) {
             role.remove();
         }

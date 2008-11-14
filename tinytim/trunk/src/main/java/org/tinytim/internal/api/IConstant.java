@@ -26,83 +26,83 @@ package org.tinytim.internal.api;
  */
 public interface IConstant {
     /**
-     * Initial size of the {@link MemoryTopicMap} topic set
+     * Initial size of the topic set
      */
     public static final int TM_TOPIC_SIZE = 100;
     /**
-     * Initial size of the {@link MemoryTopicMap} association set
+     * Initial size of the association set
      */
     public static final int TM_ASSOCIATION_SIZE = 100;
     /**
-     * Initial size of the {@link ConstructImpl} item identifier set.
+     * Initial size of the item identifier set.
      */
     public static final int CONSTRUCT_IID_SIZE = 4;
     /**
-     * Initial size of the {@link TopicImpl} subject identifier set.
+     * Initial size of the subject identifier set.
      */
     public static final int TOPIC_SID_SIZE = 4;
     /**
-     * Initial size of the {@link TopicImpl} subject locator set.
+     * Initial size of the subject locator set.
      */
     public static final int TOPIC_SLO_SIZE = 2;
     /**
-     * Initial size of the {@link TopicImpl} types set.
+     * Initial size of the topic types set.
      */
     public static final int TOPIC_TYPE_SIZE = 2;
     /**
-     * Initial size of the {@link TopicImpl} name set.
+     * Initial size of the name set.
      */
     public static final int TOPIC_NAME_SIZE = 2;
     /**
-     * Initial size of the {@link TopicImpl} occurrence set.
+     * Initial size of the occurrence set.
      */
     public static final int TOPIC_OCCURRENCE_SIZE = 2;
     /**
-     * Initial size of the {@link TopicImpl} roles-played set.
+     * Initial size of the topic roles-played set.
      */
     public static final int TOPIC_ROLE_SIZE = 2;
     /**
-     * Initial size of the {@link AssociationImpl} roles set.
+     * Initial size of the association roles set.
      */
     public static final int ASSOC_ROLE_SIZE = 2;
     /**
-     * Initial size of the {@link NameImpl} variants set.
+     * Initial size of the name variants set.
      */
     public static final int NAME_VARIANT_SIZE = 2;
     /**
-     * Initial size of the {@link IdentityManager} id->construct map.
+     * Initial size of the id->construct map.
      */
     public static final int IDENTITY_ID2CONSTRUCT_SIZE = 200;
     /**
-     * Initial size of the {@link IdentityManager} item identifier->construct map.
+     * Initial size of the item identifier->construct map.
      */
     public static final int IDENTITY_IID2CONSTRUCT_SIZE = 50;
     /**
-     * Initial size of the {@link IdentityManager} subject identifier->topic map.
+     * Initial size of the subject identifier->topic map.
      */
     public static final int IDENTITY_SID2TOPIC_SIZE = 50;
     /**
-     * Initial size of the {@link IdentityManager} subject locator -> topic map.
+     * Initial size of the subject locator -> topic map.
      */
     public static final int IDENTITY_SLO2TOPIC_SIZE = 20;
     /**
-     * Initial size of the {@link Literal}'s IRI registry. 
+     * Initial size of the IRI registry. 
      */
     public static final int LITERAL_IRI_SIZE = 100;
     /**
-     * Initial size of the {@link Literal}'s String registry. 
+     * Initial size of the String registry. 
      */
     public static final int LITERAL_STRING_SIZE = 50;
     /**
-     * Initial size of the {@link Literal}'s literal (!= String/IRI) registry. 
+     * Initial size of the literal (!= String/IRI) registry. 
      */
     public static final int LITERAL_OTHER_SIZE = 50;
     /**
-     * Initial size of the {@link Scope}'s scope registry. 
+     * Initial size of the scope registry. 
      */
     public static final int SCOPE_SCOPES_SIZE = 10;
     /**
-     * Initial size of the {@link MemoryTopicMapSystem} topic map map.
+     * Initial size of the system topic map map.
      */
     public static final int SYSTEM_TM_SIZE = 4;
 }

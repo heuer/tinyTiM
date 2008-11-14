@@ -84,7 +84,7 @@ public final class Scope implements IScope {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IScope#asSet()
+     * @see org.tinytim.internal.api.IScope#asSet()
      */
     public Set<Topic> asSet() {
         // _set is immutable
@@ -92,21 +92,21 @@ public final class Scope implements IScope {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IScope#contains(org.tmapi.core.Topic)
+     * @see org.tinytim.internal.api.IScope#contains(org.tmapi.core.Topic)
      */
     public boolean contains(Topic theme) {
         return _set.contains(theme);
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IScope#containsAll(java.util.Collection)
+     * @see org.tinytim.internal.api.IScope#containsAll(java.util.Collection)
      */
     public boolean containsAll(Collection<Topic> scope) {
         return _set.containsAll(scope);
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IScope#add(org.tmapi.core.Topic)
+     * @see org.tinytim.internal.api.IScope#add(org.tmapi.core.Topic)
      */
     public IScope add(Topic theme) {
         if (_set.contains(theme)) {
@@ -118,7 +118,7 @@ public final class Scope implements IScope {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IScope#remove(org.tmapi.core.Topic)
+     * @see org.tinytim.internal.api.IScope#remove(org.tmapi.core.Topic)
      */
     public IScope remove(Topic theme) {
         if (!_set.contains(theme)) {
@@ -137,14 +137,14 @@ public final class Scope implements IScope {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IScope#isUnconstrained()
+     * @see org.tinytim.internal.api.IScope#isUnconstrained()
      */
     public boolean isUnconstrained() {
         return this == UCS;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IScope#size()
+     * @see org.tinytim.internal.api.IScope#size()
      */
     public int size() {
         return _set.size();

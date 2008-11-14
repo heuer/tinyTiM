@@ -68,35 +68,50 @@ final class LocatorImpl implements ILocator {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.ILiteral#getDatatype()
+     * @see org.tinytim.internal.api.ILiteral#getDatatype()
      */
     public Locator getDatatype() {
         return XSD.ANY_URI;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.ILiteral#getValue()
+     * @see org.tinytim.internal.api.ILiteral#getValue()
      */
     public String getValue() {
         return _reference;
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.ILiteral#decimalValue()
+     */
     public BigDecimal decimalValue() {
         throw new NumberFormatException();
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.ILiteral#floatValue()
+     */
     public float floatValue() {
         throw new NumberFormatException();
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.ILiteral#integerValue()
+     */
     public BigInteger integerValue() {
         throw new NumberFormatException();
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.ILiteral#intValue()
+     */
     public int intValue() {
         throw new NumberFormatException();
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.ILiteral#longValue()
+     */
     public long longValue() {
         throw new NumberFormatException();
     }

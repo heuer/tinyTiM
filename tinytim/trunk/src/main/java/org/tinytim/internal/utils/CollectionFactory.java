@@ -134,4 +134,5 @@ public final class CollectionFactory {
     public static <E> List<E> createList(Collection<? extends E> values) {
         return _COLL_FACTORY.createList(values);
     }
+
 }

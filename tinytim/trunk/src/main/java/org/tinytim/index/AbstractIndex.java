@@ -20,8 +20,7 @@ import org.tinytim.internal.api.IEventPublisherAware;
 import org.tmapi.index.Index;
 
 /**
- * Abstract base class for {@link org.tmapi.index.Index} implementation which 
- * are autoupdated.
+ * Abstract base class for {@link Index} implementations which are autoupdated.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -69,5 +68,10 @@ abstract class AbstractIndex implements Index, IEventPublisherAware {
     public void reindex() {
         // noop.
     }
+
+    /**
+     * Clears the index.
+     */
+    abstract void clear();
 
 }

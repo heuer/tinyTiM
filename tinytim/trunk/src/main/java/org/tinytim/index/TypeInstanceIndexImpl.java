@@ -42,25 +42,25 @@ import org.tmapi.index.TypeInstanceIndex;
  */
 public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstanceIndex {
 
-    private Map<Topic, Set<Topic>> _type2Topics;
-    private Map<Topic, List<Association>> _type2Assocs;
-    private Map<Topic, List<Role>> _type2Roles;
-    private Map<Topic, List<Occurrence>> _type2Occs;
-    private Map<Topic, List<Name>> _type2Names;
+    private final Map<Topic, Set<Topic>> _type2Topics;
+    private final Map<Topic, List<Association>> _type2Assocs;
+    private final Map<Topic, List<Role>> _type2Roles;
+    private final Map<Topic, List<Occurrence>> _type2Occs;
+    private final Map<Topic, List<Name>> _type2Names;
 
     public TypeInstanceIndexImpl() {
         super();
+        _type2Topics = CollectionFactory.createIdentityMap();
+        _type2Assocs = CollectionFactory.createIdentityMap();
+        _type2Roles = CollectionFactory.createIdentityMap();
+        _type2Occs = CollectionFactory.createIdentityMap();
+        _type2Names = CollectionFactory.createIdentityMap();
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.core.IEventPublisherAware#subscribe(org.tinytim.core.IEventPublisher)
      */
     public void subscribe(IEventPublisher publisher) {
-        _type2Topics = CollectionFactory.createIdentityMap();
-        _type2Assocs = CollectionFactory.createIdentityMap();
-        _type2Roles = CollectionFactory.createIdentityMap();
-        _type2Occs = CollectionFactory.createIdentityMap();
-        _type2Names = CollectionFactory.createIdentityMap();
         IEventHandler handler = new TopicTypeHandler();
         publisher.subscribe(Event.ADD_TYPE, handler);
         publisher.subscribe(Event.REMOVE_TYPE, handler);
@@ -352,16 +352,14 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.index.AbstractIndex#clear()
+     */
     void clear() {
         _type2Topics.clear();
-        _type2Topics = null;
         _type2Assocs.clear();
-        _type2Assocs = null;
         _type2Roles.clear();
-        _type2Roles = null;
         _type2Occs.clear();
-        _type2Occs = null;
         _type2Names.clear();
-        _type2Names = null;
     }
 }

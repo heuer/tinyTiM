@@ -16,6 +16,8 @@
 package org.tinytim.index;
 
 import org.tinytim.internal.api.IEventPublisher;
+import org.tinytim.internal.api.IIndexManager;
+
 import org.tmapi.index.LiteralIndex;
 import org.tmapi.index.ScopedIndex;
 import org.tmapi.index.TypeInstanceIndex;
@@ -40,7 +42,7 @@ public final class IndexManager implements IIndexManager {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IEventPublisherAware#subscribe(org.tinytim.core.IEventPublisher)
+     * @see org.tinytim.internal.api.IEventPublisherAware#subscribe(org.tinytim.internal.api.IEventPublisher)
      */
     public void subscribe(final IEventPublisher publisher) {
         _typeInstanceIndex.subscribe(publisher);
@@ -49,7 +51,7 @@ public final class IndexManager implements IIndexManager {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IEventPublisherAware#unsubscribe(org.tinytim.core.IEventPublisher)
+     * @see org.tinytim.internal.api.IEventPublisherAware#unsubscribe(org.tinytim.internal.api.IEventPublisher)
      */
     public void unsubscribe(IEventPublisher publisher) {
         _typeInstanceIndex.unsubscribe(publisher);
@@ -58,26 +60,29 @@ public final class IndexManager implements IIndexManager {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.index.IIndexManager#getTypeInstanceIndex()
+     * @see org.tinytim.internal.api.IIndexManager#getTypeInstanceIndex()
      */
     public TypeInstanceIndex getTypeInstanceIndex() {
         return _typeInstanceIndex;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.index.IIndexManager#getScopedIndex()
+     * @see org.tinytim.internal.api.IIndexManager#getScopedIndex()
      */
     public ScopedIndex getScopedIndex() {
         return _scopedIndex;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.index.IIndexManager#getLiteralIndex()
+     * @see org.tinytim.internal.api.IIndexManager#getLiteralIndex()
      */
     public LiteralIndex getLiteralIndex() {
         return _literalIndex;
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.IIndexManager#close()
+     */
     public void close() {
         _typeInstanceIndex.clear();
         _scopedIndex.clear();

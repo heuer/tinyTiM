@@ -54,8 +54,8 @@ abstract class TypedImpl extends ConstructImpl implements Reifiable {
         return _type;
     }
 
-    /* (non-Javadoc)
-     * @see org.tinytim.ITyped#setType(org.tmapi.core.Topic)
+    /*
+     * @see org.tmapi.core.Typed#setType(org.tmapi.core.Topic)
      */
     public void setType(Topic type) {
         Check.typeNotNull(this, type);
@@ -67,14 +67,14 @@ abstract class TypedImpl extends ConstructImpl implements Reifiable {
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.core.IReifiable#getReifier()
+     * @see org.tmapi.core.Reifiable#getReifier()
      */
     public Topic getReifier() {
         return _reifier;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.IReifiable#setReifier(org.tmapi.core.Topic)
+     * @see org.tmapi.core.Reifiable#setReifier(org.tmapi.core.Topic)
      */
     public void setReifier(Topic reifier) {
         if (_reifier == reifier) {
@@ -91,7 +91,7 @@ abstract class TypedImpl extends ConstructImpl implements Reifiable {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.Construct#dispose()
+     * @see org.tinytim.core.ConstructImpl#dispose()
      */
     @Override
     protected void dispose() {

@@ -48,49 +48,49 @@ final class DecimalLiteral implements ILiteral {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.ILiteral#decimalValue()
+     * @see org.tinytim.internal.api.ILiteral#decimalValue()
      */
     public BigDecimal decimalValue() {
         return _decimal;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.ILiteral#floatValue()
+     * @see org.tinytim.internal.api.ILiteral#floatValue()
      */
     public float floatValue() {
         return _decimal.floatValue();
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.ILiteral#getDatatype()
+     * @see org.tinytim.internal.api.ILiteral#getDatatype()
      */
     public Locator getDatatype() {
         return XSD.DECIMAL;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.ILiteral#getValue()
+     * @see org.tinytim.internal.api.ILiteral#getValue()
      */
     public String getValue() {
         return _lexicalForm;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.ILiteral#intValue()
+     * @see org.tinytim.internal.api.ILiteral#intValue()
      */
     public int intValue() {
         return _decimal.intValue();
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.ILiteral#integerValue()
+     * @see org.tinytim.internal.api.ILiteral#integerValue()
      */
     public BigInteger integerValue() {
         return _decimal.toBigInteger();
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.ILiteral#longValue()
+     * @see org.tinytim.internal.api.ILiteral#longValue()
      */
     public long longValue() {
         return _decimal.longValue();

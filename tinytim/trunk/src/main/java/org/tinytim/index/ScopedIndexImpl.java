@@ -44,23 +44,23 @@ import org.tmapi.index.ScopedIndex;
  */
 public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
 
-    private Map<Topic, Set<Association>> _theme2Assocs;
-    private Map<Topic, Set<Occurrence>> _theme2Occs;
-    private Map<Topic, Set<Name>> _theme2Names;
-    private Map<Topic, Set<Variant>> _theme2Variants;
+    private final Map<Topic, Set<Association>> _theme2Assocs;
+    private final Map<Topic, Set<Occurrence>> _theme2Occs;
+    private final Map<Topic, Set<Name>> _theme2Names;
+    private final Map<Topic, Set<Variant>> _theme2Variants;
 
     public ScopedIndexImpl() {
         super();
+        _theme2Assocs = CollectionFactory.createIdentityMap();
+        _theme2Occs = CollectionFactory.createIdentityMap();
+        _theme2Names = CollectionFactory.createIdentityMap();
+        _theme2Variants = CollectionFactory.createIdentityMap();
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.core.IEventPublisherAware#subscribe(org.tinytim.core.IEventPublisher)
      */
     public void subscribe(IEventPublisher publisher) {
-        _theme2Assocs = CollectionFactory.createIdentityMap();
-        _theme2Occs = CollectionFactory.createIdentityMap();
-        _theme2Names = CollectionFactory.createIdentityMap();
-        _theme2Variants = CollectionFactory.createIdentityMap();
         publisher.subscribe(Event.SET_SCOPE, new SetScopeHandler());
         IEventHandler handler = new AddScopedHandler();
         publisher.subscribe(Event.ADD_ASSOCIATION, handler);
@@ -239,15 +239,14 @@ public class ScopedIndexImpl extends AbstractIndex implements ScopedIndex {
         return themes;
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.index.AbstractIndex#clear()
+     */
     void clear() {
         _theme2Assocs.clear();
-        _theme2Assocs = null;
         _theme2Occs.clear();
-        _theme2Occs = null;
         _theme2Names.clear();
-        _theme2Names = null;
         _theme2Variants.clear();
-        _theme2Variants = null;
     }
 
     private void _unindex(Map<Topic, Set<Scoped>> map, Scoped scoped, IScope scope) {

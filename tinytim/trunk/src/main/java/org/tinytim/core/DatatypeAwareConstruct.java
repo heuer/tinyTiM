@@ -42,11 +42,11 @@ abstract class DatatypeAwareConstruct extends ScopedImpl implements
 
     private ILiteral _literal;
 
-    DatatypeAwareConstruct(ITopicMap tm) {
+    protected DatatypeAwareConstruct(ITopicMap tm) {
         super(tm);
     }
 
-    DatatypeAwareConstruct(ITopicMap topicMap, Topic type, ILiteral literal, IScope scope) {
+    protected DatatypeAwareConstruct(ITopicMap topicMap, Topic type, ILiteral literal, IScope scope) {
         super(topicMap, type, scope);
         _literal = literal;
     }

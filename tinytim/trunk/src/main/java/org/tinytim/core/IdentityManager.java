@@ -44,13 +44,13 @@ import org.tmapi.core.Topic;
  */
 final class IdentityManager implements IEventPublisherAware {
 
-    private Map<Locator, Topic> _sid2Topic;
-    private Map<Locator, Topic> _slo2Topic;
-    private Map<Locator, IConstruct> _iid2Construct;
-    private Map<String, IConstruct> _id2Construct;
+    private final Map<Locator, Topic> _sid2Topic;
+    private final Map<Locator, Topic> _slo2Topic;
+    private final Map<Locator, IConstruct> _iid2Construct;
+    private final Map<String, IConstruct> _id2Construct;
 
     IdentityManager(MemoryTopicMap tm) {
-        _id2Construct = CollectionFactory.createIdentityMap(IConstant.IDENTITY_ID2CONSTRUCT_SIZE);
+        _id2Construct = CollectionFactory.createMap(IConstant.IDENTITY_ID2CONSTRUCT_SIZE);
         _sid2Topic = CollectionFactory.createIdentityMap(IConstant.IDENTITY_SID2TOPIC_SIZE);
         _slo2Topic = CollectionFactory.createIdentityMap(IConstant.IDENTITY_SLO2TOPIC_SIZE);
         _iid2Construct = CollectionFactory.createIdentityMap(IConstant.IDENTITY_IID2CONSTRUCT_SIZE);
@@ -59,7 +59,7 @@ final class IdentityManager implements IEventPublisherAware {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IEventPublisherAware#subscribe(org.tinytim.core.IEventPublisher)
+     * @see org.tinytim.internal.api.IEventPublisherAware#subscribe(org.tinytim.internal.api.IEventPublisher)
      */
     public void subscribe(IEventPublisher publisher) {
         IEventHandler handler = new TopicMapsConstructAddHandler();
@@ -93,7 +93,7 @@ final class IdentityManager implements IEventPublisherAware {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IEventPublisherAware#unsubscribe(org.tinytim.core.IEventPublisher)
+     * @see org.tinytim.internal.api.IEventPublisherAware#unsubscribe(org.tinytim.internal.api.IEventPublisher)
      */
     public void unsubscribe(IEventPublisher publisher) {
         // noop.
@@ -106,17 +106,18 @@ final class IdentityManager implements IEventPublisherAware {
      */
     private void _register(IConstruct construct) {
         ConstructImpl c = (ConstructImpl) construct;
-        if (c._id == null) {
-            String id = "" + IdGenerator.nextId();
-            c._id = id.intern();
+        String id = c._id;
+        if (id == null) {
+            id = "" + IdGenerator.nextId();
         }
-        if (!_id2Construct.containsKey(c._id)) {
-            _id2Construct.put(c._id, c);
+        if (!_id2Construct.containsKey(id)) {
+            _id2Construct.put(id, c);
+            c._id = id;
         }
     }
 
     /**
-     * Unregisteres the specified <code>construct</code>.
+     * Unregisteres the specified <tt>construct</tt>.
      *
      * @param construct The Topic Maps construct to unregister.
      */
@@ -128,7 +129,7 @@ final class IdentityManager implements IEventPublisherAware {
      * Returns a Topic Maps construct by its identifier.
      *
      * @param id The identifier.
-     * @return A Topic Maps construct with the <code>id</code> or <code>null</code>.
+     * @return A Topic Maps construct with the <tt>id</tt> or <tt>null</tt>.
      */
     public Construct getConstructById(String id) {
         return _id2Construct.get(id);
@@ -138,7 +139,7 @@ final class IdentityManager implements IEventPublisherAware {
      * Returns a topic by its subject identifier.
      *
      * @param sid The subject identifier.
-     * @return A topic with the <code>sid</code> or <code>null</code>.
+     * @return A topic with the <tt>sid</tt> or <tt>null</tt>.
      */
     public Topic getTopicBySubjectIdentifier(Locator sid) {
         return _sid2Topic.get(sid);
@@ -148,7 +149,7 @@ final class IdentityManager implements IEventPublisherAware {
      * Returns a topic by its subject locator.
      *
      * @param slo The subject locator.
-     * @return A topic with the <code>slo</code> or <code>null</code>.
+     * @return A topic with the <tt>slo</tt> or <tt>null</tt>.
      */
     public Topic getTopicBySubjectLocator(Locator slo) {
         return _slo2Topic.get(slo);
@@ -158,17 +159,17 @@ final class IdentityManager implements IEventPublisherAware {
      * Returns a Topic Maps construct by its item identifier.
      *
      * @param iid The item identifier.
-     * @return A Topic Maps construct with the <code>iid</code> or <code>null</code>.
+     * @return A Topic Maps construct with the <tt>iid</tt> or <tt>null</tt>.
      */
     public Construct getConstructByItemIdentifier(Locator iid) {
         return _iid2Construct.get(iid);
     }
 
     public void close() {
-        _id2Construct = null;
-        _iid2Construct = null;
-        _sid2Topic = null;
-        _slo2Topic = null;
+        _id2Construct.clear();
+        _iid2Construct.clear();
+        _sid2Topic.clear();
+        _slo2Topic.clear();
     }
 
     private class TopicMapsConstructAddHandler implements IEventHandler {

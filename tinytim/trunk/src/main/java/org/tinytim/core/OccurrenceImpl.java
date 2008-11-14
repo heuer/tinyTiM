@@ -47,7 +47,7 @@ final class OccurrenceImpl extends DatatypeAwareConstruct implements IOccurrence
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.IMovable#moveTo(java.lang.Object)
+     * @see org.tinytim.internal.api.IMovable#moveTo(org.tmapi.core.Construct)
      */
     public void moveTo(Topic newParent) {
         ((TopicImpl) _parent).detachOccurrence(this, true);

@@ -13,21 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.tinytim.internal.api;
+package org.tinytim.core;
 
-import java.util.Collection;
-
-import org.tmapi.core.Name;
+import org.tinytim.internal.api.ITopicMap;
+import org.tmapi.core.Association;
 import org.tmapi.core.Topic;
 
 /**
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev$ - $Date$
+ * @version $Rev:$ - $Date:$
  */
-public interface IName extends Name, IScoped, ILiteralAware, IMovable<Topic>{
+abstract class AbstractTopicMap extends ConstructImpl implements ITopicMap {
 
-    public IVariant createVariant(ILiteral literal, Collection<Topic> scope);
+    protected AbstractTopicMap() {
+        super(null);
+    }
+
+    abstract void removeAssociation(Association assoc);
+
+    abstract void removeTopic(Topic topic);
 
 }

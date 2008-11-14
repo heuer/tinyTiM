@@ -17,6 +17,9 @@ package org.tinytim.utils;
 
 /**
  * This class provides access to tinyTiM-specifc properties.
+ * <p>
+ * Even if public this class is currently not meant to be used.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
@@ -27,19 +30,10 @@ public final class Property {
 
     public static final String SYSTEM = _PROPERTY_BASE + "system";
 
-    /**
-     * 
-     */
     public static final String TMSHARE = _PROPERTY_BASE + "tmshare";
 
-    /**
-     * 
-     */
     public static final String TMSHARE_SUBSCRIBE = TMSHARE + "-subscribe";
 
-    /**
-     * 
-     */
     public static final String TMSHARE_INTERVALL = TMSHARE + "-intervall";
 
     public static final String PERSISTENT = _PROPERTY_BASE + "persistent";

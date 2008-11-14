@@ -65,14 +65,14 @@ final class NameImpl extends ScopedImpl implements IName {
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.ILiteralAware#getLiteral()
+     * @see org.tinytim.internal.api.ILiteralAware#getLiteral()
      */
     public ILiteral getLiteral() {
         return _literal;
     }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.ILiteralAware#setLiteral(org.tinytim.core.ILiteral)
+     * @see org.tinytim.internal.api.ILiteralAware#setLiteral(org.tinytim.internal.api.ILiteral)
      */
     public void setLiteral(ILiteral literal) {
         assert literal != null;
@@ -81,7 +81,7 @@ final class NameImpl extends ScopedImpl implements IName {
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.core.TopicName#getValue()
+     * @see org.tmapi.core.Name#getValue()
      */
     public String getValue() {
         return _literal.getValue();
@@ -128,7 +128,7 @@ final class NameImpl extends ScopedImpl implements IName {
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.core.TopicName#getVariants()
+     * @see org.tmapi.core.Name#getVariants()
      */
     public Set<Variant> getVariants() {
         return _variants == null ? Collections.<Variant>emptySet()
@@ -214,30 +214,30 @@ final class NameImpl extends ScopedImpl implements IName {
        attachVariant(v);
     }
 
-   void removeVariant(Variant variant) {
-       VariantImpl v = (VariantImpl) variant;
-       if (v._parent != this) {
-           return;
-       }
-       _fireEvent(Event.REMOVE_VARIANT, v, null);
-       detachVariant(v);
-   }
+    void removeVariant(Variant variant) {
+        VariantImpl v = (VariantImpl) variant;
+        if (v._parent != this) {
+            return;
+        }
+        _fireEvent(Event.REMOVE_VARIANT, v, null);
+        detachVariant(v);
+    }
 
-   void attachVariant(VariantImpl variant) {
-       if (_variants == null) {
-           _variants = CollectionFactory.createIdentitySet(IConstant.NAME_VARIANT_SIZE);
-       }
-       variant._parent = this;
-       _variants.add(variant);
-   }
+    void attachVariant(VariantImpl variant) {
+        if (_variants == null) {
+            _variants = CollectionFactory.createIdentitySet(IConstant.NAME_VARIANT_SIZE);
+        }
+        variant._parent = this;
+        _variants.add(variant);
+    }
 
-   void detachVariant(VariantImpl variant) {
-       _variants.remove(variant);
-       variant._parent = null;
-   }
+    void detachVariant(VariantImpl variant) {
+        _variants.remove(variant);
+        variant._parent = null;
+    }
 
     /* (non-Javadoc)
-     * @see org.tinytim.core.IMovable#moveTo(org.tmapi.core.Construct)
+     * @see org.tinytim.internal.api.IMovable#moveTo(org.tmapi.core.Construct)
      */
     public void moveTo(Topic newParent) {
         ((TopicImpl) _parent).detachName(this, true);

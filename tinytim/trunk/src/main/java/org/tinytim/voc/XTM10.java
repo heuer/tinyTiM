@@ -25,9 +25,6 @@ import org.tmapi.core.Locator;
  * topic maps which depend on the XTM 1.0 "model" but they should not be
  * used for new topic maps, use {@link TMDM}.
  * </p>
- * <p>
- * Copied from the Semagia MIO project.
- * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
