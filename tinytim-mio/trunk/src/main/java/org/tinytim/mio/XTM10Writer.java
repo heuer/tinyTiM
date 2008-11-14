@@ -18,6 +18,7 @@ package org.tinytim.mio;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.tinytim.internal.api.IScope;
 import org.tinytim.internal.api.IScoped;
@@ -48,8 +49,9 @@ import org.xml.sax.helpers.AttributesImpl;
  */
 public class XTM10Writer extends AbstractXTMWriter {
 
+    private static final Logger LOG = Logger.getLogger(XTM10Writer.class.getName());
+
     //TODO: Export iids, 
-    //      warn if len(slos) > 1, 
     //      warn if name.type != default name type, 
     //      warn if datatype not in (xsd:string, xsd:anyURI) 
 
@@ -120,50 +122,45 @@ public class XTM10Writer extends AbstractXTMWriter {
         _out.startElement("topic", _attrs);
         _writeIdentities(topic);
         for (Topic type: topic.getTypes()) {
-            _out.newline();
             _out.startElement("instanceOf");
             _writeTopicRef(type);
             _out.endElement("instanceOf");
-            _out.newline();
         }
         for (Name name: topic.getNames()) {
-            _out.newline();
             _writeName(name);
-            _out.newline();
         }
         for (Occurrence occ: topic.getOccurrences()) {
-            _out.newline();
             _writeOccurrence(occ);
-            _out.newline();
         }
         _out.endElement("topic");
-        _out.newline();
     }
 
     protected void _writeAssociation(final Association assoc) throws IOException {
+        Set<Role> roles = assoc.getRoles();
+        if (roles.isEmpty()) {
+            LOG.info("Omitting association id " + assoc.getId() + " since it has no roles");
+            return;
+        }
         _attrs.clear();
         _addId(_attrs, assoc);
         _out.startElement("association", _attrs);
         _writeType(assoc);
         _writeScope(assoc);
-        for (Role role: assoc.getRoles()) {
+        for (Role role: roles) {
             _writeRole(role);
         }
         _out.endElement("association");
-        _out.newline();
     }
 
     protected void _writeRole(final Role role) throws IOException {
         _attrs.clear();
         _addId(_attrs, role);
-        _out.newline();
         _out.startElement("member", _attrs);
         _out.startElement("roleSpec");
         _writeTopicRef(role.getType());
         _out.endElement("roleSpec");
         _writeTopicRef(role.getPlayer());
         _out.endElement("member");
-        _out.newline();
     }
 
     protected void _writeName(final Name name) throws IOException {
@@ -173,9 +170,7 @@ public class XTM10Writer extends AbstractXTMWriter {
         _writeScope(name);
         _out.dataElement("baseNameString", name.getValue());
         for (Variant variant: name.getVariants()) {
-            _out.newline();
             _writeVariant(variant);
-            _out.newline();
         }
         _out.endElement("baseName");
     }
@@ -184,13 +179,11 @@ public class XTM10Writer extends AbstractXTMWriter {
         _attrs.clear();
         _addId(_attrs, variant);
         _out.startElement("variant", _attrs);
-        _out.newline();
         _out.startElement("parameters");
         for (Topic theme: variant.getScope()) {
             _writeTopicRef(theme);
         }
         _out.endElement("parameters");
-        _out.newline();
         _writeDatatypeAware(variant);
         _out.endElement("variant");
     }
@@ -218,18 +211,14 @@ public class XTM10Writer extends AbstractXTMWriter {
 
     private void _writeTopicRef(final Topic topic) throws IOException {
         _attrs.clear();
-        _attrs.addAttribute("", "href", "", "CDATA", "#" + _getId(topic));
-        _out.newline();
+        _attrs.addAttribute("", "xlink:href", "", "CDATA", "#" + _getId(topic));
         _out.emptyElement("topicRef", _attrs);
-        _out.newline();
     }
 
     private void _writeType(final Typed typed) throws IOException {
-        _out.newline();
         _out.startElement("type");
         _writeTopicRef(typed.getType());
         _out.endElement("type");
-        _out.newline();
     }
 
     private void _writeScope(final Scoped scoped) throws IOException {
@@ -237,13 +226,11 @@ public class XTM10Writer extends AbstractXTMWriter {
         if (scope.isUnconstrained()) {
             return;
         }
-        _out.newline();
         _out.startElement("scope");
         for (Topic theme: scope) {
             _writeTopicRef(theme);
         }
         _out.endElement("scope");
-        _out.newline();
     }
 
     protected void _writeIdentities(final Topic topic) throws IOException {
@@ -256,8 +243,10 @@ public class XTM10Writer extends AbstractXTMWriter {
             return;
         }
         _out.startElement("subjectIdentity");
-        _out.newline();
         if (!slos.isEmpty()) {
+            if (slos.size() > 1) {
+                LOG.warning("The topic " + topic.getId() + " has more than one subject locator, exporting just one");
+            }
             // Choose one subject locator
             Locator slo = slos.iterator().next();
             _attrs.clear();
@@ -275,7 +264,6 @@ public class XTM10Writer extends AbstractXTMWriter {
             _out.emptyElement("subjectIndicatorRef", _attrs);
         }
         _out.endElement("subjectIdentity");
-        _out.newline();
     }
 
 }

@@ -18,6 +18,7 @@ package org.tinytim.mio;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
+import java.util.logging.Logger;
 
 import org.tinytim.internal.api.IConstruct;
 import org.tinytim.internal.api.IScope;
@@ -52,6 +53,8 @@ import org.xml.sax.helpers.AttributesImpl;
  * @version $Rev$ - $Date$
  */
 public class XTM20Writer extends AbstractXTMWriter {
+
+    private static final Logger LOG = Logger.getLogger(XTM20Writer.class.getName());
 
     /**
      * Creates a XTM 2.0 writer using "utf-8" encoding.
@@ -92,11 +95,9 @@ public class XTM20Writer extends AbstractXTMWriter {
         _writeItemIdentifiers(topicMap);
         for (Topic topic: topicMap.getTopics()) {
             _writeTopic(topic);
-            _out.newline();
         }
         for (Association assoc: topicMap.getAssociations()) {
             _writeAssociation(assoc);
-            _out.newline();
         }
         _out.endElement("topicMap");
         _out.endDocument();
@@ -116,23 +117,25 @@ public class XTM20Writer extends AbstractXTMWriter {
         }
         for (Name name: topic.getNames()) {
             _writeName(name);
-            _out.newline();
         }
         for (Occurrence occ: topic.getOccurrences()) {
             _writeOccurrence(occ);
-            _out.newline();
         }
         _out.endElement("topic");
     }
 
     protected void _writeAssociation(final Association assoc) throws IOException {
+        Set<Role> roles = assoc.getRoles();
+        if (roles.isEmpty()) {
+            LOG.info("Omitting association id " + assoc.getId() + " since it has no roles");
+            return;
+        }
         _out.startElement("association", _reifier(assoc));
         _writeItemIdentifiers(assoc);
         _writeType(assoc);
         _writeScope(assoc);
-        for (Role role: assoc.getRoles()) {
+        for (Role role: roles) {
             _writeRole(role);
-            _out.newline();
         }
         _out.endElement("association");
     }
@@ -142,7 +145,6 @@ public class XTM20Writer extends AbstractXTMWriter {
         _writeItemIdentifiers(role);
         _writeType(role);
         _writeTopicRef(role.getPlayer());
-        _out.newline();
         _out.endElement("role");
     }
 
@@ -154,7 +156,6 @@ public class XTM20Writer extends AbstractXTMWriter {
         _out.dataElement("value", name.getValue());
         for (Variant variant: name.getVariants()) {
             _writeVariant(variant);
-            _out.newline();
         }
         _out.endElement("name");
     }
@@ -178,7 +179,6 @@ public class XTM20Writer extends AbstractXTMWriter {
 
     private void _writeDatatypeAware(final DatatypeAware datatyped) throws IOException {
         _attrs.clear();
-        _out.newline();
         if (XSD.ANY_URI.equals(datatyped.getDatatype())) {
             _attrs.addAttribute("", "href", "", "CDATA", datatyped.locatorValue().toExternalForm());
             _out.emptyElement("resourceRef", _attrs);
@@ -190,7 +190,6 @@ public class XTM20Writer extends AbstractXTMWriter {
             }
             _out.dataElement("resourceData", _attrs, datatyped.getValue());
         }
-        _out.newline();
     }
 
     /**
@@ -226,11 +225,9 @@ public class XTM20Writer extends AbstractXTMWriter {
                     && type.getSubjectIdentifiers().contains(TMDM.TOPIC_NAME)) {
             return;
         }
-        _out.newline();
         _out.startElement("type");
         _writeTopicRef(type);
         _out.endElement("type");
-        _out.newline();
     }
 
     private void _writeScope(final Scoped scoped) throws IOException {
@@ -238,13 +235,11 @@ public class XTM20Writer extends AbstractXTMWriter {
         if (scope.isUnconstrained()) {
             return;
         }
-        _out.newline();
         _out.startElement("scope");
         for (Topic theme: scope) {
             _writeTopicRef(theme);
         }
         _out.endElement("scope");
-        _out.newline();
     }
 
     private void _writeItemIdentifiers(final Construct construct) throws IOException {
@@ -255,9 +250,7 @@ public class XTM20Writer extends AbstractXTMWriter {
         for (Locator loc: locs) {
             _attrs.clear();
             _attrs.addAttribute("", "href", "", "CDATA", loc.toExternalForm());
-            _out.newline();
             _out.emptyElement(name, _attrs);
-            _out.newline();
         }
     }
 }
