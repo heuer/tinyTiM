@@ -2,7 +2,7 @@
 Changes Log
 ===========
 
-2.0.0 a3 (xx.11.2008)
+2.0.0 a3 (14.11.2008)
 ---------------------
 * Moved to Apache License 2.0
 * Internal code refactoring
