@@ -31,7 +31,7 @@ import com.semagia.mio.Syntax;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class LTMReader extends AbstractTopicMapReader {
+public final class LTMTopicMapReader extends AbstractTopicMapReader {
 
     /**
      * Constructs a new instance.
@@ -41,7 +41,7 @@ public final class LTMReader extends AbstractTopicMapReader {
      * @param docIRI The document IRI which is used to resolve IRIs against.
      * @throws IOException If an error occurs. 
      */
-    public LTMReader(final TopicMap topicMap, final File source,
+    public LTMTopicMapReader(final TopicMap topicMap, final File source,
             final String docIRI) throws IOException {
         super(topicMap, Syntax.LTM, source, docIRI);
     }
@@ -57,7 +57,7 @@ public final class LTMReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @throws IOException If an error occurs. 
      */
-    public LTMReader(final TopicMap topicMap, final File source)
+    public LTMTopicMapReader(final TopicMap topicMap, final File source)
             throws IOException {
         super(topicMap, Syntax.LTM, source);
     }
@@ -69,7 +69,7 @@ public final class LTMReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @param docIRI The document IRI which is used to resolve IRIs against.
      */
-    public LTMReader(final TopicMap topicMap, final InputStream source,
+    public LTMTopicMapReader(final TopicMap topicMap, final InputStream source,
             final String docIRI) {
         super(topicMap, Syntax.LTM, source, docIRI);
     }
@@ -80,7 +80,7 @@ public final class LTMReader extends AbstractTopicMapReader {
      * @param topicMap The topic map to which the content is added to.
      * @param source The source to read the serialized topic map from.
      */
-    public LTMReader(final TopicMap topicMap, final Source source) {
+    public LTMTopicMapReader(final TopicMap topicMap, final Source source) {
         super(topicMap, Syntax.LTM, source);
     }
 

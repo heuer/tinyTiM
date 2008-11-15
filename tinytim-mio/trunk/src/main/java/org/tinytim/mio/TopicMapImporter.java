@@ -177,22 +177,22 @@ public final class TopicMapImporter {
     private static void _import(Syntax syntax, TopicMap topicMap, Source input) throws IOException {
         TopicMapReader tmReader = null;
         if (Syntax.XTM.equals(syntax)) {
-           tmReader = new XTMReader(topicMap, input);
+           tmReader = new XTMTopicMapReader(topicMap, input);
         }
         else if (Syntax.CTM.equals(syntax)) {
-            tmReader = new CTMReader(topicMap, input);
+            tmReader = new CTMTopicMapReader(topicMap, input);
         }
         else if (Syntax.LTM.equals(syntax)) {
-            tmReader = new LTMReader(topicMap, input);
+            tmReader = new LTMTopicMapReader(topicMap, input);
         }
         else if (Syntax.TMXML.equals(syntax)) {
-            tmReader = new TMXMLReader(topicMap, input);
+            tmReader = new TMXMLTopicMapReader(topicMap, input);
         }
         else if (Syntax.SNELLO.equals(syntax)) {
-            tmReader = new SnelloReader(topicMap, input);
+            tmReader = new SnelloTopicMapReader(topicMap, input);
         }
         else if (Syntax.BTM.equals(syntax)) {
-            tmReader = new BTMReader(topicMap, input);
+            tmReader = new BTMTopicMapReader(topicMap, input);
         }
         if (tmReader == null) {
             throw new IOException("Unknown syntax " + syntax.getName());

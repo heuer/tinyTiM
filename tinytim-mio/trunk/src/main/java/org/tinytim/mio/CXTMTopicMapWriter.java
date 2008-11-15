@@ -73,9 +73,9 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class CXTMWriter implements TopicMapWriter {
+public final class CXTMTopicMapWriter implements TopicMapWriter {
 
-    private static final Logger LOG = Logger.getLogger(CXTMWriter.class.getName());
+    private static final Logger LOG = Logger.getLogger(CXTMTopicMapWriter.class.getName());
 
     private static final Role[] _EMPTY_ROLES = new Role[0];
 
@@ -109,7 +109,7 @@ public final class CXTMWriter implements TopicMapWriter {
      * @param baseLocator The base locator which is used to resolve IRIs against.
      * @throws IOException If an error occurs.
      */
-    public CXTMWriter(OutputStream out, String baseLocator) throws IOException {
+    public CXTMTopicMapWriter(OutputStream out, String baseLocator) throws IOException {
         if (baseLocator == null) {
             throw new IllegalArgumentException("The base locator must not be null");
         }

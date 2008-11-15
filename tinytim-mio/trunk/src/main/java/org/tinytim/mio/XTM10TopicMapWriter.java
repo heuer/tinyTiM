@@ -20,15 +20,12 @@ import java.io.OutputStream;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.tinytim.internal.api.IConstruct;
 import org.tinytim.internal.api.IScope;
 import org.tinytim.internal.api.IScoped;
 import org.tinytim.voc.Namespace;
-import org.tinytim.voc.TMDM;
 import org.tinytim.voc.XSD;
 
 import org.tmapi.core.Association;
-import org.tmapi.core.Construct;
 import org.tmapi.core.DatatypeAware;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
@@ -41,44 +38,62 @@ import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
 
-import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
- * A {@link TopicMapWriter} implementation that serializes a topic map into
- * a <a href="http://www.isotopicmaps.org/sam/sam-xtm/">XTM 2.0</a> 
- * representation.
+ * {@link TopicMapWriter} that serializes a topic map into 
+ * a <a href="http://www.topicmaps.org/xtm/1.0/">XTM 1.0</a> representation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class XTM20Writer extends AbstractXTMWriter {
+public class XTM10TopicMapWriter extends AbstractXTMWriter {
 
-    private static final Logger LOG = Logger.getLogger(XTM20Writer.class.getName());
+    private static final Logger LOG = Logger.getLogger(XTM10TopicMapWriter.class.getName());
+
+    //TODO: Export iids, 
+    //      warn if name.type != default name type, 
+    //      warn if datatype not in (xsd:string, xsd:anyURI) 
 
     /**
-     * Creates a XTM 2.0 writer using "utf-8" encoding.
+     * Creates a XTM 1.0 writer using "utf-8" encoding.
      *
      * @param out The stream the XTM is written onto.
      * @param baseIRI The base IRI which is used to resolve IRIs against.
      * @throws IOException If an error occurs.
      */
-    public XTM20Writer(final OutputStream out, final String baseIRI)
+    public XTM10TopicMapWriter(final OutputStream out, final String baseIRI)
             throws IOException {
         super(out, baseIRI);
     }
 
     /**
-     * Creates a XTM 2.0 writer.
+     * Creates a XTM 1.0 writer.
      *
      * @param out The stream the XTM is written onto.
      * @param baseIRI The base IRI which is used to resolve IRIs against.
      * @param encoding The encoding to use.
      * @throws IOException If an error occurs.
      */
-    public XTM20Writer(final OutputStream out, final String baseIRI,
+    public XTM10TopicMapWriter(final OutputStream out, final String baseIRI,
             final String encoding) throws IOException {
         super(out, baseIRI, encoding);
+    }
+
+    private String _getId(Reifiable reifiable) {
+        assert reifiable.getReifier() != null;
+        return "reifier-id-" + reifiable.getReifier().getId();
+    }
+
+    private void _addId(AttributesImpl attrs, final Reifiable reifiable) {
+        if (reifiable.getReifier() == null) {
+            return;
+        }
+        attrs.addAttribute("", "id", "", "CDATA", _getId(reifiable));
+    }
+
+    private void _addLocator(AttributesImpl attrs, Locator loc) {
+        attrs.addAttribute("", "xlink:href", "", "CDATA", loc.toExternalForm());
     }
 
     /* (non-Javadoc)
@@ -86,13 +101,11 @@ public class XTM20Writer extends AbstractXTMWriter {
      */
     public void write(final TopicMap topicMap) throws IOException {
         _out.startDocument();
-        _attrs.addAttribute("", "xmlns", "", "CDATA", Namespace.XTM_20);
-        _attrs.addAttribute("", "version", "", "CDATA", "2.0");
-        if (topicMap.getReifier() != null) {
-            _addReifier(_attrs, topicMap.getReifier());
-        }
+        _attrs.clear();
+        _attrs.addAttribute("", "xmlns", "", "CDATA", Namespace.XTM_10);
+        _attrs.addAttribute("", "xmlns:xlink", "", "CDATA", Namespace.XLINK);
+        _addId(_attrs, topicMap);
         _out.startElement("topicMap", _attrs);
-        _writeItemIdentifiers(topicMap);
         for (Topic topic: topicMap.getTopics()) {
             _writeTopic(topic);
         }
@@ -105,11 +118,9 @@ public class XTM20Writer extends AbstractXTMWriter {
 
     protected void _writeTopic(final Topic topic) throws IOException {
         _attrs.clear();
-        _attrs.addAttribute("", "id", "", "CDATA", _getId(topic));
+        _attrs.addAttribute("", "id", "", "CDATA",  _getId(topic));
         _out.startElement("topic", _attrs);
-        _writeItemIdentifiers(topic);
-        _writeLocators("subjectIdentifier", topic.getSubjectIdentifiers());
-        _writeLocators("subjectLocator", topic.getSubjectLocators());
+        _writeIdentities(topic);
         for (Topic type: topic.getTypes()) {
             _out.startElement("instanceOf");
             _writeTopicRef(type);
@@ -130,8 +141,9 @@ public class XTM20Writer extends AbstractXTMWriter {
             LOG.info("Omitting association id " + assoc.getId() + " since it has no roles");
             return;
         }
-        _out.startElement("association", _reifier(assoc));
-        _writeItemIdentifiers(assoc);
+        _attrs.clear();
+        _addId(_attrs, assoc);
+        _out.startElement("association", _attrs);
         _writeType(assoc);
         _writeScope(assoc);
         for (Role role: roles) {
@@ -141,36 +153,45 @@ public class XTM20Writer extends AbstractXTMWriter {
     }
 
     protected void _writeRole(final Role role) throws IOException {
-        _out.startElement("role", _reifier(role));
-        _writeItemIdentifiers(role);
-        _writeType(role);
+        _attrs.clear();
+        _addId(_attrs, role);
+        _out.startElement("member", _attrs);
+        _out.startElement("roleSpec");
+        _writeTopicRef(role.getType());
+        _out.endElement("roleSpec");
         _writeTopicRef(role.getPlayer());
-        _out.endElement("role");
+        _out.endElement("member");
     }
 
     protected void _writeName(final Name name) throws IOException {
-        _out.startElement("name", _reifier(name));
-        _writeItemIdentifiers(name);
-        _writeType(name);
+        _attrs.clear();
+        _addId(_attrs, name);
+        _out.startElement("baseName", _attrs);
         _writeScope(name);
-        _out.dataElement("value", name.getValue());
+        _out.dataElement("baseNameString", name.getValue());
         for (Variant variant: name.getVariants()) {
             _writeVariant(variant);
         }
-        _out.endElement("name");
+        _out.endElement("baseName");
     }
 
     protected void _writeVariant(final Variant variant) throws IOException {
-        _out.startElement("variant", _reifier(variant));
-        _writeItemIdentifiers(variant);
-        _writeScope(variant);
+        _attrs.clear();
+        _addId(_attrs, variant);
+        _out.startElement("variant", _attrs);
+        _out.startElement("parameters");
+        for (Topic theme: variant.getScope()) {
+            _writeTopicRef(theme);
+        }
+        _out.endElement("parameters");
         _writeDatatypeAware(variant);
         _out.endElement("variant");
     }
 
     protected void _writeOccurrence(final Occurrence occ) throws IOException {
-        _out.startElement("occurrence", _reifier(occ));
-        _writeItemIdentifiers(occ);
+        _attrs.clear();
+        _addId(_attrs, occ);
+        _out.startElement("occurrence", _attrs);
         _writeType(occ);
         _writeScope(occ);
         _writeDatatypeAware(occ);
@@ -178,55 +199,25 @@ public class XTM20Writer extends AbstractXTMWriter {
     }
 
     private void _writeDatatypeAware(final DatatypeAware datatyped) throws IOException {
-        _attrs.clear();
         if (XSD.ANY_URI.equals(datatyped.getDatatype())) {
-            _attrs.addAttribute("", "href", "", "CDATA", datatyped.locatorValue().toExternalForm());
+            _attrs.clear();
+            _addLocator(_attrs, datatyped.locatorValue());
             _out.emptyElement("resourceRef", _attrs);
         }
         else {
-            final Locator datatype = datatyped.getDatatype();
-            if (!XSD.STRING.equals(datatype)) {
-                _attrs.addAttribute("", "datatype", "", "CDATA", datatype.toExternalForm());
-            }
-            _out.dataElement("resourceData", _attrs, datatyped.getValue());
+            _out.dataElement("resourceData", datatyped.getValue());
         }
-    }
-
-    /**
-     * If the <tt>reifiable</tt> is reified, this method returns attributes
-     * with the a reference to the reifier, otherwise the attributes will be empty.
-     *
-     * @param reifiable The reifiable construct.
-     * @return 
-     */
-    private Attributes _reifier(final Reifiable reifiable) {
-        final Topic reifier = reifiable.getReifier();
-        if (reifier != null) {
-            _attrs.clear();
-            _addReifier(_attrs, reifier);
-            return _attrs;
-        }
-        return XMLWriter.EMPTY_ATTRS;
-    }
-
-    private void _addReifier(final AttributesImpl attrs, final Topic reifier) {
-        attrs.addAttribute("", "reifier", "", "CDATA", "#" + _getId(reifier));
     }
 
     private void _writeTopicRef(final Topic topic) throws IOException {
         _attrs.clear();
-        _attrs.addAttribute("", "href", "", "CDATA", "#" + _getId(topic));
+        _attrs.addAttribute("", "xlink:href", "", "CDATA", "#" + _getId(topic));
         _out.emptyElement("topicRef", _attrs);
     }
 
     private void _writeType(final Typed typed) throws IOException {
-        final Topic type = typed.getType();
-        if (((IConstruct) typed).isName() 
-                    && type.getSubjectIdentifiers().contains(TMDM.TOPIC_NAME)) {
-            return;
-        }
         _out.startElement("type");
-        _writeTopicRef(type);
+        _writeTopicRef(typed.getType());
         _out.endElement("type");
     }
 
@@ -242,15 +233,37 @@ public class XTM20Writer extends AbstractXTMWriter {
         _out.endElement("scope");
     }
 
-    private void _writeItemIdentifiers(final Construct construct) throws IOException {
-        _writeLocators("itemIdentity", construct.getItemIdentifiers());
+    protected void _writeIdentities(final Topic topic) throws IOException {
+        Set<Locator> sids = topic.getSubjectIdentifiers();
+        Set<Locator> slos = topic.getSubjectLocators();
+        Reifiable reifiable = topic.getReified();
+        if (reifiable == null
+                && sids.isEmpty()
+                && slos.isEmpty()) {
+            return;
+        }
+        _out.startElement("subjectIdentity");
+        if (!slos.isEmpty()) {
+            if (slos.size() > 1) {
+                LOG.warning("The topic " + topic.getId() + " has more than one subject locator, exporting just one");
+            }
+            // Choose one subject locator
+            Locator slo = slos.iterator().next();
+            _attrs.clear();
+            _addLocator(_attrs, slo);
+            _out.emptyElement("resourceRef", _attrs);
+        }
+        for (Locator sid: sids) {
+            _attrs.clear();
+            _addLocator(_attrs, sid);
+            _out.emptyElement("subjectIndicatorRef", _attrs);
+        }
+        if (reifiable != null) {
+            _attrs.clear();
+            _attrs.addAttribute("", "xlink:href", "", "CDATA", "#" + _getId(reifiable));
+            _out.emptyElement("subjectIndicatorRef", _attrs);
+        }
+        _out.endElement("subjectIdentity");
     }
 
-    private void _writeLocators(final String name, final Set<Locator> locs) throws IOException {
-        for (Locator loc: locs) {
-            _attrs.clear();
-            _attrs.addAttribute("", "href", "", "CDATA", loc.toExternalForm());
-            _out.emptyElement(name, _attrs);
-        }
-    }
 }

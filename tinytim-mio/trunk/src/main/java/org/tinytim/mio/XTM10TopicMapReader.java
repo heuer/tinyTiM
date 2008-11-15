@@ -25,13 +25,17 @@ import com.semagia.mio.Source;
 import com.semagia.mio.Syntax;
 
 /**
- * {@link TopicMapReader} implementation that is able to deserialize 
- * <a href="http://www.semagia.com/tr/snello/1.0/">Snello Topic Maps (STM) 1.0</a>.
+ * {@link TopicMapReader} implementation that is able to deserialize XML Topic 
+ * Maps (XTM) <a href="http://www.topicmaps.org/xtm/1.0/">version 1.0</a>.
+ * <p>
+ * Note: {@link XTMTopicMapReader} is a {@link TopicMapReader} which is able to 
+ * parse any XTM version.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class SnelloReader extends AbstractTopicMapReader {
+public final class XTM10TopicMapReader extends AbstractXTMTopicMapReader {
 
     /**
      * Constructs a new instance.
@@ -41,9 +45,9 @@ public final class SnelloReader extends AbstractTopicMapReader {
      * @param docIRI The document IRI which is used to resolve IRIs against.
      * @throws IOException If an error occurs. 
      */
-    public SnelloReader(final TopicMap topicMap, final File source,
+    public XTM10TopicMapReader(final TopicMap topicMap, final File source,
             final String docIRI) throws IOException {
-        super(topicMap, Syntax.SNELLO, source, docIRI);
+        super(topicMap, Syntax.XTM_10, source, docIRI);
     }
 
     /**
@@ -57,9 +61,9 @@ public final class SnelloReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @throws IOException If an error occurs. 
      */
-    public SnelloReader(final TopicMap topicMap, final File source)
+    public XTM10TopicMapReader(final TopicMap topicMap, final File source)
             throws IOException {
-        super(topicMap, Syntax.SNELLO, source);
+        super(topicMap, Syntax.XTM_10, source);
     }
 
     /**
@@ -69,9 +73,9 @@ public final class SnelloReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @param docIRI The document IRI which is used to resolve IRIs against.
      */
-    public SnelloReader(final TopicMap topicMap, final InputStream source,
+    public XTM10TopicMapReader(final TopicMap topicMap, final InputStream source,
             final String docIRI) {
-        super(topicMap, Syntax.SNELLO, source, docIRI);
+        super(topicMap, Syntax.XTM_10, source, docIRI);
     }
 
     /**
@@ -80,8 +84,8 @@ public final class SnelloReader extends AbstractTopicMapReader {
      * @param topicMap The topic map to which the content is added to.
      * @param source The source to read the serialized topic map from.
      */
-    public SnelloReader(final TopicMap topicMap, final Source source) {
-        super(topicMap, Syntax.SNELLO, source);
+    public XTM10TopicMapReader(final TopicMap topicMap, final Source source) {
+        super(topicMap, Syntax.XTM_10, source);
     }
 
 }
