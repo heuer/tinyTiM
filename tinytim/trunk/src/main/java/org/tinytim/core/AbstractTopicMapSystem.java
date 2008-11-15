@@ -37,7 +37,7 @@ abstract class AbstractTopicMapSystem implements TopicMapSystem {
     protected final Map<String, Boolean> _features;
     protected final Map<String, Object> _properties;
 
-    AbstractTopicMapSystem(Map<String, Boolean> features, Map<String, Object> properties) throws TMAPIException {
+    protected AbstractTopicMapSystem(Map<String, Boolean> features, Map<String, Object> properties) throws TMAPIException {
         _features = features;
         _properties = properties;
     }

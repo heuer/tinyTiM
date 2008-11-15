@@ -102,11 +102,9 @@ final class NameImpl extends ScopedImpl implements IName {
     public void addTheme(Topic theme) {
         IScope scope = _scope;
         super.addTheme(theme);
-        if (scope != _scope) {
-            if (_variants != null) {
-                for (Variant variant: _variants) {
-                    ((VariantImpl) variant)._addNameTheme(theme);
-                }
+        if (_variants != null && scope != _scope) {
+            for (Variant variant: _variants) {
+                ((VariantImpl) variant)._addNameTheme(theme);
             }
         }
     }
@@ -118,11 +116,9 @@ final class NameImpl extends ScopedImpl implements IName {
     public void removeTheme(Topic theme) {
         IScope scope = _scope;
         super.removeTheme(theme);
-        if (scope != _scope) {
-            if (_variants != null) {
-                for (Variant variant: _variants) {
-                    ((VariantImpl) variant)._removeNameTheme(theme);
-                }
+        if (_variants != null && scope != _scope) {
+            for (Variant variant: _variants) {
+                ((VariantImpl) variant)._removeNameTheme(theme);
             }
         }
     }
