@@ -41,7 +41,6 @@ final class XMLWriter {
 
     private int _depth;
 
-    
     public XMLWriter(OutputStream out) throws IOException {
         this(out, "utf-8");
     }
@@ -63,6 +62,7 @@ final class XMLWriter {
         _out.write(Version.RELEASE);
         _out.write(" - http://tinytim.sourceforge.net/ -->");
         _newline();
+        _depth = 0;
     }
 
     /**
@@ -161,11 +161,12 @@ final class XMLWriter {
     }
 
     private void _indent() throws IOException {
-        char[] indent = new char[_depth*2];
-        for (int i=0; i<indent.length; i++) {
-            indent[i] = ' ';
+        int indent = _depth*2;
+        char[] chars = new char[indent];
+        for (int i=0; i<indent; i++) {
+            chars[i] = ' ';
         }
-        _out.write(indent);
+        _out.write(chars);
     }
 
     /**

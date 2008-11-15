@@ -21,18 +21,21 @@ import java.io.InputStream;
 
 import org.tmapi.core.TopicMap;
 
-import com.semagia.mio.Property;
 import com.semagia.mio.Source;
 import com.semagia.mio.Syntax;
 
 /**
- * {@link TopicMapReader} implementation that is able to deserialize 
- * <a href="http://www.ontopia.net/topicmaps/tmxml.html">TM/XML</a> topic maps.
+ * {@link TopicMapReader} implementation that is able to deserialize XML Topic 
+ * Maps (XTM) <a href="http://www.isotopicmaps.org/sam/sam-xtm/">version 2.0</a>.
+ * <p>
+ * Note: {@link XTMTopicMapReader} is a {@link TopicMapReader} which is able to 
+ * parse any XTM version.
+ * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class TMXMLReader extends AbstractTopicMapReader {
+public final class XTM20TopicMapReader extends AbstractXTMTopicMapReader {
 
     /**
      * Constructs a new instance.
@@ -42,9 +45,9 @@ public final class TMXMLReader extends AbstractTopicMapReader {
      * @param docIRI The document IRI which is used to resolve IRIs against.
      * @throws IOException If an error occurs. 
      */
-    public TMXMLReader(final TopicMap topicMap, final File source,
+    public XTM20TopicMapReader(final TopicMap topicMap, final File source,
             final String docIRI) throws IOException {
-        super(topicMap, Syntax.TMXML, source, docIRI);
+        super(topicMap, Syntax.XTM_20, source, docIRI);
     }
 
     /**
@@ -58,9 +61,9 @@ public final class TMXMLReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @throws IOException If an error occurs. 
      */
-    public TMXMLReader(final TopicMap topicMap, final File source)
+    public XTM20TopicMapReader(final TopicMap topicMap, final File source)
             throws IOException {
-        super(topicMap, Syntax.TMXML, source);
+        super(topicMap, Syntax.XTM_20, source);
     }
 
     /**
@@ -70,9 +73,9 @@ public final class TMXMLReader extends AbstractTopicMapReader {
      * @param source The source to read the topic map from.
      * @param docIRI The document IRI which is used to resolve IRIs against.
      */
-    public TMXMLReader(final TopicMap topicMap, final InputStream source,
+    public XTM20TopicMapReader(final TopicMap topicMap, final InputStream source,
             final String docIRI) {
-        super(topicMap, Syntax.TMXML, source, docIRI);
+        super(topicMap, Syntax.XTM_20, source, docIRI);
     }
 
     /**
@@ -81,31 +84,8 @@ public final class TMXMLReader extends AbstractTopicMapReader {
      * @param topicMap The topic map to which the content is added to.
      * @param source The source to read the serialized topic map from.
      */
-    public TMXMLReader(final TopicMap topicMap, final Source source) {
-        super(topicMap, Syntax.TMXML, source);
-    }
-
-    /**
-     * Enables / disables validation of the source.
-     * <p>
-     * The reader validates the XML document if this feature is enabled 
-     * (disabled by default).
-     * </p>
-     *
-     * @param validate <tt>true</tt> to enable validation, <tt>false</tt> to 
-     *                  disable validation.
-     */
-    public void setValidation(boolean validate) {
-        _deserializer.setProperty(Property.VALIDATE, validate);
-    }
-
-    /**
-     * Returns if this reader validates the source.
-     *
-     * @return <tt>true</tt> if this reader validates the source, otherwise <tt>false</tt>.
-     */
-    public boolean isValidating() {
-        return Boolean.TRUE.equals(_deserializer.getProperty(Property.VALIDATE));
+    public XTM20TopicMapReader(final TopicMap topicMap, final Source source) {
+        super(topicMap, Syntax.XTM_20, source);
     }
 
 }

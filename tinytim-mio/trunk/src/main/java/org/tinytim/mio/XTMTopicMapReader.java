@@ -26,16 +26,16 @@ import com.semagia.mio.Syntax;
 
 /**
  * {@link TopicMapReader} implementation that is able to deserialize XML Topic 
- * Maps (XTM) <a href="http://www.topicmaps.org/xtm/1.0/">version 1.0</a>.
+ * Maps (XTM) <a href="http://www.topicmaps.org/xtm/1.0/">version 1.0</a> and
+ * <a href="http://www.isotopicmaps.org/sam/sam-xtm/">version 2.0</a>.
  * <p>
- * Note: {@link XTMReader} is a {@link TopicMapReader} which is able to 
- * parse any XTM version.
+ * This reader detects automatically the used XTM version.
  * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public final class XTM10Reader extends AbstractXTMTopicMapReader {
+public final class XTMTopicMapReader extends AbstractXTMTopicMapReader {
 
     /**
      * Constructs a new instance.
@@ -45,9 +45,9 @@ public final class XTM10Reader extends AbstractXTMTopicMapReader {
      * @param docIRI The document IRI which is used to resolve IRIs against.
      * @throws IOException If an error occurs. 
      */
-    public XTM10Reader(final TopicMap topicMap, final File source,
+    public XTMTopicMapReader(final TopicMap topicMap, final File source,
             final String docIRI) throws IOException {
-        super(topicMap, Syntax.XTM_10, source, docIRI);
+        super(topicMap, Syntax.XTM, source, docIRI);
     }
 
     /**
@@ -61,9 +61,8 @@ public final class XTM10Reader extends AbstractXTMTopicMapReader {
      * @param source The source to read the topic map from.
      * @throws IOException If an error occurs. 
      */
-    public XTM10Reader(final TopicMap topicMap, final File source)
-            throws IOException {
-        super(topicMap, Syntax.XTM_10, source);
+    public XTMTopicMapReader(final TopicMap topicMap, final File source) throws IOException {
+        super(topicMap, Syntax.XTM, source);
     }
 
     /**
@@ -73,9 +72,9 @@ public final class XTM10Reader extends AbstractXTMTopicMapReader {
      * @param source The source to read the topic map from.
      * @param docIRI The document IRI which is used to resolve IRIs against.
      */
-    public XTM10Reader(final TopicMap topicMap, final InputStream source,
+    public XTMTopicMapReader(final TopicMap topicMap, final InputStream source,
             final String docIRI) {
-        super(topicMap, Syntax.XTM_10, source, docIRI);
+        super(topicMap, Syntax.XTM, source, docIRI);
     }
 
     /**
@@ -84,8 +83,8 @@ public final class XTM10Reader extends AbstractXTMTopicMapReader {
      * @param topicMap The topic map to which the content is added to.
      * @param source The source to read the serialized topic map from.
      */
-    public XTM10Reader(final TopicMap topicMap, final Source source) {
-        super(topicMap, Syntax.XTM_10, source);
+    public XTMTopicMapReader(final TopicMap topicMap, final Source source) {
+        super(topicMap, Syntax.XTM, source);
     }
 
 }
