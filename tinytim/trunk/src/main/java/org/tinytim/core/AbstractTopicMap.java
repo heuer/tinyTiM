@@ -23,7 +23,7 @@ import org.tmapi.core.Topic;
  * 
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 abstract class AbstractTopicMap extends ConstructImpl implements ITopicMap {
 

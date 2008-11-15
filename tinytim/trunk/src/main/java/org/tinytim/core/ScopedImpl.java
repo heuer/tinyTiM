@@ -38,12 +38,12 @@ abstract class ScopedImpl extends TypedImpl implements IScoped {
 
     protected IScope _scope;
 
-    ScopedImpl(ITopicMap tm) {
+    protected ScopedImpl(ITopicMap tm) {
         super(tm);
         _scope = Scope.UCS;
     }
 
-    ScopedImpl(ITopicMap topicMap, Topic type, IScope scope) {
+    protected ScopedImpl(ITopicMap topicMap, Topic type, IScope scope) {
         super(topicMap, type);
         _scope = scope;
     }
