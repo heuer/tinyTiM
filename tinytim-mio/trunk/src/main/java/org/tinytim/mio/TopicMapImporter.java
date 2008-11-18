@@ -191,9 +191,6 @@ public final class TopicMapImporter {
         else if (Syntax.SNELLO.equals(syntax)) {
             tmReader = new SnelloTopicMapReader(topicMap, input);
         }
-        else if (Syntax.BTM.equals(syntax)) {
-            tmReader = new BTMTopicMapReader(topicMap, input);
-        }
         if (tmReader == null) {
             throw new IOException("Unknown syntax " + syntax.getName());
         }
