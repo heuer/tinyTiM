@@ -33,7 +33,7 @@ import com.semagia.mio.Syntax;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-abstract class AbstractXTMTopicMapReader extends AbstractTopicMapReader {
+public abstract class AbstractXTMTopicMapReader extends AbstractTopicMapReader {
 
     public AbstractXTMTopicMapReader(TopicMap topicMap, Syntax syntax,
             File source) throws IOException {

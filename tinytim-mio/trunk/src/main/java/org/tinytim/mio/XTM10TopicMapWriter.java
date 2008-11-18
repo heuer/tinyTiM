@@ -138,7 +138,6 @@ public class XTM10TopicMapWriter extends AbstractXTMWriter {
     protected void _writeAssociation(final Association assoc) throws IOException {
         Set<Role> roles = assoc.getRoles();
         if (roles.isEmpty()) {
-            LOG.info("Omitting association id " + assoc.getId() + " since it has no roles");
             return;
         }
         _attrs.clear();

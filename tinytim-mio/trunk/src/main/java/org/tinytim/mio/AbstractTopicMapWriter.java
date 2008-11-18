@@ -56,7 +56,8 @@ abstract class AbstractTopicMapWriter implements TopicMapWriter {
                 continue;
             }
             id = reference.substring(fragIdx+1);
-            if (id.startsWith("id")) {
+            System.out.println("Id: " + id);
+            if (id.startsWith("id-")) {
                 id = null;
             }
             if (id != null) {

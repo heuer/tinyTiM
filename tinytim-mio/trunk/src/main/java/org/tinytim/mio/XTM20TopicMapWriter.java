@@ -18,7 +18,6 @@ package org.tinytim.mio;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.tinytim.internal.api.IScope;
 import org.tinytim.internal.api.IScoped;
@@ -52,8 +51,6 @@ import org.xml.sax.helpers.AttributesImpl;
  * @version $Rev$ - $Date$
  */
 public class XTM20TopicMapWriter extends AbstractXTMWriter {
-
-    private static final Logger LOG = Logger.getLogger(XTM20TopicMapWriter.class.getName());
 
     private Topic _defaultNameType;
 
@@ -108,11 +105,12 @@ public class XTM20TopicMapWriter extends AbstractXTMWriter {
 
     protected void _writeTopic(final Topic topic) throws IOException {
         // Ignore the topic if it is the default name type and it has no further
-        // characteristics (iids do not count)
+        // characteristics
         if (_isDefaultNameType(topic)
                 && topic.getReified() == null
                 && topic.getSubjectIdentifiers().size() == 1
                 && topic.getSubjectLocators().isEmpty()
+                && topic.getItemIdentifiers().isEmpty()
                 && topic.getRolesPlayed().isEmpty()
                 && topic.getTypes().isEmpty()
                 && topic.getNames().isEmpty()
@@ -142,7 +140,6 @@ public class XTM20TopicMapWriter extends AbstractXTMWriter {
     protected void _writeAssociation(final Association assoc) throws IOException {
         Set<Role> roles = assoc.getRoles();
         if (roles.isEmpty()) {
-            LOG.info("Omitting association id " + assoc.getId() + " since it has no roles");
             return;
         }
         _out.startElement("association", _reifier(assoc));
