@@ -71,7 +71,7 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
     protected AbstractTopicMapReader(final TopicMap topicMap,
             final Syntax syntax, final File source, final String docIRI)
             throws IOException {
-        this(topicMap, syntax, new Source(new FileInputStream(source), docIRI));
+        this(topicMap, syntax, new FileInputStream(source), docIRI);
     }
 
     /**
@@ -82,8 +82,8 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
      * @param source
      * @param docIRI
      */
-    protected AbstractTopicMapReader(TopicMap topicMap, Syntax syntax,
-            InputStream source, String docIRI) {
+    protected AbstractTopicMapReader(final TopicMap topicMap, final Syntax syntax,
+            final InputStream source, final String docIRI) {
         this(topicMap, syntax, new Source(source, docIRI));
     }
 
@@ -108,14 +108,15 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
      */
     protected AbstractTopicMapReader(final IMapHandler handler,
             final Syntax syntax, final Source source) {
-        this(handler, DeserializerRegistry.createDeserializer(syntax), source);
+        this(handler, DeserializerRegistry.createDeserializer(syntax), source, syntax);
     }
 
     protected AbstractTopicMapReader(final IMapHandler handler,
-            final IDeserializer deserializer, final Source source) {
-        if (_deserializer == null) {
-            throw new IllegalArgumentException("Deserializer not found");
+            final IDeserializer deserializer, final Source source, final Syntax syntax) {
+        if (deserializer == null) {
+            throw new IllegalArgumentException("Deserializer for " + syntax.getName() + " not found");
         }
+        _deserializer = deserializer;
         _deserializer.setProperty(Property.VALIDATE, Boolean.FALSE);
         _deserializer.setMapHandler(handler);
         _source = source;

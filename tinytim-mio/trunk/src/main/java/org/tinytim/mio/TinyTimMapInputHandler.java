@@ -435,7 +435,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
     private IConstruct _leaveStatePopConstruct(int state) throws MIOException {
         _leaveState(state);
         final IConstruct construct = _peekConstruct();
-        _constructStack[_constructSize] = null;
+        _constructStack[_constructSize-1] = null;
         _constructSize--;
         return construct;
     }
@@ -494,7 +494,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      */
     private void _merge(Topic source, ITopic target) {
         for (int i=0; i <_constructSize; i++) {
-            if (_constructStack[i] == source) {
+            if (_constructStack[i].equals(source)) {
                 _constructStack[i] = target;
             }
         }

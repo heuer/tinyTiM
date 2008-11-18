@@ -448,7 +448,7 @@ public final class CXTMTopicMapWriter implements TopicMapWriter {
         _out.endElement("value");
         _out.newline();
         _out.startElement("datatype");
-        _out.characters(_normalizeLocator(obj.getDatatype()));
+        _out.characters(obj.getDatatype().getReference());
         _out.endElement("datatype");
         _out.newline();
     }
@@ -652,7 +652,7 @@ public final class CXTMTopicMapWriter implements TopicMapWriter {
                 normLoc = normLoc.substring(slashPos);
             }
         }
-        if (normLoc.startsWith("/")) {
+        if (normLoc.charAt(0) == '/') {
             normLoc = normLoc.substring(1);
         }
         _locator2Norm.put(locator, normLoc);
