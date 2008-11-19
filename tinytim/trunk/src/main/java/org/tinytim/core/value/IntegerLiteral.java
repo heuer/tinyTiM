@@ -105,7 +105,7 @@ final class IntegerLiteral implements ILiteral {
      */
     @Override
     public int hashCode() {
-        return _integer.hashCode();
+        return _lexicalForm.hashCode();
     }
 
     /* (non-Javadoc)

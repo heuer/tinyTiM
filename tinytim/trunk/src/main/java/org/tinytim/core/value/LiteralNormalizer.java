@@ -66,9 +66,9 @@ final class LiteralNormalizer {
 
     public static String normalizeInteger(final String value) {
         final String val = value.trim();
-        int len = value.length();
+        int len = val.length();
         if (len == 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Illegal integer value: " + value);
         }
         int idx = 0;
         boolean negative = false;
@@ -93,7 +93,7 @@ final class LiteralNormalizer {
         // Check if everything is a digit
         for (int i = 0; i < len; i++) {
             if (!Character.isDigit(normalized.charAt(i))) {
-                throw new IllegalArgumentException();
+                throw new IllegalArgumentException("Illegal integer value: " + value);
             }
         }
         return negative && normalized.charAt(0) != 0 ? '-' + normalized : normalized;
@@ -101,9 +101,9 @@ final class LiteralNormalizer {
 
     public static String normalizeDecimal(final String value) {
         final String val = value.trim();
-        int len = value.length();
+        int len = val.length();
         if (len == 0) {
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Illegal decimal value: " + value);
         }
         int idx = 0;
         boolean negative = false;
@@ -142,11 +142,13 @@ final class LiteralNormalizer {
         while (len >= idx && val.charAt(len) == '0') {
             len--;
         }
-        if (len == idx || len < idx) {
+        if (len <= idx) {
             normalized.append('0');
         }
         else {
-            while (idx < len) {
+            // idx points to the '.', increment it
+            idx++;
+            while (idx <= len) {
                 char c = val.charAt(idx);
                 if (!Character.isDigit(c)) {
                     throw new IllegalArgumentException("Illegal decimal value: " + value);
