@@ -2,6 +2,15 @@
 Changes Log
 ===========
 
+2.0.0 a4 (xx.11.2008)
+---------------------
+
+Bugfixes:
+---------
+* Bug #2315558 -- Decimal value "9.3" is not accepted
+
+
+
 2.0.0 a3 (14.11.2008)
 ---------------------
 * Moved to Apache License 2.0
