@@ -316,4 +316,25 @@ public class TestTinyTimMapInputHandler extends TinyTimTestCase {
         }
     }
 
+    /**
+     * Tests nested startTopic/endTopic events.
+     */
+    public void testNestedTopics() throws Exception {
+        String base = "http://tinytim.sourceforge.net/test-nesting#";
+        final int MAX = 10000;
+        String[] iids = new String[MAX];
+        _handler.startTopicMap();
+        for (int i=0; i<MAX; i++) {
+            iids[i] = base + i;
+            _handler.startTopic(Ref.createItemIdentifier(iids[i]));
+        }
+        for (int i=0; i<MAX; i++) {
+            _handler.endTopic();
+        }
+        _handler.endTopicMap();
+        for (String iid: iids) {
+            assertNotNull(_tm.getConstructByItemIdentifier(createLocator(iid)));
+        }
+    }
+
 }
