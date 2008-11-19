@@ -101,7 +101,7 @@ final class DecimalLiteral implements ILiteral {
      */
     @Override
     public int hashCode() {
-        return _decimal.hashCode();
+        return _lexicalForm.hashCode();
     }
 
     /* (non-Javadoc)

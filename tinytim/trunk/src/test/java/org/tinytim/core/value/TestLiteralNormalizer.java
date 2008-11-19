@@ -46,6 +46,7 @@ public class TestLiteralNormalizer extends TinyTimTestCase {
         assertEquals("1", LiteralNormalizer.normalizeInteger("00001"));
         assertEquals("-1", LiteralNormalizer.normalizeInteger("-1"));
         assertEquals("-1", LiteralNormalizer.normalizeInteger("-00001"));
+        assertEquals("-1", LiteralNormalizer.normalizeInteger("  -00001   "));
         try {
             LiteralNormalizer.normalizeInteger("invalid");
             fail("Expected an IllegalArgumentException");
@@ -57,6 +58,7 @@ public class TestLiteralNormalizer extends TinyTimTestCase {
 
     public void testNormalizeDecimal() {
         assertEquals("0.0", LiteralNormalizer.normalizeDecimal("0"));
+        assertEquals("0.0", LiteralNormalizer.normalizeDecimal("   0    "));
         assertEquals("0.0", LiteralNormalizer.normalizeDecimal("-0"));
         assertEquals("0.0", LiteralNormalizer.normalizeDecimal("-0.0"));
         assertEquals("0.0", LiteralNormalizer.normalizeDecimal("+0.0"));
@@ -65,6 +67,9 @@ public class TestLiteralNormalizer extends TinyTimTestCase {
         assertEquals("10.0", LiteralNormalizer.normalizeDecimal("10"));
         assertEquals("-10.0", LiteralNormalizer.normalizeDecimal("-10.00"));
         assertEquals("10.0", LiteralNormalizer.normalizeDecimal("+10.00"));
+        assertEquals("9.3", LiteralNormalizer.normalizeDecimal("+9.3"));
+        assertEquals("9.3", LiteralNormalizer.normalizeDecimal("9.3"));
+        assertEquals("-9.3", LiteralNormalizer.normalizeDecimal("-9.3"));
         try {
             LiteralNormalizer.normalizeDecimal("invalid");
             fail("Expected an IllegalArgumentException");

@@ -46,28 +46,14 @@ public final class Literal implements ILiteral {
     private final Locator _datatype;
 
     private Literal(final String value, final Locator datatype) {
-        if (value == null) {
-            throw new IllegalArgumentException("The value must not be null");
-        }
         _value = LiteralNormalizer.normalize(value, datatype);
         _datatype = datatype;
     }
 
-    /* (non-Javadoc)
-     * @see org.tinytim.internal.api.ILiteral#getDatatype()
-     */
-    public Locator getDatatype() {
-        return _datatype;
-    }
-
-    /* (non-Javadoc)
-     * @see org.tinytim.internal.api.ILiteral#getValue()
-     */
-    public String getValue() {
-        return _value;
-    }
-
     public static synchronized ILiteral get(String value) {
+        if (value == null) {
+            throw new IllegalArgumentException("The value must not be null");
+        }
         return _STRINGS.get(new Literal(value, XSD.STRING));
     }
 
@@ -108,7 +94,7 @@ public final class Literal implements ILiteral {
         return lit;
     }
 
-    public static synchronized ILiteral create(final String value, final Locator datatype) {
+    public static ILiteral create(final String value, final Locator datatype) {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
@@ -133,7 +119,7 @@ public final class Literal implements ILiteral {
         return _registerIfAbsent(_OTHERS, new Literal(value, datatype));
     }
 
-    public static synchronized ILiteral create(String value) {
+    public static ILiteral create(String value) {
         return _registerIfAbsent(_STRINGS, new Literal(value, XSD.STRING));
     }
 
@@ -164,35 +150,35 @@ public final class Literal implements ILiteral {
         return (ILocator) value;
     }
 
-    public static synchronized ILocator createIRI(String value) {
+    public static ILocator createIRI(String value) {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
         return _registerIfAbsent(_IRIS, new LocatorImpl(value));
     }
 
-    public static synchronized ILiteral createDecimal(String value) {
+    public static ILiteral createDecimal(String value) {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
         return _registerIfAbsent(_OTHERS, new DecimalLiteral(value));
     }
 
-    public static synchronized ILiteral createDecimal(BigDecimal value) {
+    public static ILiteral createDecimal(BigDecimal value) {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
         return _registerIfAbsent(_OTHERS, new DecimalLiteral(value));
     }
 
-    public static synchronized ILiteral createInteger(String value) {
+    public static ILiteral createInteger(String value) {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
         return _registerIfAbsent(_OTHERS, new IntegerLiteral(value));
     }
 
-    public static synchronized ILiteral createInteger(BigInteger value) {
+    public static ILiteral createInteger(BigInteger value) {
         if (value == null) {
             throw new IllegalArgumentException("The value must not be null");
         }
@@ -204,22 +190,51 @@ public final class Literal implements ILiteral {
                                                       : BooleanLiteral.FALSE;
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.ILiteral#getDatatype()
+     */
+    public Locator getDatatype() {
+        return _datatype;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.ILiteral#getValue()
+     */
+    public String getValue() {
+        return _value;
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.ILiteral#decimalValue()
+     */
     public BigDecimal decimalValue() {
         return new BigDecimal(_value);
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.ILiteral#integerValue()
+     */
     public BigInteger integerValue() {
         return new BigInteger(_value);
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.ILiteral#floatValue()
+     */
     public float floatValue() {
         return Float.valueOf(_value);
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.ILiteral#intValue()
+     */
     public int intValue() {
         return Integer.valueOf(_value);
     }
 
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.ILiteral#longValue()
+     */
     public long longValue() {
         return Long.valueOf(_value);
     }
