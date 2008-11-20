@@ -61,6 +61,12 @@ public class TestTopicUtils extends TinyTimTestCase {
         ((IReifiable) assoc).setReifier(null);
         assertTrue(TopicUtils.isRemovable(topic));
         assertTrue(TopicUtils.isRemovable(topic, true));
+        // Topic type
+        Topic topic2 = _tm.createTopic();
+        topic2.addType(topic);
+        assertFalse(TopicUtils.isRemovable(topic));
+        topic2.removeType(topic);
+        assertTrue(TopicUtils.isRemovable(topic));
     }
 
 }

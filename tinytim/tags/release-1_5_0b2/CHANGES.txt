@@ -2,6 +2,13 @@
 Changes Log
 ===========
 
+1.5.0 b2 (20.11.2008)
+-----------------------
+Bugfixes:
+---------
+* Bug #2270475 -- Topic types are not considered as dependency
+
+
 1.5.0 beta (08.08.2008)
 -----------------------
 Bugfixes:
