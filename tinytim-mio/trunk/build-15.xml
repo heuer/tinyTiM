@@ -10,7 +10,7 @@
 
     <property name="lib.junit" value="${dir.lib}/junit-4.5.jar"/>
     <property name="lib.tmapi" value="${dir.lib}/tmapi-1_0SP1.jar"/>
-    <property name="lib.tinytim" value="${dir.lib}/tinytim-1.5.0beta.jar"/>
+    <property name="lib.tinytim" value="${dir.lib}/tinytim-1.5.0b2.jar"/>
     <property name="lib.logging" value="${dir.lib}/slf4j-api-1.5.2.jar"/>
     <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.3.jar"/>
 
@@ -125,7 +125,7 @@
         <copy file="${dir.src}/org/tinytim/mio/TinyTimMapInputHandler-15.txt" tofile="${dir.src}/org/tinytim/mio/TinyTimMapInputHandler.java" overwrite="true"/>
         <javac destdir="${dir.build.classes}"
             debug="${debug}"
-            excludes="org/tinytim/mio/**Writer.*"
+            excludes="org/tinytim/mio/XMLWriter* org/tinytim/mio/Abstract*Writer* org/tinytim/mio/CXTMTopicMapWriter* org/tinytim/mio/XTM*TopicMapWriter*"
             target="1.5">
             <classpath>
                 <pathelement location="${lib.tmapi}"/>
