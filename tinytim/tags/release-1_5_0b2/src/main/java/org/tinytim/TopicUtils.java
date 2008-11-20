@@ -84,7 +84,8 @@ public final class TopicUtils {
         boolean removable = typeInstanceIdx.getAssociations(topic).isEmpty()
                                 && typeInstanceIdx.getRoles(topic).isEmpty()
                                 && typeInstanceIdx.getOccurrences(topic).isEmpty()
-                                && typeInstanceIdx.getNames(topic).isEmpty();
+                                && typeInstanceIdx.getNames(topic).isEmpty()
+                                && typeInstanceIdx.getTopics(topic).isEmpty();
         typeInstanceIdx.close();
         if (removable) {
             IScopedIndex scopedIdx = idxMan.getScopedIndex();
