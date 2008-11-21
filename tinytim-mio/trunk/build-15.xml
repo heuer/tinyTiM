@@ -121,11 +121,10 @@
     <!-- Compile source files                                                -->
     <!-- =================================================================== -->
     <target name="compile" depends="clean, prepare">
-        <copy file="${dir.src}/org/tinytim/mio/TinyTimMapInputHandler.java" tofile="${dir.src}/org/tinytim/mio/TinyTimMapInputHandler-20.txt"/>
-        <copy file="${dir.src}/org/tinytim/mio/TinyTimMapInputHandler-15.txt" tofile="${dir.src}/org/tinytim/mio/TinyTimMapInputHandler.java" overwrite="true"/>
         <javac destdir="${dir.build.classes}"
             debug="${debug}"
-            excludes="org/tinytim/mio/XMLWriter* org/tinytim/mio/Abstract*Writer* org/tinytim/mio/CXTMTopicMapWriter* org/tinytim/mio/XTM*TopicMapWriter*"
+            excludes="org/tinytim/mio/AbstractTopicMapWriter* org/tinytim/mio/CXTMTopicMapWriter* org/tinytim/mio/XTM*TopicMapWriter*"
+            includes="org/tinytim/mio15/** org/tinytim/mio/*TopicMapReader* org/tinytim/mio/*TopicMapImporter*"
             target="1.5">
             <classpath>
                 <pathelement location="${lib.tmapi}"/>
@@ -135,8 +134,6 @@
             </classpath>
             <src path="${dir.src}"/>
         </javac>
-        <copy file="${dir.src}/org/tinytim/mio/TinyTimMapInputHandler-20.txt" tofile="${dir.src}/org/tinytim/mio/TinyTimMapInputHandler.java" overwrite="true"/>
-        <delete file="${dir.src}/org/tinytim/mio/TinyTimMapInputHandler-20.txt"/>
     </target>
 
     <!-- =================================================================== -->
