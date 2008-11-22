@@ -56,7 +56,7 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
      */
     protected AbstractTopicMapReader(final TopicMap topicMap,
             final Syntax syntax, final File source) throws IOException {
-        this(topicMap, syntax, source, source.toURL().toString());
+        this(topicMap, syntax, source, source.toURI().toURL().toString());
     }
 
     /**
