@@ -47,18 +47,14 @@ import com.semagia.mio.IRef;
 import com.semagia.mio.MIOException;
 
 /**
- * Abstract {@link com.semagia.mio.IMapHandler} implementation.
- * <p>
- * This class utilises the <tt>.core</tt> package since some <tt>...Impl</tt>
- * classes have only package visibility.
- * </p>
+ * Implementation of a {@link com.semagia.mio.IMapHandler} for tinyTiM.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
 public final class TinyTimMapInputHandler implements IMapHandler {
 
-    private static final int 
+    private static final byte 
         INITIAL = 1,
         TOPIC = 2,
         ASSOCIATION = 3,
@@ -80,7 +76,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
     private final IConstructFactory _factory;
     private final ITopicMap _tm;
     private final List<Topic> _scope;
-    private int[] _stateStack;
+    private byte[] _stateStack;
     private int _stateSize;
     private IConstruct[] _constructStack;
     private int _constructSize;
@@ -99,7 +95,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      */
     public void startTopicMap() throws MIOException {
         _constructStack = new IConstruct[_CONSTRUCT_SIZE];
-        _stateStack = new int[_STATE_SIZE];
+        _stateStack = new byte[_STATE_SIZE];
         _constructSize = 0;
         _stateSize = 0;
         _enterState(INITIAL, _tm); 
@@ -386,9 +382,9 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      *
      * @param state The state to push ontop of the state stack.
      */
-    private void _enterState(int state) {
+    private void _enterState(byte state) {
         if (_stateSize >= _stateStack.length) {
-            int[] states = new int[_stateStack.length*2];
+            byte[] states = new byte[_stateStack.length*2];
             System.arraycopy(_stateStack, 0, states, 0, _stateStack.length);
             _stateStack = states;
         }
@@ -402,7 +398,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      * @param state The state to enter.
      * @param tmo The Topic Maps construct which should be pushed to the stack.
      */
-    private void _enterState(int state, Construct tmo) {
+    private void _enterState(byte state, Construct tmo) {
         _enterState(state);
         if (_constructSize >= _constructStack.length) {
             IConstruct[] constructs = new IConstruct[_constructStack.length*2];
@@ -418,7 +414,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      * @param state The state to leave.
      * @throws MIOException If the state is not equals to the current state.
      */
-    private void _leaveState(int state) throws MIOException {
+    private void _leaveState(byte state) throws MIOException {
         if (state != _state()) {
             _reportError("Unexpected state: " + _state() + ", expected: " + state);
         }
@@ -432,7 +428,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      * @param state The state to leave.
      * @throws MIOException If the state is not equals to the current state.
      */
-    private IConstruct _leaveStatePopConstruct(int state) throws MIOException {
+    private IConstruct _leaveStatePopConstruct(byte state) throws MIOException {
         _leaveState(state);
         final IConstruct construct = _peekConstruct();
         _constructSize--;
@@ -463,7 +459,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      *
      * @return The current state.
      */
-    private int _state() {
+    private byte _state() {
         return _stateStack[_stateSize-1];
     }
 
