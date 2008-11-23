@@ -29,6 +29,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.logging.Logger;
 
+import org.tinytim.internal.api.IIndexManagerAware;
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tinytim.utils.DuplicateRemovalUtils;
 import org.tinytim.voc.TMDM;
@@ -143,7 +144,7 @@ public final class CXTMTopicMapWriter implements TopicMapWriter {
      */
     public void write(TopicMap topicMap) throws IOException {
         DuplicateRemovalUtils.removeDuplicates(topicMap);
-        TypeInstanceIndex typeInstanceIndex = topicMap.getIndex(TypeInstanceIndex.class);
+        TypeInstanceIndex typeInstanceIndex = ((IIndexManagerAware)topicMap).getIndexManager().getTypeInstanceIndex();
         if (!typeInstanceIndex.isAutoUpdated()) {
             typeInstanceIndex.reindex();
         }

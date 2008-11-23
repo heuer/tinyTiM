@@ -17,8 +17,9 @@ Changes Log
   - Snello
   - LTM 1.3
 * Moved CXTMWriter into .mio package, implements TopicMapWriter
-* XTM 1.0 writer
-* XTM 2.0 writer
+* JSON Topic Maps (JTM) writer
+* XML Topic Maps (XTM) 1.0 writer
+* XML Topic Maps (XTM) 2.0 writer
 * Deprecated some TopicMapImporter methods which take a sax.InputSource 
   as argument
 * Added docs to TopicMapImporter that it may become deprecated

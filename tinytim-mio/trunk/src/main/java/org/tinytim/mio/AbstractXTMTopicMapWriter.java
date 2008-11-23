@@ -29,7 +29,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-abstract class AbstractXTMWriter extends AbstractTopicMapWriter {
+abstract class AbstractXTMTopicMapWriter extends AbstractTopicMapWriter {
 
     protected final AttributesImpl _attrs;
 
@@ -42,7 +42,7 @@ abstract class AbstractXTMWriter extends AbstractTopicMapWriter {
      * @param baseIRI The base IRI.
      * @throws IOException If an error occurs.
      */
-    protected AbstractXTMWriter(final OutputStream out, final String baseIRI)
+    protected AbstractXTMTopicMapWriter(final OutputStream out, final String baseIRI)
             throws IOException {
         this(out, baseIRI, "utf-8");
     }
@@ -59,14 +59,34 @@ abstract class AbstractXTMWriter extends AbstractTopicMapWriter {
      * @throws IOException
      *             If an error occurs.
      */
-    protected AbstractXTMWriter(final OutputStream out, final String baseIRI,
+    protected AbstractXTMTopicMapWriter(final OutputStream out, final String baseIRI,
             final String encoding) throws IOException {
         super(baseIRI);
         if (encoding == null) {
             throw new IOException("The encoding must not be null");
         }
         _out = new XMLWriter(out, encoding);
+        _out.setPrettify(true);
         _attrs = new AttributesImpl();
+    }
+
+    /**
+     * Enables / disables newlines and indentation of XML elements.
+     * (newlines and indentation is enabled by default)
+     *
+     * @param prettify <tt>true</tt> to enable prettified XML, otherwise <tt>false</tt>.
+     */
+    public void setPrettify(boolean prettify) {
+        _out.setPrettify(prettify);
+    }
+
+    /**
+     * Returns if newlines and indentation are enabled.
+     *
+     * @return <tt>true</tt> if prettified XML is enabled, otherwise <tt>false</tt>.
+     */
+    public boolean getPrettify() {
+        return _out.getPrettify();
     }
 
 }
