@@ -39,6 +39,7 @@ final class XMLWriter {
     private final String _encoding;
 
     private int _depth;
+    private boolean _prettify;
 
     public XMLWriter(OutputStream out) throws IOException {
         this(out, "utf-8");
@@ -47,6 +48,14 @@ final class XMLWriter {
     public XMLWriter(OutputStream out, String encoding) throws IOException {
         _out = new OutputStreamWriter(out, encoding);
         _encoding = encoding;
+    }
+
+    public void setPrettify(boolean prettify) {
+        _prettify = prettify;
+    }
+
+    public boolean getPrettify() {
+        return _prettify;
     }
 
     /**
@@ -83,9 +92,6 @@ final class XMLWriter {
      * @see org.xml.sax.DocumentHandler#startElement(java.lang.String, org.xml.sax.AttributeList)
      */
     public void startElement(String name, Attributes attrs) throws IOException {
-        if (_depth > 0) {
-            _newline();
-        }
         _indent();
         _out.write('<');
         _out.write(name);
@@ -106,8 +112,7 @@ final class XMLWriter {
      */
     public void _endElement(String name, boolean indent) throws IOException {
         _depth--;
-        if (indent && _depth >= 0) {
-            _newline();
+        if (indent) {
             _indent();
         }
         _out.write("</");
@@ -116,9 +121,6 @@ final class XMLWriter {
     }
 
     public void emptyElement(String name, Attributes attrs) throws IOException {
-        if (_depth > 0) {
-            _newline();
-        }
         _indent();
         _out.write('<');
         _out.write(name);
@@ -158,6 +160,12 @@ final class XMLWriter {
     }
 
     private void _indent() throws IOException {
+        if (!_prettify) {
+            return;
+        }
+        if (_depth > 0) {
+            _newline();
+        }
         int indent = _depth*2;
         char[] chars = new char[indent];
         for (int i=0; i<indent; i++) {

@@ -123,7 +123,7 @@
     <target name="compile" depends="clean, prepare">
         <javac destdir="${dir.build.classes}"
             debug="${debug}"
-            excludes="org/tinytim/mio/AbstractTopicMapWriter* org/tinytim/mio/CXTMTopicMapWriter* org/tinytim/mio/XTM*TopicMapWriter*"
+            excludes="org/tinytim/mio/AbstractTopicMapWriter* org/tinytim/mio/CXTMTopicMapWriter* org/tinytim/mio/XTM*TopicMapWriter* org/tinytim/mio/JTM* org/tinytim/mio/JSON*"
             includes="org/tinytim/mio15/** org/tinytim/mio/*TopicMapReader* org/tinytim/mio/*TopicMapImporter*"
             target="1.5">
             <classpath>

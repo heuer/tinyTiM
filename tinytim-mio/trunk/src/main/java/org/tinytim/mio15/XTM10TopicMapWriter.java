@@ -49,7 +49,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class XTM10TopicMapWriter extends AbstractXTMWriter {
+public class XTM10TopicMapWriter extends AbstractXTMTopicMapWriter {
 
     private static final String _XSD_ANY_URI = "http://www.w3.org/2001/XMLSchema#anyURI";
 
