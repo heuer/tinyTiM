@@ -42,11 +42,11 @@ import org.tmapi.index.TypeInstanceIndex;
 
 /**
  * A {@link TopicMapWriter} implementation that serializes a topic map into
- * a <a href="http://www.cerny-online.com/topincs/">JSON Topic Maps</a>
+ * a <a href="http://www.cerny-online.com/topincs/technical-whitepaper">JSON Topic Maps (JTM)</a>
  * representation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class JTMTopicMapWriter implements TopicMapWriter {
 
