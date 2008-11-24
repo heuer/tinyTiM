@@ -25,7 +25,7 @@ import java.io.OutputStreamWriter;
  * it is good enough to support JTM.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 final class JSONWriter {
 
@@ -34,27 +34,51 @@ final class JSONWriter {
     private int _depth;
     private boolean _prettify;
 
-    public JSONWriter(OutputStream out) throws IOException {
-        _out = new OutputStreamWriter(out, "utf-8");
+    public JSONWriter(OutputStream out, String encoding) throws IOException {
+        _out = new OutputStreamWriter(out, encoding);
     }
 
+    /**
+     * Enables / disables newlines and indentation of JSON elements.
+     * (newlines and indentation is enabled by default)
+     *
+     * @param prettify <tt>true</tt> to enable prettified JSON, otherwise <tt>false</tt>.
+     */
     public void setPrettify(boolean prettify) {
         _prettify = prettify;
     }
 
+    /**
+     * Returns if newlines and indentation are enabled.
+     *
+     * @return <tt>true</tt> if prettified JSON is enabled, otherwise <tt>false</tt>.
+     */
     public boolean getPrettify() {
         return _prettify;
     }
 
+    /**
+     * Indicates the start of the serialization.
+     */
     public void startDocument() {
         _depth = 0;
     }
 
+    /**
+     * Indicates the end of the serialization.
+     *
+     * @throws IOException If an error occurs.
+     */
     public void endDocument() throws IOException {
         _out.write('\n');
         _out.flush();
     }
 
+    /**
+     * Indents a line, iff {@link #getPrettify()} is enabled.
+     *
+     * @throws IOException If an error occurs.
+     */
     private void _indent() throws IOException {
         if (!_prettify) {
             return;
@@ -70,6 +94,11 @@ final class JSONWriter {
         _out.write(chars);
     }
 
+    /**
+     * Start of a JSON object.
+     *
+     * @throws IOException If an error occurs.
+     */
     public void startObject() throws IOException {
         if (_wantComma) {
             _out.write(',');
@@ -80,18 +109,33 @@ final class JSONWriter {
         _wantComma = false;
     }
 
+    /**
+     * End of a JSON object.
+     *
+     * @throws IOException If an error occurs.
+     */
     public void endObject() throws IOException {
         _out.write('}');
         _depth--;
         _wantComma = true;
     }
 
+    /**
+     * Start of a JSON array.
+     *
+     * @throws IOException If an error occurs.
+     */
     public void startArray() throws IOException {
         _out.write('[');
         _depth++;
         _wantComma = false;
     }
 
+    /**
+     * End of a JSON array.
+     *
+     * @throws IOException If an error occurs.
+     */
     public void endArray() throws IOException {
         _out.write(']');
         _depth--;
@@ -103,8 +147,8 @@ final class JSONWriter {
      * The writer assumes that the key is a valid JSON string (ensured by 
      * by JTM) so the keys are not escaped!
      *
-     * @param key
-     * @throws IOException
+     * @param key The key to write.
+     * @throws IOException If an error occurs.
      */
     public void key(String key)  throws IOException {
         if (_wantComma) {
@@ -118,6 +162,12 @@ final class JSONWriter {
         _wantComma = false;
     }
 
+    /**
+     * The value to write. The value is written in an escaped form.
+     *
+     * @param value The value to write.
+     * @throws IOException If an error occurs.
+     */
     public void value(String value) throws IOException {
         if (_wantComma) {
             _out.write(',');
@@ -127,10 +177,10 @@ final class JSONWriter {
     }
 
     /**
-     * 
+     * Escapes a string value.
      *
-     * @param value
-     * @return
+     * @param value The string to escape.
+     * @return An escaped string, usable as JSON value.
      */
     public static String escape(String value) {
         // Code adapted from JSON.org (JSONObject.quote(String))
@@ -140,12 +190,11 @@ final class JSONWriter {
         char c = 0;
         char[] chars = value.toCharArray();
         StringBuilder sb = new StringBuilder(chars.length + 4);
-        String t;
         sb.append('"');
-        for (int i = 0; i < chars.length; i += 1) {
+        for (int i=0; i<chars.length; i++) {
             b = c;
             c = chars[i];
-            switch (chars[i]) {
+            switch (c) {
             case '\\':
             case '"':
                 sb.append('\\');
@@ -175,9 +224,10 @@ final class JSONWriter {
             default:
                 if (c < ' ' || (c >= '\u0080' && c < '\u00a0') ||
                                (c >= '\u2000' && c < '\u2100')) {
-                    t = "000" + Integer.toHexString(c);
-                    sb.append("\\u" + t.substring(t.length() - 4));
-                } else {
+                    sb.append("\\u000")
+                        .append(Integer.toHexString(c));
+                }
+                else {
                     sb.append(c);
                 }
             }
