@@ -59,15 +59,30 @@ public class JTMTopicMapWriter implements TopicMapWriter {
     private Topic _defaultNameType;
 
     /**
-     * Creates a JTM writer.
+     * Creates a JTM writer, using "utf-8" encoding.
      *
      * @param out The stream the JTM is written onto.
      * @param baseIRI The base IRI which is used to resolve IRIs against.
      * @throws IOException If an error occurs.
      */
     public JTMTopicMapWriter(OutputStream out, String baseIRI) throws IOException {
+        this(out, baseIRI, "utf-8");
+    }
+
+    /**
+     * Creates a JTM writer.
+     *
+     * @param out The stream the JTM is written onto.
+     * @param baseIRI The base IRI which is used to resolve IRIs against.
+     * @param encoding The encoding to use.
+     * @throws IOException If an error occurs.
+     */
+    public JTMTopicMapWriter(OutputStream out, String baseIRI, String encoding) throws IOException {
+        if (encoding == null) {
+            throw new IOException("The encoding must not be null");
+        }
         _baseIRI = baseIRI;
-        _out = new JSONWriter(out);
+        _out = new JSONWriter(out, encoding);
         _out.setPrettify(true);
     }
 
@@ -126,6 +141,16 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _out.endDocument();
     }
 
+    /**
+     * Serializes the specified topic.
+     * <p>
+     * The default name type topic is omitted in case it carries no further
+     * characteristics.
+     * </p>
+     *
+     * @param topic The topic to serialize.
+     * @throws IOException If an error occurs.
+     */
     private void _writeTopic(Topic topic) throws IOException {
         // Ignore the topic if it is the default name type and it has no further
         // characteristics
@@ -165,6 +190,12 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _out.endObject();
     }
 
+    /**
+     * Serializes the specified name.
+     *
+     * @param name The name to serialize.
+     * @throws IOException If an error occurs.
+     */
     private void _writeName(Name name) throws IOException {
         _out.startObject();
         _writeReifier(name);
@@ -186,6 +217,12 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _out.endObject();
     }
 
+    /**
+     * Serializes the specified variant.
+     *
+     * @param variant The variant to serialize.
+     * @throws IOException If an error occurs.
+     */
     private void _writeVariant(Variant variant) throws IOException {
         _out.startObject();
         _writeReifier(variant);
@@ -195,6 +232,12 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _out.endObject();
     }
 
+    /**
+     * Serializes the specifed occurrence.
+     *
+     * @param occ The occurrence.
+     * @throws IOException If an error occurs.
+     */
     private void _writeOccurrence(Occurrence occ) throws IOException {
         _out.startObject();
         _writeReifier(occ);
@@ -205,6 +248,12 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _out.endObject();
     }
 
+    /**
+     * Writes the value and datatype of an occurrence or variant.
+     *
+     * @param datatyped The datatype-aware construct.
+     * @throws IOException If an error occurs.
+     */
     private void _writeDatatypeAware(DatatypeAware datatyped) throws IOException {
         Locator datatype = datatyped.getDatatype();
         String value = XSD.ANY_URI.equals(datatype) ? datatyped.locatorValue().toExternalForm()
@@ -213,10 +262,24 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _writeKeyValue("datatype", datatype.toExternalForm());
     }
 
+    /**
+     * Serializes the item identifiers of the specified construct.
+     *
+     * @param construct The construct to serialize the iids from.
+     * @throws IOException If an error occurs.
+     */
     private void _writeItemIdentifiers(Construct construct) throws IOException {
         _writeLocators("item_identifiers", construct.getItemIdentifiers());
     }
 
+    /**
+     * Writes a set of locators under the specified name. If the set is
+     * empty, this method does nothing.
+     *
+     * @param name The name (item_identifiers, subject_identifiers, subject_locators)
+     * @param locators A (maybe empty) set of locators.
+     * @throws IOException If an error occurs.
+     */
     private void _writeLocators(String name, Set<Locator> locators) throws IOException {
         if (locators.isEmpty()) {
             return;
@@ -229,6 +292,12 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _out.endArray();
     }
 
+    /**
+     * Serializes the specified asssociation.
+     *
+     * @param assoc The association to serialize.
+     * @throws IOException If an error occurs.
+     */
     private void _writeAssociation(Association assoc) throws IOException {
         Set<Role> roles = assoc.getRoles();
         if (roles.isEmpty()) {
@@ -248,6 +317,12 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _out.endObject();
     }
 
+    /**
+     * Serializes the specified role.
+     *
+     * @param role The role to serialize.
+     * @throws IOException If an error occurs.
+     */
     private void _writeRole(Role role) throws IOException {
         _out.startObject();
         _writeReifier(role);
@@ -257,10 +332,22 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _out.endObject();
     }
 
+    /**
+     * Writes the type of a typed construct.
+     *
+     * @param typed The typed construct.
+     * @throws IOException If an error occurs.
+     */
     private void _writeType(Typed typed) throws IOException {
         _writeKeyValue("type", _topicRef(typed.getType()));
     }
 
+    /**
+     * Writes the scope.
+     *
+     * @param scoped The scoped construct to retrieve the scope from.
+     * @throws IOException If an error occurs.
+     */
     private void _writeScope(Scoped scoped) throws IOException {
         IScope scope = ((IScoped) scoped).getScopeObject();
         if (scope.isUnconstrained()) {
@@ -303,6 +390,12 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _out.endObject();
     }
 
+    /**
+     * Serializes the reifier iff the reifier is not <tt>null</tt>.
+     *
+     * @param reifiable The reifiable construct to retrieve the reifier from.
+     * @throws IOException If an error occurs.
+     */
     private void _writeReifier(Reifiable reifiable) throws IOException {
         Topic reifier = reifiable.getReifier();
         if (reifier == null) {
@@ -311,6 +404,13 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _writeKeyValue("reifier", _topicRef(reifier));
     }
 
+    /**
+     * Writes a key/value pair.
+     *
+     * @param key The key to write.
+     * @param value The value to write.
+     * @throws IOException If an error occurs.
+     */
     private void _writeKeyValue(String key, String value) throws IOException {
         _out.key(key);
         _out.value(value);
