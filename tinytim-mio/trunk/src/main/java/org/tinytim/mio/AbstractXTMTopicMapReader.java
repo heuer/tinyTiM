@@ -33,29 +33,29 @@ import com.semagia.mio.Syntax;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public abstract class AbstractXTMTopicMapReader extends AbstractTopicMapReader {
+abstract class AbstractXTMTopicMapReader extends AbstractTopicMapReader {
 
-    public AbstractXTMTopicMapReader(TopicMap topicMap, Syntax syntax,
+    protected AbstractXTMTopicMapReader(TopicMap topicMap, Syntax syntax,
             File source) throws IOException {
         super(topicMap, syntax, source);
     }
 
-    public AbstractXTMTopicMapReader(TopicMap topicMap, Syntax syntax,
+    protected AbstractXTMTopicMapReader(TopicMap topicMap, Syntax syntax,
             File source, String docIRI) throws IOException {
         super(topicMap, syntax, source, docIRI);
     }
 
-    public AbstractXTMTopicMapReader(TopicMap topicMap, Syntax syntax,
+    protected AbstractXTMTopicMapReader(TopicMap topicMap, Syntax syntax,
             InputStream source, String docIRI) {
         super(topicMap, syntax, source, docIRI);
     }
 
-    public AbstractXTMTopicMapReader(TopicMap topicMap, Syntax syntax,
+    protected AbstractXTMTopicMapReader(TopicMap topicMap, Syntax syntax,
             Source source) {
         super(topicMap, syntax, source);
     }
 
-    public AbstractXTMTopicMapReader(IMapHandler handler, Syntax syntax,
+    protected AbstractXTMTopicMapReader(IMapHandler handler, Syntax syntax,
             Source source) {
         super(handler, syntax, source);
     }
