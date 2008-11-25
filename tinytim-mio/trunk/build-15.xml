@@ -13,6 +13,7 @@
     <property name="lib.tinytim" value="${dir.lib}/tinytim-1.5.0b2.jar"/>
     <property name="lib.logging" value="${dir.lib}/slf4j-api-1.5.6.jar"/>
     <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.3.jar"/>
+    <property name="lib.json" value="${dir.lib}/json_simple.jar"/>
 
     <target name="help">
         <echo message="------------------------"/>
@@ -123,7 +124,7 @@
     <target name="compile" depends="clean, prepare">
         <javac destdir="${dir.build.classes}"
             debug="${debug}"
-            excludes="org/tinytim/mio/AbstractTopicMapWriter* org/tinytim/mio/CXTMTopicMapWriter* org/tinytim/mio/XTM*TopicMapWriter* org/tinytim/mio/JTM* org/tinytim/mio/JSON*"
+            excludes="org/tinytim/mio/AbstractTopicMapWriter* org/tinytim/mio/CXTMTopicMapWriter* org/tinytim/mio/XTM*TopicMapWriter* org/tinytim/mio/JTM*Writer* org/tinytim/mio/JSON*"
             includes="org/tinytim/mio15/** org/tinytim/mio/*TopicMapReader* org/tinytim/mio/*TopicMapImporter*"
             target="1.5">
             <classpath>
@@ -131,6 +132,7 @@
                 <pathelement location="${lib.tinytim}"/>
                 <pathelement location="${lib.mio}"/>
                 <pathelement location="${lib.logging}"/>
+                <pathelement location="${lib.json}"/>
             </classpath>
             <src path="${dir.src}"/>
         </javac>
