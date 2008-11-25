@@ -32,8 +32,7 @@ import com.semagia.mio.Syntax;
  * <p>
  * This class is kept for backward compatibility, some methods are already
  * deprectated, maybe the whole class will be deprecated in the near future; 
- * use {@link TopicMapReader} and its implementations. Actually, this class has 
- * become a wrapper around different {@link TopicMapReader} implementations.
+ * use {@link TopicMapReader} and its implementations.
  * </p>
  * <p>
  * This class may be deprected since it provides a high-level view on 
@@ -190,6 +189,24 @@ public final class TopicMapImporter {
         }
         else if (Syntax.SNELLO.equals(syntax)) {
             tmReader = new SnelloTopicMapReader(topicMap, input);
+        }
+        else if (Syntax.N3.equals(syntax)) {
+            tmReader = new N3TopicMapReader(topicMap, input);
+        }
+        else if (Syntax.NTRIPLES.equals(syntax)) {
+            tmReader = new NTriplesTopicMapReader(topicMap, input);
+        }
+        else if (Syntax.RDFXML.equals(syntax)) {
+            tmReader = new RDFXMLTopicMapReader(topicMap, input);
+        }
+        else if (Syntax.TRIG.equals(syntax)) {
+            tmReader = new TrigTopicMapReader(topicMap, input);
+        }
+        else if (Syntax.TRIX.equals(syntax)) {
+            tmReader = new TrixTopicMapReader(topicMap, input);
+        }
+        else if (Syntax.TURTLE.equals(syntax)) {
+            tmReader = new TurtleTopicMapReader(topicMap, input);
         }
         if (tmReader == null) {
             throw new IOException("Unknown syntax " + syntax.getName());

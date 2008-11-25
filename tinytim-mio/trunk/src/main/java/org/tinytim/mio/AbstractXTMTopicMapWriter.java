@@ -72,7 +72,7 @@ abstract class AbstractXTMTopicMapWriter extends AbstractTopicMapWriter {
 
     /**
      * Enables / disables newlines and indentation of XML elements.
-     * (newlines and indentation is enabled by default)
+     * (enabled by default)
      *
      * @param prettify <tt>true</tt> to enable prettified XML, otherwise <tt>false</tt>.
      */
