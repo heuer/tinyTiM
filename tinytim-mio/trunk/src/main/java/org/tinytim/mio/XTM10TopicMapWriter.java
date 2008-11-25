@@ -47,7 +47,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class XTM10TopicMapWriter extends AbstractXTMWriter {
+public class XTM10TopicMapWriter extends AbstractXTMTopicMapWriter {
 
     private static final Logger LOG = Logger.getLogger(XTM10TopicMapWriter.class.getName());
 

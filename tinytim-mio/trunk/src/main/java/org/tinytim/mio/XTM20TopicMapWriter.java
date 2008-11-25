@@ -50,7 +50,7 @@ import org.xml.sax.helpers.AttributesImpl;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class XTM20TopicMapWriter extends AbstractXTMWriter {
+public class XTM20TopicMapWriter extends AbstractXTMTopicMapWriter {
 
     private Topic _defaultNameType;
 
