@@ -30,7 +30,7 @@ import com.semagia.mio.helpers.SimpleMapHandler;
 
 /**
  * {@link TopicMapReader} implementation that deserializes 
- * <a href="http://www.cerny-online.com/topincs/technical-whitepaper">JSON Topic Maps (JTM)</a>.
+ * <a href="http://www.cerny-online.com/jtm/">JSON Topic Maps (JTM)</a>.
  * <p>
  * The reader does not accept fragments, i.e. only a topic in a JSON document;
  * each JTM instance must start with a topic map container, i.e. 

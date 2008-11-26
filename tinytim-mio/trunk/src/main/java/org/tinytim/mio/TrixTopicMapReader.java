@@ -25,7 +25,8 @@ import com.semagia.mio.Source;
 import com.semagia.mio.Syntax;
 
 /**
- * {@link RDFTopicMapReader} implementation that is able to deserialize RDF TriX.
+ * {@link RDFTopicMapReader} implementation that is able to deserialize RDF 
+ * <a href="http://swdev.nokia.com/trix/TriX.html">TriX</a>.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

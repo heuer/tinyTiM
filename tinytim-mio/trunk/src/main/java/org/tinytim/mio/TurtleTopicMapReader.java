@@ -26,7 +26,7 @@ import com.semagia.mio.Syntax;
 
 /**
  * {@link RDFTopicMapReader} implementation that is able to deserialize RDF 
- * Turtle.
+ * <a href="http://www.dajobe.org/2004/01/turtle/">Turtle</a>.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

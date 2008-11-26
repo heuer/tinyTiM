@@ -25,7 +25,8 @@ import com.semagia.mio.Source;
 import com.semagia.mio.Syntax;
 
 /**
- * {@link RDFTopicMapReader} implementation that is able to deserialize RDF N3.
+ * {@link RDFTopicMapReader} implementation that is able to deserialize RDF 
+ * <a href="http://www.w3c.org/2000/10/swap/Primer.html">N3</a>.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

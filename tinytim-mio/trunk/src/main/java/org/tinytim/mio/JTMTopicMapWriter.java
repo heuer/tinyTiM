@@ -42,7 +42,7 @@ import org.tmapi.index.TypeInstanceIndex;
 
 /**
  * A {@link TopicMapWriter} implementation that serializes a topic map into
- * a <a href="http://www.cerny-online.com/topincs/technical-whitepaper">JSON Topic Maps (JTM)</a>
+ * a <a href="http://www.cerny-online.com/jtm/">JSON Topic Maps (JTM)</a>
  * representation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
@@ -83,12 +83,12 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         }
         _baseIRI = baseIRI;
         _out = new JSONWriter(out, encoding);
-        _out.setPrettify(true);
+        _out.setPrettify(false);
     }
 
     /**
-     * Enables / disables newlines and indentation of JSON elements.
-     * (newlines and indentation is enabled by default)
+     * Enables / disables newlines and indentation of the JSON output.
+     * (disabled by default)
      *
      * @param prettify <tt>true</tt> to enable prettified JSON, otherwise <tt>false</tt>.
      */
