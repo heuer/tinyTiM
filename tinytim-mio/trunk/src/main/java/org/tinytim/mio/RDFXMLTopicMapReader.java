@@ -25,7 +25,8 @@ import com.semagia.mio.Source;
 import com.semagia.mio.Syntax;
 
 /**
- * {@link RDFTopicMapReader} implementation that is able to deserialize RDF/XML.
+ * {@link RDFTopicMapReader} implementation that is able to deserialize 
+ * <a href="http://www.w3.org/TR/rdf-syntax-grammar/">RDF/XML</a>.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

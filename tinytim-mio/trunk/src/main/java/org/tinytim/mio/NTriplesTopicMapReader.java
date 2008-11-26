@@ -26,7 +26,7 @@ import com.semagia.mio.Syntax;
 
 /**
  * {@link RDFTopicMapReader} implementation that is able to deserialize RDF 
- * N-Triples.
+ * <a href="http://www.w3.org/TR/rdf-testcases/#ntriples">N-Triples</a>.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
