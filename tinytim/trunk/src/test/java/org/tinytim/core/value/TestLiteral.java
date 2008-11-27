@@ -28,6 +28,12 @@ import org.tmapi.core.Locator;
  */
 public class TestLiteral extends TinyTimTestCase {
 
+    public void testLocatorResolve() {
+        Locator base = Literal.createIRI("http://www.semagia.com/");
+        Locator loc1 = base.resolve("#iid");
+        Locator loc2 = base.resolve("#iid");
+        assertSame(loc1, loc2);
+    }
 
     public void testStringGet() {
         final String value = "tiny tiny tiny";
@@ -63,7 +69,7 @@ public class TestLiteral extends TinyTimTestCase {
     }
 
     public void testIRIEquality() {
-        final String value = "http://www.semagia.com/";
+        final String value = "http://www.semagia.com/test-iri-eq";
         assertNull(Literal.get(value, XSD.ANY_URI));
         final Locator loc = _sys.createLocator(value);
         ILiteral lit1 = Literal.create(loc);
@@ -72,7 +78,7 @@ public class TestLiteral extends TinyTimTestCase {
     }
 
     public void testIRIEquality2() {
-        final String value = "http://www.semagia.net/";
+        final String value = "http://www.semagia.net/test-iri-eq2";
         assertNull(Literal.get(value, XSD.ANY_URI));
         final Locator loc = _sys.createLocator(value);
         ILiteral lit1 = Literal.create(loc);
@@ -81,7 +87,7 @@ public class TestLiteral extends TinyTimTestCase {
     }
 
     public void testIRIEquality3() {
-        final String value = "http://www.semagia.de/";
+        final String value = "http://www.semagia.de/test-iri-eq3";
         assertNull(Literal.get(value, XSD.ANY_URI));
         final Locator loc = _sys.createLocator(value);
         ILiteral lit1 = Literal.create(value, XSD.ANY_URI);
