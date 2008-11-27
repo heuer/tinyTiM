@@ -26,7 +26,10 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.net.URLDecoder;
 
+import org.tinytim.internal.api.IConstant;
+import org.tinytim.internal.api.ILiteral;
 import org.tinytim.internal.api.ILocator;
+import org.tinytim.internal.utils.WeakObjectRegistry;
 import org.tinytim.voc.XSD;
 
 import org.tmapi.core.Locator;
@@ -44,10 +47,11 @@ import org.tmapi.core.TMAPIRuntimeException;
  */
 final class LocatorImpl implements ILocator {
 
+    private static final WeakObjectRegistry<ILocator> _IRIS = new WeakObjectRegistry<ILocator>(IConstant.LITERAL_IRI_SIZE);
     private final URI _uri;
     private final String _reference;
 
-    LocatorImpl(String reference) {
+    private LocatorImpl(String reference) {
         try {
             _reference = URLDecoder.decode(reference, "utf-8");
         }
@@ -127,7 +131,7 @@ final class LocatorImpl implements ILocator {
      * @see org.tmapi.core.Locator#resolve(java.lang.String)
      */
     public Locator resolve(String reference) {
-        return new LocatorImpl(_uri.resolve(reference));
+        return create(_uri.resolve(reference));
     }
 
     /* (non-Javadoc)
@@ -159,6 +163,30 @@ final class LocatorImpl implements ILocator {
     @Override
     public String toString() {
         return _uri.toString();
+    }
+
+    static synchronized ILiteral get(String value) {
+        return _IRIS.get(new LocatorImpl(value));
+    }
+
+    private static synchronized ILocator create(URI value) {
+        ILocator loc = new LocatorImpl(value);
+        final ILocator existing = _IRIS.get(loc);
+        if (existing != null) {
+            return existing;
+        }
+        _IRIS.add(loc);
+        return loc;
+    }
+
+    static synchronized ILocator create(String value) {
+        ILocator loc = new LocatorImpl(value);
+        final ILocator existing = _IRIS.get(loc);
+        if (existing != null) {
+            return existing;
+        }
+        _IRIS.add(loc);
+        return loc;
     }
 
 }
