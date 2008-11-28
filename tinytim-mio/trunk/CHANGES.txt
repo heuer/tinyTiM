@@ -13,9 +13,18 @@ Changes Log
   - XTM 2.0 reader
   - CTM reader which implements draft dtd. 2008-05-15 
     (does not suppot %include and %mergemap)
+  - JTM reader
   - TM/XML
   - Snello
   - LTM 1.3
+* Introduced a RDFTopicMapReader interface
+* Added RDF reader implementations:
+  - N3 reader
+  - N-Triples reader
+  - RDF/XML reader
+  - TriG reader
+  - TriX reader
+  - Turtle reader
 * Moved CXTMWriter into .mio package, implements TopicMapWriter
 * CXTMWriter does not normalize datatype locators anymore
   (this is not in the current CXTM draft but becomes part of the next draft)
