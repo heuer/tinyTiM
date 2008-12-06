@@ -174,7 +174,9 @@
         <copy todir="${dir.dist}" file="${dir.build}/${tinytim-mio.jar}"/>
 
         <copy todir="${dir.dist}/src">
-            <fileset dir="${dir.src}"/>
+            <fileset dir="${dir.src}">
+                <exclude name="**/mio15/**"/>
+            </fileset>
         </copy>
         <copy todir="${dir.dist}/test">
             <fileset dir="${dir.test}"/>
