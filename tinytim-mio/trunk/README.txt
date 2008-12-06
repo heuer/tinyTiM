@@ -19,7 +19,7 @@ Note: Semagia MIO uses another license than tinyTiM, see
 Installation
 ------------
 Put the ``tinytim-mio-<VERSION>.jar`` together with the ``tinytim-<VERSION>.jar``,
-and ``tmapi-2.0.0.jar`` into the classpath.
+and ``tmapi-<VERSION>.jar`` into the classpath.
 Further, the ``semagia-mio-<VERSION>.jar`` and one or more 
 ``semagia-mio-<SYNTAX-NAME>-<VERSION>.jar`` are needed in the classpath.
 Note, that ``Semagia MIO`` needs the ``Simple Logging Facade for Java`` 
