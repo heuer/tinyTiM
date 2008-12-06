@@ -23,7 +23,7 @@ import org.tmapi.core.TopicMap;
  * This interface represents a writer to serialize a topic map.
  * <p>
  * The writer is not meant to be reused and should be thrown away once the 
- * {{@link #write(TopicMap)} method was invoked.
+ * {@link #write(TopicMap)} method was invoked.
  * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
