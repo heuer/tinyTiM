@@ -81,7 +81,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
     private IConstruct[] _constructStack;
     private int _constructSize;
 
-    protected TinyTimMapInputHandler(TopicMap topicMap) {
+    public TinyTimMapInputHandler(TopicMap topicMap) {
         if (topicMap == null) {
             throw new IllegalArgumentException("The topic map must not be null");
         }
