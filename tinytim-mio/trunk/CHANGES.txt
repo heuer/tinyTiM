@@ -2,6 +2,15 @@
 Changes Log
 ===========
 
+2.0.0 a5 (xx.02.2008)
+---------------------
+
+Bugfixes:
+---------
+* Bug #2540490 -- Using QName in isa/ako throws syntax error
+  (CTM libs) reported by Stefan Kesberg
+
+
 2.0.0 a4 / 1.5.0b2 (06.12.2008)
 -------------------------------
 * Note: The JTMWriter is not available in 1.5.0b2!
