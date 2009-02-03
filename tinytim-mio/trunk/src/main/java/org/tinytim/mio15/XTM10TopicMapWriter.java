@@ -234,9 +234,9 @@ public class XTM10TopicMapWriter extends AbstractXTMTopicMapWriter {
     }
 
     private void _writeType(final ITyped typed) throws IOException {
-        _out.startElement("type");
+        _out.startElement("instanceOf");
         _writeTopicRef(typed.getType());
-        _out.endElement("type");
+        _out.endElement("instanceOf");
     }
 
     private void _writeScope(final ScopedObject scoped) throws IOException {
