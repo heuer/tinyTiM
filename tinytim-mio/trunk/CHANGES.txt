@@ -7,6 +7,8 @@ Changes Log
 
 Bugfixes:
 ---------
+* Bug #2560821 -- XTM 1.0 serializer uses wrong element for type
+  reported by Jens Rummler
 * Bug #2540490 -- Using QName in isa/ako throws syntax error
   (CTM libs) reported by Stefan Kesberg
 
