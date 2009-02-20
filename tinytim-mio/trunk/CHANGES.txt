@@ -2,19 +2,21 @@
 Changes Log
 ===========
 
-2.0.0 a5 (xx.02.2008)
----------------------
+2.0.0 a4 SP1 (xx.02.2008)
+-------------------------
 
 Bugfixes:
 ---------
+* Validation of XTM 1.0 and 2.0 sources against a RELAX-NG schema 
+  did not work in all cases, fixed in "semagia-mio-xtm-0.9.3-sp1.jar"
 * Bug #2560821 -- XTM 1.0 serializer uses wrong element for type
   reported by Jens Rummler
 * Bug #2540490 -- Using QName in isa/ako throws syntax error
   (CTM libs) reported by Stefan Kesberg
 
 
-2.0.0 a4 / 1.5.0b2 (06.12.2008)
--------------------------------
+2.0.0 a4 / 1.5.0 b2 (06.12.2008)
+--------------------------------
 * Note: The JTMWriter is not available in 1.5.0b2!
 * Initial .mio release for tinyTiM 2.x
 * Changed license to Apache License 2.0
