@@ -4,6 +4,8 @@ Changes Log
 
 2.0.0 a4 SP1 (xx.02.2008)
 -------------------------
+* JTMTopicMapReader / JTMTopicMapWriter implement the new JSON Topic Maps
+  specification (<http://www.cerny-online.com/jtm/1.0/>
 
 Bugfixes:
 ---------
