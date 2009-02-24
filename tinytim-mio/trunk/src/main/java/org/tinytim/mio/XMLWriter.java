@@ -39,6 +39,7 @@ final class XMLWriter {
     private final String _encoding;
 
     private int _depth;
+
     private boolean _prettify;
 
     public XMLWriter(OutputStream out) throws IOException {

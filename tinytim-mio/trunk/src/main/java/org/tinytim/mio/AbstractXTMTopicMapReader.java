@@ -70,7 +70,7 @@ abstract class AbstractXTMTopicMapReader extends AbstractTopicMapReader {
      * @param ignore <tt>true</tt> to ignore mergeMap elements, otherwise <tt>false</tt>.
      */
     public void setIgnoreMergeMap(boolean ignore) {
-        _deserializer.setProperty(Property.IGNORE_MERGEMAP, ignore);
+        _deserializer.setProperty(Property.IGNORE_MERGEMAP, Boolean.valueOf(ignore));
     }
 
     /**
@@ -94,7 +94,7 @@ abstract class AbstractXTMTopicMapReader extends AbstractTopicMapReader {
      *                  disable validation.
      */
     public void setValidation(boolean validate) {
-        _deserializer.setProperty(Property.VALIDATE, validate);
+        _deserializer.setProperty(Property.VALIDATE, Boolean.valueOf(validate));
     }
 
     /**

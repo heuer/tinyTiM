@@ -23,7 +23,7 @@ import java.net.URL;
  * define an external RDF to Topic Maps (RTM) mapping source.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public interface RDFTopicMapReader extends TopicMapReader {
 

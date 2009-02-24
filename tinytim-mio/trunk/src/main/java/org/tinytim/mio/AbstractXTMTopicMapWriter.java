@@ -66,7 +66,7 @@ abstract class AbstractXTMTopicMapWriter extends AbstractTopicMapWriter {
             throw new IOException("The encoding must not be null");
         }
         _out = new XMLWriter(out, encoding);
-        _out.setPrettify(true);
+        _out.setPrettify(false);
         _attrs = new AttributesImpl();
     }
 
