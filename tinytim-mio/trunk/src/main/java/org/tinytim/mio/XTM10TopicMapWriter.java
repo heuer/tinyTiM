@@ -80,25 +80,11 @@ public class XTM10TopicMapWriter extends AbstractXTMTopicMapWriter {
         super(out, baseIRI, encoding);
     }
 
-    private String _getId(Reifiable reifiable) {
-        assert reifiable.getReifier() != null;
-        return "reifier-id-" + reifiable.getReifier().getId();
-    }
-
-    private void _addId(AttributesImpl attrs, final Reifiable reifiable) {
-        if (reifiable.getReifier() == null) {
-            return;
-        }
-        attrs.addAttribute("", "id", "", "CDATA", _getId(reifiable));
-    }
-
-    private void _addLocator(AttributesImpl attrs, Locator loc) {
-        attrs.addAttribute("", "xlink:href", "", "CDATA", loc.toExternalForm());
-    }
-
+    
     /* (non-Javadoc)
      * @see org.tinytim.mio.ITopicMapWriter#write(org.tmapi.core.TopicMap)
      */
+    @Override
     public void write(final TopicMap topicMap) throws IOException {
         _out.startDocument();
         _attrs.clear();
@@ -114,6 +100,22 @@ public class XTM10TopicMapWriter extends AbstractXTMTopicMapWriter {
         }
         _out.endElement("topicMap");
         _out.endDocument();
+    }
+
+    private String _getId(Reifiable reifiable) {
+        assert reifiable.getReifier() != null;
+        return "reifier-id-" + reifiable.getReifier().getId();
+    }
+
+    private void _addId(AttributesImpl attrs, final Reifiable reifiable) {
+        if (reifiable.getReifier() == null) {
+            return;
+        }
+        attrs.addAttribute("", "id", "", "CDATA", _getId(reifiable));
+    }
+
+    private void _addLocator(AttributesImpl attrs, Locator loc) {
+        attrs.addAttribute("", "xlink:href", "", "CDATA", loc.toExternalForm());
     }
 
     protected void _writeTopic(final Topic topic) throws IOException {

@@ -56,7 +56,6 @@ public class JTMTopicMapWriter implements TopicMapWriter {
 
     private JSONWriter _out;
     private String _baseIRI;
-    private Topic _defaultNameType;
 
     /**
      * Creates a JTM writer, using "utf-8" encoding.
@@ -108,8 +107,8 @@ public class JTMTopicMapWriter implements TopicMapWriter {
     /* (non-Javadoc)
      * @see org.tinytim.mio.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
+    @Override
     public void write(TopicMap topicMap) throws IOException {
-        _defaultNameType = topicMap.getTopicBySubjectIdentifier(TMDM.TOPIC_NAME);
         _out.startDocument();
         _out.startObject();
         _writeReifier(topicMap);
@@ -152,19 +151,6 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @throws IOException If an error occurs.
      */
     private void _writeTopic(Topic topic) throws IOException {
-        // Ignore the topic if it is the default name type and it has no further
-        // characteristics
-        if (_isDefaultNameType(topic)
-                && topic.getReified() == null
-                && topic.getSubjectIdentifiers().size() == 1
-                && topic.getSubjectLocators().isEmpty()
-                && topic.getItemIdentifiers().isEmpty()
-                && topic.getRolesPlayed().isEmpty()
-                && topic.getTypes().isEmpty()
-                && topic.getNames().isEmpty()
-                && topic.getOccurrences().isEmpty()) {
-            return;
-        }
         _out.startObject();
         _writeItemIdentifiers(topic);
         _writeLocators("subject_identifiers", topic.getSubjectIdentifiers());
@@ -200,9 +186,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _out.startObject();
         _writeReifier(name);
         _writeItemIdentifiers(name);
-        if (!_isDefaultNameType(name.getType())) {
-            _writeType(name);
-        }
+        _writeType(name);
         _writeScope(name);
         _writeKeyValue("value", name.getValue());
         Set<Variant> variants = name.getVariants();
@@ -425,23 +409,17 @@ public class JTMTopicMapWriter implements TopicMapWriter {
     private String _topicRef(Topic topic) {
         Set<Locator> locs = topic.getItemIdentifiers();
         if (!locs.isEmpty()) {
-            return locs.iterator().next().toExternalForm();
+            return "ii:" + locs.iterator().next().toExternalForm();
         }
         locs = topic.getSubjectIdentifiers();
         if (!locs.isEmpty()) {
-            return locs.iterator().next().toExternalForm();
+            return "si:" + locs.iterator().next().toExternalForm();
         }
-        return _baseIRI + "#" + topic.getId();
-    }
-
-    /**
-     * Checks if the specified <tt>topic</tt> is the default TMDM name type.
-     *
-     * @param topic The topic to check, not <tt>null</tt>.
-     * @return <tt>true</tt> if the topic is the default name type, otherwise <tt>false</tt>.
-     */
-    private boolean _isDefaultNameType(final Topic topic) {
-        return topic.equals(_defaultNameType);
+        locs = topic.getSubjectLocators();
+        if (!locs.isEmpty()) {
+            return "sl:" + locs.iterator().next().toExternalForm();
+        }
+        return "ii:" + _baseIRI + "#" + topic.getId();
     }
 
 }

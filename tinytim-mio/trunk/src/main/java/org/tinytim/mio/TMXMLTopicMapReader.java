@@ -96,7 +96,7 @@ public final class TMXMLTopicMapReader extends AbstractTopicMapReader {
      *                  disable validation.
      */
     public void setValidation(boolean validate) {
-        _deserializer.setProperty(Property.VALIDATE, validate);
+        _deserializer.setProperty(Property.VALIDATE, Boolean.valueOf(validate));
     }
 
     /**

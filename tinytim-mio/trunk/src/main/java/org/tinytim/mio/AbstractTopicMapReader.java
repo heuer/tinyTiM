@@ -125,6 +125,7 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
     /* (non-Javadoc)
      * @see org.tinytim.mio.ITopicMapReader#read()
      */
+    @Override
     public void read() throws IOException {
         try {
             _deserializer.parse(_source);

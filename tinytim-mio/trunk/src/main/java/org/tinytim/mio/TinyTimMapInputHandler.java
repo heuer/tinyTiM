@@ -216,7 +216,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
         IVariant variant = (IVariant) _leaveStatePopConstruct(VARIANT);
         IName name = (IName) _peekConstruct();
         IScope scope = variant.getScopeObject();
-        if (scope.isUnconstrained() || name.getScopeObject() == scope) {
+        if (scope.isUnconstrained() || name.getScopeObject().equals(scope)) {
             _reportError("The variant has no scope");
         }
     }
@@ -277,7 +277,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
         Locator sid = _tm.createLocator(subjectIdentifier);
         ITopic topic = _peekTopic();
         Topic existing = _tm.getTopicBySubjectIdentifier(sid);
-        if (existing != null && !(existing == topic)) {
+        if (existing != null && !(existing.equals(topic))) {
             _merge(existing, topic);
         }
         else {
@@ -296,7 +296,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
         Locator slo = _tm.createLocator(subjectLocator);
         ITopic topic = _peekTopic();
         Topic existing = _tm.getTopicBySubjectLocator(slo);
-        if (existing != null && !(existing == topic)) {
+        if (existing != null && !(existing.equals(topic))) {
             _merge(existing, topic);
         }
         topic.addSubjectLocator(slo);

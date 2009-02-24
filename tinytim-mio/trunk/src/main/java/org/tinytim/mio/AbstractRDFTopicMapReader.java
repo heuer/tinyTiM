@@ -32,7 +32,7 @@ import com.semagia.mio.Syntax;
  * Common superclass for {@link RDFTopicMapReader}s.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
         implements RDFTopicMapReader {
@@ -65,6 +65,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     /* (non-Javadoc)
      * @see org.tinytim.mio.RDFTopicMapReader#setMappingSource(java.io.File)
      */
+    @Override
     public void setMappingSource(File file) {
         try {
             setMappingSource(file.toURI().toURL());
@@ -77,6 +78,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     /* (non-Javadoc)
      * @see org.tinytim.mio.RDFTopicMapReader#setMappingSource(java.net.URL)
      */
+    @Override
     public void setMappingSource(URL url) {
         setMappingSource(url.toExternalForm());
     }
@@ -84,6 +86,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     /* (non-Javadoc)
      * @see org.tinytim.mio.RDFTopicMapReader#setMappingSource(java.lang.String)
      */
+    @Override
     public void setMappingSource(String iri) {
         _deserializer.setProperty(Property.RDF2TM_MAPPING_IRI, iri);
     }
@@ -91,6 +94,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     /* (non-Javadoc)
      * @see org.tinytim.mio.RDFTopicMapReader#getMappingSource()
      */
+    @Override
     public String getMappingSource() {
         return (String) _deserializer.getProperty(Property.RDF2TM_MAPPING_IRI);
     }
@@ -98,6 +102,7 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     /* (non-Javadoc)
      * @see org.tinytim.mio.RDFTopicMapReader#getMappingSourceSyntax()
      */
+    @Override
     public MappingSyntax getMappingSourceSyntax() {
         Syntax syntax = (Syntax) _deserializer.getProperty(Property.RDF2TM_MAPPING_SYNTAX);
         return _toMappingSyntax(syntax); 
@@ -106,10 +111,17 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     /* (non-Javadoc)
      * @see org.tinytim.mio.RDFTopicMapReader#setMappingSourceSyntax(org.tinytim.mio.RDFTopicMapReader.MappingSyntax)
      */
+    @Override
     public void setMappingSourceSyntax(MappingSyntax syntax) {
         _deserializer.setProperty(Property.RDF2TM_MAPPING_SYNTAX, _fromMappingSyntax(syntax));
     }
 
+    /**
+     * Returns the {@link MappingSyntax} equivalent for the provided mio.Syntax.
+     *
+     * @param syntax The syntax to convert.
+     * @return The MappingSyntax instance.
+     */
     private static MappingSyntax _toMappingSyntax(Syntax syntax) {
         if (syntax == null) {
             return null;
@@ -136,6 +148,12 @@ abstract class AbstractRDFTopicMapReader extends AbstractTopicMapReader
     }
 
 
+    /**
+     * Returns the mio.Syntax equivalent for the provided {@link MappingSyntax}.
+     *
+     * @param syntax The syntax to translate.
+     * @return The translated syntax.
+     */
     private static Syntax _fromMappingSyntax(MappingSyntax syntax) {
         if (syntax == null) {
             return null;
