@@ -65,11 +65,6 @@ import org.xml.sax.helpers.AttributesImpl;
  * See <a href="http://www.isotopicmaps.org/cxtm/">http://www.isotopicmaps.org/cxtm/</a>
  * for details.
  * </p>
- * <p>
- * <em>CAUTION</em>: This class implements the 
- * <a href="http://www.isotopicmaps.org/cxtm/">CXTM draft dtd. 2008-05-15</a>,
- * the output may change in the future.
- * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$

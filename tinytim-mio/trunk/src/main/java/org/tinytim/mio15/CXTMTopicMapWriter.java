@@ -73,11 +73,6 @@ import org.xml.sax.helpers.AttributesImpl;
  * for details.
  * </p>
  * <p>
- * <em>CAUTION</em>: This class implements the 
- * <a href="http://www.isotopicmaps.org/cxtm/">CXTM draft dtd. 2008-05-15</a>,
- * the output may change in the future.
- * </p>
- * <p>
  * The canonicalizer IS NOT a generic TMAPI-compatible implementation. It 
  * requires tinyTiM. The canonicalizer requires that the property 
  * {@link org.tinytim.Property#XTM10_REIFICATION} is set to <tt>false</tt> and
