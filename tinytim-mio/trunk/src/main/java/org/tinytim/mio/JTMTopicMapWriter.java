@@ -111,6 +111,8 @@ public class JTMTopicMapWriter implements TopicMapWriter {
     public void write(TopicMap topicMap) throws IOException {
         _out.startDocument();
         _out.startObject();
+        _writeKeyValue("version", "1.0");
+        _writeKeyValue("item_type", "topicmap");
         _writeReifier(topicMap);
         _writeItemIdentifiers(topicMap);
         _out.key("topics");
