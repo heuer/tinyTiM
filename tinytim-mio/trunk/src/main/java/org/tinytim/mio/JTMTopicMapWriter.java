@@ -245,7 +245,9 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         String value = XSD.ANY_URI.equals(datatype) ? datatyped.locatorValue().toExternalForm()
                                                     : datatyped.getValue();
         _writeKeyValue("value", value);
-        _writeKeyValue("datatype", datatype.toExternalForm());
+        if (!XSD.STRING.equals(datatype)) {
+            _writeKeyValue("datatype", datatype.toExternalForm());
+        }
     }
 
     /**
@@ -409,17 +411,17 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @return An IRI.
      */
     private String _topicRef(Topic topic) {
-        Set<Locator> locs = topic.getItemIdentifiers();
-        if (!locs.isEmpty()) {
-            return "ii:" + locs.iterator().next().toExternalForm();
-        }
-        locs = topic.getSubjectIdentifiers();
+        Set<Locator> locs = topic.getSubjectIdentifiers();
         if (!locs.isEmpty()) {
             return "si:" + locs.iterator().next().toExternalForm();
         }
         locs = topic.getSubjectLocators();
         if (!locs.isEmpty()) {
             return "sl:" + locs.iterator().next().toExternalForm();
+        }
+        locs = topic.getItemIdentifiers();
+        if (!locs.isEmpty()) {
+            return "ii:" + locs.iterator().next().toExternalForm();
         }
         return "ii:" + _baseIRI + "#" + topic.getId();
     }

@@ -28,18 +28,21 @@ import com.semagia.mio.Syntax;
  * {@link TopicMapReader} implementation that deserializes 
  * <a href="http://www.cerny-online.com/jtm/">JSON Topic Maps (JTM)</a>.
  * <p>
- * This reader rejects JTM instances which contain just a single role or 
- * variant even if they are valid according to the JTM specification. 
+ * This reader rejects JTM instances where the "item_type" is either
+ * "role" or "variant" even if they are valid according to the JTM specification. 
  * </p>
  * <p>
  * Further the reader expects that at least one identity of a topic 
  * (item identifier, subject identifier, subject locator) occurs before any
- * occurrence / name. Fragments must start with a "version" property followed
- * by the "item_type" property before any further properties are specified.
+ * occurrence / name.
+ * </p>
+ * <p>
+ * The JTM instance must start with a "version" property followed by the 
+ * "item_type" property before any further properties are specified.
  * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public final class JTMTopicMapReader extends AbstractTopicMapReader {
 
