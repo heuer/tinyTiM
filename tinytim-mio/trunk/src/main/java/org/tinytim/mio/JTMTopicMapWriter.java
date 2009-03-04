@@ -56,6 +56,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
 
     private JSONWriter _out;
     private String _baseIRI;
+    private Topic _defaultNameType;
 
     /**
      * Creates a JTM writer, using "utf-8" encoding.
@@ -109,6 +110,7 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      */
     @Override
     public void write(TopicMap topicMap) throws IOException {
+        _defaultNameType = topicMap.getTopicBySubjectIdentifier(TMDM.TOPIC_NAME);
         _out.startDocument();
         _out.startObject();
         _writeKeyValue("version", "1.0");
@@ -153,6 +155,19 @@ public class JTMTopicMapWriter implements TopicMapWriter {
      * @throws IOException If an error occurs.
      */
     private void _writeTopic(Topic topic) throws IOException {
+        // Ignore the topic if it is the default name type and it has no further
+        // characteristics
+        if (topic.equals(_defaultNameType)
+                && topic.getReified() == null
+                && topic.getSubjectIdentifiers().size() == 1
+                && topic.getSubjectLocators().isEmpty()
+                && topic.getItemIdentifiers().isEmpty()
+                && topic.getRolesPlayed().isEmpty()
+                && topic.getTypes().isEmpty()
+                && topic.getNames().isEmpty()
+                && topic.getOccurrences().isEmpty()) {
+            return;
+        }
         _out.startObject();
         _writeItemIdentifiers(topic);
         _writeLocators("subject_identifiers", topic.getSubjectIdentifiers());
@@ -188,7 +203,9 @@ public class JTMTopicMapWriter implements TopicMapWriter {
         _out.startObject();
         _writeReifier(name);
         _writeItemIdentifiers(name);
-        _writeType(name);
+        if (!name.getType().equals(_defaultNameType)) {
+            _writeType(name);
+        }
         _writeScope(name);
         _writeKeyValue("value", name.getValue());
         Set<Variant> variants = name.getVariants();
