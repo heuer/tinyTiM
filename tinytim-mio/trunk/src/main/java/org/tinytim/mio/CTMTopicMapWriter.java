@@ -37,7 +37,6 @@ import org.tinytim.internal.api.IOccurrence;
 import org.tinytim.internal.api.IScope;
 import org.tinytim.internal.api.IScoped;
 import org.tinytim.internal.api.IVariant;
-import org.tinytim.voc.Namespace;
 import org.tinytim.voc.TMDM;
 import org.tinytim.voc.XSD;
 
@@ -53,6 +52,7 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
+import org.tmapi.index.ScopedIndex;
 import org.tmapi.index.TypeInstanceIndex;
 
 /**
@@ -68,38 +68,76 @@ public class CTMTopicMapWriter implements TopicMapWriter {
 
     private static final Logger LOG = Logger.getLogger(CTMTopicMapWriter.class.getName());
 
+    //TODO: Unicode ranges in patterns
     private static final Pattern _ID_PATTERN = Pattern.compile("[A-Za-z_](\\.*[\\-A-Za-z_0-9])*");
+    private static final Pattern _LOCAL_PATTERN = Pattern.compile("([0-9]*\\.*[\\-A-Za-z_0-9])*");
+    private static final char[] _TRIPLE_QUOTES = new char[] { '"', '"', '"' };
+    private static final Reference[] _EMPTY_REFERENCE_ARRAY = new Reference[0];
+    private static final Reference _UNTYPED_REFERENCE = Reference.createId("[untyped]");
+    
     private final Writer _out;
     private final String _baseIRI;
     private final String _encoding;
     private Topic _defaultNameType;
-    //TODO: Add setters/getters
-    private boolean _exportIIDs = true;
-    private boolean _prettify = true;
+    private boolean _exportIIDs;
+    private boolean _keepAbsoluteIIDs;
     private String _title;
     private String _author;
     private String _license;
     private String _comment;
+    private char[] _indent;
     private final Comparator<Topic> _topicComparator;
+    private final Comparator<Topic> _topicIdComparator;
     private final Comparator<Association> _assocComparator;
     private final Comparator<Occurrence> _occComparator;
     private final Comparator<Name> _nameComparator;
     private final Comparator<Set<Topic>> _scopeComparator;
-    private final Comparator<Locator> _locComparator;
-    private final Comparator<Set<Locator>> _locSetComparator;
     private final Comparator<Role> _roleComparator;
     private final Comparator<Variant> _variantComparator;
-    private final Map<Topic, TopicReference> _topic2Reference;
+    private final Map<Topic, Reference> _topic2Reference; //TODO: LRU?
+    private final Map<String, String> _prefixes;
+    private Reference _lastReference;
 
-
+    /**
+     * Constructs a new instance using "utf-8" encoding.
+     * <p>
+     * The base IRI is used to abbreviate IRIs. IRIs with a fragment identifier
+     * (like <tt>#my-topic</tt>) are written in an abbreviated from iff they
+     * start with the provided base IRI.
+     * </p>
+     *
+     * @param out The stream to write onto.
+     * @param baseIRI The base IRI to resolve locators against.
+     * @throws IOException In case of an error.
+     */
     public CTMTopicMapWriter(final OutputStream out, final String baseIRI) throws IOException {
         this(out, baseIRI, "utf-8");
     }
 
+    /**
+     * Constructs a new instance with the specified encoding.
+     * <p>
+     * The base IRI is used to abbreviate IRIs. IRIs with a fragment identifier
+     * (like <tt>#my-topic</tt>) are written in an abbreviated from iff they
+     * start with the provided base IRI.
+     * </p>
+     *
+     * @param out The stream to write onto.
+     * @param baseIRI The base IRI to resolve locators against.
+     * @param encoding The encoding to use.
+     * @throws IOException In case of an error, i.e. if the encoding is unsupported.
+     */
     public CTMTopicMapWriter(final OutputStream out, final String baseIRI, final String encoding) throws IOException {
         this(new OutputStreamWriter(out, encoding), baseIRI, encoding);
     }
 
+    /**
+     * Constructs a new instance.
+     *
+     * @param writer The writer to use.
+     * @param baseIRI The base IRI to resolve locators against.
+     * @param encoding The encoding to use.
+     */
     private CTMTopicMapWriter(final Writer writer, final String baseIRI, final String encoding) {
         _out = writer;
         if (baseIRI == null) {
@@ -110,20 +148,23 @@ public class CTMTopicMapWriter implements TopicMapWriter {
             throw new IllegalArgumentException("The encoding must not be null");
         }
         _encoding = encoding;
-        _topic2Reference = new HashMap<Topic, TopicReference>(200);
-        _scopeComparator = new ScopeComparator();
-        _locSetComparator = new LocatorSetComparator();
-        _locComparator = new LocatorComparator();
+        _topic2Reference = new HashMap<Topic, Reference>(200);
         _topicComparator = new TopicComparator();
+        _scopeComparator = new ScopeComparator();
+        _topicIdComparator = new TopicIdComparator();
         _assocComparator = new AssociationComparator();
         _occComparator = new OccurrenceComparator();
         _nameComparator = new NameComparator();
         _roleComparator = new RoleComparator();
         _variantComparator = new VariantComparator();
+        _prefixes = new HashMap<String, String>();
+        setIdentation(4);
+        setExportItemIdentifiers(false);
     }
 
     /**
-     * Sets the title of the topic map which appears at the top of the file.
+     * Sets the title of the topic map which appears in the header comment of
+     * the file.
      *
      * @param title The title of the topic map.
      */
@@ -141,7 +182,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     }
 
     /**
-     * Sets the author which appears at the top of the file.
+     * Sets the author which appears in the header comment of the file.
      *
      * @param author The author.
      */
@@ -159,7 +200,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     }
 
     /**
-     * Sets the license which should appear on top of the file.
+     * Sets the license which should appear in the header comment of the file.
      * <p>
      * The license of the topic map. This could be a name or an IRI or both, i.e.
      * "Creative Commons-License <http://creativecommons.org/licenses/by-nc-sa/3.0/>".
@@ -181,7 +222,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     }
 
     /**
-     * Sets a file comment.
+     * The an additional comment which appears in the header comment of the file.
      * <p>
      * The comment could describe the topic map, or provide an additional 
      * copyright notice, or SVN/CVS keywords etc.
@@ -202,6 +243,105 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         return _comment;
     }
 
+    /**
+     * Adds a prefix to the writer.
+     * <p>
+     * The writer converts all locators (item identifiers, subject identifiers,
+     * subject locators) into QNames which start with the provided 
+     * <tt>reference</tt>.
+     * </p>
+     * <p>
+     * I.e. if a prefix "wp" is set to "http://en.wikipedia.org/wiki", a 
+     * subject identifier like "http://en.wikipedia.org/wiki/John_Lennon" is 
+     * converted into a QName "wp:John_Lennon".
+     * </p>
+     *
+     * @param prefix The prefix to add, an existing prefix with the same name
+     *                  will be overridden.
+     * @param reference The IRI to which the prefix should be assigned to.
+     */
+    public void addPrefix(String prefix, String reference) {
+        _prefixes.put(prefix, reference);
+    }
+
+    /**
+     * Removes a prefix mapping.
+     *
+     * @param prefix The prefix to remove.
+     */
+    public void removePrefix(String prefix) {
+        _prefixes.remove(prefix);
+    }
+
+    /**
+     * Sets the identation level, by default the identation level is set to 4
+     * which means four whitespace characters are written.
+     * <p>
+     * If the size is set to <tt>0</tt>, no identation will be done.
+     * </p>
+     * <p>
+     * The identation level indicates how many whitespaces are written in front
+     * of a statement within a topic block.
+     * </p>
+     * <p>Example (identation level = 4):
+     * <pre>
+     * john isa person;
+     *     - "John".
+     * </pre>
+     * </p>
+     * <p>Example (identation level = 0):
+     * <pre>
+     * paul isa person;
+     * - "Paul".
+     * </pre>
+     * </p>
+     *
+     * @param level The identation level.
+     */
+    public void setIdentation(int level) {
+        if (_indent == null || _indent.length != level) {
+            _indent = new char[level];
+            Arrays.fill(_indent, ' ');
+        }
+    }
+
+    /**
+     * Returns the identation level.
+     *
+     * @return The number of whitespaces which are written in front of a 
+     *          statement within a topic block.
+     */
+    public int getIdentation() {
+        return _indent.length;
+    }
+
+    /**
+     * Indicates if the item identifiers of the topics should be exported.
+     * <p>
+     * By default, this feature is disabled.
+     * </p>
+     *
+     * @param export <tt>true</tt> to export item identifiers, otherwise <tt>false</tt>.
+     */
+    public void setExportItemIdentifiers(boolean export) {
+        setExportItemIdentifiers(export, export);
+    }
+
+    /**
+     * Indicates if the item identifiers of a topic are exported.
+     *
+     * @return <tt>true</tt> if the item identifiers are exported, otherwise <tt>false</tt>.
+     */
+    public boolean getExportItemIdentifiers() {
+        return _exportIIDs;
+    }
+
+    // Unsure if this feature should be exposed, keep it private currently
+    private void setExportItemIdentifiers(boolean export, boolean keepAbsoluteItemIdentifiers) {
+        _exportIIDs = export;
+        _keepAbsoluteIIDs = keepAbsoluteItemIdentifiers;
+    }
+
     /* (non-Javadoc)
      * @see org.tinytim.mio.TopicMapWriter#write(org.tmapi.core.TopicMap)
      */
@@ -212,13 +352,9 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         _newline();
         _out.write("%version 1.0");
         _writeFileHeader();
-        _out.write("%prefix xsd <" + Namespace.XSD + ">    # Default prefix");
+        _writePrefixes();
         _newline();
         Collection<Topic> topics = new ArrayList<Topic>(topicMap.getTopics());
-        final boolean removeDefaultNameType = _shouldStandardTopicExported(_defaultNameType);
-        if (removeDefaultNameType) {
-            topics.remove(_defaultNameType);
-        }
         if (topicMap.getReifier() != null) {
             // Special handling of the tm reifier to avoid an additional 
             // whitespace character in front of the ~
@@ -227,7 +363,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
             _out.write("~ ");
             _writeTopicRef(reifier);
             _newline();
-            _writeTopic(reifier);
+            _writeTopic(reifier, false);
             topics.remove(reifier);
         }
         TypeInstanceIndex tiIdx = ((IIndexManagerAware) topicMap).getIndexManager().getTypeInstanceIndex();
@@ -235,16 +371,43 @@ public class CTMTopicMapWriter implements TopicMapWriter {
             tiIdx.reindex();
         }
         _writeSection("ONTOLOGY");
-        _writeOntologyTypes(tiIdx.getTopicTypes(), topics, "Topic Types");
-        _writeOntologyTypes(tiIdx.getAssociationTypes(), topics, "Association Types");
-        _writeOntologyTypes(tiIdx.getRoleTypes(), topics, "Role Types");
-        _writeOntologyTypes(tiIdx.getOccurrenceTypes(), topics, "Occurrence Types");
-        Collection<Topic> nameTypes = new ArrayList<Topic>(tiIdx.getNameTypes());
-        if (removeDefaultNameType) {
-            nameTypes.remove(_defaultNameType);
+        _writeOntologySection(tiIdx.getTopicTypes(), topics, "Topic Types");
+        Collection<Topic> types = tiIdx.getAssociationTypes();
+        final Topic typeInstance = topicMap.getTopicBySubjectIdentifier(TMDM.TYPE_INSTANCE);
+        if (_omitTopic(typeInstance)) {
+            types.remove(typeInstance);
+            topics.remove(typeInstance);
         }
-        _writeOntologyTypes(nameTypes, topics, "Name Types");
+        _writeOntologySection(types, topics, "Association Types");
+        types = tiIdx.getRoleTypes();
+        final Topic type = topicMap.getTopicBySubjectIdentifier(TMDM.TYPE);
+        final Topic instance = topicMap.getTopicBySubjectIdentifier(TMDM.INSTANCE);
+        if (_omitTopic(type)) {
+            types.remove(type);
+            topics.remove(type);
+        }
+        if (_omitTopic(instance)) {
+            types.remove(instance);
+            topics.remove(instance);
+        }
+        _writeOntologySection(types, topics, "Role Types");
+        _writeOntologySection(tiIdx.getOccurrenceTypes(), topics, "Occurrence Types");
+        types = new ArrayList<Topic>(tiIdx.getNameTypes());
+        if (_omitTopic(_defaultNameType)) {
+            types.remove(_defaultNameType);
+            topics.remove(_defaultNameType);
+        }
+        _writeOntologySection(types, topics, "Name Types");
         tiIdx.close();
+        ScopedIndex scopeIdx = ((IIndexManagerAware) topicMap).getIndexManager().getScopedIndex();
+        if (!scopeIdx.isAutoUpdated()) {
+            scopeIdx.reindex();
+        }
+        _writeOntologySection(scopeIdx.getAssociationThemes(), topics, "Association Themes");
+        _writeOntologySection(scopeIdx.getOccurrenceThemes(), topics, "Occurrence Themes");
+        _writeOntologySection(scopeIdx.getNameThemes(), topics, "Name Themes");
+        _writeOntologySection(scopeIdx.getVariantThemes(), topics, "Variant Themes");
+        scopeIdx.close();
         _newline();
         _writeSection("INSTANCES");
         _writeSection("Topics");
@@ -265,14 +428,22 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         _topic2Reference.clear();
     }
 
-    private boolean _shouldStandardTopicExported(Topic topic) {
+    /**
+     * Indicates if the provided <tt>topic</tt> has just one subject identifier
+     * and provides no further properties.
+     *
+     * @param topic The topic to check.
+     * @return <tt>true</tt> if the topic should be omitted, otherwise <tt>false</tt>.
+     */
+    private boolean _omitTopic(Topic topic) {
         return topic != null
                 && topic.getSubjectIdentifiers().size() == 1
-                && topic.getSubjectLocators().size() == 0
-                && topic.getTypes().size() == 0
-                && topic.getNames().size() == 0 
-                && topic.getOccurrences().size() == 0
-                && topic.getRolesPlayed().size() == 0
+                && topic.getSubjectLocators().isEmpty()
+                && (!_exportIIDs || topic.getItemIdentifiers().isEmpty())
+                && topic.getTypes().isEmpty()
+                && topic.getNames().isEmpty() 
+                && topic.getOccurrences().isEmpty()
+                && topic.getRolesPlayed().isEmpty()
                 && topic.getReified() == null;
     }
 
@@ -309,8 +480,24 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         _newline();
         _newline();
         _out.write(")#");
-        _newline();
-        _newline();
+    }
+
+    /**
+     * Writes the registered prefixes.
+     *
+     * @throws IOException In case of an error.
+     */
+    private void _writePrefixes() throws IOException {
+        if (_prefixes.isEmpty()) {
+            return;
+        }
+        _writeSection("Prefixes");
+        String[] keys = _prefixes.keySet().toArray(new String[0]);
+        Arrays.sort(keys);
+        for (String ident: keys) {
+            _out.write("%prefix " + ident + " <" + _prefixes.get(ident) + ">");
+            _newline();
+        }
     }
 
     /**
@@ -322,7 +509,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
      * @param title The title of the ontology section.
      * @throws IOException In case of an error.
      */
-    private void _writeOntologyTypes(Collection<Topic> topics, Collection<Topic> allTopics, String title) throws IOException {
+    private void _writeOntologySection(Collection<Topic> topics, Collection<Topic> allTopics, String title) throws IOException {
         if (topics.isEmpty()) {
             return;
         }
@@ -338,10 +525,11 @@ public class CTMTopicMapWriter implements TopicMapWriter {
      * @throws IOException In case of an error.
      */
     private void _writeTopics(Collection<Topic> topics) throws IOException {
+        _lastReference = null;
         Topic[] topicArray = topics.toArray(new Topic[topics.size()]);
         Arrays.sort(topicArray, _topicComparator);
         for (Topic topic: topicArray) {
-            _writeTopic(topic);
+            _writeTopic(topic, true);
         }
     }
 
@@ -351,14 +539,32 @@ public class CTMTopicMapWriter implements TopicMapWriter {
      * @param topic The topic to serialize.
      * @throws IOException In case of an error.
      */
-    private void _writeTopic(Topic topic) throws IOException {
-        _newline();
+    private void _writeTopic(Topic topic, boolean topicTypeHeader) throws IOException {
+        final Reference mainIdentity = _getTopicReference(topic);
+        Topic[] types = _getTypes(topic);
+        if (topicTypeHeader) {
+            if (types.length > 0) {
+                Reference ref = _getTopicReference(types[0]);
+                if (!ref.equals(_lastReference)) {
+                    _writeSection("TT: " + ref);
+                    _lastReference = ref;
+                }
+            }
+            else if (_UNTYPED_REFERENCE != _lastReference) {
+                _writeSection("TT: " + _UNTYPED_REFERENCE);
+                _lastReference = _UNTYPED_REFERENCE;
+            }
+        }
         boolean wantSemicolon = false;
-        final TopicReference mainIdentity = _getTopicReference(topic);
+        _newline();
         _writeTopicRef(mainIdentity);
         _out.write(' ');
-        for (Topic type: topic.getTypes()) {
+        for (Topic type: types) {
             _writeTypeInstance(type, wantSemicolon);
+            wantSemicolon = true;
+        }
+        for (Topic supertype: _getSupertypes(topic)) {
+            this._writeSupertypeSubtype(supertype, wantSemicolon);
             wantSemicolon = true;
         }
         for (Name name: _getNames(topic)) {
@@ -369,71 +575,140 @@ public class CTMTopicMapWriter implements TopicMapWriter {
             _writeOccurrence((IOccurrence) occ, wantSemicolon);
             wantSemicolon = true;
         }
-        for (TopicReference sid: _getSubjectIdentifiers(topic)) {
+        for (Reference sid: _getSubjectIdentifiers(topic)) {
             _writeTopicRef(sid, wantSemicolon);
             wantSemicolon = true;
         }
-        for (TopicReference slo: _getSubjectLocators(topic)) {
+        for (Reference slo: _getSubjectLocators(topic)) {
             _writeTopicRef(slo, wantSemicolon);
             wantSemicolon = true;
         }
         if (_exportIIDs) {
-            TopicReference[] iids = _getItemIdentifiers(topic);
-            if ((mainIdentity.type == TopicReference.ID
-                    || mainIdentity.type == TopicReference.IID) 
-                    && iids.length == 1) {
-                //TODO
+            for (Reference iid: _getItemIdentifiers(topic)) {
+                _writeTopicRef(iid, wantSemicolon);
+                wantSemicolon = true;
             }
-            else {
-                for (TopicReference iid: iids) {
-                    _writeTopicRef(iid, wantSemicolon);
-                    wantSemicolon = true;
-                }
-            }
-        }
-        if (wantSemicolon) {
-            _out.write(' ');
         }
         _out.write('.');
         _newline();
     }
 
-    private TopicReference[] _getSubjectIdentifiers(Topic topic) {
-        return _getLocators(topic, TopicReference.SID, topic.getSubjectIdentifiers());
+    /**
+     * Returns a sorted array of subject identifiers for the specified topic.
+     * <p>
+     * The main identity (the one which starts the topic block) is removed
+     * is not part of the array iff the main identity is a subject identifier.
+     * </p>
+     *
+     * @param topic The topic to retrieve the subject identifiers from.
+     * @return A (maybe empty) sorted array of subject identifiers.
+     */
+    private Reference[] _getSubjectIdentifiers(Topic topic) {
+        return _getLocators(topic, Reference.SID);
     }
 
-    private TopicReference[] _getSubjectLocators(Topic topic) {
-        return _getLocators(topic, TopicReference.SLO, topic.getSubjectLocators());
+    /**
+     * Returns a sorted array of subject locators for the specified topic.
+     * <p>
+     * The main identity (the one which starts the topic block) is removed
+     * is not part of the array iff the main identity is a subject locator.
+     * </p>
+     *
+     * @param topic The topic to retrieve the subject locators from.
+     * @return A (maybe empty) sorted array of subject locators.
+     */
+    private Reference[] _getSubjectLocators(Topic topic) {
+        return _getLocators(topic, Reference.SLO);
     }
 
-    private TopicReference[] _getItemIdentifiers(Topic topic) {
-        return _getLocators(topic, TopicReference.IID, topic.getItemIdentifiers());
-    }
-
-    private TopicReference[] _getLocators(Topic topic, int kind, Set<Locator> locs) {
-        if (locs.isEmpty()) {
-            return new TopicReference[0];
+    /**
+     * Returns a sorted array of item identifiers for the specified topic.
+     * <p>
+     * The main identity (the one which starts the topic block) is removed
+     * is not part of the array iff the main identity is an item identifier.
+     * </p>
+     *
+     * @param topic The topic to retrieve the item identifiers from.
+     * @return A (maybe empty) sorted array of item identifiers.
+     */
+    private Reference[] _getItemIdentifiers(Topic topic) {
+        Collection<Locator> iids = topic.getItemIdentifiers();
+        if (iids.isEmpty()) {
+            return _EMPTY_REFERENCE_ARRAY;
         }
-        Collection<TopicReference> refs = new ArrayList<TopicReference>(locs.size());
-        if (kind == TopicReference.SID) {
-            for (Locator loc: locs) {
-                refs.add(TopicReference.createSubjectIdentifier(loc.toExternalForm()));
+        Collection<Reference> refs = new ArrayList<Reference>();
+        for (Locator iid: iids) {
+            refs.add(Reference.createItemIdentifier(iid));
+        }
+        Reference mainIdentity = _getTopicReference(topic);
+        if (!refs.remove(mainIdentity)
+                && mainIdentity.type == Reference.ID) {
+            String iri = _baseIRI + "#" + mainIdentity.reference;
+            for (Reference r: refs) {
+                if (r.reference.equals(iri)) {
+                    refs.remove(r);
+                    break;
+                }
             }
         }
-        else if (kind == TopicReference.IID) {
-            for (Locator loc: locs) {
-                refs.add(TopicReference.createItemIdentifier(loc.toExternalForm()));
-            }
-        }
-        else if (kind == TopicReference.SLO) {
-            for (Locator loc: locs) {
-                refs.add(TopicReference.createSubjectLocator(loc.toExternalForm()));
-            }
-        }
-        refs.remove(_getTopicReference(topic));
-        TopicReference[] refArray = refs.toArray(new TopicReference[refs.size()]);
-        //Arrays.sort(locArray, _locComparator);
+        Reference[] refArray = refs.toArray(new Reference[refs.size()]);
+        Arrays.sort(refArray);
         return refArray;
+    }
+
+    /**
+     * Returns a sorted array of {@link Reference}s which represent the 
+     * provided locators.
+     * <p>
+     * The main identity is not part of the array.
+     * </p>
+     *
+     * @param topic The topic.
+     * @param kind Either {@link Reference#SID} or {@link Reference#SLO}.
+     * @return A (maybe empty) sorted array.
+     */
+    private Reference[] _getLocators(Topic topic, int kind) {
+        Set<Locator> locs = kind == Reference.SID ? topic.getSubjectIdentifiers()
+                                                  : topic.getSubjectLocators();
+        if (locs.isEmpty()) {
+            return _EMPTY_REFERENCE_ARRAY;
+        }
+        Collection<Reference> refs = new ArrayList<Reference>(locs.size());
+        for (Locator loc: locs) {
+            refs.add(new Reference(kind, loc));
+        }
+        refs.remove(_getTopicReference(topic)); 
+        Reference[] refArray = refs.toArray(new Reference[refs.size()]);
+        Arrays.sort(refArray);
+        return refArray;
+    }
+
+    /**
+     * Returns a sorted array of types for the specified topic.
+     *
+     * @param topic The topic to retrieve the types from.
+     * @return A sorted array of types.
+     */
+    private Topic[] _getTypes(Topic topic) {
+        Set<Topic> types_ = topic.getTypes();
+        Topic[] types = types_.toArray(new Topic[types_.size()]);
+        Arrays.sort(types, _topicIdComparator);
+        return types;
+    }
+
+    /**
+     * Returns a sorted array of supertypes for the specified topic.
+     *
+     * @param topic The topic to retrieve the supertypes from.
+     * @return A sorted array of supertypes.
+     */
+    private Topic[] _getSupertypes(Topic topic) {
+        //FIXME
+        return new Topic[0];
+//        Set<Topic> supertypes_ = TypeInstanceUtils.getSupertypes(topic);
+//        Topic[] supertypes = supertypes_.toArray(new Topic[supertypes_.size()]);
+//        Arrays.sort(supertypes, _topicIdComparator);
+//        return supertypes;
     }
 
     /**
@@ -463,9 +738,9 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     }
 
     /**
-     * 
+     * Writes a type-instance relationship via "isa".
      *
-     * @param type
+     * @param type The type to write.
      * @param wantSemicolon Indicates if a semicolon should be written.
      * @throws IOException In case of an error.
      */
@@ -475,11 +750,18 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         _writeTopicRef(type);
     }
 
-//    private void _writeSupertypeSubtype(Topic supertype, boolean wantSemicolon) throws IOException {
-//        _writeSemicolon(wantSemicolon);
-//        _out.write("ako ");
-//        _writeTopicRef(supertype);
-//    }
+    /**
+     * Writes a supertype-subtype relationship via "isa".
+     *
+     * @param supertype The supertype to write.
+     * @param wantSemicolon Indicates if a semicolon should be written.
+     * @throws IOException In case of an error.
+     */
+    private void _writeSupertypeSubtype(Topic supertype, boolean wantSemicolon) throws IOException {
+        _writeSemicolon(wantSemicolon);
+        _out.write("ako ");
+        _writeTopicRef(supertype);
+    }
 
     /**
      * Serializes the specified occurrence.
@@ -548,24 +830,31 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         _out.write('(');
         Role[] roles = assoc.getRoles().toArray(new Role[0]);
         Arrays.sort(roles, _roleComparator);
-        boolean wantComma = false;
-        for (Role role: roles) {
-            if (wantComma) {
-                _out.write(", ");
-            }
-            _writeTopicRef(role.getType());
-            _out.write(": ");
-            _writeTopicRef(role.getPlayer());
-            if (role.getReifier() != null) {
-                _writeReifier(role);
-                _out.write(" #( Great, you found a reason why a role should be reified, please tell us about it :) )# ");
-            }
-            wantComma = true;
+        _writeRole(roles[0]);
+        for (int i=1; i<roles.length; i++) {
+            _out.write(", ");
+            _writeRole(roles[i]);
         }
         _out.write(')');
         _writeScope((IScoped) assoc);
         _writeReifier(assoc);
         _newline();
+    }
+
+    /**
+     * Serializes the specified association role.
+     *
+     * @param role The association role to serialize.
+     * @throws IOException In case of an error.
+     */
+    private void _writeRole(Role role) throws IOException {
+        _writeTopicRef(role.getType());
+        _out.write(": ");
+        _writeTopicRef(role.getPlayer());
+        if (role.getReifier() != null) {
+            _writeReifier(role);
+            _out.write(" #( Great, you found a reason why a role should be reified, please tell us about it :) )# ");
+        }
     }
 
     /**
@@ -583,9 +872,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         if (wantSemicolon) {
             _out.write(';');
             _newline();
-            if (_prettify) {
-                _out.write("    ");
-            }
+            _out.write(_indent);
         }
     }
 
@@ -600,21 +887,18 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         IScope scope = scoped.getScopeObject(); 
         if (!scope.isUnconstrained()) {
             Topic[] themes = scope.asSet().toArray(new Topic[scope.size()]);
-            Arrays.sort(themes, _topicComparator);
+            Arrays.sort(themes, _topicIdComparator);
             _out.write(" @");
-            boolean wantComma = false;
-            for (Topic theme: themes) {
-                if (wantComma) {
-                    _out.write(", ");
-                }
-                _writeTopicRef(theme);
-                wantComma = true;
+            _writeTopicRef(themes[0]);
+            for (int i=1; i<themes.length; i++) {
+                _out.write(", ");
+                _writeTopicRef(themes[i]);
             }
         }
     }
 
     /**
-     * Writes the reifier if <tt>reifiable</tt> is reified.
+     * Writes the reifier iff <tt>reifiable</tt> is reified.
      *
      * @param reifiable The reifiable construct.
      * @throws IOException If an error occurs.
@@ -653,21 +937,14 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         else {
             _writeString(value);
             _out.write("^^");
-            String datatypeIRI = datatype.toExternalForm(); 
-            if (datatypeIRI.startsWith(Namespace.XSD)) {
-                _out.write("xsd:");
-                _out.write(datatypeIRI.substring(datatypeIRI.lastIndexOf('#')+1));
-            }
-            else {
-                _writeLocator(datatypeIRI);
-            }
+            _writeLocator(datatype); 
         }
     }
 
     /**
-     * 
+     * Writes a topic reference for the specified topic.
      *
-     * @param topic
+     * @param topic The topic to serialize.
      * @throws IOException In case of an error.
      */
     private void _writeTopicRef(Topic topic) throws IOException {
@@ -675,35 +952,35 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     }
 
     /**
-     * 
+     * Writes the specied topic reference without whitespaces in front.
      *
-     * @param topicRef
+     * @param topicRef The topic reference to serialize.
      * @throws IOException In case of an error.
      */
-    private void _writeTopicRef(TopicReference topicRef) throws IOException {
+    private void _writeTopicRef(Reference topicRef) throws IOException {
         _writeTopicRef(topicRef, false);
     }
 
     /**
-     * 
+     * Writes the specified topic reference.
      *
-     * @param topicRef
+     * @param topicRef The topic reference to write.
      * @param wantSemicolon Indicates if a semicolon should be written.
      * @throws IOException In case of an error.
      */
-    private void _writeTopicRef(TopicReference topicRef, boolean wantSemicolon) throws IOException {
+    private void _writeTopicRef(Reference topicRef, boolean wantSemicolon) throws IOException {
         _writeSemicolon(wantSemicolon);
         switch (topicRef.type) {
-            case TopicReference.ID:
+            case Reference.ID:
                 _out.write(topicRef.reference);
                 return;
-            case TopicReference.IID:
+            case Reference.IID:
                 _out.write('^');
                 break;
-            case TopicReference.SLO:
+            case Reference.SLO:
                 _out.write("= ");
                 break;
-            case TopicReference.SID:
+            case Reference.SID:
                 break;
             default:
                 throw new RuntimeException("Internal error: Cannot match topic reference type " + topicRef.type);
@@ -712,85 +989,188 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     }
 
     /**
-     * 
+     * Serializes the provided <tt>string</tt>.
+     * <p>
+     * This method recognizes characters which have to be escaped.
+     * </p>
      *
-     * @param string
-     * @throws IOException
+     * @param string The string to write.
+     * @throws IOException In case of an error.
      */
     private void _writeString(String string) throws IOException {
-        _out.write('"');
-        char[] ch = string.toCharArray();
-        for (int i=0; i<ch.length; i++) {
-            switch (ch[i]) {
-                case '"':
-                case '\\':
-                    _out.write("\\");
-                default:
-                    _out.write(ch[i]);
+        // Avoid escaping of "
+        if (string.indexOf('"') > 0 && !string.endsWith("\"")) {
+            _out.write(_TRIPLE_QUOTES);
+            char[] ch = string.toCharArray();
+            for (int i=0; i<ch.length; i++) {
+                switch (ch[i]) {
+                    case '\\':
+                        _out.write("\\");
+                    default:
+                        _out.write(ch[i]);
+                }
+            }
+            _out.write(_TRIPLE_QUOTES);
+        }
+        else {
+            // Either the string ends with a " or the string is a 'normal' string
+            _out.write('"');
+            char[] ch = string.toCharArray();
+            for (int i=0; i<ch.length; i++) {
+                switch (ch[i]) {
+                    case '"':
+                    case '\\':
+                        _out.write("\\");
+                    default:
+                        _out.write(ch[i]);
+                }
+            }
+            _out.write('"');
+        }
+    }
+
+    /**
+     * Writes the specified locator (maybe abbreviated as QName).
+     *
+     * @param loc The locator to write.
+     * @throws IOException In case of an error.
+     */
+    private void _writeLocator(final Locator loc) throws IOException {
+        _writeLocator(loc.toExternalForm());
+    }
+
+    /**
+     * Writes the specified locator <tt>reference</tt> which has been 
+     * externalized..
+     * <p>
+     * If the reference starts with the base IRI followed by a hash ('#'), the
+     * reference is abbreviated.
+     * </p>
+     *
+     * @param reference The reference to write.
+     * @throws IOException In case of an error.
+     */
+    private void _writeLocator(String reference) throws IOException {
+        // If the reference starts with the base IRI and is followed by a #
+        // a relative reference is written
+        if (reference.startsWith(_baseIRI)) {
+            String tmp = reference.substring(_baseIRI.length());
+            if (tmp.charAt(0) == '#') {
+                _out.write('<' + tmp + '>');
+                return;
             }
         }
-        _out.write('"');
+        // If no relative IRI was written, check the registered prefixes and
+        // write a QName if a prefix matches
+        for (Map.Entry<String, String> entry: _prefixes.entrySet()) {
+            String iri = entry.getValue();
+            if (reference.startsWith(iri)) {
+                String localPart = reference.substring(iri.length());
+                if (_isValidLocalPart(localPart)) {
+                    _out.write(entry.getKey());
+                    _out.write(':');
+                    _out.write(localPart);
+                    return;
+                }
+            }
+        }
+        // No relative IRI and no QName was written, write the reference as it is
+        _out.write('<' + reference + '>');
     }
 
-    private void _writeLocator(String reference) throws IOException {
-        _out.write("<" + reference + ">");
-    }
-
-    private TopicReference _getTopicReference(Topic topic) {
-        TopicReference ref = _topic2Reference.get(topic);
+    /**
+     * Returns a reference to the provided topic.
+     * <p>
+     * The reference to the topic stays stable during the serialization of
+     * the topic map.
+     * </p>
+     *
+     * @param topic The topic to retrieve a reference for.
+     * @return A reference to the specified topic.
+     */
+    private Reference _getTopicReference(Topic topic) {
+        Reference ref = _topic2Reference.get(topic);
         if (ref == null) {
-            final boolean hasIIds = !(_exportIIDs || topic.getItemIdentifiers().isEmpty());
-            final boolean hasSids = !topic.getSubjectIdentifiers().isEmpty();
-            final boolean hasSlos = !topic.getSubjectLocators().isEmpty();
-            if (!hasIIds) {
-                if (hasSids) {
-                    ref = hasSlos ? null : TopicReference.createSubjectIdentifier(topic.getSubjectIdentifiers().iterator().next().toExternalForm());
-                }
-                else if (hasSlos) {
-                    ref = TopicReference.createSubjectLocator(topic.getSubjectLocators().iterator().next().toExternalForm());
-                }
-            }
-            if (ref == null) {
-                if (topic.getItemIdentifiers().size() == 1) {
-                    final String iid = topic.getItemIdentifiers().iterator().next().toExternalForm();
-                    int idx = !iid.startsWith(_baseIRI) ? -1 : iid.lastIndexOf('#');
-                    if (idx > 0) {
-                        String id = iid.substring(idx + 1);
-                        ref = _isValidId(id) ? TopicReference.createId(id)
-                                             : TopicReference.createItemIdentifier("#" + id);
-                    }
-                    else {
-                        ref = TopicReference.createItemIdentifier(iid);
-                    }
-                }
-            }
-            if (ref == null) {
-                String iri = null;
-                for (Locator iid: topic.getItemIdentifiers()) {
-                    String addr = iid.getReference();
-                    int idx = addr.lastIndexOf('#');
-                    if (idx < 0) {
-                        continue;
-                    }
-                    else {
-                        String id = addr.substring(idx+1);
-                        iri = _isValidId(id) ? id : null; 
-                    }
-                }
-                if (iri == null) {
-                    iri = "id-" + topic.getId();
-                }
-                ref = TopicReference.createId(iri);
-            }
+            ref = _generateTopicReference(topic);
             _topic2Reference.put(topic, ref);
         }
         return ref;
     }
 
+    /**
+     * Returns a reference to the specified <tt>topic</tt>.
+     *
+     * @param topic The topic to generate a reference for.
+     * @return A reference to the specified topic.
+     */
+    private Reference _generateTopicReference(final Topic topic) {
+        Reference ref = null;
+        Collection<Reference> refs = new ArrayList<Reference>();
+        for (Locator iid: topic.getItemIdentifiers()) {
+            String addr = iid.toExternalForm();
+            int idx = addr.indexOf('#');
+            if (idx > 0) {
+                String id = addr.substring(idx+1);
+                if (_isValidId(id)) {
+                    if (_keepAbsoluteIIDs && !addr.startsWith(_baseIRI)) {
+                        refs.add(Reference.createItemIdentifier(iid));
+                    }
+                    else {
+                        refs.add(Reference.createId(id));
+                    }
+                }
+                else {
+                    refs.add(Reference.createItemIdentifier(iid));
+                }
+            }
+        }
+        if (refs.isEmpty()) {
+            for (Locator sid: topic.getSubjectIdentifiers()) {
+                refs.add(Reference.createSubjectIdentifier(sid));
+            }
+        }
+        if (refs.isEmpty()) {
+            for (Locator sid: topic.getSubjectLocators()) {
+                refs.add(Reference.createSubjectLocator(sid));
+            }
+        }
+        if (!refs.isEmpty()) {
+            Reference[] refArray = refs.toArray(new Reference[refs.size()]);
+            Arrays.sort(refArray);
+            ref = refArray[0];
+        }
+        else {
+            ref = Reference.createItemIdentifier("#" + topic.getId());
+        }
+        return ref;
+    }
+
+    /**
+     * Returns if the provided <tt>id</tt> is a valid CTM topic identifier.
+     *
+     * @param id The id to check.
+     * @return <tt>true</tt> if the id is valid, otherwise <tt>false</tt>.
+     */
     private boolean _isValidId(String id) {
         return _ID_PATTERN.matcher(id).matches();
     }
 
+    /**
+     * Returns if the provided <tt>id</tt> is a valid local part of a QName.
+     *
+     * @param id The id to check.
+     * @return <tt>true</tt> if the id is valid, otherwise <tt>false</tt>.
+     */
+    private boolean _isValidLocalPart(String id) {
+        return _LOCAL_PATTERN.matcher(id).matches();
+    }
+
+    /**
+     * Returns if the provided <tt>literal</tt> is supported by CTM natively.
+     *
+     * @param literal The literal to check.
+     * @return <tt>true</tt> if the literal is supported, else <tt>false</tt>.
+     */
     private boolean _isNativelySupported(ILiteral literal) {
         Locator datatype = literal.getDatatype();
         return XSD.STRING.equals(datatype)
@@ -804,10 +1184,21 @@ public class CTMTopicMapWriter implements TopicMapWriter {
                             || "-INF".equals(literal.getValue()));
     }
 
+    /**
+     * Writes a EOL character.
+     *
+     * @throws IOException In case of an error.
+     */
     private void _newline() throws IOException {
         _out.write('\n');
     }
 
+    /**
+     * Writes a section name.
+     *
+     * @param name The section name to write.
+     * @throws IOException In case of an error.
+     */
     private void _writeSection(String name) throws IOException {
         _newline();
         _newline();
@@ -827,9 +1218,10 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         LOG.warning("Invalid CTM: '" + msg + "'");
     }
 
-
-
-    private static final class TopicReference {
+    /**
+     * Represents a reference to a topic.
+     */
+    static final class Reference implements Comparable<Reference> {
         static final int 
             ID = 0,
             SID = 1,
@@ -838,25 +1230,57 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         final int type;
         final String reference;
 
-        private TopicReference(int type, String reference) {
+        private Reference(int type, String reference) {
             this.type = type;
             this.reference = reference;
         }
 
-        public static TopicReference createId(String reference) {
-            return new TopicReference(ID, reference);
+        public Reference(int type, Locator loc) {
+            this(type, loc.toExternalForm());
+        }
+
+        public static Reference createId(String reference) {
+            return new Reference(ID, reference);
         }
         
-        public static TopicReference createSubjectIdentifier(String reference) {
-            return new TopicReference(SID, reference);
+        public static Reference createSubjectIdentifier(Locator reference) {
+            return new Reference(SID, reference);
         }
 
-        public static TopicReference createSubjectLocator(String reference) {
-            return new TopicReference(SLO, reference);
+        public static Reference createSubjectLocator(Locator reference) {
+            return new Reference(SLO, reference);
         }
 
-        public static TopicReference createItemIdentifier(String reference) {
-            return new TopicReference(IID, reference);
+        public static Reference createItemIdentifier(String string) {
+            return new Reference(IID, string);
+        }
+
+        public static Reference createItemIdentifier(Locator reference) {
+            return createItemIdentifier(reference.toExternalForm());
+        }
+
+        /* (non-Javadoc)
+         * @see java.lang.Object#toString()
+         */
+        @Override
+        public String toString() {
+            StringBuilder buff = new StringBuilder();
+            switch (type) {
+                case Reference.ID:
+                    return reference;
+                case Reference.IID:
+                    buff.append('^');
+                    break;
+                case Reference.SID:
+                    break;
+                case Reference.SLO:
+                    buff.append("= ");
+                    break;
+            }
+            buff.append('<');
+            buff.append(reference);
+            buff.append('>');
+            return buff.toString();
         }
 
         /* (non-Javadoc)
@@ -867,11 +1291,11 @@ public class CTMTopicMapWriter implements TopicMapWriter {
             if (this == obj) {
                 return true;
             }
-            if (!(obj instanceof TopicReference)) {
+            if (!(obj instanceof Reference)) {
                 return false;
             }
-            TopicReference other = (TopicReference) obj;
-            return (type == other.type && reference.equals(other.reference)); 
+            Reference other = (Reference) obj;
+            return type == other.type && reference.equals(other.reference); 
         }
 
         /* (non-Javadoc)
@@ -882,6 +1306,18 @@ public class CTMTopicMapWriter implements TopicMapWriter {
             return type + reference.hashCode();
         }
 
+        /* (non-Javadoc)
+         * @see java.lang.Comparable#compareTo(java.lang.Object)
+         */
+        @Override
+        public int compareTo(Reference o) {
+            int res = type - o.type;
+            if (res == 0) {
+                res = reference.compareTo(o.reference);
+            }
+            return res;
+        }
+
     }
 
 
@@ -889,33 +1325,33 @@ public class CTMTopicMapWriter implements TopicMapWriter {
      * Comparators.
      */
 
-    /**
-     * Topic comparator.
-     * - Topics with less types are considered less than others with types.
-     * - Topics with less subject identifiers are considered less than others with sids.
-     * - Topics with less subject locators are considered less than other with slos
-     * - Topics with less item identifiers are less than others with iids
-     * 
-     */
-    private final class TopicComparator implements Comparator<Topic> {
+    private class TopicIdComparator implements Comparator<Topic> {
 
         /* (non-Javadoc)
          * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
          */
         @Override
         public int compare(Topic o1, Topic o2) {
-            if (o1 == o2) {
-                return 0;
-            }
-            int res = o1.getTypes().size() - o2.getTypes().size();
+            return _getTopicReference(o1).compareTo(_getTopicReference(o2));
+        }
+    }
+
+    private class TopicComparator implements Comparator<Topic> {
+
+        private final TopicTypeSetComparator _typesComparator;
+
+        TopicComparator() {
+            _typesComparator = new TopicTypeSetComparator();
+        }
+
+        /* (non-Javadoc)
+         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
+         */
+        @Override
+        public int compare(Topic o1, Topic o2) {
+            int res = _typesComparator.compare(o1.getTypes(), o2.getTypes());
             if (res == 0) {
-                res = _locSetComparator.compare(o1.getSubjectIdentifiers(), o2.getSubjectIdentifiers());
-                if (res == 0) {
-                    res = _locSetComparator.compare(o1.getSubjectLocators(), o2.getSubjectLocators());
-                    if (res == 0) {
-                        res = _locSetComparator.compare(o1.getItemIdentifiers(), o2.getItemIdentifiers());
-                    }
-                }
+                res = _getTopicReference(o1).compareTo(_getTopicReference(o2));
             }
             return res;
         }
@@ -948,7 +1384,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
          *          second.
          */
         int compareType(Typed o1, Typed o2) {
-            return _topicComparator.compare(o1.getType(), o2.getType());
+            return _topicIdComparator.compare(o1.getType(), o2.getType());
         }
         /**
          * Extracts the scope of the scoped Topic Maps constructs and compares
@@ -976,6 +1412,9 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         int compareReifier(Reifiable o1, Reifiable o2) {
             Topic reifier1 = o1.getReifier();
             Topic reifier2 = o2.getReifier();
+            if (reifier1 == reifier2) {
+                return 0;
+            }
             int res = 0;
             if (reifier1 == null) {
                 res = reifier2 == null ? 0 : -1;
@@ -983,7 +1422,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
             else if (reifier2 == null) {
                 res = 1;
             }
-            return res != 0 ? res : _topicComparator.compare(reifier1, reifier2);
+            return res != 0 ? res : _topicIdComparator.compare(reifier1, reifier2);
         }
     }
 
@@ -1030,7 +1469,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         private Comparator<Set<Role>> _roleSetComparator;
 
         AssociationComparator() {
-            //_roleSetComparator = new RoleSetComparator();
+            _roleSetComparator = new RoleSetComparator();
         }
 
         /* (non-Javadoc)
@@ -1043,7 +1482,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
             }
             int res = compareType(o1, o2);
             if (res == 0) {
-                //res = _roleSetComparator.compare(o1.getRoles(), o2.getRoles());
+                res = _roleSetComparator.compare(o1.getRoles(), o2.getRoles());
                 if (res == 0) {
                     res = compareScope(o1, o2);
                 }
@@ -1069,7 +1508,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
             }
             int res = compareType(o1, o2);
             if (res == 0) {
-                res = _topicComparator.compare(o1.getPlayer(), o2.getPlayer());
+                res = _topicIdComparator.compare(o1.getPlayer(), o2.getPlayer());
             }
             return res;
         }
@@ -1220,59 +1659,71 @@ public class CTMTopicMapWriter implements TopicMapWriter {
     }
 
     /**
-     * Compares the scope of two scoped Topic Maps constructs.
+     * Compares role sets. The parent of the roles is ignored! 
      */
-    private final class ScopeComparator extends AbstractSetComparator<Topic> {
+    private final class RoleSetComparator extends AbstractSetComparator<Role> {
 
+        private RoleComparator _roleCmp; 
+
+        RoleSetComparator() {
+            _roleCmp = new RoleComparator();
+        }
+
+        /* (non-Javadoc)
+         * @see org.tinytim.mio.CXTMTopicMapWriter.AbstractSetComparator#compareContent(java.util.Set, java.util.Set, int)
+         */
         @Override
-        int compareContent(Set<Topic> o1, Set<Topic> o2, int size) {
-            int res = 0 ;
-            Topic[] topics1 = o1.toArray(new Topic[size]);
-            Topic[] topics2 = o2.toArray(new Topic[size]);
-            Arrays.sort(topics1, _topicComparator);
-            Arrays.sort(topics2, _topicComparator);
+        int compareContent(Set<Role> o1, Set<Role> o2,
+                int size) {
+            int res = 0;
+            Role[] roles1 = o1.toArray(new Role[size]);
+            Role[] roles2 = o2.toArray(new Role[size]);
+            Arrays.sort(roles1, _roleCmp);
+            Arrays.sort(roles2, _roleCmp);
             for (int i=0; i < size && res == 0; i++) {
-                res = _topicComparator.compare(topics1[i], topics2[i]);
+                res = _roleCmp.compare(roles1[i], roles2[i]);
+            }
+            return res;
+        }
+    }
+
+    private final class TopicTypeSetComparator extends AbstractSetComparator<Topic> {
+
+        /* (non-Javadoc)
+         * @see org.tinytim.mio.CXTMTopicMapWriter.AbstractSetComparator#compareContent(java.util.Set, java.util.Set, int)
+         */
+        @Override
+        int compareContent(Set<Topic> o1, Set<Topic> o2,
+                int size) {
+            int res = 0;
+            Topic[] types1 = o1.toArray(new Topic[size]);
+            Topic[] types2 = o2.toArray(new Topic[size]);
+            Arrays.sort(types1, _topicIdComparator);
+            Arrays.sort(types2, _topicIdComparator);
+            for (int i=0; i < size && res == 0; i++) {
+                res = _topicIdComparator.compare(types1[i], types2[i]);
             }
             return res;
         }
     }
 
     /**
-     * Compares {@link org.tmapi.core.Locator}s.
+     * Compares the scope of two scoped Topic Maps constructs.
      */
-    private final class LocatorComparator implements Comparator<Locator> {
-
-        /* (non-Javadoc)
-         * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-         */
-        @Override
-        public int compare(Locator o1, Locator o2) {
-            if (o1 == o2) {
-                return 0;
-            }
-            return o1.getReference().compareTo(o2.getReference());
-        }
-        
-    }
-
-    /**
-     * Comparator for sets of {@link org.tmapi.core.Locator}s. 
-     */
-    private final class LocatorSetComparator extends AbstractSetComparator<Locator> {
+    private final class ScopeComparator extends AbstractSetComparator<Topic> {
 
         /* (non-Javadoc)
          * @see org.tinytim.mio.CTMTopicMapWriter.AbstractSetComparator#compareContent(java.util.Set, java.util.Set, int)
          */
         @Override
-        int compareContent(Set<Locator> o1, Set<Locator> o2, int size) {
-            int res = 0;
-            Locator[] locs1 = o1.toArray(new Locator[size]);
-            Locator[] locs2 = o2.toArray(new Locator[size]);
-            Arrays.sort(locs1, _locComparator);
-            Arrays.sort(locs2, _locComparator);
+        int compareContent(Set<Topic> o1, Set<Topic> o2, int size) {
+            int res = 0 ;
+            Topic[] topics1 = o1.toArray(new Topic[size]);
+            Topic[] topics2 = o2.toArray(new Topic[size]);
+            Arrays.sort(topics1, _topicIdComparator);
+            Arrays.sort(topics2, _topicIdComparator);
             for (int i=0; i < size && res == 0; i++) {
-                res = _locComparator.compare(locs1[i], locs2[i]);
+                res = _topicIdComparator.compare(topics1[i], topics2[i]);
             }
             return res;
         }
