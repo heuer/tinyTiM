@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Lars Heuer (heuer[at]semagia.com)
+ * Copyright 2008 - 2009 Lars Heuer (heuer[at]semagia.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -129,6 +129,7 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
     public void read() throws IOException {
         try {
             _deserializer.parse(_source);
+            postProcess();
         }
         catch (MIOException ex) {
             if (ex.getException() instanceof IOException) {
@@ -141,5 +142,15 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
         finally {
             _deserializer = null;
         }
+    }
+
+    /**
+     * Called if parsing has been finished without errors, does nothing by default.
+     * <p>
+     * The {@link #_deserializer} is still available.
+     * </p>
+     */
+    protected void postProcess() {
+        // noop.
     }
 }
