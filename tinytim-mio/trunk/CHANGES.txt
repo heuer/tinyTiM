@@ -2,15 +2,17 @@
 Changes Log
 ===========
 
-2.0.0 a4 SP1 (xx.02.2008)
--------------------------
+2.0.0 a5 (xx.03.2009)
+---------------------
 * JTMTopicMapReader / JTMTopicMapWriter implement the new JSON Topic Maps
   specification (<http://www.cerny-online.com/jtm/1.0/>
+* LTMTopicMapReader: Configurable reification handling
 
 Bugfixes:
 ---------
 * Validation of XTM 1.0 and 2.0 sources against a RELAX-NG schema 
-  did not work in all cases, fixed in "semagia-mio-xtm-0.9.3-sp1.jar"
+  did not work in all cases, fixed in "semagia-mio-xtm-0.9.4.jar"
+* XTM 1.0 <mergeMap/> didn't work, fixed
 * Bug #2560821 -- XTM 1.0 serializer uses wrong element for type
   reported by Jens Rummler
 * Bug #2540490 -- Using QName in isa/ako throws syntax error
