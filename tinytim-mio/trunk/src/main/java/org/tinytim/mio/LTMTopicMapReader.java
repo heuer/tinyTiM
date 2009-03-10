@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Lars Heuer (heuer[at]semagia.com)
+ * Copyright 2008 - 2009 Lars Heuer (heuer[at]semagia.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -21,6 +21,7 @@ import java.io.InputStream;
 
 import org.tmapi.core.TopicMap;
 
+import com.semagia.mio.Property;
 import com.semagia.mio.Source;
 import com.semagia.mio.Syntax;
 
@@ -41,6 +42,10 @@ import com.semagia.mio.Syntax;
  *      specified after an subject locator (if given); this implementation 
  *      does not mandate any order; a subject locator may be followed by an 
  *      subject identifier etc.</li>
+ *  <li>Reification is handled directly without adding an additional item 
+ *      identifier to the reified construct and without adding an additional
+ *      subject identifier to the reifier (unless this "feature" is enabled
+ *      explicitely; c.f. {@link #setLegacyReifierHandling(boolean)}</li>
  * </ul>
  * </p>
  * 
@@ -100,49 +105,31 @@ public final class LTMTopicMapReader extends AbstractTopicMapReader {
         super(topicMap, Syntax.LTM, source);
     }
 
-//    /**
-//     * Enables / disables processing of the "#MERGEMAP" directive.
-//     * <p>
-//     * The reader won't deserialize topic maps referenced by mergeMap if
-//     * this feature is enabled (disabled by default).
-//     * </p>
-//     *
-//     * @param ignore <tt>true</tt> to ignore "#MERGEMAP" directives, 
-//     *                  otherwise <tt>false</tt>.
-//     */
-//    public void setIgnoreMergeMap(boolean ignore) {
-//        _deserializer.setProperty(Property.IGNORE_MERGEMAP, ignore);
-//    }
-//
-//    /**
-//     * Returns if this reader ignores "#MERGEMAP" directives.
-//     *
-//     * @return <tt>true</tt> if "#MERGEMAP" is ignored, otherwise <tt>false</tt>.
-//     */
-//    public boolean isIgnoringMergeMap() {
-//        return Boolean.TRUE.equals(_deserializer.getProperty(Property.IGNORE_MERGEMAP));
-//    }
+    /**
+     * Indicates if reified construct should receive an item identifier of the 
+     * form <tt>uri-of-file#--reified--id</tt> and the reifying topic should 
+     * receive a subject identifier of the same form.
+     * <p>
+     * By default this "feature" is disabled; the parser sets [reifier] property 
+     * of the reified construct and does not add any additional IRIs. To be 
+     * conform to the LTM specification, this feature has to be enabled even if
+     * it adds no value.
+     * </p>
+     *
+     * @param enable <tt>true</tt> to enable the legacy mode, otherwise <tt>false</tt>.
+     */
+    public void setLegacyReifierHandling(boolean enable) {
+        _deserializer.setProperty(Property.XTM_10_LEGACY, Boolean.valueOf(enable));
+    }
 
-//    /**
-//     * Enables / disables processing of the "#INCLUDE" directive.
-//     * <p>
-//     * The reader won't deserialize topic maps referenced by "#INCLUDE" if
-//     * this feature is enabled (disabled by default).
-//     * </p>
-//     *
-//     * @param ignore <tt>true</tt> to ignore "#INCLUDE" directives, 
-//     *                  otherwise <tt>false</tt>.
-//     */
-//    public void setIgnoreInclude(boolean ignore) {
-//        _deserializer.setProperty(Property.IGNORE_INCLUDE, ignore);
-//    }
-//
-//    /**
-//     * Returns if this reader ignores "#INCLUDE" directives.
-//     *
-//     * @return <tt>true</tt> if "#INCLUDE" is ignored, otherwise <tt>false</tt>.
-//     */
-//    public boolean isIgnoringInclude() {
-//        return Boolean.TRUE.equals(_deserializer.getProperty(Property.IGNORE_INCLUDE));
-//    }
+    /**
+     * Indicates if the parser handles the reification of constructs in a legacy
+     * way.
+     *
+     * @return <tt>true</tt> if the parser is in legacy mode, otherwise <tt>false</tt>.
+     */
+    public boolean getLegacyReifierHandling() {
+        return Boolean.TRUE.equals(_deserializer.getProperty(Property.XTM_10_LEGACY));
+    }
+
 }
