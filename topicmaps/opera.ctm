@@ -44,8 +44,7 @@ operatm - "The Italian Opera Topic Map";
     Date: "$Date: 2006/10/27 12:16:15 $";
     Description: "This topic map was originally written to help me understand various aspects of the Topic Maps standard, and to be able to experiment with different modeling approaches. Latterly it has served as a test bed for Ontopia's topic map engine and other components of the Ontopia Knowledge Suite, and therefore contains a number of weird and wonderful constructs (including some bugs we know about, and maybe some we don't!). As of July 2006 it is maintained in LTM syntax. An XTM 1.0 version can be generated using the Export plug-in of the Omnigator.";
     Rights: "Copyright (c) 1999-2006, Steve Pepper. This topic map may be freely distributed and used for any purpose, commercial or non-commercial, provided that it is not modified in any way and that this copyright notice is left intact.";
-    revision: "$Revision: 1.8 $";
-    <#--reified--operatm>.
+    revision: "$Revision: 1.8 $".
 
 
 #-- ONTOLOGY
@@ -1657,16 +1656,14 @@ display - "Display";
     xtm:display.
 
 la-tilda-libretto-by - "The librettist of La Tilde";
-    descr: "The libretto was written by Zanardini under the pseudonym Anneldo Graziani.";
-    <#--reified--la-tilda-libretto-by>.
+    descr: "The libretto was written by Zanardini under the pseudonym Anneldo Graziani.".
 
 literary-work - "Literary work";
     - "Litterært verk" @norwegian;
     lit:literary-work.
 
 madama-butterfly-based-on - "The genesis of Madame Butterfly";
-    bibref: """van Rij, Jan: "Madame Butterfly: Japonisme, Puccini, and the search for the real Cho-Cho-San", Stone Bridge Press (Berkeley, 2001)""";
-    <#--reified--madama-butterfly-based-on>.
+    bibref: """van Rij, Jan: "Madame Butterfly: Japonisme, Puccini, and the search for the real Cho-Cho-San", Stone Bridge Press (Berkeley, 2001)""".
 
 musical-work - "Musical work";
     - "Musikalsk verk" @norwegian;
@@ -1680,7 +1677,6 @@ organization - "Organization";
     <http://psi.ontopia.net/organization>.
 
 pauld-website - "Opera: A Philatelic History";
-    <#--reified--pauld-website>;
     = <http://home.prcn.org/~pauld/opera/>.
 
 pepper - "Steve Pepper";
@@ -1695,13 +1691,11 @@ theatrical-work - "Theatrical work";
     lit:theatrical-work.
 
 tosca-takes-place-in - "The setting of Tosca in Rome";
-    bibref: """Nicassio, Susan Vandiver: "Tosca's Rome: The Play and the Opera in Historical Perspective", University of Chicago Press (Chicago, 2002)""";
-    <#--reified--tosca-takes-place-in>.
+    bibref: """Nicassio, Susan Vandiver: "Tosca's Rome: The Play and the Opera in Historical Perspective", University of Chicago Press (Chicago, 2002)""".
 
 turandot-takes-place-in - "Turandot performed in the Forbidden City";
     article: <http://www.sallys-place.com/travel/asia/beijing.htm> @web;
-    website: <http://www.turandotonsite.com/> @web;
-    <#--reified--turandot-takes-place-in>.
+    website: <http://www.turandotonsite.com/> @web.
 
 
 #-- TT: Format
