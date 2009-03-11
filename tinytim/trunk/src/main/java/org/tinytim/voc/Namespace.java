@@ -48,6 +48,11 @@ public class Namespace {
     public static final String TMDM_MODEL = "http://psi.topicmaps.org/iso13250/model/";
 
     /**
+     * TMCL namespace (<tt>http://psi.topicmaps.org/tmcl/</tt>)
+     */
+    public static final String TMCL = "http://psi.topicmaps.org/tmcl/";
+
+    /**
      * XTM 2.0 namespace (<tt>http://www.topicmaps.org/xtm/</tt>).
      */
     public static final String XTM_20 = "http://www.topicmaps.org/xtm/";
