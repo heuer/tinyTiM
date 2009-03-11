@@ -31,6 +31,10 @@ import org.tmapi.core.TopicMap;
  */
 public class XTM10Utils {
 
+    private XTM10Utils() {
+        // noop.
+    }
+
     private static final Logger LOG = Logger.getLogger(XTM10Utils.class.getName());
 
     /**
