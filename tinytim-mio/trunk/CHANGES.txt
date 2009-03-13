@@ -10,6 +10,9 @@ Changes Log
 
 Bugfixes:
 ---------
+* XTM 2.0 importer sets the reifier of a merged-in topic map to
+  the master topic map. Correct behaviour: Just import the topic but
+  loose the reified topic map.
 * Validation of XTM 1.0 and 2.0 sources against a RELAX-NG schema 
   did not work in all cases, fixed in "semagia-mio-xtm-0.9.4.jar"
 * XTM 1.0 <mergeMap/> didn't work, fixed
