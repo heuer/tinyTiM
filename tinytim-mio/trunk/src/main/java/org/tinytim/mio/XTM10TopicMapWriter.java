@@ -20,10 +20,6 @@ import java.io.OutputStream;
 import java.util.Set;
 import java.util.logging.Logger;
 
-import org.tinytim.internal.api.IScope;
-import org.tinytim.internal.api.IScoped;
-import org.tinytim.voc.Namespace;
-import org.tinytim.voc.XSD;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.DatatypeAware;
@@ -37,6 +33,10 @@ import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
 import org.tmapi.core.Variant;
+import org.topicmap.internal.api.IScope;
+import org.topicmap.internal.api.IScoped;
+import org.topicmap.voc.Namespace;
+import org.topicmap.voc.XSD;
 
 import org.xml.sax.helpers.AttributesImpl;
 
@@ -185,7 +185,9 @@ public class XTM10TopicMapWriter extends AbstractXTMTopicMapWriter {
             _writeTopicRef(theme);
         }
         _out.endElement("parameters");
+        _out.startElement("variantName");
         _writeDatatypeAware(variant);
+        _out.endElement("variantName");
         _out.endElement("variant");
     }
 
