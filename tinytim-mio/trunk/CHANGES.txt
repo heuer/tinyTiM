@@ -2,7 +2,7 @@
 Changes Log
 ===========
 
-2.0.0 a5 (xx.03.2009)
+2.0.0 a5 (xx.05.2009)
 ---------------------
 * JTMTopicMapReader / JTMTopicMapWriter implement the new JSON Topic Maps
   specification (<http://www.cerny-online.com/jtm/1.0/>
@@ -20,6 +20,7 @@ Bugfixes:
   reported by Jens Rummler
 * Bug #2540490 -- Using QName in isa/ako throws syntax error
   (CTM libs) reported by Stefan Kesberg
+* XTM 1.0 writer forgot to add a <variantName/> element to the output.
 
 
 2.0.0 a4 / 1.5.0 b2 (06.12.2008)
