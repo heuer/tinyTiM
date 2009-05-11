@@ -193,7 +193,9 @@ public class XTM10TopicMapWriter extends AbstractXTMTopicMapWriter {
             _writeTopicRef(theme);
         }
         _out.endElement("parameters");
+        _out.startElement("variantName");
         _writeDatatypeAware(variant);
+        _out.endElement("variantName");
         _out.endElement("variant");
     }
 
