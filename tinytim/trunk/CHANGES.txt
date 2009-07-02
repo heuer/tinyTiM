@@ -5,6 +5,8 @@ Changes Log
 2.0.0 a5 (xx.yy.2009)
 ---------------------
 
+* Updated TMCL constants (implemented by Hannes Niederhausen)
+
 Bugfixes:
 ---------
 * Bug #2812460 -- Port the Check class from Ontopia back to 
