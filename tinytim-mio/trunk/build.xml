@@ -130,7 +130,9 @@
     <target name="compile" depends="clean, prepare">
         <javac destdir="${dir.build.classes}"
             debug="${debug}"
-            target="1.5">
+            target="1.5"
+            excludes="**/CTMTopicMapWriter.java, **/internal/**"
+            >
             <classpath>
                 <pathelement location="${lib.tmapi}"/>
                 <pathelement location="${lib.tinytim}"/>
