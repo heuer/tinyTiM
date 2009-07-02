@@ -2,6 +2,17 @@
 Changes Log
 ===========
 
+2.0.0 a5 (xx.yy.2009)
+---------------------
+
+Bugfixes:
+---------
+* Bug #2812460 -- Port the Check class from Ontopia back to 
+                  tinyTiM
+* Bug #2809821 -- Ensure same topic map constraint
+* 
+
+
 2.0.0 a4 (06.12.2008)
 ---------------------
 
