@@ -50,7 +50,7 @@ abstract class AbstractTopicMapSystem implements TopicMapSystem {
         if (supported == null) {
             TopicMapSystemFactoryImpl.reportFeatureNotRecognized(featureName);
         }
-        return supported;
+        return supported.booleanValue();
     }
 
     /* (non-Javadoc)

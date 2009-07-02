@@ -36,92 +36,98 @@ public final class TMCL extends Vocabulary {
 
     // Topic types
     
-    public static final Locator TOPIC_TYPE = _createLocator(_BASE + "topictype");
+    public static final Locator TOPIC_TYPE = _createLocator(_BASE + "topic-type");
 
-    public static final Locator ASSOCIATION_TYPE = _createLocator(_BASE + "associationtype");
+    public static final Locator ASSOCIATION_TYPE = _createLocator(_BASE + "association-type");
 
-    public static final Locator ROLE_TYPE = _createLocator(_BASE + "roletype");
+    public static final Locator ROLE_TYPE = _createLocator(_BASE + "role-type");
 
-    public static final Locator OCCURRENCE_TYPE = _createLocator(_BASE + "occurrencetype");
+    public static final Locator OCCURRENCE_TYPE = _createLocator(_BASE + "occurrence-type");
 
-    public static final Locator NAME_TYPE = _createLocator(_BASE + "nametype");
+    public static final Locator NAME_TYPE = _createLocator(_BASE + "name-type");
 
-    public static final Locator SCOPE_TYPE = _createLocator(_BASE + "scopetype");
+    public static final Locator SCOPE_TYPE = _createLocator(_BASE + "scope-type");
 
 
     // Role types
+    public static final Locator ALLOWS = _createLocator(_BASE + "allows");
+    
+    public static final Locator ALLOWED = _createLocator(_BASE + "allowed");
+    
+    public static final Locator CONSTRAINS = _createLocator(_BASE + "constrains");
+    
+    public static final Locator CONSTRAINED = _createLocator(_BASE + "constrained");
 
-    public static final Locator TOPIC_TYPE_ROLE = _createLocator(_BASE + "topictype-role");
-
-    public static final Locator ASSOCIATION_TYPE_ROLE = _createLocator(_BASE + "associationtype-role");
-
-    public static final Locator ROLE_TYPE_ROLE = _createLocator(_BASE + "roletype-role");
-
-    public static final Locator OTHERROLE_TYPE_ROLE = _createLocator(_BASE + "roletype-role");
-
-    public static final Locator OCCURRENCE_TYPE_ROLE = _createLocator(_BASE + "occurrencetype-role");
-
-    public static final Locator NAME_TYPE_ROLE = _createLocator(_BASE + "nametype-role");
-
-    public static final Locator SCOPE_TYPE_ROLE = _createLocator(_BASE + "scopetype-role");
-
-    public static final Locator CONSTRAINT_ROLE = _createLocator(_BASE + "constraint-role");
-
-
+    // Association types - applies-to is no more 
+    public static final Locator CONSTRAINED_TOPIC_TYPE = _createLocator(_BASE + "constrained-topic-type");
+   
+    public static final Locator CONSTRAINED_STATEMENT = _createLocator(_BASE + "constrained-statement");
+    
+    public static final Locator CONSTRAINED_ROLE = _createLocator(_BASE + "constrained-role");
+    
+    public static final Locator OVERLAPS = _createLocator(_BASE + "overlaps");
+    
+    public static final Locator ALLOWED_SCOPE = _createLocator(_BASE + "allowed-scope");
+    
+    public static final Locator ALLOWED_REIFIER = _createLocator(_BASE + "allowed-reifier");
+    
+    public static final Locator OTHER_CONSTRAINED_TOPIC_TYPE = _createLocator(_BASE + "other-constrained-topic-type");
+    
+    public static final Locator OTHER_CONSTRAINED_ROLE = _createLocator(_BASE + "other-constrained-role");
+    
+    public static final Locator BELONGS_TO_SCHEMA = _createLocator(_BASE + "belongs-to-schema");
+    
     // Model topics
+    
+    public static final Locator SCHEMA = _createLocator(_BASE + "schema");
+    
     public static final Locator CONSTRAINT = _createLocator(_BASE + "constraint");
 
     public static final Locator VALIDATION_EXPRESSION = _createLocator(_BASE + "validation-expression");
-
-    public static final Locator APPLIES_TO = _createLocator(_BASE + "applies-to");
 
     public static final Locator CARD_MIN = _createLocator(_BASE + "card-min");
 
     public static final Locator CARD_MAX = _createLocator(_BASE + "card-max");
 
-    //TODO: TMCL uses sometimes "regexp" and sometimes "reg-exp"
-    public static final Locator REGEXP = _createLocator(_BASE + "reg-exp");
+    public static final Locator REGEXP = _createLocator(_BASE + "regexp");
 
     public static final Locator DATATYPE = _createLocator(_BASE + "datatype");
+    
+    public static final Locator VERSION = _createLocator(_BASE + "version");
 
+    public static final Locator DESCRIPTION = _createLocator(_BASE + "description");
+    
+    public static final Locator COMMENT = _createLocator(_BASE + "comment");
+    
+    public static final Locator SEE_ALSO = _createLocator(_BASE + "see-also");
 
     // Constraint types
-    public static final Locator TOPIC_TYPE_CONSTRAINT = _createLocator(_BASE + "topictype-constraint");
-
-    public static final Locator ASSOCIATION_TYPE_CONSTRAINT = _createLocator(_BASE + "associationtype-constraint");
-
-    public static final Locator ROLE_TYPE_CONSTRAINT = _createLocator(_BASE + "roletype-constraint");
-
-    public static final Locator OCCURRENCE_TYPE_CONSTRAINT = _createLocator(_BASE + "occurrencetype-constraint");
-
-    public static final Locator NAME_TYPE_CONSTRAINT = _createLocator(_BASE + "nametype-constraint");
-
-    public static final Locator ABSTRACT_TOPIC_TYPE_CONSTRAINT = _createLocator(_BASE + "abstract-topictype-constraint");
     
-    public static final Locator EXCLUSIVE_INSTANCE = _createLocator(_BASE + "exclusive-instance");
+    public static final Locator ABSTRACT_TOPIC_TYPE_CONSTRAINT = _createLocator(_BASE + "abstract-constraint");
+    
+    public static final Locator OVERLAP_DECLARATION = _createLocator(_BASE + "overlap-declaration");
+    
+    public static final Locator SUBJECT_IDENTIFIER_CONSTRAINT = _createLocator(_BASE + "subject-identifier-constraint");
 
-    public static final Locator SUBJECT_IDENTIFIER_CONSTRAINT = _createLocator(_BASE + "subjectidentifier-constraint");
+    public static final Locator SUBJECT_LOCATOR_CONSTRAINT = _createLocator(_BASE + "subject-locator-constraint");
+    
+    public static final Locator TOPIC_NAME_CONSTRAINT = _createLocator(_BASE + "topic-name-constraint");    
+    
+    public static final Locator TOPIC_OCCURRENCE_CONSTRAINT = _createLocator(_BASE + "topic-occurrence-constraint");
+   
+    public static final Locator ROLE_PLAYER_CONSTRAINT = _createLocator(_BASE + "role-player-constraint");
+    
+    public static final Locator SCOPE_CONSTRAINT = _createLocator(_BASE + "scope-constraint");
+    
+    public static final Locator REIFIER_CONSTRAINT = _createLocator(_BASE + "reifier-constraint");
 
-    public static final Locator SUBJECT_LOCATOR_CONSTRAINT = _createLocator(_BASE + "subjectlocator-constraint");
+    public static final Locator ASSOCIATION_ROLE_CONSTRAINT = _createLocator(_BASE + "association-role-constraint");
+    
+    public static final Locator OTHER_ROLE_CONSTRAINT = _createLocator(_BASE + "other-role-constraint");
+    
+    public static final Locator OCCURRENCE_DATATYPE_CONSTRAINT = _createLocator(_BASE + "occurrence-datatype-constraint");
 
-    public static final Locator NAME_CONSTRAINT = _createLocator(_BASE + "topicname-constraint");
-
-    public static final Locator NAME_TYPE_SCOPE_CONSTRAINT = _createLocator(_BASE + "nametypescope-constraint");
-
-    public static final Locator OCCURRENCE_TYPE_SCOPE_CONSTRAINT = _createLocator(_BASE + "occurrencetypescope-constraint");
-
-    public static final Locator OCCURRENCE_DATATYPE_CONSTRAINT = _createLocator(_BASE + "occurrencedatatype-constraint");
-
-    public static final Locator ASSOCIATION_TYPE_SCOPE_CONSTRAINT = _createLocator(_BASE + "associationtypescope-constraint");
-
-    public static final Locator ASSOCIATION_ROLE_CONSTRAINT = _createLocator(_BASE + "associationrole-constraint");
-
-    public static final Locator ROLE_PLAYER_CONSTRAINT = _createLocator(_BASE + "roleplayer-constraint");
-
-    public static final Locator OTHERROLE_CONSTRAINT = _createLocator(_BASE + "otherrole-constraint");
-
-    public static final Locator TOPIC_OCCURRENCE_CONSTRAINT = _createLocator(_BASE + "topicoccurrence-constraint");
-
-    public static final Locator UNIQUE_OCCURRENCE_CONSTRAINT = _createLocator(_BASE + "uniqueoccurrence-constraint");
-
+    public static final Locator UNIQUE_VALUE_CONSTRAINT = _createLocator(_BASE + "unique-value-constraint");
+    
+    public static final Locator REGULAR_EXPRESSION_CONSTRAINT = _createLocator(_BASE + "regular-expression-constraint");
 }

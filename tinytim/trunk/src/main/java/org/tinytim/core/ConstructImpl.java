@@ -22,11 +22,11 @@ import org.tinytim.internal.api.Event;
 import org.tinytim.internal.api.IConstant;
 import org.tinytim.internal.api.IConstruct;
 import org.tinytim.internal.api.ITopicMap;
+import org.tinytim.internal.utils.Check;
 import org.tinytim.internal.utils.CollectionFactory;
 
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
-import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.TopicMap;
 
 /**
@@ -78,18 +78,16 @@ abstract class ConstructImpl implements IConstruct {
     /* (non-Javadoc)
      * @see org.tmapi.core.Construct#addItemIdentifier(org.tmapi.core.Locator)
      */
-    public void addItemIdentifier(Locator itemIdentifier) {
-        if (itemIdentifier == null) {
-            throw new ModelConstraintException(this, "The item identifier must not be null");
-        }
-        if (_iids != null && _iids.contains(itemIdentifier)) {
+    public void addItemIdentifier(Locator iid) {
+        Check.itemIdentifierNotNull(this, iid);
+        if (_iids != null && _iids.contains(iid)) {
             return;
         }
-        _fireEvent(Event.ADD_IID, null, itemIdentifier);
+        _fireEvent(Event.ADD_IID, null, iid);
         if (_iids == null) {
             _iids = CollectionFactory.createIdentitySet(IConstant.CONSTRUCT_IID_SIZE);
         }
-        _iids.add(itemIdentifier);
+        _iids.add(iid);
     }
 
     /* (non-Javadoc)

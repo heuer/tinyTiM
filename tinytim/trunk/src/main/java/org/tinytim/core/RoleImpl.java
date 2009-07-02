@@ -61,6 +61,7 @@ final class RoleImpl extends TypedImpl implements Role {
      */
     public void setPlayer(Topic player) {
         Check.playerNotNull(this, player);
+        Check.sameTopicMap(this, player);
         if (_player == player) {
             return;
         }

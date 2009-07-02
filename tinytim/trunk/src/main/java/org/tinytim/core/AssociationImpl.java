@@ -103,6 +103,7 @@ final class AssociationImpl extends ScopedImpl implements Association {
     public Role createRole(Topic type, Topic player) {
         Check.typeNotNull(this, type);
         Check.playerNotNull(this, player);
+        Check.sameTopicMap(this, type, player);
         RoleImpl role = new RoleImpl(_tm, type, player);
         addRole(role);
         return role;
@@ -130,9 +131,7 @@ final class AssociationImpl extends ScopedImpl implements Association {
      * @see org.tmapi.core.Association#getRoles(org.tmapi.core.Topic)
      */
     public Set<Role> getRoles(Topic type) {
-        if (type == null) {
-            throw new IllegalArgumentException("The type must not be null");
-        }
+        Check.typeNotNull(type);
         Set<Role> roles = CollectionFactory.createIdentitySet(_roles.size());
         for (Role role: _roles) {
             if (type == role.getType()) {

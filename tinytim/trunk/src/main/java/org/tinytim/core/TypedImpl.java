@@ -59,6 +59,7 @@ abstract class TypedImpl extends ConstructImpl implements Reifiable {
      */
     public void setType(Topic type) {
         Check.typeNotNull(this, type);
+        Check.sameTopicMap(this, type);
         if (_type == type) {
             return;
         }
@@ -77,6 +78,7 @@ abstract class TypedImpl extends ConstructImpl implements Reifiable {
      * @see org.tmapi.core.Reifiable#setReifier(org.tmapi.core.Topic)
      */
     public void setReifier(Topic reifier) {
+        Check.sameTopicMap(this, reifier);
         if (_reifier == reifier) {
             return;
         }
