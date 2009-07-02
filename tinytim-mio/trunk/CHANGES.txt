@@ -2,8 +2,10 @@
 Changes Log
 ===========
 
-1.5.0 (02.07.2009)
+2.0.0 a5 (xx.07.2009)
 ---------------------
+* JTMTopicMapReader / JTMTopicMapWriter implement the new JSON Topic Maps
+  specification (<http://www.cerny-online.com/jtm/1.0/>
 * LTMTopicMapReader: Configurable reification handling
 
 Bugfixes:
