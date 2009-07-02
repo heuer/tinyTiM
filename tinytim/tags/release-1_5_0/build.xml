@@ -29,7 +29,8 @@
     <property name="dir.res" value="${basedir}/src/main/resources"/>
 
     <property name="lib.junit" value="${dir.lib}/junit-4.4.jar"/>
-    <property name="lib.trove" value="${dir.lib}/trove-2.0.3.jar"/>
+    <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.4.jar"/>
+    <property name="lib.trove" value="${dir.lib}/trove-2.0.4.jar"/>
     <property name="lib.tmapi" value="${dir.lib}/tmapi-1_0SP1.jar"/>
     <property name="lib.tmapi.tests" value="${dir.lib}/tmapi-test-1_0SP1.jar"/>
 
@@ -93,6 +94,7 @@
                 <pathelement location="${lib.tmapi}"/>
                 <pathelement location="${lib.tmapi.tests}"/>
                 <pathelement location="${lib.trove}"/>
+                <pathelement location="${lib.mio}"/>
             </classpath>
             <src path="${dir.test}"/>
         </javac>
@@ -105,6 +107,7 @@
                 <pathelement location="${lib.tmapi}"/>
                 <pathelement location="${lib.tmapi.tests}"/>
                 <pathelement location="${lib.trove}"/>
+                <pathelement location="${lib.mio}"/>
             </classpath>
             <formatter type="brief" usefile="false"/>
             <batchtest fork="no" todir="${dir.build}">
@@ -127,6 +130,7 @@
             <classpath>
                 <pathelement location="${lib.tmapi}"/>
                 <pathelement location="${lib.trove}"/>
+                <pathelement location="${lib.mio}"/>
             </classpath>
             <src path="${dir.src}"/>
         </javac>
@@ -193,7 +197,14 @@
             <fileset dir="${dir.test}"/>
         </copy>
         <copy todir="${dir.dist}/lib">
-            <fileset dir="${dir.lib}"/>
+            <fileset dir="${dir.lib}">
+                <include name="tmapi*"/>
+                <include name="junit*"/>
+                <include name="trove*"/>
+                <include name="LICENSE.tmapi*"/>
+                <include name="LICENSE.junit*"/>
+                <include name="LICENSE.trove*"/>
+            </fileset>
         </copy>
        
         <copy todir="${dir.dist}" file="CHANGES.txt"/>
