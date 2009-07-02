@@ -74,9 +74,6 @@
             noindex="false"
             windowtitle="tinyTiM MIO API v${dist.version}"
             doctitle="tinyTiM API MIO v${dist.version}">
-            <fileset dir="${dir.src}">
-                <exclude name="org/tinytim/mio15/**"/>
-            </fileset>
 <!--            
             <doclet name="net.gleamynode.apiviz.APIviz"
                 path="${dir.lib}/apiviz-1.2.5.GA.jar">
@@ -95,7 +92,6 @@
             debug="${debug}"
             optimize="${optimize}"
             target="1.5"
-            excludes="org/tinytim/mio15/**"
             >
             <classpath>
                 <pathelement location="${dir.build.classes}"/>
@@ -134,8 +130,7 @@
     <target name="compile" depends="clean, prepare">
         <javac destdir="${dir.build.classes}"
             debug="${debug}"
-            target="1.5"
-            excludes="org/tinytim/mio15/**">
+            target="1.5">
             <classpath>
                 <pathelement location="${lib.tmapi}"/>
                 <pathelement location="${lib.tinytim}"/>
@@ -173,7 +168,6 @@
 
         <copy todir="${dir.dist}/src">
             <fileset dir="${dir.src}">
-                <exclude name="**/mio15/**"/>
             </fileset>
         </copy>
         <copy todir="${dir.dist}/test">
