@@ -186,6 +186,7 @@ final class NameImpl extends ScopedImpl implements IName {
     }
 
     public IVariant createVariant(ILiteral literal, Collection<Topic> scope) {
+        Check.sameTopicMap(this, scope);
         if (scope.isEmpty()) {
             throw new ModelConstraintException(this, "The scope of the variant must not be unconstrained");
         }

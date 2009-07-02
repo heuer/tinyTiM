@@ -36,7 +36,6 @@ import org.tinytim.internal.utils.MergeUtils;
 
 import org.tmapi.core.Association;
 import org.tmapi.core.IdentityConstraintException;
-import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Role;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Occurrence;
@@ -127,9 +126,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
      * @see org.tmapi.core.TopicMap#createTopicByItemIdentifier(org.tmapi.core.Locator)
      */
     public Topic createTopicByItemIdentifier(Locator iid) {
-        if (iid == null) {
-            throw new ModelConstraintException(null, "The item identifier must not be null");
-        }
+        Check.itemIdentifierNotNull(this, iid);
         Construct construct = getConstructByItemIdentifier(iid);
         if (construct != null) {
             if (construct instanceof Topic) {
@@ -153,9 +150,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
      * @see org.tmapi.core.TopicMap#createTopicBySubjectIdentifier(org.tmapi.core.Locator)
      */
     public Topic createTopicBySubjectIdentifier(Locator sid) {
-        if (sid == null) {
-            throw new ModelConstraintException(null, "The subject identifier must not be null");
-        }
+        Check.subjectIdentifierNotNull(this, sid);
         Topic topic = getTopicBySubjectIdentifier(sid);
         if (topic != null) {
             return topic;
@@ -177,9 +172,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
      * @see org.tmapi.core.TopicMap#createTopicBySubjectLocator(org.tmapi.core.Locator)
      */
     public Topic createTopicBySubjectLocator(Locator slo) {
-        if (slo == null) {
-            throw new ModelConstraintException(null, "The subject locator must not be null");
-        }
+        Check.subjectLocatorNotNull(this, slo);
         Topic topic = getTopicBySubjectLocator(slo);
         if (topic != null) {
             return topic;
@@ -229,6 +222,8 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     public Association createAssociation(Topic type, Collection<Topic> scope) {
         Check.typeNotNull(this, type);
         Check.scopeNotNull(this, scope);
+        Check.sameTopicMap(this, type);
+        Check.sameTopicMap(this, scope);
         AssociationImpl assoc = new AssociationImpl(this, type, Scope.create(scope));
         addAssociation(assoc);
         return assoc;
@@ -270,22 +265,25 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#getTopicBySubjectIdentifier(org.tmapi.core.Locator)
      */
-    public Topic getTopicBySubjectIdentifier(Locator subjectIdentifier) {
-        return _identityManager.getTopicBySubjectIdentifier(subjectIdentifier);
+    public Topic getTopicBySubjectIdentifier(Locator sid) {
+        Check.subjectIdentifierNotNull(sid);
+        return _identityManager.getTopicBySubjectIdentifier(sid);
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#getTopicBySubjectLocator(org.tmapi.core.Locator)
      */
-    public Topic getTopicBySubjectLocator(Locator subjectLocator) {
-        return _identityManager.getTopicBySubjectLocator(subjectLocator);
+    public Topic getTopicBySubjectLocator(Locator slo) {
+        Check.subjectLocatorNotNull(slo);
+        return _identityManager.getTopicBySubjectLocator(slo);
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#getConstructByItemIdentifier(org.tmapi.core.Locator)
      */
-    public Construct getConstructByItemIdentifier(Locator itemIdentifier) {
-        return _identityManager.getConstructByItemIdentifier(itemIdentifier);
+    public Construct getConstructByItemIdentifier(Locator iid) {
+        Check.itemIdentifierNotNull(iid);
+        return _identityManager.getConstructByItemIdentifier(iid);
     }
 
     /* (non-Javadoc)
@@ -299,6 +297,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
      * @see org.tmapi.core.Reifiable#setReifier(org.tmapi.core.Topic)
      */
     public void setReifier(Topic reifier) {
+        Check.sameTopicMap(this, reifier);
         if (_reifier == reifier) {
             return;
         }

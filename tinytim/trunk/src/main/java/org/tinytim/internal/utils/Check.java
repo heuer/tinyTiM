@@ -21,6 +21,7 @@ import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
 import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Topic;
+import org.tmapi.core.TopicMap;
 
 /**
  * Provides various argument constraint checks.
@@ -41,8 +42,17 @@ public final class Check {
      * @param sender The sender
      * @param msg The error message
      */
-    private static void _reportError(Construct sender, String msg) {
+    private static void _reportModelConstraintViolation(Construct sender, String msg) {
         throw new ModelConstraintException(sender, msg);
+    }
+
+    /**
+     * 
+     *
+     * @param msg
+     */
+    private static void _reportIllegalArgument(String msg) {
+        throw new IllegalArgumentException(msg);
     }
 
     /**
@@ -54,7 +64,7 @@ public final class Check {
      */
     public static void scopeNotNull(Construct sender, Topic[] scope) {
         if (scope == null) {
-            _reportError(sender, "The scope must not be null");
+            _reportModelConstraintViolation(sender, "The scope must not be null");
         }
     }
 
@@ -67,7 +77,7 @@ public final class Check {
      */
     public static void scopeNotNull(Construct sender, Collection<Topic> scope) {
         if (scope == null) {
-            _reportError(sender, "The scope must not be null");
+            _reportModelConstraintViolation(sender, "The scope must not be null");
         }
     }
 
@@ -80,7 +90,7 @@ public final class Check {
      */
     public static void typeNotNull(Construct sender, Topic type) {
         if (type == null) {
-            _reportError(sender, "The type must not be null");
+            _reportModelConstraintViolation(sender, "The type must not be null");
         }
     }
 
@@ -93,7 +103,7 @@ public final class Check {
      */
     public static void valueNotNull(Construct sender, Object value) {
         if (value == null) {
-            _reportError(sender, "The value must not be null");
+            _reportModelConstraintViolation(sender, "The value must not be null");
         }
     }
 
@@ -108,7 +118,7 @@ public final class Check {
     public static void valueNotNull(Construct sender, Object value, Locator datatype) {
         valueNotNull(sender, value);
         if (datatype == null) {
-            _reportError(sender, "The datatype must not be null");
+            _reportModelConstraintViolation(sender, "The datatype must not be null");
         }
     }
 
@@ -121,7 +131,146 @@ public final class Check {
      */
     public static void playerNotNull(Construct sender, Topic player) {
         if (player == null) {
-            _reportError(sender, "The role player must not be null");
+            _reportModelConstraintViolation(sender, "The role player must not be null");
+        }
+    }
+
+    /**
+     * Throws a {@link ModelConstraintException} iff the <tt>iid</tt> is 
+     * <tt>null</tt>.
+     *
+     * @param sender The sender
+     * @param iid The item identifier.
+     */
+    public static void itemIdentifierNotNull(Construct sender, Locator iid) {
+        if (iid == null) {
+            _reportModelConstraintViolation(sender, "The item identifier must not be null");
+        }
+    }
+
+    /**
+     * Throws a {@link ModelConstraintException} iff the <tt>sid</tt> is 
+     * <tt>null</tt>.
+     *
+     * @param sender The sender
+     * @param sid The subject identifier.
+     */
+    public static void subjectIdentifierNotNull(Construct sender, Locator sid) {
+        if (sid == null) {
+            _reportModelConstraintViolation(sender, "The subject identifier must not be null");
+        }
+    }
+
+    /**
+     * Throws a {@link ModelConstraintException} iff the <tt>slo</tt> is 
+     * <tt>null</tt>.
+     *
+     * @param sender The sender
+     * @param slo The subject locator.
+     */
+    public static void subjectLocatorNotNull(Construct sender, Locator slo) {
+        if (slo == null) {
+            _reportModelConstraintViolation(sender, "The subject locator must not be null");
+        }
+    }
+
+    /**
+     * Throws an {@link ModelConstraintException} iff the <tt>theme</tt> is 
+     * <tt>null</tt>.
+     *
+     * @param theme The theme.
+     */
+    public static void themeNotNull(Construct sender, Topic theme) {
+        if (theme == null) {
+            _reportModelConstraintViolation(sender, "The theme must not be null");
+        }
+    }
+
+    /**
+     * Reports a {@link ModelConstraintException} iff the <tt>sender<tt> and
+     * the <tt>construct</tt> do not belong to the same topic map.
+     *
+     * @param sender The sender.
+     * @param construct The construct.
+     */
+    public static void sameTopicMap(Construct sender, Construct construct) {
+        if (construct == null) {
+            return;
+        }
+        _sameTopicMap(sender, sender.getTopicMap(), construct);
+    }
+
+    public static void sameTopicMap(Construct sender, Construct...constructs) {
+        if (constructs == null || constructs.length == 0) {
+            return;
+        }
+        TopicMap tm = sender.getTopicMap();
+        for (Construct construct: constructs) {
+            _sameTopicMap(sender, tm, construct);
+        }
+    }
+
+    public static void sameTopicMap(Construct sender, Collection<? extends Construct> constructs) {
+        if (constructs == null) {
+            return;
+        }
+        TopicMap tm = sender.getTopicMap();
+        for (Construct construct: constructs) {
+            _sameTopicMap(sender, tm, construct);
+        }
+    }
+
+    private static void _sameTopicMap(Construct sender, TopicMap tm, Construct other) {
+        if (!tm.equals(other.getTopicMap())) {
+            _reportModelConstraintViolation(sender, "All constructs must belong to the same topic map");
+        }
+    }
+
+    /**
+     * Throws an {@link IllegalArgumentException} iff the <tt>type</tt> is 
+     * <tt>null</tt>.
+     *
+     * @param type The type.
+     */
+    public static void typeNotNull(Topic type) {
+        if (type == null) {
+            _reportIllegalArgument("The type must not be null");
+        }
+    }
+
+    /**
+     * Reports an {@link IllegalArgumentException} iff the <tt>sid</tt> is 
+     * <tt>null</tt>.
+     *
+     * @param sid The subject identifier.
+     */
+    public static void subjectIdentifierNotNull(Locator sid) {
+        if (sid == null) {
+            _reportIllegalArgument("The subject identifier must not be null");
+        }
+    }
+
+    /**
+     * Reports an {@link IllegalArgumentException} iff the <tt>slo</tt> is 
+     * <tt>null</tt>.
+     *
+     * @param slo The subject locator.
+     */
+    public static void subjectLocatorNotNull(Locator slo) {
+        if (slo == null) {
+            _reportIllegalArgument("The subject locator must not be null");
+        }
+    }
+
+    /**
+     * Reports an {@link IllegalArgumentException} iff the <tt>iid</tt> is 
+     * <tt>null</tt>.
+     *
+     * @param iid The item identifier.
+     */
+    public static void itemIdentifierNotNull(Locator iid) {
+        if (iid == null) {
+            _reportIllegalArgument("The item identifier must not be null");
         }
     }
 

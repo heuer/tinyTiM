@@ -35,7 +35,6 @@ import org.tinytim.utils.TopicUtils;
 import org.tinytim.voc.TMDM;
 
 import org.tmapi.core.Locator;
-import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
 import org.tmapi.core.Reifiable;
@@ -86,9 +85,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
      * @see org.tmapi.core.Topic#addSubjectIdentifier(org.tmapi.core.Locator)
      */
     public void addSubjectIdentifier(Locator sid) {
-        if (sid == null) {
-            throw new ModelConstraintException(this, "The subject identifier must not be null");
-        }
+        Check.subjectIdentifierNotNull(this, sid);
         if (_sids.contains(sid)) {
             return;
         }
@@ -119,9 +116,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
      * @see org.tmapi.core.Topic#addSubjectLocator(org.tmapi.core.Locator)
      */
     public void addSubjectLocator(Locator slo) {
-        if (slo == null) {
-            throw new ModelConstraintException(this, "The subject locator must not be null");
-        }
+        Check.subjectLocatorNotNull(this, slo);
         if (_slos != null && _sids.contains(slo)) {
             return;
         }
@@ -201,6 +196,8 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     public IOccurrence createOccurrence(Topic type, ILiteral literal, Collection<Topic> scope) {
         Check.typeNotNull(this, type);
         Check.scopeNotNull(this, scope);
+        Check.sameTopicMap(this, type);
+        Check.sameTopicMap(this, scope);
         IOccurrence occ = new OccurrenceImpl(_tm, type, literal, Scope.create(scope));
         addOccurrence(occ);
         return occ;
@@ -261,9 +258,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
      * @see org.tmapi.core.Topic#getNames(org.tmapi.core.Topic)
      */
     public Set<Name> getNames(Topic type) {
-        if (type == null) {
-            throw new IllegalArgumentException("The type must not be null");
-        }
+        Check.typeNotNull(type);
         Set<Name> names = CollectionFactory.createIdentitySet();
         for (Name name: _names) {
             if (type == name.getType()) {
@@ -293,9 +288,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
      * @see org.tmapi.core.Topic#getOccurrences(org.tmapi.core.Topic)
      */
     public Set<Occurrence> getOccurrences(Topic type) {
-        if (type == null) {
-            throw new IllegalArgumentException("The type must not be null");
-        }
+        Check.typeNotNull(type);
         Set<Occurrence> occs = CollectionFactory.createIdentitySet();
         for (Occurrence occ: _occs) {
             if (type == occ.getType()) {
@@ -323,6 +316,8 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     public IName createName(Topic type, ILiteral literal, Collection<Topic> scope) {
         Check.typeNotNull(this, type);
         Check.scopeNotNull(this, scope);
+        Check.sameTopicMap(this, type);
+        Check.sameTopicMap(this, scope);
         NameImpl name = new NameImpl(_tm, type, literal, Scope.create(scope));
         addName(name);
         return name;
@@ -382,9 +377,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
      * @see org.tmapi.core.Topic#getRolesPlayed(org.tmapi.core.Topic)
      */
     public Set<Role> getRolesPlayed(Topic type) {
-        if (type == null) {
-            throw new IllegalArgumentException("The type must not be null");
-        }
+        Check.typeNotNull(type);
         if (_rolesPlayed == null) {
             return Collections.emptySet();
         }
@@ -401,9 +394,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
      * @see org.tmapi.core.Topic#getRolesPlayed(org.tmapi.core.Topic, org.tmapi.core.Topic)
      */
     public Set<Role> getRolesPlayed(Topic type, Topic assoc) {
-        if (type == null) {
-            throw new IllegalArgumentException("The type must not be null");
-        }
+        Check.typeNotNull(type);
         if (assoc == null) {
             throw new IllegalArgumentException("The association type must not be null");
         }
@@ -446,6 +437,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
      */
     public void addType(Topic type) {
         Check.typeNotNull(this, type);
+        Check.sameTopicMap(this, type);
         if (_types != null && _types.contains(type)) {
             return;
         }

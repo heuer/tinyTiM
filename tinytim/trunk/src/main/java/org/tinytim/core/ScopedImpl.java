@@ -21,8 +21,8 @@ import org.tinytim.internal.api.Event;
 import org.tinytim.internal.api.IScope;
 import org.tinytim.internal.api.IScoped;
 import org.tinytim.internal.api.ITopicMap;
+import org.tinytim.internal.utils.Check;
 
-import org.tmapi.core.ModelConstraintException;
 import org.tmapi.core.Topic;
 
 /**
@@ -77,9 +77,8 @@ abstract class ScopedImpl extends TypedImpl implements IScoped {
      * @see org.tmapi.core.Scoped#addTheme(org.tmapi.core.Topic)
      */
     public void addTheme(Topic theme) {
-        if (theme == null) {
-            throw new ModelConstraintException(this, "The theme must not be null");
-        }
+        Check.themeNotNull(this, theme);
+        Check.sameTopicMap(this, theme);
         setScopeObject(_scope.add(theme));
     }
 
@@ -87,6 +86,9 @@ abstract class ScopedImpl extends TypedImpl implements IScoped {
      * @see org.tmapi.core.Scoped#removeTheme(org.tmapi.core.Topic)
      */
     public void removeTheme(Topic theme) {
+        if (theme == null) {
+            return;
+        }
         setScopeObject(_scope.remove(theme));
     }
 

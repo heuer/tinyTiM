@@ -40,11 +40,7 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
 
     private static final FeatureInfo[] _FEATURES = new FeatureInfo[] {
                     // Feature IRI, default value, fixed?
-        new FeatureInfo(Feature.NOTATION_URI, true, true),
-        new FeatureInfo(Feature.XTM_1_0, false, true),
-        new FeatureInfo(Feature.XTM_1_1, true, true),
         new FeatureInfo(Feature.AUTOMERGE, false, true),
-        new FeatureInfo(Feature.TNC, false, true),
         new FeatureInfo(Feature.READ_ONLY, false, true)
     };
 
@@ -114,7 +110,7 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
         if (supported == null) {
             reportFeatureNotRecognized(featureName);
         }
-        return supported;
+        return supported.booleanValue();
     }
 
     /* (non-Javadoc)
