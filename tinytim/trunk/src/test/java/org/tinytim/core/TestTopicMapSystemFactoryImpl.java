@@ -33,12 +33,8 @@ public class TestTopicMapSystemFactoryImpl extends TinyTimTestCase {
      * @throws Exception
      */
     public void testDefaultFeatureValues() throws Exception {
-        assertTrue(_sysFactory.getFeature(Feature.NOTATION_URI));
-        assertTrue(_sysFactory.getFeature(Feature.XTM_1_1));
-        assertFalse(_sysFactory.getFeature(Feature.XTM_1_0));
         assertFalse(_sysFactory.getFeature(Feature.READ_ONLY));
         assertFalse(_sysFactory.getFeature(Feature.AUTOMERGE));
-        assertFalse(_sysFactory.getFeature(Feature.TNC));
     }
 
 
@@ -68,18 +64,10 @@ public class TestTopicMapSystemFactoryImpl extends TinyTimTestCase {
      * @throws Exception
      */
     public void testSetFeatureValues() throws Exception {
-        _setFeatureToAcceptedValue(Feature.NOTATION_URI, true);
-        _setFeatureToUnacceptedValue(Feature.NOTATION_URI, false);
-        _setFeatureToAcceptedValue(Feature.XTM_1_0, false);
-        _setFeatureToUnacceptedValue(Feature.XTM_1_0, true);
-        _setFeatureToAcceptedValue(Feature.XTM_1_1, true);
-        _setFeatureToUnacceptedValue(Feature.XTM_1_1, false);
         _setFeatureToAcceptedValue(Feature.READ_ONLY, false);
         _setFeatureToUnacceptedValue(Feature.READ_ONLY, true);
         _setFeatureToAcceptedValue(Feature.AUTOMERGE, false);
         _setFeatureToUnacceptedValue(Feature.AUTOMERGE, true);
-        _setFeatureToAcceptedValue(Feature.TNC, false);
-        _setFeatureToUnacceptedValue(Feature.TNC, true);
     }
 
     /**
