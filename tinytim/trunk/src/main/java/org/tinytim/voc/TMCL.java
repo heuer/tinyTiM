@@ -47,8 +47,7 @@ public final class TMCL extends Vocabulary {
     public static final Locator NAME_TYPE = _createLocator(_BASE + "name-type");
 
     public static final Locator SCOPE_TYPE = _createLocator(_BASE + "scope-type");
-
-
+    
     // Role types
     public static final Locator ALLOWS = _createLocator(_BASE + "allows");
     
@@ -57,6 +56,12 @@ public final class TMCL extends Vocabulary {
     public static final Locator CONSTRAINS = _createLocator(_BASE + "constrains");
     
     public static final Locator CONSTRAINED = _createLocator(_BASE + "constrained");
+    
+    public static final Locator CONTAINER = _createLocator(_BASE + "container");
+    
+    public static final Locator CONTAINEE = _createLocator(_BASE + "containee");
+    
+
 
     // Association types - applies-to is no more 
     public static final Locator CONSTRAINED_TOPIC_TYPE = _createLocator(_BASE + "constrained-topic-type");
