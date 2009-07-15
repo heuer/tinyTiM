@@ -68,6 +68,7 @@ import org.tmapi.index.TypeInstanceIndex;
  * representation.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
+ * @author Hannes Niederhausen
  * @version $Rev$ - $Date$
  */
 public class CTMTopicMapWriter implements TopicMapWriter {
@@ -541,33 +542,32 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         case TOPIC: {
             if (_tmcl) {
                 toFilter = new Locator[] {
+                        // Topic types
                         TMCL.TOPIC_TYPE,
-                        TMCL.OCCURRENCE_TYPE,
                         TMCL.ASSOCIATION_TYPE,
                         TMCL.ROLE_TYPE,
+                        TMCL.OCCURRENCE_TYPE,
                         TMCL.NAME_TYPE,
                         TMCL.SCOPE_TYPE,
+
+                        // Model topics
+                        TMCL.SCHEMA,
                         TMCL.CONSTRAINT,
+
                         // Constraint types
-                        TMCL.TOPIC_TYPE_CONSTRAINT,
-                        TMCL.ASSOCIATION_TYPE_CONSTRAINT,
-                        TMCL.ASSOCIATION_ROLE_TYPE,
-                        TMCL.OCCURRENCE_TYPE_CONSTRAINT,
-                        TMCL.NAME_TYPE_CONSTRAINT,
                         TMCL.ABSTRACT_TOPIC_TYPE_CONSTRAINT,
-                        TMCL.EXCLUSIVE_INSTANCE,
+                        TMCL.OVERLAP_DECLARATION,
                         TMCL.SUBJECT_IDENTIFIER_CONSTRAINT,
                         TMCL.SUBJECT_LOCATOR_CONSTRAINT,
-                        TMCL.NAME_TYPE,
-                        TMCL.NAME_TYPE_SCOPE_CONSTRAINT,
-                        TMCL.TOPIC_OCCURRENCE_TYPE,
-                        TMCL.ASSOCIATION_TYPE_SCOPE_CONSTRAINT,
-                        TMCL.OCCURRENCE_DATATYPE_CONSTRAINT,
+                        TMCL.TOPIC_NAME_CONSTRAINT,
                         TMCL.TOPIC_OCCURRENCE_CONSTRAINT,
+                        TMCL.ROLE_PLAYER_CONSTRAINT, TMCL.SCOPE_CONSTRAINT,
+                        TMCL.REIFIER_CONSTRAINT,
                         TMCL.ASSOCIATION_ROLE_CONSTRAINT,
-                        TMCL.ASSOCIATION_ROLE_PLAYER,
-                        TMCL.OTHERROLE_CONSTRAINT,
-                        TMCL.UNIQUE_OCCURRENCE_CONSTRAINT,
+                        TMCL.OTHER_ROLE_CONSTRAINT,
+                        TMCL.OCCURRENCE_DATATYPE_CONSTRAINT,
+                        TMCL.UNIQUE_VALUE_CONSTRAINT,
+                        TMCL.REGULAR_EXPRESSION_CONSTRAINT
                 };
             }
             break;
@@ -578,7 +578,16 @@ public class CTMTopicMapWriter implements TopicMapWriter {
                 toFilter = new Locator[] {
                         toFilter[0],
                         toFilter[1],
-                        TMCL.APPLIES_TO
+                        // Association types - applies-to is no more 
+                        TMCL.CONSTRAINED_TOPIC_TYPE,
+                        TMCL.CONSTRAINED_STATEMENT, 
+                        TMCL.CONSTRAINED_ROLE,
+                        TMCL.OVERLAPS, 
+                        TMCL.ALLOWED_SCOPE,
+                        TMCL.ALLOWED_REIFIER,
+                        TMCL.OTHER_CONSTRAINED_TOPIC_TYPE,
+                        TMCL.OTHER_CONSTRAINED_ROLE, 
+                        TMCL.BELONGS_TO_SCHEMA,
                 };
             }
             break;
@@ -587,14 +596,13 @@ public class CTMTopicMapWriter implements TopicMapWriter {
             toFilter = new Locator[] {TMDM.TYPE, TMDM.INSTANCE, TMDM.SUPERTYPE, TMDM.SUBTYPE};
             if (_tmcl) {
                 toFilter = new Locator[] {toFilter[0], toFilter[1], toFilter[2], toFilter[3],
-                        TMCL.TOPIC_TYPE_ROLE,
-                        TMCL.OCCURRENCE_TYPE_ROLE,
-                        TMCL.ASSOCIATION_TYPE_ROLE,
-                        TMCL.ROLE_TYPE_ROLE,
-                        TMCL.OTHERROLE_TYPE_ROLE,
-                        TMCL.NAME_TYPE_ROLE,
-                        TMCL.SCOPE_TYPE_ROLE,
-                        TMCL.CONSTRAINT_ROLE
+                        // Role types
+                        TMCL.ALLOWS, 
+                        TMCL.ALLOWED, 
+                        TMCL.CONSTRAINS,
+                        TMCL.CONSTRAINED, 
+                        TMCL.CONTAINER, 
+                        TMCL.CONTAINEE
                 };
             }
             break;
@@ -606,7 +614,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
                         TMCL.CARD_MAX, 
                         TMCL.DATATYPE,
                         TMCL.REGEXP,
-                        TMCL.VALIDATION_EXPRESSION,
+                        TMCL.VALIDATION_EXPRESSION
                 };
             }
             break;
@@ -793,10 +801,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
             _writeSupertypeSubtype(supertype, wantSemicolon);
             wantSemicolon = true;
         }
-        for (ITemplate tpl: _getTemplates(topic)) {
-            _writeTemplate(tpl, wantSemicolon);
-            wantSemicolon = true;
-        }
+
         for (Name name: _getNames(topic)) {
             _writeName((IName) name, wantSemicolon);
             wantSemicolon = true;
@@ -811,6 +816,10 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         }
         for (Reference slo: _getSubjectLocators(topic)) {
             _writeTopicRef(slo, wantSemicolon);
+            wantSemicolon = true;
+        }
+        for (ITemplate tpl: _getTemplates(topic)) {
+            _writeTemplate(tpl, wantSemicolon);
             wantSemicolon = true;
         }
         if (_exportIIDs) {
