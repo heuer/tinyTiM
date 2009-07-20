@@ -24,6 +24,7 @@ import org.tmapi.core.Locator;
  * </p>
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
+ * @author Hannes Niederhausen
  * @version $Rev$ - $Date$
  */
 public final class TMCL extends Vocabulary {
@@ -126,9 +127,11 @@ public final class TMCL extends Vocabulary {
     
     public static final Locator REIFIER_CONSTRAINT = _createLocator(_BASE + "reifier-constraint");
 
+    public static final Locator TOPIC_REIFIES_CONSTRAINT = _createLocator(_BASE + "topic-reifies-constraint");
+    
     public static final Locator ASSOCIATION_ROLE_CONSTRAINT = _createLocator(_BASE + "association-role-constraint");
     
-    public static final Locator OTHER_ROLE_CONSTRAINT = _createLocator(_BASE + "other-role-constraint");
+    public static final Locator ROLE_COMBINATION_CONSTRAINT = _createLocator(_BASE + "role-combination-constraint");
     
     public static final Locator OCCURRENCE_DATATYPE_CONSTRAINT = _createLocator(_BASE + "occurrence-datatype-constraint");
 
