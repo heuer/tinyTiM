@@ -18,6 +18,7 @@ package org.tinytim.internal.utils;
 import java.util.Arrays;
 import java.util.Collection;
 
+import org.tinytim.internal.api.IConstruct;
 import org.tinytim.internal.api.ILiteralAware;
 import org.tinytim.internal.api.IScoped;
 
@@ -49,6 +50,25 @@ public final class SignatureGenerator {
 
     private SignatureGenerator() {
         // noop.
+    }
+
+    public static int generateSignature(IConstruct construct) {
+        if (construct.isAssociation()) {
+            return generateSignature((Association) construct);
+        }
+        else if (construct.isOccurrence()) {
+            return generateSignature((Occurrence) construct);
+        }
+        else if (construct.isName()) {
+            return generateSignature((Name) construct);
+        }
+        else if (construct.isVariant()) {
+            return generateSignature((Variant) construct);
+        }
+        else if (construct.isRole()) {
+            return generateSignature((Role) construct);
+        }
+        throw new IllegalArgumentException("Only association, role, occurrence, name, and variant are supported");
     }
 
     /**

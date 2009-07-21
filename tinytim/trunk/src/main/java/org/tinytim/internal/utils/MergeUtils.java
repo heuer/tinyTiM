@@ -105,7 +105,7 @@ public final class MergeUtils {
             assert sourceReifiable != target.getReified();
             throw new ModelConstraintException(target, "The topics cannot be merged. They reify different Topic Maps constructs");
         }
-        _moveItemIdentifiers(source, target);
+        moveItemIdentifiers(source, target);
         if (sourceReifiable != null) {
             sourceReifiable.setReifier(target);
         }
@@ -226,7 +226,7 @@ public final class MergeUtils {
      * @param target The target Topic Maps construct.
      */
     public static void handleExistingConstruct(Reifiable source, Reifiable target) {
-        _moveItemIdentifiers(source, target);
+        moveItemIdentifiers(source, target);
         if (source.getReifier() == null) {
             return;
         }
@@ -310,7 +310,7 @@ public final class MergeUtils {
      * @param source The source to remove the item identifiers from.
      * @param target The target which get the item identifiers.
      */
-    private static void _moveItemIdentifiers(Construct source, Construct target) {
+    public static void moveItemIdentifiers(Construct source, Construct target) {
         List<Locator> iids = CollectionFactory.createList(source.getItemIdentifiers());
         for (Locator iid: iids) {
             source.removeItemIdentifier(iid);

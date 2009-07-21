@@ -18,6 +18,8 @@ package org.tinytim.mio;
 import org.tinytim.core.TinyTimTestCase;
 import org.tinytim.voc.TMDM;
 import org.tinytim.voc.XSD;
+import org.tmapi.core.Association;
+import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Occurrence;
@@ -49,12 +51,14 @@ public class TestTinyTimMapInputHandler extends TinyTimTestCase {
         _handler = new TinyTimMapInputHandler(_tm);
     }
 
+    /**
+     * <a href="http://code.google.com/p/mappa/issues/detail?id=23">http://code.google.com/p/mappa/issues/detail?id=23</a>
+     */
     public void testMappaIssue23() throws Exception {
-        // http://code.google.com/p/mappa/issues/detail?id=23
         String iid = "http://mappa.semagia.com/issue-23";
         String iid2 = "http://mappa.semagia.com/issue-23_";
         final IRef TOPIC_NAME = Ref.createSubjectIdentifier(TMDM.TOPIC_NAME.getReference());
-        TinyTimMapInputHandler handler = this._handler;
+        TinyTimMapInputHandler handler = _handler;
         handler.startTopicMap();
         handler.startTopic(Ref.createItemIdentifier(iid));
         handler.startName();
@@ -74,6 +78,376 @@ public class TestTinyTimMapInputHandler extends TinyTimTestCase {
         handler.subjectIdentifier(TOPIC_NAME.getIRI());
         handler.endTopic();
         handler.endTopicMap();
+    }
+
+    /**
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=84">http://code.google.com/p/ontopia/issues/detail?id=84</a>
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=77">http://code.google.com/p/ontopia/issues/detail?id=77</a>
+     */
+    public void testOntopiaIssue84() throws Exception {
+        TinyTimMapInputHandler handler = _handler;
+        final IRef assocType = Ref.createItemIdentifier("http://test.semagia.com/assoc-type");
+        final IRef roleType = Ref.createItemIdentifier("http://test.semagia.com/role-type");
+        final IRef rolePlayer = Ref.createItemIdentifier("http://test.semagia.com/role-player");
+        final IRef reifier = Ref.createItemIdentifier("http://test.semagia.com/reifier");
+        final String roleIID = "http://test.semagia.com/role-iid";
+        handler.startTopicMap();
+        handler.startAssociation();
+        handler.startReifier();
+        handler.topicRef(reifier);
+        handler.endReifier();
+        handler.startType();
+        handler.topicRef(assocType);
+        handler.endType();
+        handler.startRole();
+        handler.itemIdentifier(roleIID);
+        handler.startType();
+        handler.topicRef(roleType);
+        handler.endType();
+        handler.startPlayer();
+        handler.topicRef(rolePlayer);
+        handler.endPlayer();
+        handler.endRole();
+        handler.endAssociation();
+        
+        handler.startAssociation();
+        handler.startReifier();
+        handler.topicRef(reifier);
+        handler.endReifier();
+        handler.startType();
+        handler.topicRef(assocType);
+        handler.endType();
+        handler.startRole();
+        handler.startType();
+        handler.topicRef(roleType);
+        handler.endType();
+        handler.startPlayer();
+        handler.topicRef(rolePlayer);
+        handler.endPlayer();
+        handler.endRole();
+        handler.endAssociation();
+        handler.endTopicMap();
+        assertEquals(1, _tm.getAssociations().size());
+        final Association assoc = _tm.getAssociations().iterator().next();
+        assertNotNull(assoc.getReifier());
+        final Construct tmc = _tm.getConstructByItemIdentifier(createLocator(roleIID));
+        assertNotNull(tmc);
+        assertEquals(assoc, tmc.getParent());
+    }
+
+    /**
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=84">http://code.google.com/p/ontopia/issues/detail?id=84</a>
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=77">http://code.google.com/p/ontopia/issues/detail?id=77</a>
+     */
+    public void testOntopiaIssue84_2() throws Exception {
+        TinyTimMapInputHandler handler = _handler;
+        final IRef assocType = Ref.createItemIdentifier("http://test.semagia.com/assoc-type");
+        final IRef roleType = Ref.createItemIdentifier("http://test.semagia.com/role-type");
+        final IRef rolePlayer = Ref.createItemIdentifier("http://test.semagia.com/role-player");
+        final IRef reifier = Ref.createItemIdentifier("http://test.semagia.com/reifier");
+        final String roleIID = "http://test.semagia.com/role-iid";
+        handler.startTopicMap();
+        handler.startAssociation();
+        handler.startReifier();
+        handler.topicRef(reifier);
+        handler.endReifier();
+        handler.startType();
+        handler.topicRef(assocType);
+        handler.endType();
+        handler.startRole();
+        handler.startType();
+        handler.topicRef(roleType);
+        handler.endType();
+        handler.startPlayer();
+        handler.topicRef(rolePlayer);
+        handler.endPlayer();
+        handler.endRole();
+        handler.endAssociation();
+        
+        handler.startAssociation();
+        handler.startReifier();
+        handler.topicRef(reifier);
+        handler.endReifier();
+        handler.startType();
+        handler.topicRef(assocType);
+        handler.endType();
+        handler.startRole();
+        handler.itemIdentifier(roleIID);
+        handler.startType();
+        handler.topicRef(roleType);
+        handler.endType();
+        handler.startPlayer();
+        handler.topicRef(rolePlayer);
+        handler.endPlayer();
+        handler.endRole();
+        handler.endAssociation();
+        handler.endTopicMap();
+        assertEquals(1, _tm.getAssociations().size());
+        final Association assoc = _tm.getAssociations().iterator().next();
+        assertNotNull(assoc.getReifier());
+        final Construct tmc = _tm.getConstructByItemIdentifier(createLocator(roleIID));
+        assertNotNull(tmc);
+        assertEquals(assoc, tmc.getParent());
+    }
+
+    /**
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=84">http://code.google.com/p/ontopia/issues/detail?id=84</a>
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=77">http://code.google.com/p/ontopia/issues/detail?id=77</a>
+     */
+    public void testOntopiaIssue84RoleReifier() throws Exception {
+        TinyTimMapInputHandler handler = _handler;
+        final IRef assocType = Ref.createItemIdentifier("http://test.semagia.com/assoc-type");
+        final IRef roleType = Ref.createItemIdentifier("http://test.semagia.com/role-type");
+        final IRef rolePlayer = Ref.createItemIdentifier("http://test.semagia.com/role-player");
+        final IRef reifier = Ref.createItemIdentifier("http://test.semagia.com/reifier");
+        final String roleIID = "http://test.semagia.com/role-iid";
+        handler.startTopicMap();
+        handler.startAssociation();
+        handler.startType();
+        handler.topicRef(assocType);
+        handler.endType();
+        handler.startRole();
+        handler.startReifier();
+        handler.topicRef(reifier);
+        handler.endReifier();
+        handler.itemIdentifier(roleIID);
+        handler.startType();
+        handler.topicRef(roleType);
+        handler.endType();
+        handler.startPlayer();
+        handler.topicRef(rolePlayer);
+        handler.endPlayer();
+        handler.endRole();
+        handler.endAssociation();
+        
+        handler.startAssociation();
+        handler.startType();
+        handler.topicRef(assocType);
+        handler.endType();
+        handler.startRole();
+        handler.startReifier();
+        handler.topicRef(reifier);
+        handler.endReifier();
+        handler.startType();
+        handler.topicRef(roleType);
+        handler.endType();
+        handler.startPlayer();
+        handler.topicRef(rolePlayer);
+        handler.endPlayer();
+        handler.endRole();
+        handler.endAssociation();
+        handler.endTopicMap();
+        assertEquals(1, _tm.getAssociations().size());
+        final Association assoc = _tm.getAssociations().iterator().next();
+        assertNull(assoc.getReifier());
+        final Construct tmc = _tm.getConstructByItemIdentifier(createLocator(roleIID));
+        assertNotNull(tmc);
+        assertEquals(assoc, tmc.getParent());
+    }
+
+    /**
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=84">http://code.google.com/p/ontopia/issues/detail?id=84</a>
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=77">http://code.google.com/p/ontopia/issues/detail?id=77</a>
+     */
+    public void testOntopiaIssue84RoleReifier2() throws Exception {
+        TinyTimMapInputHandler handler = _handler;
+        final IRef assocType = Ref.createItemIdentifier("http://test.semagia.com/assoc-type");
+        final IRef assocType2 = Ref.createItemIdentifier("http://test.semagia.com/assoc-type2");
+        final IRef roleType = Ref.createItemIdentifier("http://test.semagia.com/role-type");
+        final IRef rolePlayer = Ref.createItemIdentifier("http://test.semagia.com/role-player");
+        final String reifierIID = "http://test.semagia.com/reifier";
+        final IRef reifier = Ref.createItemIdentifier(reifierIID);
+        final String roleIID = "http://test.semagia.com/role-iid";
+        handler.startTopicMap();
+        handler.startAssociation();
+        handler.startType();
+        handler.topicRef(assocType);
+        handler.endType();
+        handler.startRole();
+        handler.startReifier();
+        handler.topicRef(reifier);
+        handler.endReifier();
+        handler.itemIdentifier(roleIID);
+        handler.startType();
+        handler.topicRef(roleType);
+        handler.endType();
+        handler.startPlayer();
+        handler.topicRef(rolePlayer);
+        handler.endPlayer();
+        handler.endRole();
+        handler.endAssociation();
+        try {
+            handler.startAssociation();
+            handler.startType();
+            handler.topicRef(assocType2);
+            handler.endType();
+            handler.startRole();
+            handler.startReifier();
+            handler.topicRef(reifier);
+            handler.endReifier();
+            handler.startType();
+            handler.topicRef(roleType);
+            handler.endType();
+            handler.startPlayer();
+            handler.topicRef(rolePlayer);
+            handler.endPlayer();
+            handler.endRole();
+            handler.endAssociation();
+            handler.endTopicMap();
+            fail("The topic " + reifierIID + " reifies another role");
+        }
+        catch (MIOException ex) {
+            // noop.
+        }
+    }
+
+    /**
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=84">http://code.google.com/p/ontopia/issues/detail?id=84</a>
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=77">http://code.google.com/p/ontopia/issues/detail?id=77</a>
+     */
+    public void testOntopiaIssue84VariantReifier() throws Exception {
+        TinyTimMapInputHandler handler = _handler;
+        final IRef theTopic = Ref.createItemIdentifier("http://test.semagia.com/the-topic");
+        final String reifierIID = "http://test.semagia.com/reifier";
+        final String variantIID = "http://test.semagia.com/variant";
+        final IRef reifier = Ref.createItemIdentifier(reifierIID);
+        final IRef theme = Ref.createItemIdentifier("http://test.semagia.com/theme");
+        handler.startTopicMap();
+        handler.startTopic(theTopic);
+        handler.startName();
+        handler.value("Semagia");
+        handler.startVariant();
+        handler.startReifier();
+        handler.topicRef(reifier);
+        handler.endReifier();
+        handler.itemIdentifier(variantIID);
+        handler.startScope();
+        handler.startTheme();
+        handler.topicRef(theme);
+        handler.endTheme();
+        handler.endScope();
+        handler.endVariant();
+        handler.endName();
+
+        handler.startName();
+        handler.value("Semagia");
+        handler.startVariant();
+        handler.startReifier();
+        handler.topicRef(reifier);
+        handler.endReifier();
+        handler.startScope();
+        handler.startTheme();
+        handler.topicRef(theme);
+        handler.endTheme();
+        handler.endScope();
+        handler.endVariant();
+        handler.endName();
+        handler.endTopic();
+        handler.endTopicMap();
+        Topic reifying = (Topic) _tm.getConstructByItemIdentifier(createLocator(reifierIID));
+        assertNotNull(reifying);
+        assertNotNull(reifying.getReified());
+        assertEquals(reifying.getReified(), _tm.getConstructByItemIdentifier(createLocator(variantIID)));
+    }
+    
+    /**
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=84">http://code.google.com/p/ontopia/issues/detail?id=84</a>
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=77">http://code.google.com/p/ontopia/issues/detail?id=77</a>
+     */
+    public void testOntopiaIssue84VariantReifier2() throws Exception {
+        TinyTimMapInputHandler handler = _handler;
+        final IRef theTopic = Ref.createItemIdentifier("http://test.semagia.com/the-topic");
+        final String reifierIID = "http://test.semagia.com/reifier";
+        final String variantIID = "http://test.semagia.com/variant";
+        final IRef reifier = Ref.createItemIdentifier(reifierIID);
+        final IRef theme = Ref.createItemIdentifier("http://test.semagia.com/theme");
+        handler.startTopicMap();
+        handler.startTopic(theTopic);
+        handler.startName();
+        handler.value("Semagia");
+        handler.startVariant();
+        handler.startReifier();
+        handler.topicRef(reifier);
+        handler.endReifier();
+        handler.startScope();
+        handler.startTheme();
+        handler.topicRef(theme);
+        handler.endTheme();
+        handler.endScope();
+        handler.endVariant();
+        handler.endName();
+
+        handler.startName();
+        handler.value("Semagia");
+        handler.startVariant();
+        handler.startReifier();
+        handler.topicRef(reifier);
+        handler.endReifier();
+        handler.itemIdentifier(variantIID);
+        handler.startScope();
+        handler.startTheme();
+        handler.topicRef(theme);
+        handler.endTheme();
+        handler.endScope();
+        handler.endVariant();
+        handler.endName();
+        handler.endTopic();
+        handler.endTopicMap();
+        Topic reifying = (Topic) _tm.getConstructByItemIdentifier(createLocator(reifierIID));
+        assertNotNull(reifying);
+        assertNotNull(reifying.getReified());
+        assertEquals(reifying.getReified(), _tm.getConstructByItemIdentifier(createLocator(variantIID)));
+    }
+    
+    /**
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=84">http://code.google.com/p/ontopia/issues/detail?id=84</a>
+     * <a href="http://code.google.com/p/ontopia/issues/detail?id=77">http://code.google.com/p/ontopia/issues/detail?id=77</a>
+     */
+    public void testOntopiaIssue84VariantReifier3() throws Exception {
+        TinyTimMapInputHandler handler = _handler;
+        final IRef theTopic = Ref.createItemIdentifier("http://test.semagia.com/the-topic");
+        final String reifierIID = "http://test.semagia.com/reifier";
+        final String variantIID = "http://test.semagia.com/variant";
+        final IRef reifier = Ref.createItemIdentifier(reifierIID);
+        final IRef theme = Ref.createItemIdentifier("http://test.semagia.com/theme");
+        handler.startTopicMap();
+        handler.startTopic(theTopic);
+        handler.startName();
+        handler.value("Semagia");
+        handler.startVariant();
+        handler.startReifier();
+        handler.topicRef(reifier);
+        handler.endReifier();
+        handler.startScope();
+        handler.startTheme();
+        handler.topicRef(theme);
+        handler.endTheme();
+        handler.endScope();
+        handler.endVariant();
+        handler.endName();
+
+        try {
+            handler.startName();
+            handler.value("Not Semagia");
+            handler.startVariant();
+            handler.startReifier();
+            handler.topicRef(reifier);
+            handler.endReifier();
+            handler.itemIdentifier(variantIID);
+            handler.startScope();
+            handler.startTheme();
+            handler.topicRef(theme);
+            handler.endTheme();
+            handler.endScope();
+            handler.endVariant();
+            handler.endName();
+            handler.endTopic();
+            handler.endTopicMap();
+            fail("The topic " + reifierIID + " reifies a variant of another name which is not equal");
+        }
+        catch (MIOException ex) {
+            // noop.
+        }
     }
 
     /**
