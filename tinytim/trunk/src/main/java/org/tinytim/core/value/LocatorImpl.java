@@ -33,6 +33,7 @@ import org.tinytim.internal.utils.WeakObjectRegistry;
 import org.tinytim.voc.XSD;
 
 import org.tmapi.core.Locator;
+import org.tmapi.core.MalformedIRIException;
 import org.tmapi.core.TMAPIRuntimeException;
 
 /**
@@ -47,11 +48,15 @@ import org.tmapi.core.TMAPIRuntimeException;
  */
 final class LocatorImpl implements ILocator {
 
+    private static final String _EMPTY = "";
     private static final WeakObjectRegistry<ILocator> _IRIS = new WeakObjectRegistry<ILocator>(IConstant.LITERAL_IRI_SIZE);
     private final URI _uri;
     private final String _reference;
 
     private LocatorImpl(String reference) {
+        if (_EMPTY.equals(reference) || reference.charAt(0) == '#') {
+            throw new MalformedIRIException("Illegal absolute IRI: '" + reference + "'");
+        }
         try {
             _reference = URLDecoder.decode(reference, "utf-8");
         }
