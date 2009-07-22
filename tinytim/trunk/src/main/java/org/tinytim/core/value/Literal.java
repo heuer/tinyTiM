@@ -214,7 +214,7 @@ public final class Literal implements ILiteral {
      * @see org.tinytim.internal.api.ILiteral#integerValue()
      */
     public BigInteger integerValue() {
-        return new BigInteger(_value);
+        return decimalValue().toBigInteger();
     }
 
     /* (non-Javadoc)
@@ -228,14 +228,14 @@ public final class Literal implements ILiteral {
      * @see org.tinytim.internal.api.ILiteral#intValue()
      */
     public int intValue() {
-        return Integer.valueOf(_value);
+        return decimalValue().intValue();
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#longValue()
      */
     public long longValue() {
-        return Long.valueOf(_value);
+        return decimalValue().longValue();
     }
 
     /* (non-Javadoc)
