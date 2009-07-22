@@ -10,7 +10,7 @@
 
     <property name="lib.junit" value="${dir.lib}/junit-4.5.jar"/>
     <property name="lib.tmapi" value="${dir.lib}/tmapi-2.0a2.jar"/>
-    <property name="lib.tinytim" value="${dir.lib}/tinytim-2.0.0a5-snapshot-200907151305.jar"/>
+    <property name="lib.tinytim" value="${dir.lib}/tinytim-2.0.0a5-snapshot-200907221824.jar"/>
     <property name="lib.tinytim.tests" value="${dir.lib}/tinytim-2.0.0a4-tests.jar"/>
     <property name="lib.logging" value="${dir.lib}/slf4j-api-1.5.8.jar"/>
     <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.4.jar"/>
