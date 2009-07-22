@@ -248,7 +248,6 @@ public final class TinyTimMapInputHandler implements IMapHandler {
         if (scope.isUnconstrained() || name.getScopeObject().equals(scope)) {
             _reportError("The variant has no scope");
         }
-        _handleDelayedReifier(variant);
     }
 
     /* (non-Javadoc)
@@ -552,10 +551,12 @@ public final class TinyTimMapInputHandler implements IMapHandler {
         IConstruct reified = (IConstruct) reifier.getReified();
         if (SignatureGenerator.generateSignature(c) ==
             SignatureGenerator.generateSignature(reified)) {
-            
             MergeUtils.moveItemIdentifiers(reifiable, reifier.getReified());
             if (c.isAssociation()) {
                 MergeUtils.moveRoleCharacteristics((Association) c, (Association) reifier.getReified());
+            }
+            else if (c.isName()) {
+                MergeUtils.moveVariants((IName)c, (IName) reified);
             }
             reifiable.remove();
             return reifier.getReified();
@@ -648,14 +649,6 @@ public final class TinyTimMapInputHandler implements IMapHandler {
                         || a.getParent().equals(b.getParent()));
     }
 
-    private void _replaceConstructOnStack(Construct source, IConstruct target) {
-        for (int i=0; i <_constructSize; i++) {
-            if (_constructStack[i].equals(source)) {
-                _constructStack[i] = target;
-            }
-        } 
-    }
-
     /**
      * Merges the <tt>source</tt> topic with the <tt>target</tt>.
      * 
@@ -667,7 +660,11 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      * @param target The target topic.
      */
     private void _merge(Topic source, ITopic target) {
-        _replaceConstructOnStack(source, target);
+        for (int i=0; i <_constructSize; i++) {
+            if (_constructStack[i].equals(source)) {
+                _constructStack[i] = target;
+            }
+        }
         for (Reifiable reifiable: CollectionFactory.createList(_delayedReification.keySet())) {
             Topic topic = _delayedReification.get(reifiable);
             if (topic.equals(target)) {
