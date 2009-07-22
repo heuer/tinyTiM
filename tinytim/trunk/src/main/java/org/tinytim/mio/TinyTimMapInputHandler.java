@@ -504,7 +504,6 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      */
     private Reifiable _handleDelayedReifier(final Reifiable reifiable) throws MIOException {
         Topic reifier = _delayedReification.remove(reifiable);
-        System.out.println(reifiable + ": " + reifier);
         final IConstruct c = (IConstruct) reifiable;
         if (reifier != null) {
            return  _handleDelayedReifier(reifiable, reifier);
