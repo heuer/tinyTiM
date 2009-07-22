@@ -483,9 +483,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
     }
 
     private Reifiable _leaveStatePopReifiable(byte state) throws MIOException {
-        final Reifiable reifiable = (Reifiable) _leaveStatePopConstruct(state);
-        _handleDelayedReifier(reifiable);
-        return reifiable;
+        return _handleDelayedReifier((Reifiable) _leaveStatePopConstruct(state));
     }
 
     /**
@@ -501,14 +499,15 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      * 
      *
      * @param reifiable
+     * @return 
      * @throws MIOException
      */
-    private void _handleDelayedReifier(final Reifiable reifiable) throws MIOException {
+    private Reifiable _handleDelayedReifier(final Reifiable reifiable) throws MIOException {
         Topic reifier = _delayedReification.remove(reifiable);
+        System.out.println(reifiable + ": " + reifier);
         final IConstruct c = (IConstruct) reifiable;
         if (reifier != null) {
-            _handleDelayedReifier(reifiable, reifier);
-            return;
+           return  _handleDelayedReifier(reifiable, reifier);
         }
         List<? extends Reifiable> reifiables = null;
         if (c.isAssociation()) {
@@ -518,7 +517,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
             reifiables = CollectionFactory.createList(((IName) c).getVariants());
         }
         if (reifiables == null || _delayedReification.isEmpty()) {
-            return;
+            return reifiable;
         }
         boolean foundReifier = false;
         final int parentSignature = SignatureGenerator.generateSignature(c);
@@ -529,7 +528,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
             }
             if (parentSignature == SignatureGenerator.generateSignature((IConstruct) reifier.getReified().getParent())) {
                 _handleDelayedReifier(r, reifier);
-                foundReifier = true;
+                foundReifier =  !c.equals(reifier.getReified().getParent());
             }
             else {
                 throw new MIOException("The topic '" + reifier + "' reifies another construct");
@@ -538,6 +537,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
         if (foundReifier) {
             c.remove();
         }
+        return reifiable;
     }
 
     /**
@@ -545,21 +545,21 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      *
      * @param reifiable
      * @param reifier
+     * @return 
      * @throws MIOException
      */
-    private void _handleDelayedReifier(final Reifiable reifiable, final Topic reifier) throws MIOException {
+    private Reifiable _handleDelayedReifier(final Reifiable reifiable, final Topic reifier) throws MIOException {
         IConstruct c = (IConstruct) reifiable;
+        IConstruct reified = (IConstruct) reifier.getReified();
         if (SignatureGenerator.generateSignature(c) ==
-            SignatureGenerator.generateSignature((IConstruct) reifier.getReified())) {
+            SignatureGenerator.generateSignature(reified)) {
+            
             MergeUtils.moveItemIdentifiers(reifiable, reifier.getReified());
             if (c.isAssociation()) {
-                MergeUtils.moveRoleCharacteristics((Association) c, (Association) reifier.getReified()); 
-            }
-            else if (c.isName()) {
-                MergeUtils.moveVariants((IName) c, (IName) reifier.getReified());
+                MergeUtils.moveRoleCharacteristics((Association) c, (Association) reifier.getReified());
             }
             reifiable.remove();
-            _delayedReification.remove(reifiable);
+            return reifier.getReified();
         }
         else {
             throw new MIOException("The topic " + reifier + " reifies another construct");
@@ -649,6 +649,14 @@ public final class TinyTimMapInputHandler implements IMapHandler {
                         || a.getParent().equals(b.getParent()));
     }
 
+    private void _replaceConstructOnStack(Construct source, IConstruct target) {
+        for (int i=0; i <_constructSize; i++) {
+            if (_constructStack[i].equals(source)) {
+                _constructStack[i] = target;
+            }
+        } 
+    }
+
     /**
      * Merges the <tt>source</tt> topic with the <tt>target</tt>.
      * 
@@ -660,11 +668,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      * @param target The target topic.
      */
     private void _merge(Topic source, ITopic target) {
-        for (int i=0; i <_constructSize; i++) {
-            if (_constructStack[i].equals(source)) {
-                _constructStack[i] = target;
-            }
-        }
+        _replaceConstructOnStack(source, target);
         for (Reifiable reifiable: CollectionFactory.createList(_delayedReification.keySet())) {
             Topic topic = _delayedReification.get(reifiable);
             if (topic.equals(target)) {
