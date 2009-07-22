@@ -51,72 +51,72 @@ public class TestTinyTimMapInputHandler extends TinyTimTestCase {
         _handler = new TinyTimMapInputHandler(_tm);
     }
 
-    public void testVariantNoValue() throws Exception {
-        final IRef theTopic = Ref.createItemIdentifier("http://test.semagia.com/the-topic");
-        final IRef theme = Ref.createItemIdentifier("http://test.semagia.com/theme");
-        TinyTimMapInputHandler handler = _handler;
-        handler.startTopicMap();
-        handler.startTopic(theTopic);
-        handler.startName();
-        handler.value("Semagia");
-        handler.startVariant();
-        handler.startScope();
-        handler.startTheme();
-        handler.topicRef(theme);
-        handler.endTheme();
-        handler.endScope();
-        try {
-            handler.endVariant();
-            fail("Expected an error since the variant has no value");
-        }
-        catch (MIOException ex) {
-            // noop.
-        }
-    }
-
-    public void testNameNoValue() throws Exception {
-        final IRef theTopic = Ref.createItemIdentifier("http://test.semagia.com/the-topic");
-        TinyTimMapInputHandler handler = _handler;
-        handler.startTopicMap();
-        handler.startTopic(theTopic);
-        handler.startName();
-        try {
-            handler.endName();
-            fail("Expected an error since the name has no value");
-        }
-        catch (MIOException ex) {
-            // noop.
-        }
-    }
-
-    /**
-     * <a href="http://code.google.com/p/mappa/issues/detail?id=23">http://code.google.com/p/mappa/issues/detail?id=23</a>
-     */
-    public void testMappaIssue23() throws Exception {
-        String iid = "http://mappa.semagia.com/issue-23";
-        String iid2 = "http://mappa.semagia.com/issue-23_";
-        final IRef TOPIC_NAME = Ref.createSubjectIdentifier(TMDM.TOPIC_NAME.getReference());
-        TinyTimMapInputHandler handler = _handler;
-        handler.startTopicMap();
-        handler.startTopic(Ref.createItemIdentifier(iid));
-        handler.startName();
-        handler.value("test");
-        handler.startType();
-        handler.topicRef(TOPIC_NAME);
-        handler.endType();
-        handler.endName();
-        handler.endTopic();
-        handler.startTopic(Ref.createItemIdentifier(iid2));
-        handler.startName();
-        handler.value("a test");
-        handler.startType();
-        handler.topicRef(TOPIC_NAME);
-        handler.endType();
-        handler.endName();
-        handler.subjectIdentifier(TOPIC_NAME.getIRI());
-        handler.endTopic();
-        handler.endTopicMap();
-    }
+//    public void testVariantNoValue() throws Exception {
+//        final IRef theTopic = Ref.createItemIdentifier("http://test.semagia.com/the-topic");
+//        final IRef theme = Ref.createItemIdentifier("http://test.semagia.com/theme");
+//        TinyTimMapInputHandler handler = _handler;
+//        handler.startTopicMap();
+//        handler.startTopic(theTopic);
+//        handler.startName();
+//        handler.value("Semagia");
+//        handler.startVariant();
+//        handler.startScope();
+//        handler.startTheme();
+//        handler.topicRef(theme);
+//        handler.endTheme();
+//        handler.endScope();
+//        try {
+//            handler.endVariant();
+//            fail("Expected an error since the variant has no value");
+//        }
+//        catch (MIOException ex) {
+//            // noop.
+//        }
+//    }
+//
+//    public void testNameNoValue() throws Exception {
+//        final IRef theTopic = Ref.createItemIdentifier("http://test.semagia.com/the-topic");
+//        TinyTimMapInputHandler handler = _handler;
+//        handler.startTopicMap();
+//        handler.startTopic(theTopic);
+//        handler.startName();
+//        try {
+//            handler.endName();
+//            fail("Expected an error since the name has no value");
+//        }
+//        catch (MIOException ex) {
+//            // noop.
+//        }
+//    }
+//
+//    /**
+//     * <a href="http://code.google.com/p/mappa/issues/detail?id=23">http://code.google.com/p/mappa/issues/detail?id=23</a>
+//     */
+//    public void testMappaIssue23() throws Exception {
+//        String iid = "http://mappa.semagia.com/issue-23";
+//        String iid2 = "http://mappa.semagia.com/issue-23_";
+//        final IRef TOPIC_NAME = Ref.createSubjectIdentifier(TMDM.TOPIC_NAME.getReference());
+//        TinyTimMapInputHandler handler = _handler;
+//        handler.startTopicMap();
+//        handler.startTopic(Ref.createItemIdentifier(iid));
+//        handler.startName();
+//        handler.value("test");
+//        handler.startType();
+//        handler.topicRef(TOPIC_NAME);
+//        handler.endType();
+//        handler.endName();
+//        handler.endTopic();
+//        handler.startTopic(Ref.createItemIdentifier(iid2));
+//        handler.startName();
+//        handler.value("a test");
+//        handler.startType();
+//        handler.topicRef(TOPIC_NAME);
+//        handler.endType();
+//        handler.endName();
+//        handler.subjectIdentifier(TOPIC_NAME.getIRI());
+//        handler.endTopic();
+//        handler.endTopicMap();
+//    }
 
     /**
      * <a href="http://code.google.com/p/ontopia/issues/detail?id=84">http://code.google.com/p/ontopia/issues/detail?id=84</a>
