@@ -19,6 +19,7 @@ import org.tinytim.core.value.TestLiteral;
 import org.tinytim.core.value.TestLiteralNormalizer;
 import org.tinytim.core.value.TestLocatorImpl;
 import org.tinytim.internal.utils.TestSignatureGenerator;
+import org.tinytim.mio.TestTinyTimMapInputHandler;
 import org.tinytim.utils.TestDuplicateRemovalUtils;
 import org.tinytim.utils.TestTopicUtils;
 
@@ -45,6 +46,7 @@ public class AllTests extends TestSuite {
         suite.addTestSuite(TestIConstructFactory.class);
         suite.addTestSuite(TestScope.class);
         suite.addTestSuite(TestLiteral.class);
+        suite.addTestSuite(TestTinyTimMapInputHandler.class);
         suite.addTestSuite(TestLiteralNormalizer.class);
         suite.addTestSuite(TestSignatureGenerator.class);
         suite.addTest(TestTMAPICore.suite());
