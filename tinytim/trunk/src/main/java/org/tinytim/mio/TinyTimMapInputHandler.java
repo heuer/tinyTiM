@@ -216,6 +216,9 @@ public final class TinyTimMapInputHandler implements IMapHandler {
     @Override
     public void endName() throws MIOException {
         IName name = (IName) _leaveStatePopConstruct(NAME);
+        if (name.getLiteral() == null) {
+            throw new MIOException("The name '" + name + "' has no value");
+        }
         if (name.getType() == null) {
             name.setType(_tm.createTopicBySubjectIdentifier(TMDM.TOPIC_NAME));
         }
@@ -237,6 +240,9 @@ public final class TinyTimMapInputHandler implements IMapHandler {
     @Override
     public void endVariant() throws MIOException {
         IVariant variant = (IVariant) _leaveStatePopConstruct(VARIANT);
+        if (variant.getLiteral() == null) {
+            throw new MIOException("The variant '" + variant + "' has no value");
+        }
         IName name = (IName) _peekConstruct();
         IScope scope = variant.getScopeObject();
         if (scope.isUnconstrained() || name.getScopeObject().equals(scope)) {
@@ -604,8 +610,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
     private void _handleReifier(Reifiable reifiable, Topic reifier) throws MIOException {
         final Reifiable reified = reifier.getReified();
         if (reified != null && !reifiable.equals(reified)) {
-            if (!_sameConstructKind((IConstruct) reifiable, (IConstruct) reified)
-                    || !_areMergable((IConstruct) reifiable, (IConstruct) reified)) { 
+            if (!_areMergable((IConstruct) reifiable, (IConstruct) reified)) { 
                 throw new MIOException("The topic " + reifier + " reifies another construct");
             }
             // The construct reified by 'reifier' has the same parent as the 
@@ -619,6 +624,14 @@ public final class TinyTimMapInputHandler implements IMapHandler {
         }
     }
 
+    /**
+     * Returns if <tt>a</tt> and <tt>b</tt> represent the same information 
+     * item (i.e. both are associations).
+     *
+     * @param a A Topic Maps construct.
+     * @param b A Topic Maps construct.
+     * @return <tt>true</tt> if they represent the same information item, otherwise <tt>false</tt>.
+     */
     private boolean _sameConstructKind(IConstruct a, IConstruct b) {
        return a.isAssociation() && b.isAssociation()
                 || a.isName() && b.isName()
@@ -630,9 +643,10 @@ public final class TinyTimMapInputHandler implements IMapHandler {
     }
 
     private boolean _areMergable(IConstruct a, IConstruct b) {
-        return a.isRole() && b.isRole()
-                || (a.isVariant() && b.isVariant() && a.getParent().getParent().equals(b.getParent().getParent()))
-                || a.getParent().equals(b.getParent());
+        return _sameConstructKind(a, b)
+                && (a.isRole() && b.isRole()
+                        || (a.isVariant() && b.isVariant() && a.getParent().getParent().equals(b.getParent().getParent()))
+                        || a.getParent().equals(b.getParent()));
     }
 
     /**

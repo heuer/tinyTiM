@@ -51,6 +51,44 @@ public class TestTinyTimMapInputHandler extends TinyTimTestCase {
         _handler = new TinyTimMapInputHandler(_tm);
     }
 
+    public void testVariantNoValue() throws Exception {
+        final IRef theTopic = Ref.createItemIdentifier("http://test.semagia.com/the-topic");
+        final IRef theme = Ref.createItemIdentifier("http://test.semagia.com/theme");
+        TinyTimMapInputHandler handler = _handler;
+        handler.startTopicMap();
+        handler.startTopic(theTopic);
+        handler.startName();
+        handler.value("Semagia");
+        handler.startVariant();
+        handler.startScope();
+        handler.startTheme();
+        handler.topicRef(theme);
+        handler.endTheme();
+        handler.endScope();
+        try {
+            handler.endVariant();
+            fail("Expected an error since the variant has no value");
+        }
+        catch (MIOException ex) {
+            // noop.
+        }
+    }
+
+    public void testNameNoValue() throws Exception {
+        final IRef theTopic = Ref.createItemIdentifier("http://test.semagia.com/the-topic");
+        TinyTimMapInputHandler handler = _handler;
+        handler.startTopicMap();
+        handler.startTopic(theTopic);
+        handler.startName();
+        try {
+            handler.endName();
+            fail("Expected an error since the name has no value");
+        }
+        catch (MIOException ex) {
+            // noop.
+        }
+    }
+
     /**
      * <a href="http://code.google.com/p/mappa/issues/detail?id=23">http://code.google.com/p/mappa/issues/detail?id=23</a>
      */
@@ -320,6 +358,7 @@ public class TestTinyTimMapInputHandler extends TinyTimTestCase {
         handler.startReifier();
         handler.topicRef(reifier);
         handler.endReifier();
+        handler.value("variant", _XSD_STRING);
         handler.itemIdentifier(variantIID);
         handler.startScope();
         handler.startTheme();
@@ -335,6 +374,7 @@ public class TestTinyTimMapInputHandler extends TinyTimTestCase {
         handler.startReifier();
         handler.topicRef(reifier);
         handler.endReifier();
+        handler.value("variant", _XSD_STRING);
         handler.startScope();
         handler.startTheme();
         handler.topicRef(theme);
@@ -369,6 +409,7 @@ public class TestTinyTimMapInputHandler extends TinyTimTestCase {
         handler.startReifier();
         handler.topicRef(reifier);
         handler.endReifier();
+        handler.value("variant", _XSD_STRING);
         handler.startScope();
         handler.startTheme();
         handler.topicRef(theme);
@@ -383,6 +424,7 @@ public class TestTinyTimMapInputHandler extends TinyTimTestCase {
         handler.startReifier();
         handler.topicRef(reifier);
         handler.endReifier();
+        handler.value("variant", _XSD_STRING);
         handler.itemIdentifier(variantIID);
         handler.startScope();
         handler.startTheme();
@@ -418,6 +460,7 @@ public class TestTinyTimMapInputHandler extends TinyTimTestCase {
         handler.startReifier();
         handler.topicRef(reifier);
         handler.endReifier();
+        handler.value("variant", _XSD_STRING);
         handler.startScope();
         handler.startTheme();
         handler.topicRef(theme);
@@ -433,6 +476,7 @@ public class TestTinyTimMapInputHandler extends TinyTimTestCase {
             handler.startReifier();
             handler.topicRef(reifier);
             handler.endReifier();
+            handler.value("variant", _XSD_STRING);
             handler.itemIdentifier(variantIID);
             handler.startScope();
             handler.startTheme();
