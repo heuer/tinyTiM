@@ -2,6 +2,11 @@
 Changes Log
 ===========
 
+2.0.0 a6 (xx.yy.2009)
+---------------------
+
+
+
 2.0.0 a5 (23.07.2009)
 ---------------------
 * JTMTopicMapReader / JTMTopicMapWriter implement the new JSON Topic Maps
