@@ -17,9 +17,11 @@ package org.tinytim.mio;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.tinytim.core.Scope;
 import org.tinytim.core.value.Literal;
+import org.tinytim.internal.api.IAssociation;
 import org.tinytim.internal.api.IConstruct;
 import org.tinytim.internal.api.IConstructFactory;
 import org.tinytim.internal.api.ILiteralAware;
@@ -35,15 +37,14 @@ import org.tinytim.internal.utils.SignatureGenerator;
 import org.tinytim.utils.TypeInstanceConverter;
 import org.tinytim.voc.TMDM;
 
-import org.tmapi.core.Association;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Reifiable;
 import org.tmapi.core.Role;
-import org.tmapi.core.Scoped;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 import org.tmapi.core.Typed;
+import org.tmapi.core.Variant;
 
 import com.semagia.mio.IMapHandler;
 import com.semagia.mio.IRef;
@@ -76,11 +77,13 @@ public final class TinyTimMapInputHandler implements IMapHandler {
     private static final int _STATE_SIZE = 10;
     private static final int _SCOPE_SIZE = 6;
     private static final int _DELAYED_REIFICATION_SIZE = 2;
+    private static final int _DELAYED_ITEM_IDENTIFIER_SIZE = 2;
 
     private final IConstructFactory _factory;
     private final ITopicMap _tm;
     private final List<Topic> _scope;
-    private final Map<Reifiable, Topic> _delayedReification;
+    private final Map<Reifiable, ITopic> _delayedReification;
+    private final Map<IConstruct, Set<Locator>> _delayedItemIdentifiers;
     private byte[] _stateStack;
     private int _stateSize;
     private IConstruct[] _constructStack;
@@ -94,6 +97,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
         _factory = _tm.getConstructFactory();
         _scope = CollectionFactory.createList(_SCOPE_SIZE);
         _delayedReification = CollectionFactory.createIdentityMap(_DELAYED_REIFICATION_SIZE);
+        _delayedItemIdentifiers = CollectionFactory.createIdentityMap(_DELAYED_ITEM_IDENTIFIER_SIZE);
     }
 
     /* (non-Javadoc)
@@ -114,6 +118,12 @@ public final class TinyTimMapInputHandler implements IMapHandler {
     @Override
     public void endTopicMap() throws MIOException {
         TypeInstanceConverter.convertAssociationsToTypes(_tm);
+        if (!_delayedReification.isEmpty()) {
+            throw new MIOException("ERROR: Unhandled reifications");
+        }
+        if (!_delayedItemIdentifiers.isEmpty()) {
+            throw new MIOException("ERROR: Unhandled item identifiers");
+        }
         _constructStack = null;
         _stateStack = null;
         _scope.clear();
@@ -148,7 +158,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      */
     @Override
     public void endAssociation() throws MIOException {
-        _leaveStatePopReifiable(ASSOCIATION);
+        _handleDelayedEvents(_leaveStatePopConstruct(ASSOCIATION));
     }
 
     /* (non-Javadoc)
@@ -157,7 +167,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
     @Override
     public void startRole() throws MIOException {
         assert _state() == ASSOCIATION;
-        _enterState(ROLE, _factory.createRole((Association) _peekConstruct()));
+        _enterState(ROLE, _factory.createRole((IAssociation) _peekConstruct()));
     }
 
     /* (non-Javadoc)
@@ -199,7 +209,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      */
     @Override
     public void endOccurrence() throws MIOException {
-        _leaveStatePopReifiable(OCCURRENCE);
+        _handleDelayedEvents(_leaveStatePopConstruct(OCCURRENCE));
     }
 
     /* (non-Javadoc)
@@ -222,7 +232,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
         if (name.getType() == null) {
             name.setType(_tm.createTopicBySubjectIdentifier(TMDM.TOPIC_NAME));
         }
-        _handleDelayedReifier(name);
+        _handleDelayedEvents(name);
     }
 
     /* (non-Javadoc)
@@ -273,7 +283,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      */
     @Override
     public void startScope() throws MIOException {
-        assert _peekConstruct() instanceof Scoped;
+        assert _peekConstruct() instanceof IScoped;
         _enterState(SCOPE);
     }
 
@@ -346,8 +356,8 @@ public final class TinyTimMapInputHandler implements IMapHandler {
     public void itemIdentifier(String itemIdentifier) throws MIOException {
         Locator iid = _tm.createLocator(itemIdentifier);
         IConstruct tmo = _peekConstruct();
+        IConstruct existing = (IConstruct) _tm.getConstructByItemIdentifier(iid);
         if (_state() == TOPIC) {
-            IConstruct existing = (IConstruct) _tm.getConstructByItemIdentifier(iid);
             if (existing != null && existing.isTopic() && !existing.equals(tmo)) {
                 _merge((Topic) existing, (ITopic) tmo);
             }
@@ -357,8 +367,24 @@ public final class TinyTimMapInputHandler implements IMapHandler {
                     _merge(topic, (ITopic) tmo);
                 }
             }
+            tmo.addItemIdentifier(iid);
         }
-        tmo.addItemIdentifier(iid);
+        else if (existing != null && !existing.equals(tmo)) {
+            if (!_areMergable(tmo, existing)) {
+                throw new MIOException("A Topic Maps construct with the item identifier '" + itemIdentifier + "' exists already");
+            }
+            else {
+                Set<Locator> iids = _delayedItemIdentifiers.get(tmo);
+                if (iids == null) {
+                    iids = CollectionFactory.createIdentitySet();
+                }
+                iids.add(iid);
+                _delayedItemIdentifiers.put(tmo, iids);
+            }
+        }
+        else {
+            tmo.addItemIdentifier(iid);
+        }
     }
 
     /* (non-Javadoc)
@@ -481,10 +507,6 @@ public final class TinyTimMapInputHandler implements IMapHandler {
         return construct;
     }
 
-    private Reifiable _leaveStatePopReifiable(byte state) throws MIOException {
-        return _handleDelayedReifier((Reifiable) _leaveStatePopConstruct(state));
-    }
-
     /**
      * Returns the Topic Maps construct on top of the stack.
      *
@@ -495,75 +517,88 @@ public final class TinyTimMapInputHandler implements IMapHandler {
     }
 
     /**
-     * 
+     * Issues the delayed item identifier and reifier events.
      *
-     * @param reifiable
-     * @return 
-     * @throws MIOException
+     * @param construct
      */
-    private Reifiable _handleDelayedReifier(final Reifiable reifiable) throws MIOException {
-        Topic reifier = _delayedReification.remove(reifiable);
-        final IConstruct c = (IConstruct) reifiable;
-        if (reifier != null) {
-           return  _handleDelayedReifier(reifiable, reifier);
-        }
-        List<? extends Reifiable> reifiables = null;
-        if (c.isAssociation()) {
-            reifiables = CollectionFactory.createList(((Association) c).getRoles());
-        }
-        else if (c.isName()) {
-            reifiables = CollectionFactory.createList(((IName) c).getVariants());
-        }
-        if (reifiables == null || _delayedReification.isEmpty()) {
-            return reifiable;
-        }
-        boolean foundReifier = false;
-        final int parentSignature = SignatureGenerator.generateSignature(c);
-        for (Reifiable r: reifiables) {
-            reifier = _delayedReification.remove(r);
-            if (reifier == null) {
-                continue;
+    private void _handleDelayedEvents(IConstruct tmc) throws MIOException {
+        IConstruct existing = _processDelayedEvents(tmc);
+        if (tmc.isAssociation()) {
+            IAssociation existingAssoc = (IAssociation) existing;
+            IConstruct existingRole = null;
+            for (Role role: ((IAssociation) tmc).getRoles()) {
+                existingRole = _processDelayedEvents((IConstruct) role);
+                if (existingRole != null && existingAssoc == null) {
+                    existingAssoc = (IAssociation) existingRole.getParent();
+                }
             }
-            if (parentSignature == SignatureGenerator.generateSignature((IConstruct) reifier.getReified().getParent())) {
-                _handleDelayedReifier(r, reifier);
-                foundReifier =  !c.equals(reifier.getReified().getParent());
-            }
-            else {
-                throw new MIOException("The topic '" + reifier + "' reifies another construct");
+            if (existingAssoc != null && !existingAssoc.equals(tmc)) {
+                MergeUtils.moveRoleCharacteristics((IAssociation) tmc, existingAssoc);
+                existing = existingAssoc;
             }
         }
-        if (foundReifier) {
-            c.remove();
+        else if (tmc.isName()) {
+            IName existingName = (IName) existing;
+            IConstruct existingVariant = null;
+            for (Variant role: ((IName) tmc).getVariants()) {
+                existingVariant = _processDelayedEvents((IConstruct) role);
+                if (existingVariant != null && existingName == null) {
+                    existingName = (IName) existingVariant.getParent();
+                }
+            }
+            if (existingName != null && !existingName.equals(tmc)) {
+                MergeUtils.moveVariants((IName) tmc, existingName);
+                existing = existingName;
+            }
         }
-        return reifiable;
+        if (existing != null && !existing.equals(tmc)) {
+            tmc.remove();
+        }
     }
 
-    /**
-     * 
-     *
-     * @param reifiable
-     * @param reifier
-     * @return 
-     * @throws MIOException
-     */
-    private Reifiable _handleDelayedReifier(final Reifiable reifiable, final Topic reifier) throws MIOException {
-        IConstruct c = (IConstruct) reifiable;
-        IConstruct reified = (IConstruct) reifier.getReified();
-        if (SignatureGenerator.generateSignature(c) ==
-            SignatureGenerator.generateSignature(reified)) {
-            MergeUtils.moveItemIdentifiers(reifiable, reifier.getReified());
-            if (c.isAssociation()) {
-                MergeUtils.moveRoleCharacteristics((Association) c, (Association) reifier.getReified());
-            }
-            else if (c.isName()) {
-                MergeUtils.moveVariants((IName)c, (IName) reified);
-            }
-            reifiable.remove();
-            return reifier.getReified();
+    private IConstruct _processDelayedEvents(IConstruct tmc) throws MIOException {
+        IConstruct existing = null;
+        Set<Locator> iids = _delayedItemIdentifiers.remove(tmc);
+        Topic reifier = _delayedReification.remove(tmc);
+        final int signature = SignatureGenerator.generateSignature(tmc);
+        if (iids != null) {
+            existing = _handleItemIdentifiers(signature, tmc, iids);
         }
-        else {
-            throw new MIOException("The topic " + reifier + " reifies another construct");
+        if (reifier != null) {
+            existing = _handleReification(signature, tmc, reifier);
         }
+        return existing;
+    }
+
+    private IConstruct _handleReification(int signature, IConstruct tmc,
+            Topic reifier) throws MIOException {
+        final IConstruct existing = (IConstruct) reifier.getReified();
+        final boolean checkParent = tmc.isRole() || tmc.isVariant();
+        final int parentSignature = checkParent ? SignatureGenerator.generateSignature((IConstruct)tmc.getParent())
+                                                : -1;
+        if (signature != SignatureGenerator.generateSignature(existing)
+                || (checkParent && parentSignature != SignatureGenerator.generateSignature((IConstruct) existing.getParent()))) {
+            throw new MIOException("The topic '" + reifier + "' reifies another construct");
+        }
+        MergeUtils.moveItemIdentifiers(tmc, existing);
+        return existing;
+    }
+
+    private IConstruct _handleItemIdentifiers(int signature, IConstruct tmc,
+            Set<Locator> iids) throws MIOException {
+        IConstruct existing = null;
+        final boolean checkParent = tmc.isRole() || tmc.isVariant();
+        final int parentSignature = checkParent ? SignatureGenerator.generateSignature((IConstruct)tmc.getParent())
+                                                : -1;
+        for (Locator iid: iids) {
+            existing = (IConstruct) _tm.getConstructByItemIdentifier(iid);
+            if (signature != SignatureGenerator.generateSignature(existing)
+                    || (checkParent && parentSignature != SignatureGenerator.generateSignature((IConstruct) existing.getParent()))) {
+                throw new MIOException("The item identifier '" + iid + "' is already assigned");
+            }
+            MergeUtils.moveItemIdentifiers(tmc, existing);
+        }
+        return existing;
     }
 
     /**
@@ -596,7 +631,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
             case TYPE: ((Typed) _peekConstruct()).setType(topic); break;
             case PLAYER: ((Role) _peekConstruct()).setPlayer(topic); break;
             case THEME: _scope.add(topic); break;
-            case REIFIER: _handleReifier((Reifiable) _peekConstruct(), topic); break;
+            case REIFIER: _handleReifier((Reifiable) _peekConstruct(), (ITopic) topic); break;
         }
     }
 
@@ -607,7 +642,7 @@ public final class TinyTimMapInputHandler implements IMapHandler {
      * @param reifier
      * @throws MIOException 
      */
-    private void _handleReifier(Reifiable reifiable, Topic reifier) throws MIOException {
+    private void _handleReifier(Reifiable reifiable, ITopic reifier) throws MIOException {
         final Reifiable reified = reifier.getReified();
         if (reified != null && !reifiable.equals(reified)) {
             if (!_areMergable((IConstruct) reifiable, (IConstruct) reified)) { 
@@ -644,8 +679,8 @@ public final class TinyTimMapInputHandler implements IMapHandler {
 
     private boolean _areMergable(IConstruct a, IConstruct b) {
         return _sameConstructKind(a, b)
-                && (a.isRole() && b.isRole()
-                        || (a.isVariant() && b.isVariant() && a.getParent().getParent().equals(b.getParent().getParent()))
+                && (a.isRole()
+                        || (a.isVariant() && a.getParent().getParent().equals(b.getParent().getParent()))
                         || a.getParent().equals(b.getParent()));
     }
 

@@ -19,13 +19,13 @@ import java.util.Collections;
 import java.util.Set;
 
 import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.IAssociation;
 import org.tinytim.internal.api.IConstant;
 import org.tinytim.internal.api.IScope;
 import org.tinytim.internal.api.ITopicMap;
 import org.tinytim.internal.utils.Check;
 import org.tinytim.internal.utils.CollectionFactory;
 
-import org.tmapi.core.Association;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
@@ -36,7 +36,7 @@ import org.tmapi.core.TopicMap;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-final class AssociationImpl extends ScopedImpl implements Association {
+final class AssociationImpl extends ScopedImpl implements IAssociation {
 
     private Set<Role> _roles;
 
