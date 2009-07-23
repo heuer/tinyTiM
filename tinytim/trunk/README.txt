@@ -11,8 +11,8 @@ see <http://www.tmapi.org/2.0/> for details.
 
 Installation
 ------------
-No real installation needed, simply put the ``tinytim-2.0.0a4.jar`` and
-``tmapi-2.0a1.jar`` into your classpath. That's all. :)
+No real installation needed, simply put the ``tinytim-2.0.0a5.jar`` and
+``tmapi-2.0a2.jar`` into your classpath. That's all. :)
 Optionally, you can put the ``trove-<VERSION>.jar`` into your classpath which
 makes tinyTiM slightly more memory efficient and faster.
 
