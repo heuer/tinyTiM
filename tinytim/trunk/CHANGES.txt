@@ -9,11 +9,11 @@ Changes Log
 
 Bugfixes:
 ---------
-* Bug #2812460 -- Port the Check class from Ontopia back to 
-                  tinyTiM
+* Bug #2812460 -- Port the Check class from Ontopia back to tinyTiM
 * Bug #2809821 -- Ensure same topic map constraint
 * Bug #2561306 -- Move TinyTimMapInputHandler to the core
 * Bug #2824834 -- Reifier at duplicate construct fails
+* Bug #2824837 -- Same iid at a duplicate statement does not work
 
 
 2.0.0 a4 (06.12.2008)
