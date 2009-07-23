@@ -48,6 +48,8 @@ import org.tmapi.index.TypeInstanceIndex;
  */
 public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
 
+    @SuppressWarnings("unused")
+    // TODO can we remove it, if we don't use it?
     private static final Logger LOG = Logger
             .getLogger(DefaultTMCLPreprocessor.class.getName());
 
@@ -109,7 +111,6 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
      */
     @Override
     public Set<Locator> getSuppressableSubjectIdentifiers() {
-        // TODO Auto-generated method stub
         return null;
     }
 
@@ -150,7 +151,7 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
         _processOverlapConstraints(topicMap, tiIdx, topics, assocs);
         _processAssociationRoleConstraints(topicMap, tiIdx, topics, assocs);
         _processRolePlayerConstraints(topicMap, tiIdx, topics, assocs);
-        _processOtherRoleConstraints(topicMap, tiIdx, topics, assocs);
+        _processRoleCombinationConstraints(topicMap, tiIdx, topics, assocs);
         _processOccurrenceConstraints(topicMap, tiIdx, topics, assocs);
         _processNameConstraints(topicMap, tiIdx, topics, assocs);
         _processScopeConstraints(topicMap, tiIdx, topics, assocs);
@@ -408,17 +409,17 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
         removeConstraint(constraint, topics, occCounter);
     }
 
-    private void _processOtherRoleConstraints(TopicMap topicMap,
+    private void _processRoleCombinationConstraints(TopicMap topicMap,
             TypeInstanceIndex tiIdx, Collection<Topic> topics,
             Collection<Association> assocs) {
         for (Topic constraint : _getConstraintInstances(topicMap, tiIdx,
-                TMCL.OTHER_ROLE_CONSTRAINT)) {
-            _processOtherRoleConstraint(constraint, topics, assocs);
+                TMCL.ROLE_COMBINATION_CONSTRAINT)) {
+            _processRoleCombinationConstraint(constraint, topics, assocs);
         }
 
     }
 
-    private void _processOtherRoleConstraint(Topic constraint,
+    private void _processRoleCombinationConstraint(Topic constraint,
             Collection<Topic> topics, Collection<Association> assocs) {
         Topic type = _getConstrainedTopicTypePlayer(constraint, assocs);
         Topic assocType = _getConstrainedStatementPlayer(constraint, assocs);
@@ -427,7 +428,7 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
         Topic otherPlayer = _getOtherConstrainedTopicTypePlayer(constraint,
                 assocs);
 
-        DefaultTemplate tpl = new DefaultTemplate("other-role");
+        DefaultTemplate tpl = new DefaultTemplate("role-combination");
         tpl.addParameter(roleType);
         tpl.addParameter(type);
         tpl.addParameter(otherRole);
