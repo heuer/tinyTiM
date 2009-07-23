@@ -564,7 +564,8 @@ public class CTMTopicMapWriter implements TopicMapWriter {
                         TMCL.ROLE_PLAYER_CONSTRAINT, TMCL.SCOPE_CONSTRAINT,
                         TMCL.REIFIER_CONSTRAINT,
                         TMCL.ASSOCIATION_ROLE_CONSTRAINT,
-                        TMCL.OTHER_ROLE_CONSTRAINT,
+                        TMCL.ROLE_COMBINATION_CONSTRAINT,
+                        TMCL.TOPIC_REIFIES_CONSTRAINT,
                         TMCL.OCCURRENCE_DATATYPE_CONSTRAINT,
                         TMCL.UNIQUE_VALUE_CONSTRAINT,
                         TMCL.REGULAR_EXPRESSION_CONSTRAINT
