@@ -2,9 +2,10 @@
 Changes Log
 ===========
 
-2.0.0 a5 (xx.yy.2009)
+2.0.0 a5 (23.07.2009)
 ---------------------
 
+* Updated to TMAPI 2.0a2
 * Updated TMCL constants (implemented by Hannes Niederhausen)
 
 Bugfixes:
@@ -14,6 +15,7 @@ Bugfixes:
 * Bug #2561306 -- Move TinyTimMapInputHandler to the core
 * Bug #2824834 -- Reifier at duplicate construct fails
 * Bug #2824837 -- Same iid at a duplicate statement does not work
+
 
 
 2.0.0 a4 (06.12.2008)
