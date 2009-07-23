@@ -6,14 +6,23 @@
 
     <property name="dir.src" value="${basedir}/src/main/java"/>
     <property name="dir.test" value="${basedir}/src/test/java"/>
+    <property name="dir.cxtm" value="${basedir}/src/test/cxtm/"/>
     <property name="dir.lib" value="${basedir}/lib"/>
 
     <property name="lib.junit" value="${dir.lib}/junit-4.5.jar"/>
     <property name="lib.tmapi" value="${dir.lib}/tmapi-2.0a2.jar"/>
-    <property name="lib.tinytim" value="${dir.lib}/tinytim-2.0.0a5-snapshot-200907221908.jar"/>
-    <property name="lib.tinytim.tests" value="${dir.lib}/tinytim-2.0.0a4-tests.jar"/>
+    <property name="lib.tinytim" value="${dir.lib}/tinytim-2.0.0a5.jar"/>
+    <property name="lib.tinytim.tests" value="${dir.lib}/tinytim-2.0.0a5-tests.jar"/>
     <property name="lib.logging" value="${dir.lib}/slf4j-api-1.5.8.jar"/>
+    <property name="lib.logger" value="${dir.lib}/slf4j-jdk14-1.5.8.jar"/>
+    <property name="lib.jing" value="${dir.lib}/jing.jar"/>
     <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.4.jar"/>
+    <property name="lib.jtm" value="${dir.lib}/semagia-mio-jtm-0.9.3.jar"/>
+    <property name="lib.ltm" value="${dir.lib}/semagia-mio-ltm-0.9.4.jar"/>
+    <property name="lib.rdf" value="${dir.lib}/semagia-mio-rdf-0.9.3.jar"/>
+    <property name="lib.snello" value="${dir.lib}/semagia-mio-snello-0.9.3.jar"/>
+    <property name="lib.tmxml" value="${dir.lib}/semagia-mio-tmxml-0.9.3.jar"/>
+    <property name="lib.xtm" value="${dir.lib}/semagia-mio-xtm-0.9.4.jar"/>
 
     <target name="help">
         <echo message="------------------------"/>
@@ -74,6 +83,9 @@
             noindex="false"
             windowtitle="tinyTiM MIO API v${dist.version}"
             doctitle="tinyTiM API MIO v${dist.version}">
+            <fileset dir="${dir.src}">
+                <exclude name="org/tinytim/mio/internal/**"/>
+            </fileset>
 <!--            
             <doclet name="net.gleamynode.apiviz.APIviz"
                 path="${dir.lib}/apiviz-1.2.5.GA.jar">
@@ -105,6 +117,7 @@
         </javac>
         <junit printsummary="true" showoutput="false"
             errorProperty="test.failed" failureProperty="test.failed">
+            <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
             <classpath>
                 <pathelement location="${dir.build.classes}"/>
                 <pathelement location="${dir.build.tests}"/>
@@ -112,14 +125,19 @@
                 <pathelement location="${lib.tmapi}"/>
                 <pathelement location="${lib.tinytim}"/>
                 <pathelement location="${lib.tinytim.tests}"/>
+                <pathelement location="${lib.logging}"/>
+                <pathelement location="${lib.logger}"/>
+                <pathelement location="${lib.jing}"/>
                 <pathelement location="${lib.mio}"/>
+                <pathelement location="${lib.jtm}"/>
+                <pathelement location="${lib.ltm}"/>
+                <pathelement location="${lib.rdf}"/>
+                <pathelement location="${lib.snello}"/>
+                <pathelement location="${lib.tmxml}"/>
+                <pathelement location="${lib.xtm}"/>
             </classpath>
             <formatter type="brief" usefile="false"/>
-            <batchtest fork="no" todir="${dir.build}">
-                <fileset dir="${dir.build.tests}/">
-                    <include name="**/Test**.class"/>
-                </fileset>
-            </batchtest>
+            <test name="org.tinytim.mio.AllTests"/>
         </junit>
         <fail message="Tests failed. Check test output." if="test.failed"/>
     </target>
