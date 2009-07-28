@@ -333,7 +333,6 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
     }
 
     private final class AddTypedHandler extends _EvtHandler {
-        @SuppressWarnings("unchecked")
         public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             Typed typed = (Typed) newValue;
@@ -343,7 +342,6 @@ public class TypeInstanceIndexImpl extends AbstractIndex implements TypeInstance
     }
 
     private final class RemoveTypedHandler extends _EvtHandler {
-        @SuppressWarnings("unchecked")
         public void handleEvent(Event evt, IConstruct sender, Object oldValue,
                 Object newValue) {
             Typed typed = (Typed) oldValue;
