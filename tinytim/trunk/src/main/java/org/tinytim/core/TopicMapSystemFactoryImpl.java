@@ -158,7 +158,7 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
     public void setProperty(final String propertyName, Object value) {
         if (value != null) {
             if (Property.TMSHARE.equals(propertyName)) {
-                if (!(value instanceof Set)) {
+                if (!(value instanceof Set<?>)) {
                     value = Collections.singleton(value);
                 }
             }
