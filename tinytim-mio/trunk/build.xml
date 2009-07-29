@@ -18,7 +18,7 @@
     <property name="lib.jing" value="${dir.lib}/jing.jar"/>
     <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.4.jar"/>
     <property name="lib.jtm" value="${dir.lib}/semagia-mio-jtm-0.9.3.jar"/>
-    <property name="lib.ltm" value="${dir.lib}/semagia-mio-ltm-0.9.4.jar"/>
+    <property name="lib.ltm" value="${dir.lib}/semagia-mio-ltm-0.9.5.jar"/>
     <property name="lib.rdf" value="${dir.lib}/semagia-mio-rdf-0.9.3.jar"/>
     <property name="lib.snello" value="${dir.lib}/semagia-mio-snello-0.9.3.jar"/>
     <property name="lib.tmxml" value="${dir.lib}/semagia-mio-tmxml-0.9.3.jar"/>
