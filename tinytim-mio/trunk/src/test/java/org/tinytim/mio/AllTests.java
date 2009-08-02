@@ -33,6 +33,8 @@ public class AllTests extends TestSuite {
         TestSuite suite = new TestSuite();
         suite.addTest(TestJTMTopicMapReader.suite());
         suite.addTest(TestN3TopicMapReader.suite());
+        suite.addTest(TestNTriplesTopicMapReader.suite());
+        suite.addTest(TestRDFXMLTopicMapReader.suite());
         suite.addTest(TestLTMTopicMapReader.suite());
         suite.addTest(TestTMXMLTopicMapReader.suite());
         suite.addTest(TestTMXMLValidatingTopicMapReader.suite());
