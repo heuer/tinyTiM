@@ -11,7 +11,7 @@
 
     <property name="lib.junit" value="${dir.lib}/junit-4.5.jar"/>
     <property name="lib.tmapi" value="${dir.lib}/tmapi-2.0a2.jar"/>
-    <property name="lib.tinytim" value="${dir.lib}/tinytim-2.0.0a5.jar"/>
+    <property name="lib.tinytim" value="${dir.lib}/tinytim-2.0.0a6-snapshot-200908121355.jar"/>
     <property name="lib.tinytim.tests" value="${dir.lib}/tinytim-2.0.0a5-tests.jar"/>
     <property name="lib.logging" value="${dir.lib}/slf4j-api-1.5.8.jar"/>
     <property name="lib.logger" value="${dir.lib}/slf4j-jdk14-1.5.8.jar"/>
@@ -22,7 +22,7 @@
     <property name="lib.rdf" value="${dir.lib}/semagia-mio-rdf-0.9.3.jar"/>
     <property name="lib.snello" value="${dir.lib}/semagia-mio-snello-0.9.3.jar"/>
     <property name="lib.tmxml" value="${dir.lib}/semagia-mio-tmxml-0.9.3.jar"/>
-    <property name="lib.xtm" value="${dir.lib}/semagia-mio-xtm-0.9.4.jar"/>
+    <property name="lib.xtm" value="${dir.lib}/semagia-mio-xtm-0.9.5.jar"/>
 
     <target name="help">
         <echo message="------------------------"/>

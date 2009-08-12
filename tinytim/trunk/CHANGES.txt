@@ -4,7 +4,9 @@ Changes Log
 
 2.0.0 a6 (xx.yy.2009)
 ---------------------
-
+* Added support to convert XTM 1.0 class-instance relationships
+  to TMDM type-instance relationships
+* Added support to convert XTM 1.0 PSIs to TMDM PSIs
 
 
 

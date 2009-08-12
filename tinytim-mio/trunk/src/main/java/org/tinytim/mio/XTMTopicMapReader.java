@@ -19,8 +19,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.tinytim.utils.XTM10Utils;
 import org.tmapi.core.TopicMap;
 
+import com.semagia.mio.IVersionAwareDeserializer;
 import com.semagia.mio.Source;
 import com.semagia.mio.Syntax;
 
@@ -85,6 +87,18 @@ public final class XTMTopicMapReader extends AbstractXTMTopicMapReader {
      */
     public XTMTopicMapReader(final TopicMap topicMap, final Source source) {
         super(topicMap, Syntax.XTM, source);
+    }
+
+    /* (non-Javadoc)
+     * @see org.tinytim.mio.AbstractTopicMapReader#postProcess()
+     */
+    @Override
+    protected void postProcess() {
+        if (super._deserializer instanceof IVersionAwareDeserializer 
+                && ((IVersionAwareDeserializer) super._deserializer).getVersion().equals("1.0") 
+                && super._tm != null) {
+            XTM10Utils.convertToTMDM(super._tm);
+        }
     }
 
 }
