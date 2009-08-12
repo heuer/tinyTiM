@@ -4,7 +4,9 @@ Changes Log
 
 2.0.0 a6 (xx.yy.2009)
 ---------------------
-
+* XTM(10)TopicMapReader converts automatically XTM 1.0 PSIs to
+  TMDM PSIs and XTM 1.0 reification to TMDM reification.
+* XTM10TopicMapReader handles xml:base correctly
 
 
 2.0.0 a5 (23.07.2009)

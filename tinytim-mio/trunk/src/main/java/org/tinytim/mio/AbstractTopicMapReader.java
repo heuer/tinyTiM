@@ -145,7 +145,8 @@ abstract class AbstractTopicMapReader implements TopicMapReader  {
     }
 
     /**
-     * Called if parsing has been finished without errors, does nothing by default.
+     * Called if parsing has been finished without errors, 
+     * does nothing by default.
      * <p>
      * The {@link #_deserializer} is still available.
      * </p>
