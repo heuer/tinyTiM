@@ -17,6 +17,8 @@ package org.tinytim.utils;
 
 import java.util.logging.Logger;
 
+import org.tinytim.voc.TMDM;
+import org.tinytim.voc.XTM10;
 import org.tmapi.core.Construct;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Reifiable;
@@ -27,7 +29,7 @@ import org.tmapi.core.TopicMap;
  * Utility functions to convert XTM 1.0 legacy features into the TMDM equivalent.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
 public class XTM10Utils {
 
@@ -36,6 +38,55 @@ public class XTM10Utils {
     }
 
     private static final Logger LOG = Logger.getLogger(XTM10Utils.class.getName());
+
+    /**
+     * Converts XTM 1.0 PSIs to TMDM PSIs and converts the XTM 1.0 
+     * reification mechanism to TMDM reification.
+     * 
+     * @see #convertClassInstanceToTypeInstance(TopicMap)
+     * @see #convertReification(TopicMap)
+     *
+     * @param topicMap
+     */
+    public static void convertToTMDM(final TopicMap topicMap) {
+        convertXTM10PSIs(topicMap);
+        convertReification(topicMap);
+    }
+
+    /**
+     * Converts <tt>xtm10:class-instance</tt>, <tt>xtm10:class</tt>,  
+     * <tt>xtm10:instance</tt>, <tt>xtm10:superclass-subclass</tt>, 
+     * <tt>xtm10:superclass</tt>, <tt>xtm10:subclass</tt>, and 
+     * <tt>xtm10:sort</tt> to the TMDM equivalent. 
+     * 
+     * The XTM 1.0 PSIs will be removed and replaced with the TMDM equivalent.
+     *
+     * @param topicMap The topic map to convert.
+     */
+    public static void convertXTM10PSIs(final TopicMap topicMap) {
+        _replaceSubjectIdentifier(topicMap, XTM10.CLASS_INSTANCE, TMDM.TYPE_INSTANCE);
+        _replaceSubjectIdentifier(topicMap, XTM10.CLASS, TMDM.TYPE);
+        _replaceSubjectIdentifier(topicMap, XTM10.INSTANCE, TMDM.INSTANCE);
+        _replaceSubjectIdentifier(topicMap, XTM10.SUPERCLASS_SUBCLASS, TMDM.SUPERTYPE_SUBTYPE);
+        _replaceSubjectIdentifier(topicMap, XTM10.SUPERCLASS, TMDM.SUPERTYPE);
+        _replaceSubjectIdentifier(topicMap, XTM10.SUBCLASS, TMDM.SUBTYPE);
+        _replaceSubjectIdentifier(topicMap, XTM10.SORT, TMDM.SORT);
+    }
+
+    /**
+     * Replaces the <tt>source</tt> subject identifier with the <tt>target</tt>.
+     *
+     * @param topicMap The topic map.
+     * @param source The source PSI
+     * @param target The target PSI.
+     */
+    private static void _replaceSubjectIdentifier(final TopicMap topicMap, final Locator source, final Locator target) {
+        Topic topic = topicMap.getTopicBySubjectIdentifier(source);
+        if (topic != null) {
+            topic.addSubjectIdentifier(target);
+            topic.removeSubjectIdentifier(source);
+        }
+    }
 
     /**
      * Converts the XTM 1.0 reification mechanism into TMDM reification.
