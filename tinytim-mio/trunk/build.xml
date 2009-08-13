@@ -4,18 +4,21 @@
     <tstamp/>
     <property name="release_type" value="-snapshot-${DSTAMP}${TSTAMP}"/>
 
+    <!-- Directories -->
     <property name="dir.src" value="${basedir}/src/main/java"/>
     <property name="dir.test" value="${basedir}/src/test/java"/>
     <property name="dir.cxtm" value="${basedir}/src/test/cxtm/"/>
     <property name="dir.lib" value="${basedir}/lib"/>
+    <property name="dir.build" value="${basedir}/build"/>
+    <property name="dir.dist.root" value="${dir.build}/dist"/>
+    <property name="dir.dist" value="${dir.dist.root}/${dist.name}"/>
+    <property name="dir.build.classes" value="${dir.build}/classes"/>
+    <property name="dir.build.tests" value="${dir.build}/tests"/>
+    <property name="dir.javadocs" value="${dir.dist}/docs/api"/>
 
-    <property name="lib.junit" value="${dir.lib}/junit-4.5.jar"/>
-    <property name="lib.tmapi" value="${dir.lib}/tmapi-2.0a2.jar"/>
-    <property name="lib.tinytim" value="${dir.lib}/tinytim-2.0.0a6-snapshot-200908121355.jar"/>
-    <property name="lib.tinytim.tests" value="${dir.lib}/tinytim-2.0.0a5-tests.jar"/>
-    <property name="lib.logging" value="${dir.lib}/slf4j-api-1.5.8.jar"/>
-    <property name="lib.logger" value="${dir.lib}/slf4j-jdk14-1.5.8.jar"/>
+    <!-- Libs -->
     <property name="lib.jing" value="${dir.lib}/jing.jar"/>
+    <property name="lib.junit" value="${dir.lib}/junit-4.5.jar"/>
     <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.4.jar"/>
     <property name="lib.jtm" value="${dir.lib}/semagia-mio-jtm-0.9.3.jar"/>
     <property name="lib.ltm" value="${dir.lib}/semagia-mio-ltm-0.9.5.jar"/>
@@ -23,6 +26,44 @@
     <property name="lib.snello" value="${dir.lib}/semagia-mio-snello-0.9.3.jar"/>
     <property name="lib.tmxml" value="${dir.lib}/semagia-mio-tmxml-0.9.3.jar"/>
     <property name="lib.xtm" value="${dir.lib}/semagia-mio-xtm-0.9.5.jar"/>
+
+    <!-- tinyTiM and TMAPI libs -->
+    <path id="libs.tinytim">
+        <fileset dir="${dir.lib}">
+            <include name="tmapi-2.*.jar"/>
+            <include name="tinytim-*.jar"/>
+        </fileset>
+    </path>
+
+    <!-- The mio libs incl. dependencies -->
+    <path id="libs.mio">
+        <!-- Logging -->
+        <fileset dir="${dir.lib}">
+            <include name="slf4j-*"/>
+        </fileset>
+        <!-- Validation -->
+        <pathelement location="${lib.jing}"/>
+        <!-- The mio libs -->
+        <pathelement location="${lib.mio}"/>
+        <pathelement location="${lib.jtm}"/>
+        <pathelement location="${lib.ltm}"/>
+        <pathelement location="${lib.rdf}"/>
+        <pathelement location="${lib.snello}"/>
+        <pathelement location="${lib.tmxml}"/>
+        <pathelement location="${lib.xtm}"/>
+    </path>
+    
+    <path id="path.compile">
+        <path refid="libs.tinytim"/>
+        <path refid="libs.mio"/>
+    </path>
+    
+    <path id="path.test">
+        <path refid="path.compile"/>
+        <pathelement location="${lib.junit}"/>
+        <pathelement location="${dir.build.classes}"/>
+        <pathelement location="${dir.build.tests}"/>
+    </path>
 
     <target name="help">
         <echo message="------------------------"/>
@@ -44,13 +85,6 @@
         <property name="tinytim-mio.tar" value="${dist.name}.tar"/>
         <property name="tinytim-mio.tar.gz" value="${tinytim-mio.tar}.gz"/>
         <property name="tinytim-mio.zip" value="${dist.name}.zip"/>
-
-        <property name="dir.build" value="${basedir}/build"/>
-        <property name="dir.dist.root" value="${dir.build}/dist"/>
-        <property name="dir.dist" value="${dir.dist.root}/${dist.name}"/>
-        <property name="dir.build.classes" value="${dir.build}/classes"/>
-        <property name="dir.build.tests" value="${dir.build}/tests"/>
-        <property name="dir.javadocs" value="${dir.dist}/docs/api"/>
     </target>
 
     <!-- =================================================================== -->
@@ -105,37 +139,13 @@
             optimize="${optimize}"
             target="1.5"
             >
-            <classpath>
-                <pathelement location="${dir.build.classes}"/>
-                <pathelement location="${lib.junit}"/>
-                <pathelement location="${lib.tmapi}"/>
-                <pathelement location="${lib.tinytim}"/>
-                <pathelement location="${lib.tinytim.tests}"/>
-                <pathelement location="${lib.mio}"/>
-            </classpath>
+            <classpath refid="path.test"/>
             <src path="${dir.test}"/>
         </javac>
         <junit printsummary="true" showoutput="false"
             errorProperty="test.failed" failureProperty="test.failed">
             <sysproperty key="org.tinytim.cxtm-test-dir" value="${dir.cxtm}"/>
-            <classpath>
-                <pathelement location="${dir.build.classes}"/>
-                <pathelement location="${dir.build.tests}"/>
-                <pathelement location="${lib.junit}"/>
-                <pathelement location="${lib.tmapi}"/>
-                <pathelement location="${lib.tinytim}"/>
-                <pathelement location="${lib.tinytim.tests}"/>
-                <pathelement location="${lib.logging}"/>
-                <pathelement location="${lib.logger}"/>
-                <pathelement location="${lib.jing}"/>
-                <pathelement location="${lib.mio}"/>
-                <pathelement location="${lib.jtm}"/>
-                <pathelement location="${lib.ltm}"/>
-                <pathelement location="${lib.rdf}"/>
-                <pathelement location="${lib.snello}"/>
-                <pathelement location="${lib.tmxml}"/>
-                <pathelement location="${lib.xtm}"/>
-            </classpath>
+            <classpath refid="path.test"/>
             <formatter type="brief" usefile="false"/>
             <test name="org.tinytim.mio.AllTests"/>
         </junit>
@@ -150,13 +160,7 @@
             debug="${debug}"
             target="1.5"
             >
-            <classpath>
-                <pathelement location="${lib.tmapi}"/>
-                <pathelement location="${lib.tinytim}"/>
-                <pathelement location="${lib.tinytim.tests}"/>
-                <pathelement location="${lib.mio}"/>
-                <pathelement location="${lib.logging}"/>
-            </classpath>
+            <classpath refid="path.compile"/>
             <src path="${dir.src}"/>
         </javac>
     </target>
