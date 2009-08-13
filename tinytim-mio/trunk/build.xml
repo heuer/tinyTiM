@@ -11,10 +11,8 @@
     <property name="dir.lib" value="${basedir}/lib"/>
     <property name="dir.build" value="${basedir}/build"/>
     <property name="dir.dist.root" value="${dir.build}/dist"/>
-    <property name="dir.dist" value="${dir.dist.root}/${dist.name}"/>
     <property name="dir.build.classes" value="${dir.build}/classes"/>
     <property name="dir.build.tests" value="${dir.build}/tests"/>
-    <property name="dir.javadocs" value="${dir.dist}/docs/api"/>
 
     <!-- Libs -->
     <property name="lib.jing" value="${dir.lib}/jing.jar"/>
@@ -80,6 +78,9 @@
     <target name="init">
         <property name="dist.version" value="${version}${version_suffix}${release_type}"/>
         <property name="dist.name" value="tinytim-mio-${dist.version}"/>
+
+        <property name="dir.dist" value="${dir.dist.root}/${dist.name}"/>
+        <property name="dir.javadocs" value="${dir.dist}/docs/api"/>
 
         <property name="tinytim-mio.jar" value="${dist.name}.jar"/>
         <property name="tinytim-mio.tar" value="${dist.name}.tar"/>
