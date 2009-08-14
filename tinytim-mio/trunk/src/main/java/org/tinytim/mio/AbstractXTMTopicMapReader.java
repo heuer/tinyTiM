@@ -35,29 +35,46 @@ import com.semagia.mio.Syntax;
  */
 abstract class AbstractXTMTopicMapReader extends AbstractTopicMapReader {
 
+    /**
+     * The underlying topic map.
+     * 
+     * This can be <tt>null</tt> if 
+     * {@link #AbstractXTMTopicMapReader(IMapHandler, Syntax, Source)}
+     * was used to create an instance of this class and the provided handler 
+     * is not an instance of {@link TinyTimMapInputHandler}.
+     */
+    protected TopicMap _tm;
+
     protected AbstractXTMTopicMapReader(TopicMap topicMap, Syntax syntax,
             File source) throws IOException {
         super(topicMap, syntax, source);
+        _tm = topicMap;
     }
 
     protected AbstractXTMTopicMapReader(TopicMap topicMap, Syntax syntax,
             File source, String docIRI) throws IOException {
         super(topicMap, syntax, source, docIRI);
+        _tm = topicMap;
     }
 
     protected AbstractXTMTopicMapReader(TopicMap topicMap, Syntax syntax,
             InputStream source, String docIRI) {
         super(topicMap, syntax, source, docIRI);
+        _tm = topicMap;
     }
 
     protected AbstractXTMTopicMapReader(TopicMap topicMap, Syntax syntax,
             Source source) {
         super(topicMap, syntax, source);
+        _tm = topicMap;
     }
 
     protected AbstractXTMTopicMapReader(IMapHandler handler, Syntax syntax,
             Source source) {
         super(handler, syntax, source);
+        if (handler instanceof TinyTimMapInputHandler) {
+            _tm = ((TinyTimMapInputHandler) handler).getTopicMap();
+        }
     }
 
     /**
