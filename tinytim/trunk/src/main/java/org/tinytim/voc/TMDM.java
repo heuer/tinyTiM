@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Lars Heuer (heuer[at]semagia.com)
+ * Copyright 2008 - 2009 Lars Heuer (heuer[at]semagia.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,8 +20,6 @@ import org.tmapi.core.Locator;
 /**
  * Constants for TMDM 1.0 (model) PSIs.
  * 
- * Copied with permission from the Semagia MIO project.
- * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
@@ -32,6 +30,11 @@ public final class TMDM extends Vocabulary {
     }
 
     private static final String _BASE = Namespace.TMDM_MODEL;
+
+    /**
+     * Core concept of a subject.
+     */
+    public static final Locator SUBJECT = _createLocator(_BASE + "subject");
 
     /**
      * Core concept of type-instance relationships. 

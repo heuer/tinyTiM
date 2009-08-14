@@ -100,6 +100,15 @@ public final class TinyTimMapInputHandler implements IMapHandler {
         _delayedItemIdentifiers = CollectionFactory.createIdentityMap(_DELAYED_ITEM_IDENTIFIER_SIZE);
     }
 
+    /**
+     * Returns the underlying topic map.
+     *
+     * @return The topic map this handler operates upon.
+     */
+    TopicMap getTopicMap() {
+        return _tm;
+    }
+
     /* (non-Javadoc)
      * @see com.semagia.mio.IMapHandler#startTopicMap()
      */
