@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
 
 import org.tinytim.core.value.Literal;
 import org.tinytim.internal.api.IIndexManagerAware;
@@ -47,11 +46,6 @@ import org.tmapi.index.TypeInstanceIndex;
  * @version $Rev$ - $Date$
  */
 public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
-
-    @SuppressWarnings("unused")
-    // TODO can we remove it, if we don't use it?
-    private static final Logger LOG = Logger
-            .getLogger(DefaultTMCLPreprocessor.class.getName());
 
     private final Map<Topic, Collection<ITemplate>> _topic2Templates;
 
