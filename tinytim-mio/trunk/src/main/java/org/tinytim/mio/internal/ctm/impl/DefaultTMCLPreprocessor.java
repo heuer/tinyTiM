@@ -150,6 +150,7 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
         _processNameConstraints(topicMap, tiIdx, topics, assocs);
         _processScopeConstraints(topicMap, tiIdx, topics, assocs);
         _processReifierConstraints(topicMap, tiIdx, topics, assocs);
+        _processTopicReifiesConstraints(topicMap, tiIdx, topics, assocs);
         _processBelongsToSchema(topicMap, tiIdx, topics, assocs);
     }
 
@@ -345,17 +346,17 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
             TypeInstanceIndex tiIdx, Collection<Topic> topics,
             Collection<Association> assocs) {
         for (Topic constraint : _getConstraintInstances(topicMap, tiIdx,
-                TMCL.BELONGS_TO_SCHEMA)) {
+                TMCL.REIFIER_CONSTRAINT)) {
             _processReifierConstraint(constraint, topics, assocs);
         }
 
     }
-
+    
     private void _processReifierConstraint(Topic constraint,
             Collection<Topic> topics, Collection<Association> assocs) {
-        Topic reifierType = _getConstrainedStatementPlayer(constraint, assocs);
-        Topic reifiableType = _getAllowedReifierPlayer(constraint, assocs);
-
+        Topic reifiableType = _getConstrainedStatementPlayer(constraint, assocs);
+        Topic reifierType = _getAllowedReifierPlayer(constraint, assocs);
+    
         ILiteral cardMin = _getCardMin(constraint);
         ILiteral cardMax = _getCardMax(constraint);
         DefaultTemplate tpl = null;
@@ -371,10 +372,47 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
         else {
             tpl = new DefaultTemplate("may-have-reifier");
             tpl.addParameter(reifierType);
+    
+        }
+    
+        _registerTemplate(reifiableType, tpl);
+        removeConstraint(constraint, topics, 2);
+    }
+
+    private void _processTopicReifiesConstraints(TopicMap topicMap,
+            TypeInstanceIndex tiIdx, Collection<Topic> topics,
+            Collection<Association> assocs) {
+        for (Topic constraint : _getConstraintInstances(topicMap, tiIdx,
+                TMCL.TOPIC_REIFIES_CONSTRAINT)) {
+            _processTopicReifiesConstraint(constraint, topics, assocs);
+        }
+
+    }
+    
+    private void _processTopicReifiesConstraint(Topic constraint,
+            Collection<Topic> topics, Collection<Association> assocs) {
+        Topic reifiableType = _getConstrainedStatementPlayer(constraint, assocs);
+        Topic reifierType = _getConstrainedTopicTypePlayer(constraint, assocs);
+
+        ILiteral cardMin = _getCardMin(constraint);
+        ILiteral cardMax = _getCardMax(constraint);
+        DefaultTemplate tpl = null;
+        if (cardMin.getValue().equals(cardMax.getValue())) {
+            if (cardMin.getValue().equals("0")) {
+                tpl = new DefaultTemplate("cannot-reify");
+            }
+            else {
+                tpl = new DefaultTemplate("must-reify");
+                tpl.addParameter(reifiableType);
+            }
+        }
+        else {
+            tpl = new DefaultTemplate("may");
+            tpl.addParameter(reifiableType);
 
         }
 
-        _registerTemplate(reifiableType, tpl);
+        _registerTemplate(reifierType, tpl);
         removeConstraint(constraint, topics, 2);
     }
 
@@ -382,7 +420,7 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
             TypeInstanceIndex tiIdx, Collection<Topic> topics,
             Collection<Association> assocs) {
         for (Topic constraint : _getConstraintInstances(topicMap, tiIdx,
-                TMCL.ROLE_PLAYER_CONSTRAINT)) {
+                TMCL.TOPIC_ROLE_CONSTRAINT)) {
             _processRolePlayerConstraint(constraint, topics, assocs);
         }
 
