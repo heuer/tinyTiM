@@ -32,7 +32,8 @@ public final class TMDM extends Vocabulary {
     private static final String _BASE = Namespace.TMDM_MODEL;
 
     /**
-     * Core concept of a subject.
+     * Core concept of a subject. Although it this identifier is in the TMDM namespace,
+     * it really is specified by TMCL.
      */
     public static final Locator SUBJECT = _createLocator(_BASE + "subject");
 
