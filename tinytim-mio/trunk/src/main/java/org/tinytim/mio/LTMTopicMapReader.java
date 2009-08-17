@@ -110,7 +110,7 @@ public final class LTMTopicMapReader extends AbstractTopicMapReader {
      * form <tt>uri-of-file#--reified--id</tt> and the reifying topic should 
      * receive a subject identifier of the same form.
      * <p>
-     * By default this "feature" is disabled; the parser sets [reifier] property 
+     * By default this "feature" is disabled; the parser sets the [reifier] property 
      * of the reified construct and does not add any additional IRIs. To be 
      * conform to the LTM specification, this feature has to be enabled even if
      * it adds no value.
