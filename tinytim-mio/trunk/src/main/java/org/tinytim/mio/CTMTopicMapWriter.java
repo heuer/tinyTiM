@@ -140,7 +140,8 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         ASSOCIATION,
         ROLE,
         OCCURRENCE,
-        NAME
+        NAME,
+        SUBJECT
     }
 
     /**
@@ -468,6 +469,13 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         _newline();
         _writeSection("INSTANCES");
         _writeSection("Topics");
+        // remove tmdm:subject, because filter below doesn't work. tmdm:subject plays a role, so
+        // _omitTopic returns false - we definitly don't want "tmdm:subject ." in our ctm file, do we?
+        Topic topic = topicMap.createTopicBySubjectIdentifier(TMDM.SUBJECT);
+        if ( (topic!=null) && (topics.contains(topic)) ) {
+            topics.remove(topic);
+        }
+
         _writeTopics(topics);
         if (!assocs.isEmpty()) {
             Association[] assocArray = assocs.toArray(new Association[assocs.size()]);
@@ -536,6 +544,7 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         _topic2Templates.putAll(tmclProcessor.getTopicToTemplatesMapping());
     }
 
+    @SuppressWarnings("deprecation")
     private Locator[] _getSubjectIdentifiersToFilter(TypeFilter mode) {
         Locator[] toFilter = new Locator[0]; 
         switch (mode) {
@@ -616,7 +625,8 @@ public class CTMTopicMapWriter implements TopicMapWriter {
                         TMCL.CARD_MAX, 
                         TMCL.DATATYPE,
                         TMCL.REGEXP,
-                        TMCL.VALIDATION_EXPRESSION
+                        TMCL.VALIDATION_EXPRESSION,
+                        TMDM.SUBJECT    // the occurrence
                 };
             }
             break;
@@ -660,7 +670,6 @@ public class CTMTopicMapWriter implements TopicMapWriter {
                       && topic.getTypes().isEmpty()
                       && topic.getNames().isEmpty() 
                       && topic.getOccurrences().isEmpty()
-                      && topic.getRolesPlayed().isEmpty()
                       && topic.getReified() == null;
     }
 

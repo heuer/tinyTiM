@@ -30,6 +30,7 @@ import org.tinytim.internal.api.IOccurrence;
 import org.tinytim.mio.internal.ctm.ITMCLPreprocessor;
 import org.tinytim.mio.internal.ctm.ITemplate;
 import org.tinytim.voc.TMCL;
+import org.tinytim.voc.TMDM;
 import org.tmapi.core.Association;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Occurrence;
@@ -278,7 +279,7 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
             TypeInstanceIndex tiIdx, Collection<Topic> topics,
             Collection<Association> assocs) {
         for (Topic constraint : _getConstraintInstances(topicMap, tiIdx,
-                TMCL.ABSTRACT_TOPIC_TYPE_CONSTRAINT)) {
+                TMCL.ABSTRACT_CONSTRAINT)) {
             _processAbstractTopicConstraint(constraint, topics, assocs);
         }
     }
@@ -614,7 +615,7 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
             TypeInstanceIndex tiIdx, Collection<Topic> topics,
             Collection<Association> assocs) {
         final Topic type = topicMap
-                .getTopicBySubjectIdentifier(TMCL.SCOPE_TYPE);
+                .getTopicBySubjectIdentifier(TMCL.TOPIC_TYPE);
         if (type == null) {
             return;
         }
@@ -641,10 +642,12 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
     private void _processOccurrenceConstraints(TopicMap topicMap,
             TypeInstanceIndex tiIdx, Collection<Topic> topics,
             Collection<Association> assocs) {
-        final Topic type = topicMap
-                .getTopicBySubjectIdentifier(TMCL.OCCURRENCE_TYPE);
+        Topic type = topicMap.getTopicBySubjectIdentifier(TMCL.OCCURRENCE_TYPE);
         if (type == null) {
-            return;
+            // try tmdm:subject
+            type = topicMap.getTopicBySubjectIdentifier(TMDM.SUBJECT);
+            if (type==null)
+                return;
         }
         for (Topic constraint : _getConstraintInstances(topicMap, tiIdx,
                 TMCL.TOPIC_OCCURRENCE_CONSTRAINT)) {
@@ -656,9 +659,12 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
     private void _processNameConstraints(TopicMap topicMap,
             TypeInstanceIndex tiIdx, Collection<Topic> topics,
             Collection<Association> assocs) {
-        final Topic type = topicMap.getTopicBySubjectIdentifier(TMCL.NAME_TYPE);
+        Topic type = topicMap.getTopicBySubjectIdentifier(TMCL.NAME_TYPE);
         if (type == null) {
-            return;
+            // try default name-type
+            type = topicMap.getTopicBySubjectIdentifier(TMDM.TOPIC_NAME);
+            if (type==null)
+                return;
         }
         for (Topic constraint : _getConstraintInstances(topicMap, tiIdx,
                 TMCL.TOPIC_NAME_CONSTRAINT)) {
