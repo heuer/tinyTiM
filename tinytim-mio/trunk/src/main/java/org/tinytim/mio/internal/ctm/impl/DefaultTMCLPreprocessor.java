@@ -602,9 +602,10 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
         }
 
         DefaultTemplate tpl = new DefaultTemplate(templateName);
+        occCounter = _assignCardinality(constraint, tpl, occCounter);
         tpl.addParameter(regEx);
 
-        occCounter = _assignCardinality(constraint, tpl, occCounter);
+        
 
         Topic player = _getConstrainedTopicTypePlayer(constraint, assocs);
         _registerTemplate(player, tpl);
