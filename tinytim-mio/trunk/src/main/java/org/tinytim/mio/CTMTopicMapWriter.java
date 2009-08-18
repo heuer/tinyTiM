@@ -471,11 +471,10 @@ public class CTMTopicMapWriter implements TopicMapWriter {
         _writeSection("Topics");
         // remove tmdm:subject, because filter below doesn't work. tmdm:subject plays a role, so
         // _omitTopic returns false - we definitly don't want "tmdm:subject ." in our ctm file, do we?
-        Topic topic = topicMap.createTopicBySubjectIdentifier(TMDM.SUBJECT);
-        if ( (topic!=null) && (topics.contains(topic)) ) {
+        Topic topic = topicMap.getTopicBySubjectIdentifier(TMDM.SUBJECT);
+        if (topic != null) {
             topics.remove(topic);
         }
-
         _writeTopics(topics);
         if (!assocs.isEmpty()) {
             Association[] assocArray = assocs.toArray(new Association[assocs.size()]);
