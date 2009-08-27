@@ -20,6 +20,7 @@ import java.util.Set;
 import org.tinytim.internal.api.Event;
 import org.tinytim.internal.api.IScope;
 import org.tinytim.internal.api.IScoped;
+import org.tinytim.internal.api.ITopic;
 import org.tinytim.internal.api.ITopicMap;
 import org.tinytim.internal.utils.Check;
 
@@ -34,14 +35,7 @@ import org.tmapi.core.Topic;
  */
 abstract class ScopedImpl extends TypedImpl implements IScoped {
 
-    //NOTE: This class does NOT implement IScoped by intention!
-
     protected IScope _scope;
-
-    protected ScopedImpl(ITopicMap tm) {
-        super(tm);
-        _scope = Scope.UCS;
-    }
 
     protected ScopedImpl(ITopicMap topicMap, Topic type, IScope scope) {
         super(topicMap, type);
@@ -51,6 +45,7 @@ abstract class ScopedImpl extends TypedImpl implements IScoped {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IScoped#getScopeObject()
      */
+    @Override
     public IScope getScopeObject() {
         return _scope;
     }
@@ -58,6 +53,7 @@ abstract class ScopedImpl extends TypedImpl implements IScoped {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IScoped#setScopeObject(org.tinytim.internal.api.IScope)
      */
+    @Override
     public void setScopeObject(IScope scope) {
         if (_scope == scope) {
             return;
@@ -69,6 +65,7 @@ abstract class ScopedImpl extends TypedImpl implements IScoped {
     /* (non-Javadoc)
      * @see org.tmapi.core.Scoped#getScope()
      */
+    @Override
     public Set<Topic> getScope() {
         return _scope.asSet();
     }
@@ -76,6 +73,7 @@ abstract class ScopedImpl extends TypedImpl implements IScoped {
     /* (non-Javadoc)
      * @see org.tmapi.core.Scoped#addTheme(org.tmapi.core.Topic)
      */
+    @Override
     public void addTheme(Topic theme) {
         Check.themeNotNull(this, theme);
         Check.sameTopicMap(this, theme);
@@ -85,11 +83,12 @@ abstract class ScopedImpl extends TypedImpl implements IScoped {
     /* (non-Javadoc)
      * @see org.tmapi.core.Scoped#removeTheme(org.tmapi.core.Topic)
      */
+    @Override
     public void removeTheme(Topic theme) {
         if (theme == null) {
             return;
         }
-        setScopeObject(_scope.remove(theme));
+        setScopeObject(_scope.remove((ITopic) theme));
     }
 
     /* (non-Javadoc)

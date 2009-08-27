@@ -26,4 +26,6 @@ import org.tmapi.core.Variant;
  */
 public interface IVariant extends Variant, IScoped, ILiteralAware, IMovable<Name> {
 
+    public IName getParent();
+
 }

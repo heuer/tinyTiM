@@ -26,6 +26,7 @@ import org.tinytim.internal.api.IConstant;
 import org.tinytim.internal.api.ILiteral;
 import org.tinytim.internal.api.IName;
 import org.tinytim.internal.api.IOccurrence;
+import org.tinytim.internal.api.IScope;
 import org.tinytim.internal.api.ITopic;
 import org.tinytim.internal.api.ITopicMap;
 import org.tinytim.internal.utils.Check;
@@ -84,6 +85,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#addSubjectIdentifier(org.tmapi.core.Locator)
      */
+    @Override
     public void addSubjectIdentifier(Locator sid) {
         Check.subjectIdentifierNotNull(this, sid);
         if (_sids.contains(sid)) {
@@ -96,6 +98,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#removeSubjectIdentifier(org.tmapi.core.Locator)
      */
+    @Override
     public void removeSubjectIdentifier(Locator sid) {
         if (!_sids.contains(sid)) {
             return;
@@ -107,6 +110,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#getSubjectLocators()
      */
+    @Override
     public Set<Locator> getSubjectLocators() {
         return _slos == null ? Collections.<Locator>emptySet()
                              : Collections.unmodifiableSet(_slos);
@@ -115,6 +119,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#addSubjectLocator(org.tmapi.core.Locator)
      */
+    @Override
     public void addSubjectLocator(Locator slo) {
         Check.subjectLocatorNotNull(this, slo);
         if (_slos != null && _sids.contains(slo)) {
@@ -130,6 +135,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#removeSubjectLocator(org.tmapi.core.Locator)
      */
+    @Override
     public void removeSubjectLocator(Locator slo) {
         if (_slos == null || !_slos.contains(slo)) {
             return;
@@ -141,6 +147,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#getOccurrences()
      */
+    @Override
     public Set<Occurrence> getOccurrences() {
         return Collections.unmodifiableSet(_occs);
     }
@@ -148,30 +155,34 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#createOccurrence(org.tmapi.core.Topic, java.lang.String, java.util.Collection)
      */
+    @Override
     public Occurrence createOccurrence(Topic type, String value, Collection<Topic> scope) {
         Check.valueNotNull(this, value);
-        return createOccurrence(type, Literal.create(value), scope);
+        return createOccurrence(type, Literal.create(value), _tm.createScope(scope));
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#createOccurrence(org.tmapi.core.Locator, org.tmapi.core.Topic, java.util.Collection)
      */
+    @Override
     public Occurrence createOccurrence(Topic type, Locator value, Collection<Topic> scope) {
         Check.valueNotNull(this, value);
-        return createOccurrence(type, Literal.create(value), scope);
+        return createOccurrence(type, Literal.create(value), _tm.createScope(scope));
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#createOccurrence(org.tmapi.core.Topic, java.lang.String, org.tmapi.core.Locator, java.util.Collection)
      */
+    @Override
     public Occurrence createOccurrence(Topic type, String value, Locator datatype, Collection<Topic> scope) {
         Check.valueNotNull(this, value, datatype);
-        return createOccurrence(type, Literal.create(value, datatype), scope);
+        return createOccurrence(type, Literal.create(value, datatype), _tm.createScope(scope));
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#createOccurrence(org.tmapi.core.Topic, java.lang.String, org.tmapi.core.Locator, org.tmapi.core.Topic[])
      */
+    @Override
     public Occurrence createOccurrence(Topic type, String value, Locator datatype, Topic... scope) {
         Check.scopeNotNull(this, scope);
         return createOccurrence(type, value, datatype, Arrays.asList(scope));
@@ -180,6 +191,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#createOccurrence(org.tmapi.core.Topic, org.tmapi.core.Locator, org.tmapi.core.Topic[])
      */
+    @Override
     public Occurrence createOccurrence(Topic type, Locator value, Topic... scope) {
         Check.scopeNotNull(this, scope);
         return createOccurrence(type, value, Arrays.asList(scope));
@@ -188,17 +200,19 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#createOccurrence(org.tmapi.core.Topic, java.lang.String, org.tmapi.core.Topic[])
      */
+    @Override
     public Occurrence createOccurrence(Topic type, String value, Topic... scope) {
         Check.scopeNotNull(this, scope);
         return createOccurrence(type, value, Arrays.asList(scope));
     }
 
-    public IOccurrence createOccurrence(Topic type, ILiteral literal, Collection<Topic> scope) {
+    @Override
+    public IOccurrence createOccurrence(Topic type, ILiteral literal, IScope scope) {
         Check.typeNotNull(this, type);
-        Check.scopeNotNull(this, scope);
+        Check.valueNotNull(this, literal);
+        Check.scopeNotNull(this, scope.asSet());
         Check.sameTopicMap(this, type);
-        Check.sameTopicMap(this, scope);
-        IOccurrence occ = new OccurrenceImpl(_tm, type, literal, Scope.create(scope));
+        IOccurrence occ = new OccurrenceImpl(_tm, type, literal, scope); 
         addOccurrence(occ);
         return occ;
     }
@@ -250,6 +264,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#getNames()
      */
+    @Override
     public Set<Name> getNames() {
         return Collections.unmodifiableSet(_names);
     }
@@ -257,6 +272,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#getNames(org.tmapi.core.Topic)
      */
+    @Override
     public Set<Name> getNames(Topic type) {
         Check.typeNotNull(type);
         Set<Name> names = CollectionFactory.createIdentitySet();
@@ -271,6 +287,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#createName(java.lang.String, org.tmapi.core.Topic[])
      */
+    @Override
     public Name createName(String value, Topic... scope) {
         Check.scopeNotNull(this, scope);
         return createName(value, Arrays.asList(scope));
@@ -279,6 +296,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#createName(org.tmapi.core.Topic, java.lang.String, org.tmapi.core.Topic[])
      */
+    @Override
     public Name createName(Topic type, String value, Topic... scope) {
         Check.scopeNotNull(this, scope);
         return createName(type, value, Arrays.asList(scope));
@@ -287,6 +305,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#getOccurrences(org.tmapi.core.Topic)
      */
+    @Override
     public Set<Occurrence> getOccurrences(Topic type) {
         Check.typeNotNull(type);
         Set<Occurrence> occs = CollectionFactory.createIdentitySet();
@@ -301,6 +320,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#createName(java.lang.String, java.util.Collection)
      */
+    @Override
     public Name createName(String value, Collection<Topic> scope) {
         return createName(_tm.createTopicBySubjectIdentifier(TMDM.TOPIC_NAME), value, scope);
     }
@@ -308,18 +328,20 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#createName(org.tmapi.core.Topic, java.lang.String, java.util.Collection)
      */
+    @Override
     public Name createName(Topic type, String value, Collection<Topic> scope) {
         Check.valueNotNull(this, value);
-        return createName(type, Literal.create(value), scope);
+        return createName(type, Literal.create(value), _tm.createScope(scope));
     }
 
-    public IName createName(Topic type, ILiteral literal, Collection<Topic> scope) {
+    @Override
+    public IName createName(Topic type, ILiteral literal, IScope scope) {
         Check.typeNotNull(this, type);
         Check.scopeNotNull(this, scope);
         Check.sameTopicMap(this, type);
-        Check.sameTopicMap(this, scope);
-        NameImpl name = new NameImpl(_tm, type, literal, Scope.create(scope));
-        addName(name);
+        Check.valueNotNull(this, literal);
+        IName name = new NameImpl(_tm, type, literal, scope);
+        this.addName(name);
         return name;
     }
 
@@ -361,6 +383,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#getReified()
      */
+    @Override
     public Reifiable getReified() {
         return _reified;
     }
@@ -368,6 +391,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#getRolesPlayed()
      */
+    @Override
     public Set<Role> getRolesPlayed() {
         return _rolesPlayed == null ? Collections.<Role>emptySet()
                                     : Collections.unmodifiableSet(_rolesPlayed); 
@@ -376,6 +400,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#getRolesPlayed(org.tmapi.core.Topic)
      */
+    @Override
     public Set<Role> getRolesPlayed(Topic type) {
         Check.typeNotNull(type);
         if (_rolesPlayed == null) {
@@ -393,6 +418,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#getRolesPlayed(org.tmapi.core.Topic, org.tmapi.core.Topic)
      */
+    @Override
     public Set<Role> getRolesPlayed(Topic type, Topic assoc) {
         Check.typeNotNull(type);
         if (assoc == null) {
@@ -427,6 +453,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#getTypes()
      */
+    @Override
     public Set<Topic> getTypes() {
         return _types == null ? Collections.<Topic>emptySet()
                               : Collections.unmodifiableSet(_types);
@@ -435,6 +462,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#addType(org.tmapi.core.Topic)
      */
+    @Override
     public void addType(Topic type) {
         Check.typeNotNull(this, type);
         Check.sameTopicMap(this, type);
@@ -451,6 +479,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#removeType(org.tmapi.core.Topic)
      */
+    @Override
     public void removeType(Topic type) {
         if (_types == null || !_types.contains(type)) {
             return;
@@ -462,6 +491,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Topic#mergeIn(org.tmapi.core.Topic)
      */
+    @Override
     public void mergeIn(Topic source) {
         MergeUtils.merge(source, this);
     }
@@ -477,6 +507,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
     /* (non-Javadoc)
      * @see org.tmapi.core.Construct#remove()
      */
+    @Override
     public void remove() throws TopicInUseException {
         if (!TopicUtils.isRemovable(this, true)) {
             throw new TopicInUseException(this, "The topic is used as type, player, reifier, or theme");

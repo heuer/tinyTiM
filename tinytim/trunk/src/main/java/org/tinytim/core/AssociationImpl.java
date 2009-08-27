@@ -40,11 +40,6 @@ final class AssociationImpl extends ScopedImpl implements IAssociation {
 
     private Set<Role> _roles;
 
-    AssociationImpl(ITopicMap tm) {
-        super(tm);
-        _roles = CollectionFactory.createIdentitySet(IConstant.ASSOC_ROLE_SIZE);
-    }
-
     AssociationImpl(ITopicMap topicMap, Topic type, IScope scope) {
         super(topicMap, type, scope);
         _roles = CollectionFactory.createIdentitySet(IConstant.ASSOC_ROLE_SIZE);
@@ -56,6 +51,16 @@ final class AssociationImpl extends ScopedImpl implements IAssociation {
     @Override
     public TopicMap getParent() {
         return _tm;
+    }
+
+    void attachRole(RoleImpl role) {
+        role._parent = this;
+        _roles.add(role);
+    }
+
+    void detachRole(RoleImpl role) {
+        role._parent = null;
+        _roles.remove(role);
     }
 
     /**

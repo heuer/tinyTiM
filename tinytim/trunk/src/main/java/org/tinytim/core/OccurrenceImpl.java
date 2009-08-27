@@ -31,10 +31,6 @@ import org.tmapi.core.Topic;
  */
 final class OccurrenceImpl extends DatatypeAwareConstruct implements IOccurrence {
 
-    OccurrenceImpl(ITopicMap tm) {
-        super(tm);
-    }
-
     OccurrenceImpl(ITopicMap topicMap, Topic type, ILiteral literal, IScope scope) {
         super(topicMap, type, literal, scope);
     }
@@ -42,6 +38,7 @@ final class OccurrenceImpl extends DatatypeAwareConstruct implements IOccurrence
     /* (non-Javadoc)
      * @see org.tmapi.core.Occurrence#getParent()
      */
+    @Override
     public Topic getParent() {
         return (Topic) _parent;
     }
@@ -49,6 +46,7 @@ final class OccurrenceImpl extends DatatypeAwareConstruct implements IOccurrence
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IMovable#moveTo(org.tmapi.core.Construct)
      */
+    @Override
     public void moveTo(Topic newParent) {
         ((TopicImpl) _parent).detachOccurrence(this, true);
         ((TopicImpl) newParent).attachOccurrence(this, true);
@@ -66,6 +64,7 @@ final class OccurrenceImpl extends DatatypeAwareConstruct implements IOccurrence
     /* (non-Javadoc)
      * @see org.tmapi.core.Construct#remove()
      */
+    @Override
     public void remove() {
         ((TopicImpl) _parent).removeOccurrence(this);
         super.dispose();

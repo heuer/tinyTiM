@@ -16,11 +16,12 @@
 package org.tinytim.core;
 
 import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.IAssociation;
+import org.tinytim.internal.api.IRole;
 import org.tinytim.internal.api.ITopicMap;
 import org.tinytim.internal.utils.Check;
 
 import org.tmapi.core.Association;
-import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
 
 /**
@@ -29,13 +30,9 @@ import org.tmapi.core.Topic;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-final class RoleImpl extends TypedImpl implements Role {
+final class RoleImpl extends TypedImpl implements IRole {
 
     private Topic _player;
-
-    RoleImpl(ITopicMap tm) {
-        super(tm);
-    }
 
     RoleImpl(ITopicMap tm, Topic type, Topic player) {
         super(tm, type);
@@ -45,6 +42,7 @@ final class RoleImpl extends TypedImpl implements Role {
     /* (non-Javadoc)
      * @see org.tinytim.core.ConstructImpl#getParent()
      */
+    @Override
     public Association getParent() {
         return (Association) _parent;
     }
@@ -52,6 +50,7 @@ final class RoleImpl extends TypedImpl implements Role {
     /* (non-Javadoc)
      * @see org.tmapi.core.Role#getPlayer()
      */
+    @Override
     public Topic getPlayer() {
         return _player;
     }
@@ -59,6 +58,7 @@ final class RoleImpl extends TypedImpl implements Role {
     /* (non-Javadoc)
      * @see org.tmapi.core.Role#setPlayer(org.tmapi.core.Topic)
      */
+    @Override
     public void setPlayer(Topic player) {
         Check.playerNotNull(this, player);
         Check.sameTopicMap(this, player);
@@ -75,6 +75,12 @@ final class RoleImpl extends TypedImpl implements Role {
         }
     }
 
+    @Override
+    public void moveTo(IAssociation newParent) {
+        ((AssociationImpl) _parent).detachRole(this);
+        ((AssociationImpl) newParent).attachRole(this);
+    }
+
     /* (non-Javadoc)
      * @see org.tinytim.core.ConstructImpl#isRole()
      */
@@ -86,6 +92,7 @@ final class RoleImpl extends TypedImpl implements Role {
     /* (non-Javadoc)
      * @see org.tmapi.core.Construct#remove()
      */
+    @Override
     public void remove() {
         ((AssociationImpl) _parent).removeRole(this);
         super.dispose();

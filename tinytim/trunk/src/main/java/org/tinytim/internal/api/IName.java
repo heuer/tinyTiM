@@ -15,8 +15,6 @@
  */
 package org.tinytim.internal.api;
 
-import java.util.Collection;
-
 import org.tmapi.core.Name;
 import org.tmapi.core.Topic;
 
@@ -28,6 +26,6 @@ import org.tmapi.core.Topic;
  */
 public interface IName extends Name, IScoped, ILiteralAware, IMovable<Topic>{
 
-    public IVariant createVariant(ILiteral literal, Collection<Topic> scope);
+    public IVariant createVariant(ILiteral literal, IScope scope);
 
 }

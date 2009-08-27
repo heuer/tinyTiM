@@ -19,6 +19,7 @@ import java.util.Set;
 
 import org.tinytim.internal.api.Event;
 import org.tinytim.internal.api.ILiteral;
+import org.tinytim.internal.api.IName;
 import org.tinytim.internal.api.IScope;
 import org.tinytim.internal.api.ITopicMap;
 import org.tinytim.internal.api.IVariant;
@@ -36,10 +37,6 @@ import org.tmapi.core.Topic;
 final class VariantImpl extends DatatypeAwareConstruct implements 
         IVariant {
 
-    VariantImpl(ITopicMap tm) {
-        super(tm);
-    }
-
     VariantImpl(ITopicMap topicMap, ILiteral literal, IScope scope) {
         super(topicMap, null, literal, scope);
     }
@@ -47,13 +44,14 @@ final class VariantImpl extends DatatypeAwareConstruct implements
     /* (non-Javadoc)
      * @see org.tinytim.core.ConstructImpl#getParent()
      */
-    public Name getParent() {
-        return (Name) _parent;
+    public IName getParent() {
+        return (IName) _parent;
     }
 
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IMovable#moveTo(org.tmapi.core.Construct)
      */
+    @Override
     public void moveTo(Name newParent) {
         ((NameImpl) _parent).detachVariant(this);
         ((NameImpl) newParent).attachVariant(this);

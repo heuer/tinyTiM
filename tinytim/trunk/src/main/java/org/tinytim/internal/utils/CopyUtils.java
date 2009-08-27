@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.tinytim.internal.api.ILiteralAware;
 import org.tinytim.internal.api.IName;
+import org.tinytim.internal.api.IScope;
 import org.tinytim.internal.api.ITopic;
 import org.tinytim.internal.api.ITopicMap;
 
@@ -126,9 +127,9 @@ final class CopyUtils {
      * @param mergeMap The map which holds the merge mappings.
      * @return The newly created topic in the target topic map.
      */
-    private static Topic _copyTopic(Topic topic, ITopicMap target,
+    private static ITopic _copyTopic(Topic topic, ITopicMap target,
             Map<Topic, Topic> mergeMap) {
-        Topic targetTopic = target.getConstructFactory().createTopic();
+        ITopic targetTopic = target.createEmptyTopic();
         _copyIdentities(topic, targetTopic);
         _copyTypes(topic, targetTopic, mergeMap);
         _copyCharacteristics(topic, (ITopic)targetTopic, mergeMap);
@@ -185,13 +186,13 @@ final class CopyUtils {
             sigs.put(SignatureGenerator.generateSignature(occ), occ);
         }
         Reifiable existing = null;
-        final TopicMap tm = targetTopic.getTopicMap();
-        Topic type = null;
-        Set<Topic> scope = null;
+        final ITopicMap tm = (ITopicMap) targetTopic.getTopicMap();
+        ITopic type = null;
+        IScope scope = null;
         Occurrence targetOcc = null;
         for (Occurrence occ: topic.getOccurrences()) {
             type = _copyType(occ, tm, mergeMap);
-            scope = _copyScope(occ, tm, mergeMap);
+            scope = _copyScope(occ, (ITopicMap) tm, mergeMap);
             targetOcc = targetTopic.createOccurrence(type, ((ILiteralAware) occ).getLiteral(), scope);
             existing = sigs.get(SignatureGenerator.generateSignature(targetOcc));
             if (existing != null) {
@@ -234,11 +235,11 @@ final class CopyUtils {
         for (Variant variant: target.getVariants()) {
             sigs.put(SignatureGenerator.generateSignature(variant), variant);
         }
-        final TopicMap tm = target.getTopicMap();
+        final ITopicMap tm = (ITopicMap) target.getTopicMap();
         Variant existing = null;
-        Set<Topic> scope = null;
+        IScope scope = null;
         for (Variant variant: source.getVariants()) {
-            scope = _copyScope( variant, tm, mergeMap);
+            scope = _copyScope(variant, tm, mergeMap);
             Variant targetVar = target.createVariant(((ILiteralAware) variant).getLiteral(), scope);
             existing = sigs.get(SignatureGenerator.generateSignature(targetVar));
             if (existing != null) {
@@ -275,10 +276,10 @@ final class CopyUtils {
      * @param target The Topic Maps construct which receives the type.
      * @param mergeMap The map which holds the merge mappings.
      */
-    private static Topic _copyType(Typed source, TopicMap tm,
+    private static ITopic _copyType(Typed source, TopicMap tm,
                 Map<Topic, Topic> mergeMap) {
         Topic sourceType = source.getType();
-       return mergeMap.containsKey(sourceType) ? mergeMap.get(sourceType)
+       return mergeMap.containsKey(sourceType) ? (ITopic) mergeMap.get(sourceType)
                             : _copyTopic(sourceType, (ITopicMap) tm, mergeMap);
     }
 
@@ -290,16 +291,16 @@ final class CopyUtils {
      * @param target The target which receives the scope.
      * @param mergeMap The map which holds the merge mappings.
      */
-    private static Set<Topic>_copyScope(Scoped source, TopicMap tm, 
+    private static IScope _copyScope(Scoped source, ITopicMap tm, 
             Map<Topic, Topic> mergeMap) {
         Set<Topic> themes = CollectionFactory.createIdentitySet(source.getScope().size());
         Topic theme = null;
         for (Topic sourceTheme: source.getScope()) {
             theme = mergeMap.containsKey(sourceTheme) ? mergeMap.get(sourceTheme)
-                            : _copyTopic(sourceTheme, (ITopicMap) tm, mergeMap);
-            themes.add(theme);
+                            : _copyTopic(sourceTheme, tm, mergeMap);
+            themes.add((ITopic) theme);
         }
-        return themes;
+        return tm.createScope(themes);
     }
 
     /**
@@ -323,15 +324,15 @@ final class CopyUtils {
      * @param mergeMap The map which holds the merge mappings.
      */
     private static void _copyAssociations(TopicMap source, 
-            TopicMap target, Map<Topic, Topic> mergeMap) {
+            ITopicMap target, Map<Topic, Topic> mergeMap) {
         Set<Association> assocs = target.getAssociations();
         IIntObjectMap<Association> sigs = CollectionFactory.createIntObjectMap(assocs.size());
         for (Association assoc: assocs) {
             sigs.put(SignatureGenerator.generateSignature(assoc), assoc);
         }
         Association existing = null;
-        Topic type = null;
-        Set<Topic> scope = null;
+        ITopic type = null;
+        IScope scope = null;
         for (Association assoc: source.getAssociations()) {
             type = _copyType(assoc, target, mergeMap);
             scope = _copyScope(assoc, target, mergeMap);
