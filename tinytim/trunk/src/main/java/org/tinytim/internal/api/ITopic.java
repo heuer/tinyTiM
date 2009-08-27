@@ -15,8 +15,6 @@
  */
 package org.tinytim.internal.api;
 
-import java.util.Collection;
-
 import org.tmapi.core.Topic;
 
 /**
@@ -27,8 +25,8 @@ import org.tmapi.core.Topic;
  */
 public interface ITopic extends Topic, IConstruct {
 
-    public IOccurrence createOccurrence(Topic type, ILiteral literal, Collection<Topic> scope);
+    public IOccurrence createOccurrence(Topic type, ILiteral literal, IScope scope);
 
-    public IName createName(Topic type, ILiteral literal, Collection<Topic> scope);
+    public IName createName(Topic type, ILiteral literal, IScope scope);
 
 }

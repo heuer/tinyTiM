@@ -24,11 +24,13 @@ import java.util.Set;
 import org.tinytim.core.value.Literal;
 import org.tinytim.index.IndexManager;
 import org.tinytim.internal.api.Event;
+import org.tinytim.internal.api.IAssociation;
 import org.tinytim.internal.api.IConstant;
 import org.tinytim.internal.api.IConstruct;
-import org.tinytim.internal.api.IConstructFactory;
 import org.tinytim.internal.api.IEventHandler;
 import org.tinytim.internal.api.IIndexManager;
+import org.tinytim.internal.api.IScope;
+import org.tinytim.internal.api.ITopic;
 import org.tinytim.internal.api.ITopicMap;
 import org.tinytim.internal.utils.Check;
 import org.tinytim.internal.utils.CollectionFactory;
@@ -54,7 +56,6 @@ import org.tmapi.index.Index;
  */
 final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
 
-    private final IConstructFactory _factory;
     private final IdentityManager _identityManager;
     private final IIndexManager _indexManager;
     private final Locator _locator;
@@ -68,7 +69,6 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     MemoryTopicMap(AbstractTopicMapSystem sys, Locator locator) {
         super();
         super._tm = this;
-        _factory = new MemoryConstructFactory(this);
         _sys = sys;
         _locator = locator;
         _topics = CollectionFactory.createIdentitySet(IConstant.TM_TOPIC_SIZE);
@@ -92,16 +92,17 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
         return this;
     }
 
-    /* (non-Javadoc)
-     * @see org.tinytim.api.internal.ITopicMap#getConstructFactory()
-     */
-    public IConstructFactory getConstructFactory() {
-        return _factory;
+    @Override
+    public ITopic createEmptyTopic() {
+        TopicImpl topic = new TopicImpl(this);
+        addTopic(topic);
+        return topic;
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#createLocator(java.lang.String)
      */
+    @Override
     public Locator createLocator(String reference) {
         return Literal.createIRI(reference);
     }
@@ -109,6 +110,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#getTopics()
      */
+    @Override
     public Set<Topic> getTopics() {
         return Collections.unmodifiableSet(_topics);
     }
@@ -116,8 +118,9 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#createTopic()
      */
+    @Override
     public Topic createTopic() {
-        Topic topic = _factory.createTopic();
+        Topic topic = createEmptyTopic();
         topic.addItemIdentifier(Literal.createIRI("urn:x-tinytim:" + IdGenerator.nextId()));
         return topic;
     }
@@ -125,6 +128,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#createTopicByItemIdentifier(org.tmapi.core.Locator)
      */
+    @Override
     public Topic createTopicByItemIdentifier(Locator iid) {
         Check.itemIdentifierNotNull(this, iid);
         Construct construct = getConstructByItemIdentifier(iid);
@@ -141,7 +145,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
                 return topic;
             }
         }
-        Topic topic = _factory.createTopic();
+        Topic topic = createEmptyTopic();
         topic.addItemIdentifier(iid);
         return topic;
     }
@@ -149,6 +153,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#createTopicBySubjectIdentifier(org.tmapi.core.Locator)
      */
+    @Override
     public Topic createTopicBySubjectIdentifier(Locator sid) {
         Check.subjectIdentifierNotNull(this, sid);
         Topic topic = getTopicBySubjectIdentifier(sid);
@@ -163,7 +168,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
                 return topic;
             }
         }
-        topic = _factory.createTopic();
+        topic = createEmptyTopic();
         topic.addSubjectIdentifier(sid);
         return topic;
     }
@@ -171,13 +176,14 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#createTopicBySubjectLocator(org.tmapi.core.Locator)
      */
+    @Override
     public Topic createTopicBySubjectLocator(Locator slo) {
         Check.subjectLocatorNotNull(this, slo);
         Topic topic = getTopicBySubjectLocator(slo);
         if (topic != null) {
             return topic;
         }
-        topic = _factory.createTopic();
+        topic = createEmptyTopic();
         topic.addSubjectLocator(slo);
         return topic;
     }
@@ -210,21 +216,34 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#getAssociations()
      */
+    @Override
     public Set<Association> getAssociations() {
         return Collections.unmodifiableSet(_assocs);
     }
 
+    @Override
     public Association createAssociation(Topic type, Topic... scope) {
         Check.scopeNotNull(this, scope);
         return createAssociation(type, Arrays.asList(scope));
     }
 
-    public Association createAssociation(Topic type, Collection<Topic> scope) {
+    /* (non-Javadoc)
+     * @see org.tmapi.core.TopicMap#createAssociation(org.tmapi.core.Topic, java.util.Collection)
+     */
+    @Override
+    public IAssociation createAssociation(Topic type, Collection<Topic> scope) {
+        return createAssociation(type, createScope(scope));
+    }
+
+    
+    /* (non-Javadoc)
+     * @see org.tinytim.internal.api.ITopicMap#createAssociation(org.tinytim.internal.api.ITopic, org.tinytim.internal.api.IScope)
+     */
+    @Override
+    public IAssociation createAssociation(Topic type, IScope scope) {
         Check.typeNotNull(this, type);
-        Check.scopeNotNull(this, scope);
         Check.sameTopicMap(this, type);
-        Check.sameTopicMap(this, scope);
-        AssociationImpl assoc = new AssociationImpl(this, type, Scope.create(scope));
+        AssociationImpl assoc = new AssociationImpl(this, type, scope);
         addAssociation(assoc);
         return assoc;
     }
@@ -258,6 +277,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#getConstructById(java.lang.String)
      */
+    @Override
     public Construct getConstructById(String id) {
         return _identityManager.getConstructById(id);
     }
@@ -265,6 +285,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#getTopicBySubjectIdentifier(org.tmapi.core.Locator)
      */
+    @Override
     public Topic getTopicBySubjectIdentifier(Locator sid) {
         Check.subjectIdentifierNotNull(sid);
         return _identityManager.getTopicBySubjectIdentifier(sid);
@@ -273,6 +294,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#getTopicBySubjectLocator(org.tmapi.core.Locator)
      */
+    @Override
     public Topic getTopicBySubjectLocator(Locator slo) {
         Check.subjectLocatorNotNull(slo);
         return _identityManager.getTopicBySubjectLocator(slo);
@@ -281,6 +303,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#getConstructByItemIdentifier(org.tmapi.core.Locator)
      */
+    @Override
     public Construct getConstructByItemIdentifier(Locator iid) {
         Check.itemIdentifierNotNull(iid);
         return _identityManager.getConstructByItemIdentifier(iid);
@@ -289,6 +312,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#getReifier()
      */
+    @Override
     public Topic getReifier() {
         return _reifier;
     }
@@ -296,6 +320,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.Reifiable#setReifier(org.tmapi.core.Topic)
      */
+    @Override
     public void setReifier(Topic reifier) {
         Check.sameTopicMap(this, reifier);
         if (_reifier == reifier) {
@@ -328,9 +353,17 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
         throw new UnsupportedOperationException("Index '" + indexInterface.getName() + "'  is unknown");
     }
 
+    @Override
+    public IScope createScope(Collection<Topic> themes) {
+        Check.scopeNotNull(this, themes);
+        Check.sameTopicMap(this, themes);
+        return Scope.create(themes);
+    }
+
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#mergeIn(org.tmapi.core.TopicMap)
      */
+    @Override
     public void mergeIn(TopicMap other) {
         MergeUtils.merge(other, this);
     }
@@ -338,6 +371,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#close()
      */
+    @Override
     public void close() {
         remove();
     }
@@ -353,6 +387,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#remove()
      */
+    @Override
     public void remove() {
         _sys.removeTopicMap(this);
         _sys = null;
@@ -375,6 +410,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IEventHandler#handleEvent(org.tinytim.internal.api.Event, org.tinytim.internal.api.IConstruct, java.lang.Object, java.lang.Object)
      */
+    @Override
     public void handleEvent(Event evt, IConstruct sender, Object oldValue, Object newValue) {
         if (!_evtHandlers.containsKey(evt)) {
             _eventMultiplier.handleEvent(evt, sender, oldValue, newValue);
@@ -390,6 +426,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tinytim.IEventPublisher#subscribe(org.tinytim.Event, org.tinytim.IEventHandler)
      */
+    @Override
     public void subscribe(Event event, IEventHandler handler) {
         Collection<IEventHandler> handlers = _evtHandlers.get(event);
         if (handlers == null) {
@@ -402,6 +439,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IEventPublisher#unsubscribe(org.tinytim.internal.api.Event, org.tinytim.internal.api.IEventHandler)
      */
+    @Override
     public void unsubscribe(Event event, IEventHandler handler) {
         Collection<IEventHandler> handlers = _evtHandlers.get(event);
         if (handlers != null) {
@@ -412,6 +450,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IIndexManagerAware#getIndexManager()
      */
+    @Override
     public IIndexManager getIndexManager() {
         return _indexManager;
     }

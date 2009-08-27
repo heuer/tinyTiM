@@ -54,6 +54,7 @@ final class MemoryTopicMapSystem extends AbstractTopicMapSystem {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMapSystem#createTopicMap(org.tmapi.core.Locator)
      */
+    @Override
     public TopicMap createTopicMap(Locator locator) throws TopicMapExistsException {
         if (_topicMaps.containsKey(locator)) {
             throw new TopicMapExistsException("A topic map with the IRI + '" + locator.getReference() + "' exists in the system");
@@ -66,6 +67,7 @@ final class MemoryTopicMapSystem extends AbstractTopicMapSystem {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMapSystem#getLocators()
      */
+    @Override
     public Set<Locator> getLocators() {
         return Collections.unmodifiableSet(_topicMaps.keySet());
     }
@@ -73,6 +75,7 @@ final class MemoryTopicMapSystem extends AbstractTopicMapSystem {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMapSystem#getTopicMap(org.tmapi.core.Locator)
      */
+    @Override
     public TopicMap getTopicMap(Locator iri) {
         return _topicMaps.get(iri);
     }
@@ -80,6 +83,7 @@ final class MemoryTopicMapSystem extends AbstractTopicMapSystem {
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMapSystem#close()
      */
+    @Override
     public void close() {
         super.close();
         _topicMaps.clear();

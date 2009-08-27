@@ -24,7 +24,6 @@ import org.tinytim.internal.api.IConstant;
 import org.tinytim.internal.api.IScope;
 import org.tinytim.internal.utils.CollectionFactory;
 import org.tinytim.internal.utils.WeakObjectRegistry;
-
 import org.tmapi.core.Topic;
 
 /**
@@ -86,6 +85,7 @@ public final class Scope implements IScope {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IScope#asSet()
      */
+    @Override
     public Set<Topic> asSet() {
         // _set is immutable
         return _set;
@@ -94,6 +94,7 @@ public final class Scope implements IScope {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IScope#contains(org.tmapi.core.Topic)
      */
+    @Override
     public boolean contains(Topic theme) {
         return _set.contains(theme);
     }
@@ -101,6 +102,7 @@ public final class Scope implements IScope {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IScope#containsAll(java.util.Collection)
      */
+    @Override
     public boolean containsAll(Collection<Topic> scope) {
         return _set.containsAll(scope);
     }
@@ -108,6 +110,7 @@ public final class Scope implements IScope {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IScope#add(org.tmapi.core.Topic)
      */
+    @Override
     public IScope add(Topic theme) {
         if (_set.contains(theme)) {
             return this;
@@ -120,6 +123,7 @@ public final class Scope implements IScope {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IScope#remove(org.tmapi.core.Topic)
      */
+    @Override
     public IScope remove(Topic theme) {
         if (!_set.contains(theme)) {
             return this;
@@ -132,6 +136,7 @@ public final class Scope implements IScope {
     /* (non-Javadoc)
      * @see java.lang.Iterable#iterator()
      */
+    @Override
     public Iterator<Topic> iterator(){
         return _set.iterator();
     }
@@ -139,6 +144,7 @@ public final class Scope implements IScope {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IScope#isUnconstrained()
      */
+    @Override
     public boolean isUnconstrained() {
         return this == UCS;
     }
@@ -146,6 +152,7 @@ public final class Scope implements IScope {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IScope#size()
      */
+    @Override
     public int size() {
         return _set.size();
     }

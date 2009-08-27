@@ -12,7 +12,7 @@
 
     <property name="lib.junit" value="${dir.lib}/junit-4.5.jar"/>
     <property name="lib.trove" value="${dir.lib}/trove-2.0.4.jar"/>
-    <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.4.jar"/>
+    <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.5.jar"/>
     <property name="lib.tmapi" value="${dir.lib}/tmapi-2.0a2.jar"/>
     <property name="lib.tmapi.tests" value="${dir.lib}/tmapi-2.0a2-tests.jar"/>
     <property name="lib.emma" value="${dir.lib}/emma.jar"/>

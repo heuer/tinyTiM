@@ -47,11 +47,6 @@ final class NameImpl extends ScopedImpl implements IName {
     private ILiteral _literal;
     private Set<Variant> _variants;
 
-
-    NameImpl(ITopicMap tm) {
-        super(tm);
-    }
-
     NameImpl(ITopicMap topicMap, Topic type, ILiteral literal, IScope scope) {
         super(topicMap, type, scope);
         _literal = literal;
@@ -60,6 +55,7 @@ final class NameImpl extends ScopedImpl implements IName {
     /* (non-Javadoc)
      * @see org.tinytim.core.ConstructImpl#getParent()
      */
+    @Override
     public Topic getParent() {
         return (Topic) _parent;
     }
@@ -67,6 +63,7 @@ final class NameImpl extends ScopedImpl implements IName {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteralAware#getLiteral()
      */
+    @Override
     public ILiteral getLiteral() {
         return _literal;
     }
@@ -74,6 +71,7 @@ final class NameImpl extends ScopedImpl implements IName {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteralAware#setLiteral(org.tinytim.internal.api.ILiteral)
      */
+    @Override
     public void setLiteral(ILiteral literal) {
         assert literal != null;
         _fireEvent(Event.SET_LITERAL, _literal, literal);
@@ -83,6 +81,7 @@ final class NameImpl extends ScopedImpl implements IName {
     /* (non-Javadoc)
      * @see org.tmapi.core.Name#getValue()
      */
+    @Override
     public String getValue() {
         return _literal.getValue();
     }
@@ -90,6 +89,7 @@ final class NameImpl extends ScopedImpl implements IName {
     /* (non-Javadoc)
      * @see org.tmapi.core.Name#setValue(java.lang.String)
      */
+    @Override
     public void setValue(String value) {
         Check.valueNotNull(this, value);
         setLiteral(Literal.create(value));
@@ -116,7 +116,7 @@ final class NameImpl extends ScopedImpl implements IName {
     public void removeTheme(Topic theme) {
         IScope scope = _scope;
         super.removeTheme(theme);
-        if (_variants != null && scope != _scope) {
+        if (_variants != null && _scope != scope) {
             for (Variant variant: _variants) {
                 ((VariantImpl) variant)._removeNameTheme(theme);
             }
@@ -126,6 +126,7 @@ final class NameImpl extends ScopedImpl implements IName {
     /* (non-Javadoc)
      * @see org.tmapi.core.Name#getVariants()
      */
+    @Override
     public Set<Variant> getVariants() {
         return _variants == null ? Collections.<Variant>emptySet()
                                  : Collections.unmodifiableSet(_variants);
@@ -134,22 +135,25 @@ final class NameImpl extends ScopedImpl implements IName {
     /* (non-Javadoc)
      * @see org.tmapi.core.Name#createVariant(org.tmapi.core.Locator, java.util.Collection)
      */
+    @Override
     public Variant createVariant(Locator value, Collection<Topic> scope) {
         Check.valueNotNull(this, value);
-        return createVariant(Literal.create(value), scope);
+        return createVariant(Literal.create(value), _tm.createScope(scope));
     }
 
     /* (non-Javadoc)
-     * @see org.tmapi.core.Name#createVariant(java.lang.String, java.util.Collection)
+     * @see org.tmapi.core.Name#createVariant(org.tmapi.core.Locator, java.util.Collection)
      */
+    @Override
     public Variant createVariant(String value, Collection<Topic> scope) {
         Check.valueNotNull(this, value);
-        return createVariant(Literal.create(value), scope);
+        return createVariant(Literal.create(value), _tm.createScope(scope));
     }
 
    /* (non-Javadoc)
      * @see org.tmapi.core.Name#createVariant(org.tmapi.core.Locator, org.tmapi.core.Topic[])
      */
+    @Override
     public Variant createVariant(Locator value, Topic... scope) {
         Check.scopeNotNull(this, scope);
         return createVariant(value, Arrays.asList(scope));
@@ -158,15 +162,17 @@ final class NameImpl extends ScopedImpl implements IName {
     /* (non-Javadoc)
      * @see org.tmapi.core.Name#createVariant(java.lang.String, org.tmapi.core.Locator, java.util.Collection)
      */
+    @Override
     public Variant createVariant(String value, Locator datatype,
             Collection<Topic> scope) {
         Check.valueNotNull(this, value, datatype);
-        return _createVariant(value, datatype, scope);
+        return createVariant(Literal.create(value, datatype), _tm.createScope(scope));
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.Name#createVariant(java.lang.String, org.tmapi.core.Locator, org.tmapi.core.Topic[])
      */
+    @Override
     public Variant createVariant(String value, Locator datatype, Topic... scope) {
         Check.scopeNotNull(this, scope);
         return createVariant(value, datatype, Arrays.asList(scope));
@@ -175,25 +181,22 @@ final class NameImpl extends ScopedImpl implements IName {
     /* (non-Javadoc)
      * @see org.tmapi.core.Name#createVariant(java.lang.String, org.tmapi.core.Topic[])
      */
+    @Override
     public Variant createVariant(String value, Topic... scope) {
         Check.scopeNotNull(this, scope);
         return createVariant(value, Arrays.asList(scope));
     }
 
-    private Variant _createVariant(String value, Locator datatype, Collection<Topic> scope) {
-        Check.valueNotNull(this, value, datatype);
-        return createVariant(Literal.create(value, datatype), scope);
-    }
-
-    public IVariant createVariant(ILiteral literal, Collection<Topic> scope) {
-        Check.sameTopicMap(this, scope);
-        if (scope.isEmpty()) {
+    @Override
+    public IVariant createVariant(ILiteral literal, IScope scope) {
+        Check.valueNotNull(this, literal);
+        if (scope.isUnconstrained()) {
             throw new ModelConstraintException(this, "The scope of the variant must not be unconstrained");
         }
-        if (_scope.containsAll(scope)) {
+        if (_scope.containsAll(scope.asSet())) {
             throw new ModelConstraintException(this, "The variant's scope is not a true superset of the parent's scope");
         }
-        VariantImpl variant = new VariantImpl(_tm, literal, Scope.create(scope));
+        VariantImpl variant = new VariantImpl(_tm, literal, scope);
         addVariant(variant);
         for (Topic theme: _scope) {
             variant._addNameTheme(theme);
@@ -236,6 +239,7 @@ final class NameImpl extends ScopedImpl implements IName {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.IMovable#moveTo(org.tmapi.core.Construct)
      */
+    @Override
     public void moveTo(Topic newParent) {
         ((TopicImpl) _parent).detachName(this, true);
         ((TopicImpl) newParent).attachName(this, true);
@@ -253,6 +257,7 @@ final class NameImpl extends ScopedImpl implements IName {
     /* (non-Javadoc)
      * @see org.tmapi.core.Construct#remove()
      */
+    @Override
     public void remove() {
         ((TopicImpl) _parent).removeName(this);
         super.dispose();

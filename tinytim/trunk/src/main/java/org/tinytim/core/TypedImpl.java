@@ -38,10 +38,6 @@ abstract class TypedImpl extends ConstructImpl implements Reifiable {
     private Topic _type;
     private Topic _reifier;
 
-    protected TypedImpl(ITopicMap tm) {
-        super(tm);
-    }
-
     protected TypedImpl(ITopicMap topicMap, Topic type) {
         super(topicMap);
         _type = type;
@@ -70,6 +66,7 @@ abstract class TypedImpl extends ConstructImpl implements Reifiable {
     /* (non-Javadoc)
      * @see org.tmapi.core.Reifiable#getReifier()
      */
+    @Override
     public Topic getReifier() {
         return _reifier;
     }
@@ -77,6 +74,7 @@ abstract class TypedImpl extends ConstructImpl implements Reifiable {
     /* (non-Javadoc)
      * @see org.tmapi.core.Reifiable#setReifier(org.tmapi.core.Topic)
      */
+    @Override
     public void setReifier(Topic reifier) {
         Check.sameTopicMap(this, reifier);
         if (_reifier == reifier) {

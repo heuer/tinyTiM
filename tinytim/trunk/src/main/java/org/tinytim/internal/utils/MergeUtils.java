@@ -18,10 +18,12 @@ package org.tinytim.internal.utils;
 import java.util.Collection;
 import java.util.List;
 
+import org.tinytim.internal.api.IAssociation;
 import org.tinytim.internal.api.IIndexManager;
 import org.tinytim.internal.api.IIndexManagerAware;
 import org.tinytim.internal.api.IName;
 import org.tinytim.internal.api.IOccurrence;
+import org.tinytim.internal.api.IRole;
 import org.tinytim.internal.api.ITopic;
 import org.tinytim.internal.api.IVariant;
 
@@ -186,6 +188,27 @@ public final class MergeUtils {
         for (Role role: CollectionFactory.createList(source.getRoles())) {
             handleExistingConstruct(role, sigs.get(SignatureGenerator.generateSignature(role)));
             role.remove();
+        }
+    }
+
+    public static void moveRoles(IAssociation source, IAssociation target) {
+        if (source.equals(target)) {
+            return;
+        }
+        IIntObjectMap<Role> sigs = CollectionFactory.createIntObjectMap();
+        for (Role role: target.getRoles()) {
+            sigs.put(SignatureGenerator.generateSignature(role), role);
+        }
+        Role existing = null;
+        for (Role role: CollectionFactory.createList(source.getRoles())) {
+            existing = sigs.get(SignatureGenerator.generateSignature(role));
+            if (existing != null) {
+                handleExistingConstruct(role, existing);
+                role.remove();
+            }
+            else {
+                ((IRole) role).moveTo(target);
+            }
         }
     }
 

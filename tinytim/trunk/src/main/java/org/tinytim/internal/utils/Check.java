@@ -47,9 +47,9 @@ public final class Check {
     }
 
     /**
-     * 
+     * Throws an {@link IllegalArgumentException}. 
      *
-     * @param msg
+     * @param msg The error message.
      */
     private static void _reportIllegalArgument(String msg) {
         throw new IllegalArgumentException(msg);
@@ -75,7 +75,7 @@ public final class Check {
      * @param sender The sender.
      * @param scope The scope.
      */
-    public static void scopeNotNull(Construct sender, Collection<Topic> scope) {
+    public static void scopeNotNull(Construct sender, Iterable<Topic> scope) {
         if (scope == null) {
             _reportModelConstraintViolation(sender, "The scope must not be null");
         }
@@ -200,6 +200,13 @@ public final class Check {
         _sameTopicMap(sender, sender.getTopicMap(), construct);
     }
 
+    /**
+     * Throws a {@link ModelConstraintException} iff the specified <tt>constructs</tt>
+     * do not belong to the same topic map as the <tt>sender</tt>.
+     *
+     * @param sender The sender.
+     * @param constructs The constructs.
+     */
     public static void sameTopicMap(Construct sender, Construct...constructs) {
         if (constructs == null || constructs.length == 0) {
             return;
@@ -210,6 +217,13 @@ public final class Check {
         }
     }
 
+    /**
+     * Throws a {@link ModelConstraintException} iff the specified <tt>constructs</tt>
+     * do not belong to the same topic map as the <tt>sender</tt>.
+     *
+     * @param sender The sender.
+     * @param constructs The constructs.
+     */
     public static void sameTopicMap(Construct sender, Collection<? extends Construct> constructs) {
         if (constructs == null) {
             return;

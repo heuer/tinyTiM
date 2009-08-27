@@ -15,6 +15,9 @@
  */
 package org.tinytim.internal.api;
 
+import java.util.Collection;
+
+import org.tmapi.core.Topic;
 import org.tmapi.core.TopicMap;
 
 /**
@@ -27,9 +30,13 @@ import org.tmapi.core.TopicMap;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public interface ITopicMap extends TopicMap, IConstruct, IIndexManagerAware,
+public interface ITopicMap extends TopicMap, IIndexManagerAware,
         IEventHandler, IEventPublisher {
 
-    public IConstructFactory getConstructFactory();
+    public ITopic createEmptyTopic();
+
+    public IAssociation createAssociation(Topic type, IScope scope);
+
+    public IScope createScope(Collection<Topic> themes);
 
 }
