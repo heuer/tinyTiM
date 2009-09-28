@@ -408,7 +408,7 @@ public class DefaultTMCLPreprocessor implements ITMCLPreprocessor {
             }
         }
         else {
-            tpl = new DefaultTemplate("may");
+            tpl = new DefaultTemplate("may-reify");
             tpl.addParameter(reifiableType);
 
         }
