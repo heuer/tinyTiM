@@ -34,6 +34,12 @@ public final class Feature {
     private static final String _FEATURE_BASE = "http://tmapi.org/features/";
 
     /**
+     * An implementation which supports this feature uses associations
+     * to model tmdm:type-instance relationships.
+     */
+    public static final String TYPE_INSTANCE_ASSOCS= _FEATURE_BASE + "type-instance-associations";
+
+    /**
      * An implementation which supports this feature can process locator 
      * addresses in URI notation as defined by RFC 2396.
      *
