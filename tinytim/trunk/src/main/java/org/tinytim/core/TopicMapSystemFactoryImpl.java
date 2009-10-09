@@ -41,7 +41,8 @@ public final class TopicMapSystemFactoryImpl extends TopicMapSystemFactory {
     private static final FeatureInfo[] _FEATURES = new FeatureInfo[] {
                     // Feature IRI, default value, fixed?
         new FeatureInfo(Feature.AUTOMERGE, false, true),
-        new FeatureInfo(Feature.READ_ONLY, false, true)
+        new FeatureInfo(Feature.READ_ONLY, false, true),
+        new FeatureInfo(Feature.TYPE_INSTANCE_ASSOCS, false, true)
     };
 
     private static final TMSystemInfo[] _SYSTEMS = new TMSystemInfo[] {
