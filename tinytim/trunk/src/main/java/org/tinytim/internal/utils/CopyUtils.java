@@ -57,14 +57,14 @@ final class CopyUtils {
      * @param source The topic map to take the topics and associations from.
      * @param target The topic map which should receive the topics and associations.
      */
-    public static void copy(TopicMap source, TopicMap target) {
+    public static void copy(final TopicMap source, final TopicMap target) {
         _copy(source, (ITopicMap) target);
     }
 
     /**
      * @see #copy(TopicMap, TopicMap)
      */
-    private static void _copy(TopicMap source, ITopicMap target) {
+    private static void _copy(final TopicMap source, final ITopicMap target) {
         if (source == null || target == null) {
             throw new IllegalArgumentException("Neither the source topic map nor the target topic map must be null");
         }
@@ -127,8 +127,8 @@ final class CopyUtils {
      * @param mergeMap The map which holds the merge mappings.
      * @return The newly created topic in the target topic map.
      */
-    private static ITopic _copyTopic(Topic topic, ITopicMap target,
-            Map<Topic, Topic> mergeMap) {
+    private static ITopic _copyTopic(final Topic topic, final ITopicMap target,
+            final Map<Topic, Topic> mergeMap) {
         ITopic targetTopic = target.createEmptyTopic();
         _copyIdentities(topic, targetTopic);
         _copyTypes(topic, targetTopic, mergeMap);
@@ -143,7 +143,7 @@ final class CopyUtils {
      * @param topic The topic to take the identities from.
      * @param targetTopic The topic which gets the identities.
      */
-    private static void _copyIdentities(Topic topic, Topic targetTopic) {
+    private static void _copyIdentities(final Topic topic, final Topic targetTopic) {
         for(Locator sid: topic.getSubjectIdentifiers()) {
             targetTopic.addSubjectIdentifier(sid);
         }
@@ -160,8 +160,8 @@ final class CopyUtils {
      * @param targetTopic The topic which receives the types.
      * @param mergeMap The map which holds the merge mappings.
      */
-    private static void _copyTypes(Topic topic, Topic targetTopic,
-            Map<Topic, Topic> mergeMap) {
+    private static void _copyTypes(final Topic topic, final Topic targetTopic,
+            final Map<Topic, Topic> mergeMap) {
         for (Topic type: topic.getTypes()) {
             Topic targetType = mergeMap.get(type);
             if (targetType == null) {
@@ -179,8 +179,9 @@ final class CopyUtils {
      * @param targetTopic The target topic which gets the charateristics.
      * @param mergeMap The map which holds the merge mappings.
      */
-    private static void _copyCharacteristics(Topic topic, ITopic targetTopic,
-            Map<Topic, Topic> mergeMap) {
+    private static void _copyCharacteristics(final Topic topic, 
+            final ITopic targetTopic,
+            final Map<Topic, Topic> mergeMap) {
         IIntObjectMap<Reifiable> sigs = CollectionFactory.createIntObjectMap();
         for (Occurrence occ: targetTopic.getOccurrences()) {
             sigs.put(SignatureGenerator.generateSignature(occ), occ);
@@ -229,9 +230,9 @@ final class CopyUtils {
      * @param target The target name which receives the variants.
      * @param mergeMap The map which holds the merge mappings.
      */
-    private static void _copyVariants(Name source, IName target,
-            Map<Topic, Topic> mergeMap) {
-        IIntObjectMap<Variant> sigs = CollectionFactory.createIntObjectMap();
+    private static void _copyVariants(final Name source, final IName target,
+            final Map<Topic, Topic> mergeMap) {
+        final IIntObjectMap<Variant> sigs = CollectionFactory.createIntObjectMap();
         for (Variant variant: target.getVariants()) {
             sigs.put(SignatureGenerator.generateSignature(variant), variant);
         }
@@ -258,13 +259,14 @@ final class CopyUtils {
      * @param target The target Topic Maps construct.
      * @param mergeMap The map which holds the merge mappings.
      */
-    private static void _copyReifier(Reifiable source, Reifiable target, 
-            Map<Topic, Topic> mergeMap) {
-        Topic sourceReifier = source.getReifier();
+    private static void _copyReifier(final Reifiable source, 
+            final Reifiable target, 
+            final Map<Topic, Topic> mergeMap) {
+        final Topic sourceReifier = source.getReifier();
         if (sourceReifier == null) {
             return;
         }
-        Topic reifier = mergeMap.containsKey(sourceReifier) ? mergeMap.get(sourceReifier)
+        final Topic reifier = mergeMap.containsKey(sourceReifier) ? mergeMap.get(sourceReifier)
                             : _copyTopic(sourceReifier, (ITopicMap) target.getTopicMap(), mergeMap);
         target.setReifier(reifier);
     }
@@ -276,10 +278,10 @@ final class CopyUtils {
      * @param target The Topic Maps construct which receives the type.
      * @param mergeMap The map which holds the merge mappings.
      */
-    private static ITopic _copyType(Typed source, TopicMap tm,
-                Map<Topic, Topic> mergeMap) {
-        Topic sourceType = source.getType();
-       return mergeMap.containsKey(sourceType) ? (ITopic) mergeMap.get(sourceType)
+    private static ITopic _copyType(final Typed source, final TopicMap tm,
+                final Map<Topic, Topic> mergeMap) {
+        final Topic sourceType = source.getType();
+        return mergeMap.containsKey(sourceType) ? (ITopic) mergeMap.get(sourceType)
                             : _copyTopic(sourceType, (ITopicMap) tm, mergeMap);
     }
 
@@ -291,9 +293,9 @@ final class CopyUtils {
      * @param target The target which receives the scope.
      * @param mergeMap The map which holds the merge mappings.
      */
-    private static IScope _copyScope(Scoped source, ITopicMap tm, 
-            Map<Topic, Topic> mergeMap) {
-        Set<Topic> themes = CollectionFactory.createIdentitySet(source.getScope().size());
+    private static IScope _copyScope(final Scoped source, final ITopicMap tm, 
+            final Map<Topic, Topic> mergeMap) {
+        final Set<Topic> themes = CollectionFactory.createIdentitySet(source.getScope().size());
         Topic theme = null;
         for (Topic sourceTheme: source.getScope()) {
             theme = mergeMap.containsKey(sourceTheme) ? mergeMap.get(sourceTheme)
@@ -309,7 +311,8 @@ final class CopyUtils {
      * @param source The source Topic Maps construct.
      * @param target The target Topic Maps construct.
      */
-    private static void _copyItemIdentifiers(Construct source, Construct target) {
+    private static void _copyItemIdentifiers(final Construct source, 
+            final Construct target) {
         for(Locator iid: source.getItemIdentifiers()) {
             target.addItemIdentifier(iid);
         }
@@ -323,10 +326,10 @@ final class CopyUtils {
      * @param target The topic map which receives the associations.
      * @param mergeMap The map which holds the merge mappings.
      */
-    private static void _copyAssociations(TopicMap source, 
-            ITopicMap target, Map<Topic, Topic> mergeMap) {
-        Set<Association> assocs = target.getAssociations();
-        IIntObjectMap<Association> sigs = CollectionFactory.createIntObjectMap(assocs.size());
+    private static void _copyAssociations(final TopicMap source, 
+            final ITopicMap target, final Map<Topic, Topic> mergeMap) {
+        final Set<Association> assocs = target.getAssociations();
+        final IIntObjectMap<Association> sigs = CollectionFactory.createIntObjectMap(assocs.size());
         for (Association assoc: assocs) {
             sigs.put(SignatureGenerator.generateSignature(assoc), assoc);
         }
@@ -364,8 +367,9 @@ final class CopyUtils {
      * @param target The target topic.
      * @param mergeMap The map which holds the merge mappings.
      */
-    private static void _addMerge(Topic source, Topic target, Map<Topic, Topic> mergeMap) {
-        Topic prevTarget = mergeMap.get(source);
+    private static void _addMerge(final Topic source, final Topic target, 
+            final Map<Topic, Topic> mergeMap) {
+        final Topic prevTarget = mergeMap.get(source);
         if (prevTarget != null) {
             if (!prevTarget.equals(target)) {
                 MergeUtils.merge(target, prevTarget);

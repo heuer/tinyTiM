@@ -31,21 +31,7 @@ import java.util.Set;
  */
 public final class CollectionFactory {
 
-    private static final String _COLL_FACTORY_TROVE = "org.tinytim.internal.utils.TroveCollectionFactory";
-
-    private static final ICollectionFactory _COLL_FACTORY;
-
-    static {
-        ICollectionFactory collFactory;
-        try {
-            Class.forName("gnu.trove.THashSet");
-            collFactory = (ICollectionFactory) Class.forName(_COLL_FACTORY_TROVE).newInstance();
-        }
-        catch (Exception ex) {
-            collFactory = new JavaCollectionFactory();
-        }
-        _COLL_FACTORY = collFactory;
-    }
+    private static final ICollectionFactory _COLL_FACTORY = new OntopiaCollectionFactory();
 
     private CollectionFactory() {
         // noop.
