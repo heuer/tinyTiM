@@ -2,12 +2,16 @@
 Changes Log
 ===========
 
-2.0.0 a6 (xx.yy.2009)
+2.0.0 a6 (2010-01-xx)
 ---------------------
 * Added support to convert XTM 1.0 class-instance relationships
   to TMDM type-instance relationships
 * Added support to convert XTM 1.0 PSIs to TMDM PSIs
 
+Bugfixes:
+---------
+* Bug #2926983 -- Merging of associations fails
+                  reported by Sven Krosse
 
 
 2.0.0 a5 (23.07.2009)

@@ -1,5 +1,5 @@
 /*
- * Copyright 2008 Lars Heuer (heuer[at]semagia.com)
+ * Copyright 2008 - 2010 Lars Heuer (heuer[at]semagia.com)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -336,12 +336,20 @@ final class CopyUtils {
         Association existing = null;
         ITopic type = null;
         IScope scope = null;
+        ITopic roleType = null;
+        ITopic player = null;
+        Topic sourcePlayer = null;
         for (Association assoc: source.getAssociations()) {
             type = _copyType(assoc, target, mergeMap);
             scope = _copyScope(assoc, target, mergeMap);
             Association targetAssoc = target.createAssociation(type, scope);
             for (Role role: assoc.getRoles()) {
-                Role targetRole = targetAssoc.createRole(role.getType(), role.getPlayer());
+                roleType = _copyType(role, target, mergeMap);
+                sourcePlayer = role.getPlayer();
+                player = mergeMap.containsKey(sourcePlayer) 
+                            ? (ITopic) mergeMap.get(sourcePlayer)
+                            : _copyTopic(sourcePlayer, target, mergeMap);
+                Role targetRole = targetAssoc.createRole(roleType, player);
                 _copyItemIdentifiers(role, targetRole);
                 _copyReifier(role, targetRole, mergeMap);
             }
