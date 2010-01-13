@@ -7,6 +7,9 @@ Changes Log
 * Added support to convert XTM 1.0 class-instance relationships
   to TMDM type-instance relationships
 * Added support to convert XTM 1.0 PSIs to TMDM PSIs
+* Moved to Ontopia's Compact(Hash|Identity)Set instead relying 
+  on Java's default implementations
+* Removed support for trove's collections
 
 Bugfixes:
 ---------
