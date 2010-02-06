@@ -12,8 +12,8 @@
 
     <property name="lib.junit" value="${dir.lib}/junit-4.5.jar"/>
     <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.5.jar"/>
-    <property name="lib.tmapi" value="${dir.lib}/tmapi-2.0RC2.jar"/>
-    <property name="lib.tmapi.tests" value="${dir.lib}/tmapi-2.0RC2-tests.jar"/>
+    <property name="lib.tmapi" value="${dir.lib}/tmapi-2.0.jar"/>
+    <property name="lib.tmapi.tests" value="${dir.lib}/tmapi-2.0-tests.jar"/>
     <property name="lib.emma" value="${dir.lib}/emma.jar"/>
     <property name="lib.emma.task" value="${dir.lib}/emma_ant.jar"/>
 
