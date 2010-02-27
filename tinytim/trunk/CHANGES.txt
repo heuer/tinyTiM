@@ -2,8 +2,9 @@
 Changes Log
 ===========
 
-2.0.0 a6 (2010-01-xx)
+2.0.0 a6 (2010-02-xx)
 ---------------------
+* Added OSGi headers to the MANIFEST
 * Added support to convert XTM 1.0 class-instance relationships
   to TMDM type-instance relationships
 * Added support to convert XTM 1.0 PSIs to TMDM PSIs
