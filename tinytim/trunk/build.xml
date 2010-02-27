@@ -10,11 +10,10 @@
     <property name="dir.res" value="${basedir}/src/main/resources"/>
     <property name="dir.coverage" value="${basedir}/coverage"/>
 
-    <property name="lib.junit" value="${dir.lib}/junit-4.5.jar"/>
-    <property name="lib.trove" value="${dir.lib}/trove-2.1.0.jar"/>
+    <property name="lib.junit" value="${dir.lib}/junit-4.8.1.jar"/>
     <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.5.jar"/>
     <property name="lib.tmapi" value="${dir.lib}/tmapi-2.0.jar"/>
-    <property name="lib.tmapi.tests" value="${dir.lib}/tmapi-2.0b1-tests.jar"/>
+    <property name="lib.tmapi.tests" value="${dir.lib}/tmapi-2.0-tests.jar"/>
     <property name="lib.emma" value="${dir.lib}/emma.jar"/>
     <property name="lib.emma.task" value="${dir.lib}/emma_ant.jar"/>
 
@@ -68,7 +67,6 @@
             <pathelement location="${lib.mio}"/>
             <pathelement location="${lib.tmapi}"/>
             <pathelement location="${lib.tmapi.tests}"/>
-            <pathelement location="${lib.trove}"/>
         </path>
     </target>
 
@@ -103,7 +101,6 @@
                 <pathelement location="${lib.mio}"/>
                 <pathelement location="${lib.tmapi}"/>
                 <pathelement location="${lib.tmapi.tests}"/>
-                <pathelement location="${lib.trove}"/>
             </classpath>
             <src path="${dir.test}"/>
         </javac>
@@ -134,7 +131,6 @@
                 <pathelement location="${lib.mio}"/>
                 <pathelement location="${lib.tmapi}"/>
                 <pathelement location="${lib.tmapi.tests}"/>
-                <pathelement location="${lib.trove}"/>
             </classpath>
             <src path="${dir.test}"/>
         </javac>
@@ -158,7 +154,6 @@
             target="1.5">
             <classpath>
                 <pathelement location="${lib.tmapi}"/>
-                <pathelement location="${lib.trove}"/>
                 <pathelement location="${lib.mio}"/>
             </classpath>
             <src path="${dir.src}"/>
@@ -210,8 +205,7 @@
                 <attribute name="Implementation-Title" value="tinyTiM"/>
                 <attribute name="Implementation-Version" value="${dist.version}"/>
                 <attribute name="Implementation-URL" value="http://tinytim.sourceforge.net/"/>
-                <attribute name="Import-Package" value="org.osgi.framework,org.tmapi.core,org.tmapi.index,com.semagia.mio"/>
-                <attribute name="Export-Package" value="org.tinytim.core"/>
+                <attribute name="Import-Package" value="org.tmapi.core,org.tmapi.index"/>
                 <attribute name="Bundle-Name" value="tinyTiM"/>
                 <attribute name="Bundle-SymbolicName" value="org.tinytim;version=${dist.version}"/>
                 <attribute name="Bundle-Vendor" value="tinyTiM project"/>
@@ -256,10 +250,8 @@
             <fileset dir="${dir.lib}">
                 <include name="tmapi*"/>
                 <include name="junit*"/>
-                <include name="trove*"/>
                 <include name="LICENSE.tmapi*"/>
                 <include name="LICENSE.junit*"/>
-                <include name="LICENSE.trove*"/>
             </fileset>
         </copy>
        
