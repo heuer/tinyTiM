@@ -94,7 +94,8 @@
         <javac destdir="${dir.build.tests}" 
             debug="${debug}"
             optimize="${optimize}"
-            target="1.5">
+            target="1.5"
+            includeruntime="false">
             <classpath>
                 <pathelement location="${dir.build.classes}"/>
                 <pathelement location="${lib.junit}"/>
@@ -124,7 +125,8 @@
         <javac destdir="${dir.build.tests}" 
             debug="${debug}"
             optimize="${optimize}"
-            target="1.5">
+            target="1.5"
+            includeruntime="false">
             <classpath>
                 <pathelement location="${dir.build.classes}"/>
                 <pathelement location="${lib.junit}"/>
@@ -151,7 +153,8 @@
         <replace file="${dir.src}/org/tinytim/Version.java" token="@RELEASE@" value="${dist.version}"/>
         <javac destdir="${dir.build.classes}"
             debug="${debug}"
-            target="1.5">
+            target="1.5"
+            includeruntime="false">
             <classpath>
                 <pathelement location="${lib.tmapi}"/>
                 <pathelement location="${lib.mio}"/>
