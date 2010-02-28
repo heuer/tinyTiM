@@ -95,7 +95,7 @@
             debug="${debug}"
             optimize="${optimize}"
             target="1.5"
-            includeruntime="false">
+            includeantruntime="false">
             <classpath>
                 <pathelement location="${dir.build.classes}"/>
                 <pathelement location="${lib.junit}"/>
@@ -126,7 +126,7 @@
             debug="${debug}"
             optimize="${optimize}"
             target="1.5"
-            includeruntime="false">
+            includeantruntime="false">
             <classpath>
                 <pathelement location="${dir.build.classes}"/>
                 <pathelement location="${lib.junit}"/>
@@ -154,7 +154,7 @@
         <javac destdir="${dir.build.classes}"
             debug="${debug}"
             target="1.5"
-            includeruntime="false">
+            includeantruntime="false">
             <classpath>
                 <pathelement location="${lib.tmapi}"/>
                 <pathelement location="${lib.mio}"/>
