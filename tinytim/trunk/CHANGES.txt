@@ -2,8 +2,10 @@
 Changes Log
 ===========
 
-2.0.0 a6 (2010-02-xx)
+2.0.0 a6 (2010-03-xx)
 ---------------------
+* Fixed LocatorImpl (the impl. of "equals" was different 
+  from the TMAPI 2.0 specs) reported by Uta Schulze
 * Added OSGi headers to the MANIFEST
 * Added support to convert XTM 1.0 class-instance relationships
   to TMDM type-instance relationships
