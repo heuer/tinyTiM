@@ -151,7 +151,7 @@ final class LocatorImpl implements ILocator {
      */
     @Override
     public boolean equals(Object obj) {
-        return this == obj || (obj instanceof LocatorImpl && _reference.equals(((LocatorImpl) obj)._reference));
+        return this == obj || (obj instanceof Locator && _reference.equals(((Locator) obj).getReference()));
     }
 
     /* (non-Javadoc)
