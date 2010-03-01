@@ -16,6 +16,7 @@ import java.util.NoSuchElementException;
  * INTERNAL: Implements the Set interface more compactly than
  * java.util.HashSet by using a closed hashtable. 
  */
+@SuppressWarnings("unchecked")
 class CompactHashSet<E> extends java.util.AbstractSet<E> {
   
   protected final static int INITIAL_SIZE = 3;
