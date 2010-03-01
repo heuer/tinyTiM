@@ -15,6 +15,7 @@ import java.util.Collection;
  * INTERNAL: This class is a specialization of the CompactHashSet
  * class, and uses the == operator to compare objects.
  */
+@SuppressWarnings("unchecked")
 class CompactIdentityHashSet<E> extends CompactHashSet<E> {
 
   public CompactIdentityHashSet() {
