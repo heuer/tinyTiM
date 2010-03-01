@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <project name="tinyTiM" default="jar" basedir=".">
     <property file="build.properties"/>
-    <tstamp/>
-    <property name="release_type" value="-snapshot-${DSTAMP}${TSTAMP}"/>
 
     <property name="dir.src" value="${basedir}/src/main/java"/>
     <property name="dir.test" value="${basedir}/src/test/java"/>
@@ -44,7 +42,7 @@
     </target>
 
     <target name="init">
-        <property name="dist.version" value="${version}${version_suffix}${release_type}"/>
+        <property name="dist.version" value="${version}${version_suffix}"/>
         <property name="dist.name" value="tinytim-${dist.version}"/>
 
         <property name="tinytim.jar" value="${dist.name}.jar"/>
