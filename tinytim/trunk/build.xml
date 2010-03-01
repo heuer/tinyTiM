@@ -12,8 +12,8 @@
 
     <property name="lib.junit" value="${dir.lib}/junit-4.8.1.jar"/>
     <property name="lib.mio" value="${dir.lib}/semagia-mio-0.9.5.jar"/>
-    <property name="lib.tmapi" value="${dir.lib}/tmapi-2.0.jar"/>
-    <property name="lib.tmapi.tests" value="${dir.lib}/tmapi-2.0-tests.jar"/>
+    <property name="lib.tmapi" value="${dir.lib}/tmapi-2.0.1.snapshot.jar"/>
+    <property name="lib.tmapi.tests" value="${dir.lib}/tmapi-tests-2.0.1.snapshot.jar"/>
     <property name="lib.emma" value="${dir.lib}/emma.jar"/>
     <property name="lib.emma.task" value="${dir.lib}/emma_ant.jar"/>
 
@@ -48,10 +48,12 @@
         <property name="dist.name" value="tinytim-${dist.version}"/>
 
         <property name="tinytim.jar" value="${dist.name}.jar"/>
-        <property name="tinytim-test.jar" value="${dist.name}-tests.jar"/>
+        <property name="tinytim-test.jar" value="tinytim-tests-${dist.version}.jar"/>
         <property name="tinytim.tar" value="${dist.name}.tar"/>
         <property name="tinytim.tar.gz" value="${tinytim.tar}.gz"/>
         <property name="tinytim.zip" value="${dist.name}.zip"/>
+        <property name="tinytim.pom" value="${dist.name}.pom"/>
+        <property name="tinytim-test.pom" value="tinytim-tests-${dist.version}.pom"/>
 
         <property name="dir.build" value="${basedir}/build"/>
         <property name="dir.dist.root" value="${dir.build}/dist"/>
@@ -215,6 +217,12 @@
                 <attribute name="Bundle-Version" value="${dist.version}"/>
             </manifest>
         </jar>
+        <checksum file="${dir.build}/${tinytim.jar}" algorithm="sha1"/>
+        <antcall target="pom">
+          <param name="pom-file" value="${tinytim.pom}"/>
+          <param name="artifact" value="tinytim"/>
+        </antcall>
+        <checksum file="${dir.build}/${tinytim.pom}" algorithm="sha1"/>
     </target>
 
     <!-- =================================================================== -->
@@ -231,6 +239,23 @@
                 <attribute name="Implementation-URL" value="http://tinytim.sourceforge.net/"/>
             </manifest>
         </jar>
+        <checksum file="${dir.build}/${tinytim-test.jar}" algorithm="sha1"/>
+        <antcall target="pom">
+          <param name="pom-file" value="${tinytim-test.pom}"/>
+          <param name="artifact" value="tinytim-test"/>
+        </antcall>
+        <checksum file="${dir.build}/${tinytim-test.pom}" algorithm="sha1"/>
+    </target>
+
+    <target name="pom">
+      <echoxml file="${dir.build}/${pom-file}" namespacePolicy="elementsOnly">
+        <project xmlns="http://maven.apache.org/POM/4.0.0">
+          <modelVersion>4.0.0</modelVersion>
+          <groupId>org.tmapi</groupId>
+          <artifactId>${artifact}</artifactId>
+          <version>${dist.version}</version>
+        </project>
+      </echoxml>
     </target>
 
     <!-- =================================================================== -->
