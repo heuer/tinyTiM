@@ -176,6 +176,7 @@
             use="true"
             splitindex="true"
             noindex="false"
+            link="http://www.tmapi.org/2.0/api/"
             windowtitle="tinyTiM API v${dist.version}"
             doctitle="tinyTiM API v${dist.version}">
             <fileset dir="${dir.src}">
@@ -189,7 +190,6 @@
                 path="${dir.lib}/apiviz-1.2.4.GA.jar">
             </doclet>
 -->
-            <link href="http://www.tmapi.org/2.0/api/"/>
         </javadoc>
     </target>
 

@@ -11,7 +11,7 @@ see <http://www.tmapi.org/2.0/> for details.
 
 Installation
 ------------
-No real installation needed, simply put the ``tinytim-2.0.0a6.jar`` and
+No real installation needed, simply put the ``tinytim-2.0.0.jar`` and
 ``tmapi-2*.jar`` into your classpath. That's all. :)
 
 
