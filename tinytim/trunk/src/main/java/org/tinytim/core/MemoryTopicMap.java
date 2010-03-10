@@ -80,7 +80,11 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
         _eventMultiplier = new EventMultiplier(this);
     }
 
-    Locator getLocator() {
+    /**
+     * Returns the storage address of this topic map.
+     */
+    //TODO: @Override
+    public Locator getLocator() {
         return _locator;
     }
 
