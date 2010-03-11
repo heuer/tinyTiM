@@ -4,7 +4,7 @@ Changes Log
 
 2.0.0 (2010-03-dd)
 ------------------
-* Updated TMAPI to 2.0.1
+* Updated TMAPI to 2.0.1 and is compatible to TMAPI 2.0.2
 * Fixed LocatorImpl (the impl. of "equals" was different 
   from the TMAPI 2.0 specs) reported by Uta Schulze
 * tinyTiM is usable as an OSGi bundle
