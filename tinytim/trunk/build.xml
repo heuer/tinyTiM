@@ -209,7 +209,7 @@
                 <attribute name="Implementation-Version" value="${dist.version}"/>
                 <attribute name="Implementation-URL" value="http://tinytim.sourceforge.net/"/>
                 <attribute name="Import-Package" value="org.tmapi.core,org.tmapi.index"/>
-                <attribute name="Export-Package" value="org.tinytim.mio"/>
+                <attribute name="Export-Package" value="org.tinytim.mio,org.tinytim.voc"/>
                 <attribute name="Bundle-Name" value="tinyTiM"/>
                 <attribute name="Bundle-SymbolicName" value="org.tinytim;version=${dist.version}"/>
                 <attribute name="Bundle-Vendor" value="tinyTiM project"/>
