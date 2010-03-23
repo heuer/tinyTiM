@@ -15,7 +15,7 @@
  */
 package org.tinytim.utils;
 
-import org.tinytim.core.TinyTimTestCase;
+import org.tinytim.core.AbstractTinyTimTestCase;
 import org.tinytim.voc.TMDM;
 import org.tinytim.voc.XTM10;
 import org.tmapi.core.Association;
@@ -28,7 +28,7 @@ import org.tmapi.core.Topic;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestTypeInstanceConverter extends TinyTimTestCase {
+public class TestTypeInstanceConverter extends AbstractTinyTimTestCase {
 
 
     public void testTMDMTypeInstanceAssociation() {

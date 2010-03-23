@@ -15,7 +15,7 @@
  */
 package org.tinytim.utils;
 
-import org.tinytim.core.TinyTimTestCase;
+import org.tinytim.core.AbstractTinyTimTestCase;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
 import org.tmapi.core.Reifiable;
@@ -25,9 +25,9 @@ import org.tmapi.core.Topic;
  * Tests against the {@link XTM10Utils}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
-public class TestXTM10Utils extends TinyTimTestCase {
+public class TestXTM10Utils extends AbstractTinyTimTestCase {
 
     private void _testConvertReification(Reifiable reifiable) {
         final Locator loc = _tm.createLocator("http://www.semagia.com/test");

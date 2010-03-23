@@ -15,7 +15,7 @@
  */
 package org.tinytim.utils;
 
-import org.tinytim.core.TinyTimTestCase;
+import org.tinytim.core.AbstractTinyTimTestCase;
 import org.tmapi.core.Association;
 import org.tmapi.core.Locator;
 import org.tmapi.core.Name;
@@ -27,7 +27,7 @@ import org.tmapi.core.Topic;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestDuplicateRemovalUtils extends TinyTimTestCase {
+public class TestDuplicateRemovalUtils extends AbstractTinyTimTestCase {
 
     public void testTopicRemoveNames() {
         Topic topic = createTopic();

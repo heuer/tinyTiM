@@ -15,7 +15,7 @@
  */
 package org.tinytim.core.value;
 
-import org.tinytim.core.TinyTimTestCase;
+import org.tinytim.core.AbstractTinyTimTestCase;
 import org.tmapi.core.Locator;
 
 /**
@@ -24,7 +24,7 @@ import org.tmapi.core.Locator;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestLocatorImpl extends TinyTimTestCase {
+public class TestLocatorImpl extends AbstractTinyTimTestCase {
 
     public void testNormalization() {
         Locator loc = _tm.createLocator("http://www.example.org/test+me/");

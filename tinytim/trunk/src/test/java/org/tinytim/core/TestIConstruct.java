@@ -31,7 +31,7 @@ import org.tmapi.core.Variant;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestIConstruct extends TinyTimTestCase {
+public class TestIConstruct extends AbstractTinyTimTestCase {
 
 
     private void _testConstruct(Construct construct) {

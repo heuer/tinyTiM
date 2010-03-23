@@ -15,7 +15,7 @@
  */
 package org.tinytim.core.value;
 
-import org.tinytim.core.TinyTimTestCase;
+import org.tinytim.core.AbstractTinyTimTestCase;
 import org.tinytim.internal.api.ILiteral;
 import org.tinytim.voc.XSD;
 import org.tmapi.core.Locator;
@@ -26,7 +26,7 @@ import org.tmapi.core.Locator;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestLiteral extends TinyTimTestCase {
+public class TestLiteral extends AbstractTinyTimTestCase {
 
     public void testLocatorResolve() {
         Locator base = Literal.createIRI("http://www.semagia.com/");

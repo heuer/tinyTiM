@@ -17,7 +17,7 @@ package org.tinytim.utils;
 
 import java.util.Collection;
 
-import org.tinytim.core.TinyTimTestCase;
+import org.tinytim.core.AbstractTinyTimTestCase;
 import org.tinytim.voc.TMDM;
 
 import org.tmapi.core.Association;
@@ -28,9 +28,9 @@ import org.tmapi.core.Typed;
  * Tests against the {@link TypeInstanceUtils}.
  * 
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
- * @version $Rev:$ - $Date:$
+ * @version $Rev$ - $Date$
  */
-public class TestTypeInstanceUtils extends TinyTimTestCase {
+public class TestTypeInstanceUtils extends AbstractTinyTimTestCase {
 
     private void _testTypedInstanceOf(final Typed typed) {
         assertNotNull(typed.getType());
