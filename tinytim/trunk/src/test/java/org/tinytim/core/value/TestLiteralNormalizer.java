@@ -15,7 +15,7 @@
  */
 package org.tinytim.core.value;
 
-import org.tinytim.core.TinyTimTestCase;
+import org.tinytim.core.AbstractTinyTimTestCase;
 
 /**
  * Tests against the {@link LiteralNormalizer}.
@@ -23,7 +23,7 @@ import org.tinytim.core.TinyTimTestCase;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestLiteralNormalizer extends TinyTimTestCase {
+public class TestLiteralNormalizer extends AbstractTinyTimTestCase {
 
     public void testNormalizeBoolean() {
         assertEquals("true", LiteralNormalizer.normalizeBoolean("1"));

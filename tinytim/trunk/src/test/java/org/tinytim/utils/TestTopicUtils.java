@@ -15,7 +15,7 @@
  */
 package org.tinytim.utils;
 
-import org.tinytim.core.TinyTimTestCase;
+import org.tinytim.core.AbstractTinyTimTestCase;
 import org.tmapi.core.Association;
 import org.tmapi.core.Role;
 import org.tmapi.core.Topic;
@@ -26,7 +26,7 @@ import org.tmapi.core.Topic;
  * @author Lars Heuer (heuer[at]semagia.com) <a href="http://www.semagia.com/">Semagia</a>
  * @version $Rev$ - $Date$
  */
-public class TestTopicUtils extends TinyTimTestCase {
+public class TestTopicUtils extends AbstractTinyTimTestCase {
 
     /**
      * Tests if a topic is considered as 'removable'.
