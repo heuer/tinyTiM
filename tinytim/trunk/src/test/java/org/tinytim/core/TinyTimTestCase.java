@@ -58,6 +58,9 @@ public class TinyTimTestCase extends TestCase {
         super(name);
     }
 
+    // Avoid warning that this class does not contain tests
+    public void testNothing() {}
+
     /**
      * Returns additional / non-default properties which should be set
      * to configure the {@link org.tmapi.core.TopicMapSystemFactory}.
