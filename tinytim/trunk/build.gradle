@@ -1,0 +1,45 @@
+// *Experimental* build file for Gradle
+// DO NOT use it. Don't even think about it!
+
+group = 'org.tinytim'
+archivesBaseName = 'tinytim'
+version = '2.0.1'
+bundleVersion = version
+
+usePlugin 'java'
+usePlugin 'osgi'
+
+manifest.mainAttributes(
+    'Implementation-Title': 'tinyTiM',
+    'Implementation-Version': version
+)
+
+gradle.taskGraph.whenReady {taskGraph ->
+   if (!taskGraph.hasTask(':release')) {
+       version += '-SNAPSHOT'
+   }
+}
+
+repositories {
+    mavenCentral()
+    mavenRepo urls: 'http://www.tmapi.org/maven-repository/'
+    mavenRepo urls: 'http://www.tmapi.org/maven-repository/snapshots/'
+}
+
+dependencies {
+    compile group: 'org.tmapi', name: 'tmapi', version: '2.0.2'
+    compile files('lib/semagia-mio-0.9.5.jar')
+
+    testCompile group: 'junit', name: 'junit', version: '4.+'
+    testCompile group: 'org.tmapi', name: 'tmapi-tests', version: '2.0.3-SNAPSHOT'
+}
+
+configure(jar.osgi) {
+    instruction 'Bundle-Description', 'tinyTiM - A tiny Topic Maps engine'
+    instruction 'Import-Package', 'org.tmapi.core, org.tmapi.index'
+    instruction 'Export-Package', 'org.tinytim.mio, org.tinytim.voc'
+}
+
+test {
+    include '**/AllTests.class'
+}
