@@ -2,6 +2,12 @@
 Changes Log
 ===========
 
+2.0.1 (2010-mm-dd)
+------------------
+* OSGi bundle exports the .voc package 
+  (contributed by Hannes Niederhausen)
+
+
 2.0.0 (2010-03-19)
 ------------------
 * Updated TMAPI to 2.0.2 (kept compatibility to 2.0 and 2.0.1)
