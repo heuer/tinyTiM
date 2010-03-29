@@ -1,4 +1,4 @@
-// *Experimental* build file for Gradle
+// *Experimental* build file for Gradle *0.9* (preview)
 // DO NOT use it. Don't even think about it!
 
 group = 'org.tinytim'
@@ -6,8 +6,8 @@ archivesBaseName = 'tinytim'
 version = '2.0.1'
 bundleVersion = version
 
-usePlugin 'java'
-usePlugin 'osgi'
+apply plugin: 'java'
+apply plugin: 'osgi'
 
 manifest.mainAttributes(
     'Implementation-Title': 'tinyTiM',
@@ -34,10 +34,12 @@ dependencies {
     testCompile group: 'org.tmapi', name: 'tmapi-tests', version: '2.0.3-SNAPSHOT'
 }
 
-configure(jar.osgi) {
-    instruction 'Bundle-Description', 'tinyTiM - A tiny Topic Maps engine'
-    instruction 'Import-Package', 'org.tmapi.core, org.tmapi.index'
-    instruction 'Export-Package', 'org.tinytim.mio, org.tinytim.voc'
+jar {
+    manifest {
+      instruction 'Bundle-Description', 'tinyTiM - A tiny Topic Maps engine'
+      instruction 'Import-Package', 'org.tmapi.core, org.tmapi.index'
+      instruction 'Export-Package', 'org.tinytim.mio, org.tinytim.voc'
+    }
 }
 
 test {
