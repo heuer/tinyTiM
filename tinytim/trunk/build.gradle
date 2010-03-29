@@ -9,11 +9,6 @@ bundleVersion = version
 apply plugin: 'java'
 apply plugin: 'osgi'
 
-manifest.mainAttributes(
-    'Implementation-Title': 'tinyTiM',
-    'Implementation-Version': version
-)
-
 gradle.taskGraph.whenReady {taskGraph ->
    if (!taskGraph.hasTask(':release')) {
        version += '-SNAPSHOT'
@@ -36,6 +31,7 @@ dependencies {
 
 jar {
     manifest {
+      attributes 'Implementation-Title': 'tinyTiM', 'Implementation-Version': version
       instruction 'Bundle-Description', 'tinyTiM - A tiny Topic Maps engine'
       instruction 'Import-Package', 'org.tmapi.core, org.tmapi.index'
       instruction 'Export-Package', 'org.tinytim.mio, org.tinytim.voc'
