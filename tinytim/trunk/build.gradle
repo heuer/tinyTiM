@@ -1,13 +1,19 @@
-// *Experimental* build file for Gradle *0.9* (preview)
-// DO NOT use it. Don't even think about it!
-
+/*
+ * Gradle 0.9 build file.
+ * 
+ * - Download Gradle from <http://www.gradle.org/>
+ * - Execute gradle build
+ * 
+ * TODO: Zip / Tar archives, run TMAPI.AllTests
+ *
+ */
 group = 'org.tinytim'
-archivesBaseName = 'tinytim'
 version = '2.0.1'
 bundleVersion = version
 
 apply plugin: 'java'
 apply plugin: 'osgi'
+apply plugin: 'maven'
 
 gradle.taskGraph.whenReady {taskGraph ->
    if (!taskGraph.hasTask(':release')) {
@@ -34,10 +40,16 @@ jar {
       attributes 'Implementation-Title': 'tinyTiM', 'Implementation-Version': version
       instruction 'Bundle-Description', 'tinyTiM - A tiny Topic Maps engine'
       instruction 'Import-Package', 'org.tmapi.core, org.tmapi.index'
-      instruction 'Export-Package', 'org.tinytim.mio, org.tinytim.voc'
+      instruction 'Export-Package', 'org.tinytim.mio, org.tinytim.voc, org.tinytim.utils'
     }
 }
 
-test {
-    include '**/AllTests.class'
+artifacts {
+    archives jar
+}
+
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: "file://$buildDir/maven-repo/")
+    }
 }
