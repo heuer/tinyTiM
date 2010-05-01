@@ -648,7 +648,7 @@ public final class CXTMTopicMapWriter {
                 normLoc = normLoc.substring(slashPos);
             }
         }
-        if (normLoc.charAt(0) == '/') {
+        if (normLoc.length() > 0 && normLoc.charAt(0) == '/') {
             normLoc = normLoc.substring(1);
         }
         _locator2Norm.put(locator, normLoc);
