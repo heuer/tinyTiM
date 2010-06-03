@@ -63,7 +63,7 @@ final class LocatorImpl implements ILocator {
         catch (UnsupportedEncodingException ex) {
             throw new TMAPIRuntimeException(ex);
         }
-        _uri = URI.create(_reference.replace(" ", "%20"));
+        _uri = URI.create(reference);
     }
 
     private LocatorImpl(URI uri) {
@@ -79,6 +79,7 @@ final class LocatorImpl implements ILocator {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#getDatatype()
      */
+    @Override
     public Locator getDatatype() {
         return XSD.ANY_URI;
     }
@@ -86,6 +87,7 @@ final class LocatorImpl implements ILocator {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#getValue()
      */
+    @Override
     public String getValue() {
         return _reference;
     }
@@ -93,6 +95,7 @@ final class LocatorImpl implements ILocator {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#decimalValue()
      */
+    @Override
     public BigDecimal decimalValue() {
         throw new NumberFormatException();
     }
@@ -100,6 +103,7 @@ final class LocatorImpl implements ILocator {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#floatValue()
      */
+    @Override
     public float floatValue() {
         throw new NumberFormatException();
     }
@@ -107,6 +111,7 @@ final class LocatorImpl implements ILocator {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#integerValue()
      */
+    @Override
     public BigInteger integerValue() {
         throw new NumberFormatException();
     }
@@ -114,6 +119,7 @@ final class LocatorImpl implements ILocator {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#intValue()
      */
+    @Override
     public int intValue() {
         throw new NumberFormatException();
     }
@@ -121,6 +127,7 @@ final class LocatorImpl implements ILocator {
     /* (non-Javadoc)
      * @see org.tinytim.internal.api.ILiteral#longValue()
      */
+    @Override
     public long longValue() {
         throw new NumberFormatException();
     }
@@ -128,6 +135,7 @@ final class LocatorImpl implements ILocator {
     /* (non-Javadoc)
      * @see org.tmapi.core.Locator#getReference()
      */
+    @Override
     public String getReference() {
         return _reference;
     }
@@ -135,13 +143,18 @@ final class LocatorImpl implements ILocator {
     /* (non-Javadoc)
      * @see org.tmapi.core.Locator#resolve(java.lang.String)
      */
+    @Override
     public Locator resolve(String reference) {
+        if (_EMPTY.equals(reference)) {
+            return this;
+        }
         return create(_uri.resolve(reference));
     }
 
     /* (non-Javadoc)
      * @see org.tmapi.core.Locator#toExternalForm()
      */
+    @Override
     public String toExternalForm() {
         return _uri.toASCIIString();
     }
