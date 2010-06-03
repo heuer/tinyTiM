@@ -50,7 +50,7 @@ final class IdentityManager implements IEventPublisherAware {
     private final Map<String, IConstruct> _id2Construct;
 
     IdentityManager(MemoryTopicMap tm) {
-        _id2Construct = CollectionFactory.createIdentityMap(IConstant.IDENTITY_ID2CONSTRUCT_SIZE);
+        _id2Construct = CollectionFactory.createMap(IConstant.IDENTITY_ID2CONSTRUCT_SIZE);
         _sid2Topic = CollectionFactory.createIdentityMap(IConstant.IDENTITY_SID2TOPIC_SIZE);
         _slo2Topic = CollectionFactory.createIdentityMap(IConstant.IDENTITY_SLO2TOPIC_SIZE);
         _iid2Construct = CollectionFactory.createIdentityMap(IConstant.IDENTITY_IID2CONSTRUCT_SIZE);
@@ -107,7 +107,7 @@ final class IdentityManager implements IEventPublisherAware {
     private void _register(IConstruct construct) {
         ConstructImpl c = (ConstructImpl) construct;
         if (c._id == null) {
-            c._id = String.valueOf(IdGenerator.nextId()).intern();
+            c._id = String.valueOf(IdGenerator.nextId());
         }
         if (!_id2Construct.containsKey(c._id)) {
             _id2Construct.put(c._id, c);
