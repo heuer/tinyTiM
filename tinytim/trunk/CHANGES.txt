@@ -6,6 +6,9 @@ Changes Log
 ------------------
 * OSGi bundle exports the .voc package 
   (contributed by Hannes Niederhausen)
+* Removed String-Interning for Object Ids 
+  (caused memory heap problems and fixes a bug reported by Uta Schulze)
+  
 
 
 2.0.0 (2010-03-19)
