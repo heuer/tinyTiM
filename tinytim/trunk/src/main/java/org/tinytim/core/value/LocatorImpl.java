@@ -63,7 +63,7 @@ final class LocatorImpl implements ILocator {
         catch (UnsupportedEncodingException ex) {
             throw new TMAPIRuntimeException(ex);
         }
-        _uri = URI.create(reference);
+        _uri = URI.create(_reference.replace(" ", "%20"));
     }
 
     private LocatorImpl(URI uri) {
