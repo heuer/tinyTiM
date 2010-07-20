@@ -401,7 +401,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
      * @see org.tmapi.core.Topic#getRolesPlayed(org.tmapi.core.Topic)
      */
     @Override
-    public Set<Role> getRolesPlayed(Topic type) {
+    public Set<Role> getRolesPlayed(final Topic type) {
         Check.typeNotNull(type);
         if (_rolesPlayed == null) {
             return Collections.emptySet();
@@ -419,7 +419,7 @@ final class TopicImpl extends ConstructImpl implements ITopic {
      * @see org.tmapi.core.Topic#getRolesPlayed(org.tmapi.core.Topic, org.tmapi.core.Topic)
      */
     @Override
-    public Set<Role> getRolesPlayed(Topic type, Topic assoc) {
+    public Set<Role> getRolesPlayed(final Topic type, final Topic assoc) {
         Check.typeNotNull(type);
         if (assoc == null) {
             throw new IllegalArgumentException("The association type must not be null");
