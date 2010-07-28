@@ -24,7 +24,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.AttributesImpl;
 
 /**
- * Simple SAX-alike XML writer that respects canonical XML to some extend.
+ * Simple SAX-alike XML writer that respects canonical XML to some extent.
  * <p>
  * This class is not meant to be a generic XML-C14N writer, but it is good 
  * enough to support CXTM.
