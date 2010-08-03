@@ -77,6 +77,7 @@ public final class DuplicateRemovalUtils {
             int sig = SignatureGenerator.generateSignature(assoc);
             existing = sig2Assoc.get(sig);
             if (existing != null) {
+                MergeUtils.handleExistingConstruct(assoc, existing);
                 MergeUtils.moveRoleCharacteristics(assoc, existing);
                 assoc.remove();
             }
