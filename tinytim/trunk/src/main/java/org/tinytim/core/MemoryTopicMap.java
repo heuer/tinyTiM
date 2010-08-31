@@ -388,6 +388,17 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
         return true;
     }
 
+    public void clear() {
+        if (_iids != null) {
+            _iids.clear();
+        }
+        _reifier = null;
+        _topics.clear();
+        _assocs.clear();
+        ((IndexManager)_indexManager).clear();
+        ((IdentityManager) _identityManager).clear();
+    }
+
     /* (non-Javadoc)
      * @see org.tmapi.core.TopicMap#remove()
      */
@@ -395,8 +406,7 @@ final class MemoryTopicMap extends AbstractTopicMap implements ITopicMap {
     public void remove() {
         _sys.removeTopicMap(this);
         _sys = null;
-        _topics.clear();
-        _assocs.clear();
+        clear();
         _indexManager.close();
         _identityManager.close();
         _eventMultiplier = null;

@@ -163,11 +163,15 @@ final class IdentityManager implements IEventPublisherAware {
         return _iid2Construct.get(iid);
     }
 
-    public void close() {
+    public void clear() {
         _id2Construct.clear();
         _iid2Construct.clear();
         _sid2Topic.clear();
         _slo2Topic.clear();
+    }
+
+    public void close() {
+        clear();
     }
 
     private class TopicMapsConstructAddHandler implements IEventHandler {
@@ -294,4 +298,5 @@ final class IdentityManager implements IEventPublisherAware {
             }
         }
     }
+
 }
