@@ -1170,7 +1170,6 @@ public final class CXTMTopicMapWriter {
         public Set<Locator> getItemIdentifiers() { return Collections.emptySet(); }
         public Association getParent() { return _parent; }
         public void removeItemIdentifier(Locator itemIdentifier) { }
-        public Association getAssociation() { return _parent; }
         public Topic getReifier() { return null; }
         public void remove() {}
         public void setPlayer(Topic arg0) {}
