@@ -84,6 +84,10 @@ public final class IndexManager implements IIndexManager {
      * @see org.tinytim.internal.api.IIndexManager#close()
      */
     public void close() {
+        clear();
+    }
+
+    public void clear() {
         _typeInstanceIndex.clear();
         _scopedIndex.clear();
         _literalIndex.clear();

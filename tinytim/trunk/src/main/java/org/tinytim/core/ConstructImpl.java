@@ -40,7 +40,7 @@ abstract class ConstructImpl implements IConstruct {
     protected String _id;
     protected ITopicMap _tm;
     protected Construct _parent;
-    private Set<Locator> _iids;
+    protected Set<Locator> _iids;
 
     protected ConstructImpl(ITopicMap topicMap) {
         _tm = topicMap;
