@@ -4,7 +4,7 @@
  * - Download Gradle from <http://www.gradle.org/>
  * - Execute gradle build
  * 
- * TODO: Zip / Tar archives, run TMAPI.AllTests
+ * TODO: Zip / Tar archives
  *
  */
 group = 'org.tinytim'
@@ -14,6 +14,12 @@ bundleVersion = version
 apply plugin: 'java'
 apply plugin: 'osgi'
 apply plugin: 'maven'
+apply plugin: 'eclipse'
+
+defaultTasks 'clean', 'build'
+
+//TODO: Remove me once <http://jira.codehaus.org/browse/GRADLE-1079> is fixed
+eclipseClasspath.variables = [:]
 
 gradle.taskGraph.whenReady {taskGraph ->
    if (!taskGraph.hasTask(':release')) {
@@ -33,21 +39,31 @@ configurations {
 }
 
 dependencies {
-    compile group: 'org.tmapi', name: 'tmapi', version: '2.0.2'
+    compile 'org.tmapi:tmapi:2.0.2'
 
     compiledep 'com.semagia.mio:mio-core:0.9.6-SNAPSHOT'
 
-    testCompile group: 'junit', name: 'junit', version: '4.8.1'
-    testCompile group: 'org.tmapi', name: 'tmapi-tests', version: '2.0.3-SNAPSHOT'
-    
-    // Make Eclipse happy
-    testCompile 'com.semagia.mio:mio-core:0.9.6-SNAPSHOT'
+    testCompile 'junit:junit:4.8.1',
+                'org.tmapi:tmapi-tests:2.0.3-SNAPSHOT'
 }
+
+eclipseClasspath.downloadSources = false
+eclipseClasspath.plusConfigurations.add configurations.compiledep
 
 sourceSets {
     main {
       compileClasspath = sourceSets.main.compileClasspath + configurations.compiledep
     }
+}
+
+test.doFirst {
+  ant {
+    unzip(src: configurations.testCompile.find { f -> f.name.startsWith('tmapi-test') },
+          dest: "$buildDir/classes/test") {
+        exclude '**/TestTopicMapSystemFactory*'
+        exclude '**/TestRFC3986*'
+    }
+  }
 }
 
 jar {
