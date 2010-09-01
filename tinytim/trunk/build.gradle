@@ -39,7 +39,7 @@ configurations {
 }
 
 dependencies {
-    compile 'org.tmapi:tmapi:2.0.2'
+    compile 'org.tmapi:tmapi:(2.0.2,)'
 
     compiledep 'com.semagia.mio:mio-core:0.9.6-SNAPSHOT'
 
