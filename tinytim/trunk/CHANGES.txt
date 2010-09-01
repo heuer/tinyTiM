@@ -4,6 +4,7 @@ Changes Log
 
 2.0.1 (2010-mm-dd)
 ------------------
+* tinyTiM is forward-compatible to TMAPI 2.0.3
 * OSGi bundle exports the .voc package 
   (contributed by Hannes Niederhausen)
 * Removed String-Interning for object ids 
