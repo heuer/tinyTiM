@@ -51,11 +51,12 @@ configurations {
 }
 
 dependencies {
-    compile 'org.tmapi:tmapi:(2.0.2,)'
+    compile 'org.tmapi:tmapi:[2.0.0,)'
 
     compiledep 'com.semagia.mio:mio-core:0.9.6-SNAPSHOT'
 
     testCompile 'junit:junit:4.8.1',
+                'org.tmapi:tmapi:2.0.3-SNAPSHOT',
                 'org.tmapi:tmapi-tests:2.0.3-SNAPSHOT',
                 'com.semagia.mio:mio-core-tests:0.9.6-SNAPSHOT',
                 'com.semagia.mio:mio-core:0.9.6-SNAPSHOT'
