@@ -11,6 +11,14 @@ group = 'org.tinytim'
 version = '2.0.1'
 bundleVersion = version
 
+project.projectName = 'tinyTiM'
+project.projectDescription = 'Topic Maps engine'
+project.vendorName = 'tinyTiM project'
+project.vendorURL = 'http://tinytim.sourceforge.net/'
+project.licenseName = 'Apache Software License, Version 2.0'
+project.licenseURL = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+project.projectURL = 'http://tinytim.sourceforge.net/'
+
 apply plugin: 'java'
 apply plugin: 'osgi'
 apply plugin: 'maven'
@@ -27,11 +35,15 @@ gradle.taskGraph.whenReady {taskGraph ->
    }
 }
 
+REP_TMAPI = 'http://www.tmapi.org/maven-repository/'
+REP_TMAPI_SNAPSHOTS = 'http://www.tmapi.org/maven-repository/snapshots/'
+REP_SEMAGIA_SNAPSHOTS = 'http://repository.semagia.com/snapshots/'
+
 repositories {
     mavenCentral()
-    mavenRepo urls: 'http://www.tmapi.org/maven-repository/'
-    mavenRepo urls: 'http://www.tmapi.org/maven-repository/snapshots/'
-    mavenRepo urls: 'http://repository.semagia.com/snapshots/'
+    mavenRepo urls: REP_TMAPI
+    mavenRepo urls: REP_TMAPI_SNAPSHOTS
+    mavenRepo urls: REP_SEMAGIA_SNAPSHOTS
 }
 
 configurations {
@@ -90,5 +102,36 @@ artifacts {
 uploadArchives {
     repositories.mavenDeployer {
         repository(url: "file://$buildDir/maven-repo/")
+        
+        pom.project {
+            name project.projectName
+            description project.projectDescription
+            url project.projectURL
+            
+            organization {
+                name project.vendorName
+                url project.vendorURL
+            }
+            licenses {
+               license {
+                  name project.licenseName
+                  url project.licenseURL
+               }
+            }
+            repositories {
+               repository {
+                  id 'tmapi'
+                  url REP_TMAPI
+               }
+               repository {
+                  id 'tmapi-snapshot'
+                  url REP_TMAPI_SNAPSHOTS
+               }
+               repository {
+                  id 'semagia-snapshots'
+                  url REP_SEMAGIA_SNAPSHOTS
+               }
+            }
+        }
     }
 }
