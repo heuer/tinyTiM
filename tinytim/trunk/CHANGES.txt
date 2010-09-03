@@ -9,7 +9,9 @@ Changes Log
   (contributed by Hannes Niederhausen)
 * Removed String-Interning for object ids 
   (caused heap memory problems and fixes a bug reported by Uta Schulze)
-  
+* Locator: Resolving a reference with white spaces caused problems. Fixed.
+  (reported by Uta Schulze)
+
 
 
 2.0.0 (2010-03-19)

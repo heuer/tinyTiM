@@ -148,7 +148,7 @@ final class LocatorImpl implements ILocator {
         if (_EMPTY.equals(reference)) {
             return this;
         }
-        return create(_uri.resolve(reference));
+        return create(_uri.resolve(reference.replace(" ", "%20")));
     }
 
     /* (non-Javadoc)
