@@ -38,6 +38,11 @@ public class TestLocatorImpl extends AbstractTinyTimTestCase {
         assertEquals("http://www.example.org/test%20me/", loc3.toExternalForm());
     }
 
+    public void testResolve() {
+        Locator loc = _tm.createLocator("http://www.example.org/");
+        assertEquals("http://www.example.org/#uta%20schulze", loc.resolve("#uta schulze").toExternalForm());
+    }
+
 //    public void testLowerCaseScheme() {
 //        Locator loc = _tm.createLocator("HTTP://www.example.org/test+me/");
 //        assertEquals("http://www.example.org/test me/", loc.getReference());
