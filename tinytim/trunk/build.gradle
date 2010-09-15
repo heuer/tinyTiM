@@ -23,6 +23,7 @@ apply plugin: 'java'
 apply plugin: 'osgi'
 apply plugin: 'maven'
 apply plugin: 'eclipse'
+apply from:'http://github.com/breskeby/gradleplugins/raw/master/emmaPlugin/emma.gradle'
 
 defaultTasks 'clean', 'build'
 
@@ -51,6 +52,8 @@ configurations {
 }
 
 dependencies {
+    emma 'emma:emma:2.0.5312', 'emma:emma_ant:2.0.5312'
+
     compile 'org.tmapi:tmapi:[2.0.2,)'
 
     compiledep 'com.semagia.mio:mio-core:0.9.6-SNAPSHOT'
