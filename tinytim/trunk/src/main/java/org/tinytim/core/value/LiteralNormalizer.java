@@ -144,6 +144,9 @@ final class LiteralNormalizer {
         }
         if (len <= idx) {
             normalized.append('0');
+            if (normalized.charAt(0) == '0') {
+                return "0.0";
+            }
         }
         else {
             // idx points to the '.', increment it
@@ -157,7 +160,7 @@ final class LiteralNormalizer {
                 idx++;
             }
         }
-        return negative && normalized.charAt(0) != '0' ? '-' + normalized.toString() : normalized.toString();
+        return negative ? '-' + normalized.toString() : normalized.toString();
     }
 
 }

@@ -62,6 +62,9 @@ public class TestLiteralNormalizer extends AbstractTinyTimTestCase {
         assertEquals("0.0", LiteralNormalizer.normalizeDecimal("-0"));
         assertEquals("0.0", LiteralNormalizer.normalizeDecimal("-0.0"));
         assertEquals("0.0", LiteralNormalizer.normalizeDecimal("+0.0"));
+        assertEquals("-0.3", LiteralNormalizer.normalizeDecimal("-.3"));
+        assertEquals("0.3", LiteralNormalizer.normalizeDecimal("+.3"));
+        assertEquals("-0.03", LiteralNormalizer.normalizeDecimal("-.03"));
         assertEquals("0.0", LiteralNormalizer.normalizeDecimal("+00000.0000000"));
         assertEquals("0.0", LiteralNormalizer.normalizeDecimal("-00000.0000000"));
         assertEquals("10.0", LiteralNormalizer.normalizeDecimal("10"));

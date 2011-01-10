@@ -2,7 +2,7 @@
 Changes Log
 ===========
 
-2.0.1 (2010-mm-dd)
+2.0.1 (2011-mm-dd)
 ------------------
 * tinyTiM is forward-compatible to TMAPI 2.0.3
 * OSGi bundle exports the .voc package 
@@ -11,6 +11,8 @@ Changes Log
   (caused heap memory problems and fixes a bug reported by Uta Schulze)
 * Locator: Resolving a reference with white spaces caused problems. Fixed.
   (reported by Uta Schulze)
+* The lexical representation of decimals like "-.3" was interpreted as "+0.3". 
+  Fixed.
 
 
 
