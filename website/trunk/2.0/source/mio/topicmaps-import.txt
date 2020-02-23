@@ -1,7 +1,0 @@
-Topic Maps Import
-=================
-
-:Author: Lars Heuer (heuer[at]semagia.com)
-:Date: $Date:$
-:Version: $Rev:$
-

@@ -1,0 +1,17 @@
+Documentation
+=============
+
+Welcome to tinyTiM, a small and lightweight in-memory Topic Maps engine
+
+tinyTiM provides a native implementation of the `Topic Maps API (TMAPI) <http://www.tmapi.org/>`_.
+
+It holds everything in-memory, so tinyTiM is reasonable fast and needs no setup; 
+just `download <http://sf.net/projects/tinytim>`_ and use it! :)
+
+Contents:
+
+.. toctree::
+    :maxdepth: 2
+
+    quickstart
+    mio/index
